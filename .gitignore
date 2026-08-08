@@ -1,0 +1,164 @@
+# ---------------------------------------------------------------------------
+# KiCad
+#
+# Committed: the editable design. Ignored: anything regenerable from it, and
+# anything that is per-user editor state rather than design data.
+# ---------------------------------------------------------------------------
+*-backups/
+*.kicad_prl
+*.kicad_sch-bak
+*.kicad_pcb-bak
+fp-info-cache
+~*.*
+_autosave-*
+
+# Fabrication output. Regenerable, and drifts from the board file within about
+# two revisions. Released archives belong on a tagged release, not in the tree.
+gerbers/
+fab/
+*.gbr
+*.gbrjob
+*.drl
+*.xln
+*-pos.csv
+*.step.zip
+*.d356
+
+# Simulation and analysis scratch
+*.raw
+*.op.raw
+spice*.net
+
+# ---------------------------------------------------------------------------
+# Local drop zone -- datasheets, vendor files, scratch. Never committed.
+# ---------------------------------------------------------------------------
+local/
+
+# ---------------------------------------------------------------------------
+# macOS
+# ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.apdisk
+# Finder custom folder icon -- the real name ends in two carriage returns
+Icon?
+
+# ---------------------------------------------------------------------------
+# Windows
+# ---------------------------------------------------------------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# ---------------------------------------------------------------------------
+# Linux
+# ---------------------------------------------------------------------------
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ---------------------------------------------------------------------------
+# Editors and IDEs
+# ---------------------------------------------------------------------------
+.vscode/
+.vs/
+*.code-workspace
+.idea/
+*.iml
+*.iws
+*.ipr
+.cursor/
+.zed/
+.fleet/
+nbproject/
+.settings/
+.project
+.classpath
+*.sublime-project
+*.sublime-workspace
+# vim / emacs
+*.swp
+*.swo
+*.swn
+.*.sw[a-p]
+Session.vim
+.netrwhist
+\#*\#
+.\#*
+*.bak
+*.orig
+*.rej
+
+# ---------------------------------------------------------------------------
+# Python -- tools/ only; there is no application code here
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Node -- only if a docs or viewer toolchain ever lands here
+# ---------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ---------------------------------------------------------------------------
+# Build output, secrets, logs
+# ---------------------------------------------------------------------------
+build/
+dist/
+out/
+_deps/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+.cache/
+*.log
+.env
+.env.*
+!.env.example
+*.pem
+*.key

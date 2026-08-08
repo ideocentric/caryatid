@@ -1,0 +1,81 @@
+# Connectors
+
+Every variable element enters through a connector. The PCB layout is identical
+for every instrument; each build populates a subset. Order once, stuff per
+instrument.
+
+Pin assignments are in [pinmap.md](pinmap.md), generated from
+[pins.yaml](pins.yaml). This file covers the connectors themselves.
+
+| Ref | Type | Carries |
+| --- | --- | --- |
+| J1 | Barrel 5.5×2.1 | 5–9 V in. **Never 12 V.** |
+| J2 | JST-PH 2 | 18650. Protected cell or protection PCB required. |
+| J3 | JST 4 | Latch switch: OUT→sw, EN return, 5 V→lamp, GND |
+| J4 | JST 4 | `/CHG` and `/PGOOD` panel LEDs, 1k each from OUT |
+| J5 | IDC 2×5 | **Analogue bus** — A0–A3, A6–A9 + 3V3A + AGND. Rails on the outer pins; 220Ω/10nF per wiper, board side. |
+| J6 | JST 2 | SW1 → D13 via LS18-P — *or* J15 takes the pins |
+| J7 | JST 2 | SW2 → D14 via LS18-P — *or* J15 takes the pins |
+| J8 | JST 2 | SW3 → D7 via LS18-P |
+| J9 | JST 3 | Soft pot: 3V3A, A5, AGND |
+| J10 | JST 2/3 | FSR: 3V3A, A4 |
+| J11 | IDC 2×5 | **Digital bus** — D0–D6 + 3V3D + DGND + spare. 100Ω series each. |
+| J12 | JST 4 | RGB status: D26, D27, D29 + GND. Common cathode, 3 × ~330Ω. |
+| J13a | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
+| J13b | JST-PH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, AUX |
+| J15 | JST-PH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, AUX |
+| J16 | header 2×3 | Expansion / SPI1 — D8 SCLK, D9 MISO, D10 MOSI, D30 CS, 3V3, GND |
+| — | jacks | Audio out stereo; audio in laid out on every board, DNP where unused |
+
+## Comms ports
+
+The most useful thing in this design and the least obvious. **D11/D12 are
+simultaneously I2C1 and UART4**, so a port is two signal lines whose protocol is
+decided by what you plug in and a line of firmware config — not by the board.
+
+| | Port A (D11/D12) | Port B (D13/D14) |
+| --- | --- | --- |
+| Protocols | I2C1, UART4 | USART1 |
+| Typical use | I2C sensor, or MIDI | MIDI, or an ESP32 OSC bridge |
+| Competes with | — | SW1 and SW2 |
+
+**Two footprints on port A, populate one.** The 4-pin JST-SH follows
+Qwiic/STEMMA-QT so an off-the-shelf sensor is a cable rather than a breakout you
+design. The 6-pin JST-PH carries both rails plus an AUX line, which is what a
+MIDI input opto or a radio module wants. Footprints are free; connectors are the
+cost.
+
+**Port B competes with SW1/SW2.** That is why loa's hook switch belongs on
+**SW3 (D7)** — USART1 needs both D13 and D14, and a hook switch sitting on one
+of them would quietly cost you the port.
+
+**MIDI's opto-isolator lives on the daughterboard**, not here. The port carries
+logic-level signals and power; isolation is the breakout's job. That keeps the
+platform free of a circuit most builds do not populate.
+
+## What the outside world sees is not a board decision
+
+The board terminates audio at jacks and MIDI at a comms port. Whether the
+instrument's panel presents three sockets or a single RJ45 carrying everything
+is a panel-and-loom question, and it can be settled after the PCB.
+
+For the record, if one cord is wanted for a single-direction MIDI input plus
+stereo audio, six conductors do it and the split pair earns its keep as a guard:
+
+| RJ45 pin | Pair | Signal |
+| --- | --- | --- |
+| 1, 2 | 2 | Audio L — signal + its own return |
+| **3** | **3** | **GND guard** |
+| 4, 5 | 1 | Audio R — signal + its own return |
+| **6** | **3** | **GND guard** |
+| 7, 8 | 4 | MIDI IN — to the opto LED |
+
+Pair 3 is split across the connector in T568B, which makes it the worst pair for
+signal and the best one for a guard: pin 6 sits physically between the audio and
+the MIDI pair, exactly where the termination untwist makes coupling worst.
+
+Two hazards if you go this way. **PoE** — an RJ45 on a panel invites a network
+cable, and a PoE port will put 48 V into your line outputs. Use a locking shell
+or a legend. And **RJ12 is the authentic phone connector but standard line cord
+is flat untwisted ribbon**, so all the twisted-pair reasoning above evaporates;
+it needs round shielded 6-conductor cable, which rather undercuts the point.

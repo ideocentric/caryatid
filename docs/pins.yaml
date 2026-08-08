@@ -1,0 +1,118 @@
+# THE FROZEN PIN MAP.
+#
+# Source of truth. docs/pinmap.md is generated from this file by
+# tools/gen_pinmap.py -- edit here, regenerate, never edit the markdown.
+#
+# One copy, because a pin map kept in two places will disagree the first time
+# a connector moves. loa's protocol table drifted twice before that lesson
+# stuck; this starts on the other side of it.
+#
+# "Frozen" means: an instrument may leave a pin unpopulated, and may choose
+# between the alternates listed for a pin, but may not repurpose it. The whole
+# value of the platform is that one PCB layout serves every build.
+#
+# `alt` lists what the silicon can do with the pin -- taken from libDaisy's
+# own peripheral tables (per/uart.cpp, per/spi.cpp, per/i2c.cpp), not from a
+# pinout card. Where a pin has no alternate, it is plain GPIO.
+
+board: absonus platform
+mcu: STM32H750IB
+module: Daisy Seed
+revision: A
+status: frozen 2026-08-08
+
+# ---------------------------------------------------------------------------
+# Analogue. All twelve ADC-capable pins are spoken for.
+# ---------------------------------------------------------------------------
+
+analog:
+  - {pin: A0,  seed: D15, mcu: PC0, role: analog panel 1,   connector: J5}
+  - {pin: A1,  seed: D16, mcu: PA3, role: analog panel 2,   connector: J5}
+  - {pin: A2,  seed: D17, mcu: PB1, role: analog panel 3,   connector: J5}
+  - {pin: A3,  seed: D18, mcu: PA7, role: analog panel 4,   connector: J5,
+     alt: SPI1_MOSI}
+  - {pin: A4,  seed: D19, mcu: PA6, role: FSR / aux analog, connector: J10,
+     alt: SPI1_MISO, notes: "3k pulldown, DNP option"}
+  - {pin: A5,  seed: D20, mcu: PC1, role: soft pot / aux analog, connector: J9,
+     notes: "10k pulldown, DNP option"}
+  - {pin: A6,  seed: D21, mcu: PC4, role: analog panel 5,   connector: J5}
+  - {pin: A7,  seed: D22, mcu: PA5, role: analog panel 6,   connector: J5,
+     alt: SPI1_SCLK}
+  - {pin: A8,  seed: D23, mcu: PA4, role: analog panel 7,   connector: J5,
+     alt: SPI1_NSS}
+  - {pin: A9,  seed: D24, mcu: PA1, role: analog panel 8,   connector: J5,
+     alt: UART4_RX}
+  - {pin: A10, seed: D25, mcu: PA0, role: battery gauge,    connector: on-board,
+     alt: UART4_TX,
+     notes: "100k/100k from BAT + 1k/10nF. ~21 uA continuous drain, always."}
+  - {pin: A11, seed: D28, mcu: PA2, role: charge-status code, connector: on-board,
+     notes: "/CHG and /PGOOD encoded as four voltage levels. See indicators.md."}
+
+# ---------------------------------------------------------------------------
+# Digital.
+# ---------------------------------------------------------------------------
+
+digital:
+  - {pin: D0,  mcu: PB12, role: digital panel 1, connector: J11, alt: UART5_RX}
+  - {pin: D1,  mcu: PC11, role: digital panel 2, connector: J11, alt: UART4_RX}
+  - {pin: D2,  mcu: PC10, role: digital panel 3, connector: J11, alt: UART4_TX}
+  - {pin: D3,  mcu: PC9,  role: digital panel 4, connector: J11}
+  - {pin: D4,  mcu: PC8,  role: digital panel 5, connector: J11}
+  - {pin: D5,  mcu: PD2,  role: digital panel 6, connector: J11, alt: UART5_RX}
+  - {pin: D6,  mcu: PC12, role: digital panel 7, connector: J11, alt: UART5_TX}
+
+  - {pin: D7,  mcu: PG10, role: SW3 via LS18-P,  connector: J8, alt: SPI1_NSS,
+     notes: "loa's hook switch lives here, NOT on SW1/SW2 -- those pins are
+             comms port B and USART1 needs both of them."}
+
+  - {pin: D8,  mcu: PG11, role: expansion SCLK,  connector: J16, alt: SPI1_SCLK,
+     notes: "The ONLY free SPI1 clock. PA5 is the sole alternative and it is an
+             analog panel input. Do not spend this pin on an LED."}
+  - {pin: D9,  mcu: PB4,  role: expansion MISO,  connector: J16, alt: SPI1_MISO}
+  - {pin: D10, mcu: PB5,  role: expansion MOSI,  connector: J16, alt: SPI1_MOSI}
+
+  - {pin: D11, mcu: PB8,  role: comms port A signal 1, connector: J13,
+     alt: "I2C1_SCL / UART4_RX"}
+  - {pin: D12, mcu: PB9,  role: comms port A signal 2, connector: J13,
+     alt: "I2C1_SDA / UART4_TX"}
+
+  - {pin: D13, mcu: PB6,  role: comms port B signal 1, connector: "J15, or J6 as SW1",
+     alt: "USART1_TX / UART5_TX"}
+  - {pin: D14, mcu: PB7,  role: comms port B signal 2, connector: "J15, or J7 as SW2",
+     alt: USART1_RX}
+
+  - {pin: D26, mcu: PD11, role: RGB status - red,   connector: J12}
+  - {pin: D27, mcu: PG9,  role: RGB status - green, connector: J12,
+     alt: SPI1_MISO}
+  - {pin: D29, mcu: PB14, role: RGB status - blue,  connector: J12,
+     alt: SPI2_MISO}
+
+  - {pin: D30, mcu: PB15, role: spare / expansion CS, connector: J16,
+     notes: "The only genuinely unassigned pin on the board."}
+
+# ---------------------------------------------------------------------------
+# Mutually exclusive populations. The board lays out both; a build fits one.
+# ---------------------------------------------------------------------------
+
+alternates:
+  - pins: [D11, D12]
+    options:
+      - {name: I2C sensor,  connector: "J13a, 4-pin JST-SH, Qwiic/STEMMA-QT pinout"}
+      - {name: MIDI or UART bridge, connector: "J13b, 6-pin JST-PH module port"}
+  - pins: [D13, D14]
+    options:
+      - {name: comms port B, connector: "J15, 6-pin JST-PH module port"}
+      - {name: SW1 + SW2 via LS18-P, connector: "J6, J7"}
+
+# ---------------------------------------------------------------------------
+# Deliberately not on this board
+# ---------------------------------------------------------------------------
+
+not_present:
+  - what: soft-latch power hold / button sense
+    was: D29 / D30 in the original spec
+    why: >
+      Redundant against the illuminated mechanical latching switch, which is
+      the committed power control. The spec marked it optional in both the pin
+      map and the connector table. Dropping it released the one pin needed to
+      keep SPI1 whole -- see ADR 0004.
