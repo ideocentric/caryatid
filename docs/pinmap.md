@@ -2,7 +2,7 @@
 
 <!-- GENERATED FROM docs/pins.yaml BY tools/gen_pinmap.py -- DO NOT EDIT -->
 
-**absonus platform** rev A — Daisy Seed (STM32H750IB). Status: **frozen 2026-08-08**.
+**caryatid** rev A — Daisy Seed (STM32H750IB). Status: **frozen 2026-08-08**.
 
 Frozen means an instrument may leave a pin unpopulated, and may choose
 between the alternates listed, but may not repurpose it. One PCB layout
@@ -60,7 +60,7 @@ serves every build; only the population changes.
 
 - **`D7`** — loa's hook switch lives here, NOT on SW1/SW2 -- those pins are comms port B and USART1 needs both of them.
 - **`D8`** — The ONLY free SPI1 clock. PA5 is the sole alternative and it is an analog panel input. Do not spend this pin on an LED.
-- **`D30`** — The only genuinely unassigned pin on the board.
+- **`D30`** — The only genuinely unassigned pin on the board -- and it is brought out to J16 rather than left floating, so 'spare' means usable rather than merely unallocated.
 
 ## Counts
 

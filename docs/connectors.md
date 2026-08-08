@@ -24,8 +24,21 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J13a | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
 | J13b | JST-PH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, AUX |
 | J15 | JST-PH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, AUX |
-| J16 | header 2×3 | Expansion / SPI1 — D8 SCLK, D9 MISO, D10 MOSI, D30 CS, 3V3, GND |
+| J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
 | — | jacks | Audio out stereo; audio in laid out on every board, DNP where unused |
+
+## Every pin reaches a connector
+
+There are no stranded pins. `A10` and `A11` are on-board by definition — they
+measure the board's own battery and charger — and every other pin lands on
+something you can plug into.
+
+That includes the spare. **`D30` is brought out on J16**, so "spare" means
+usable rather than merely unallocated. J16 is a 2×4 rather than the 2×3 the
+signals strictly need: the extra two positions carry **5 V and a second ground**,
+which cost no Seed pins and are what a display or an SD card will want. A spare
+pin on a header you can reach is worth something; a spare pin on a pad is worth
+nothing.
 
 ## Comms ports
 

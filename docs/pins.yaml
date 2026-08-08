@@ -15,7 +15,7 @@
 # own peripheral tables (per/uart.cpp, per/spi.cpp, per/i2c.cpp), not from a
 # pinout card. Where a pin has no alternate, it is plain GPIO.
 
-board: absonus platform
+board: caryatid
 mcu: STM32H750IB
 module: Daisy Seed
 revision: A
@@ -88,7 +88,9 @@ digital:
      alt: SPI2_MISO}
 
   - {pin: D30, mcu: PB15, role: spare / expansion CS, connector: J16,
-     notes: "The only genuinely unassigned pin on the board."}
+     notes: "The only genuinely unassigned pin on the board -- and it is brought
+             out to J16 rather than left floating, so 'spare' means usable
+             rather than merely unallocated."}
 
 # ---------------------------------------------------------------------------
 # Mutually exclusive populations. The board lays out both; a build fits one.

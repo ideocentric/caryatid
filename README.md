@@ -1,7 +1,11 @@
-# absonus platform
+# caryatid
 
 A common power and I/O board for Daisy Seed instruments — absonus, loa, baby
 borg, and whatever comes next.
+
+*A caryatid is a column carved as a figure, bearing the weight of what stands on
+it. Named for the role rather than for any instrument it carries: calling it
+after one of them would have implied it belonged to that one.*
 
 **One PCB layout serves every build.** Every variable element — pots, keypad,
 sensors, switches, comms — enters through a connector, and each instrument

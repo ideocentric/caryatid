@@ -7,15 +7,15 @@ block for any future board that outgrows this one:
 
 ```
 pcb/
-  absonus-platform.kicad_pro
-  absonus-platform.kicad_sch    root
+  caryatid.kicad_pro
+  caryatid.kicad_sch    root
   power.kicad_sch               charger, boost, latch, charge LEDs
   seed.kicad_sch                Seed headers, battery gauge, charge-status code
   audio.kicad_sch               jacks, coupling, optional mic bias
   panel-io.kicad_sch            analogue bus, digital bus, switches, comms ports
-  absonus-platform.kicad_sym    project-local symbols
-  absonus-platform.pretty/      project-local footprints
-  absonus-platform.kicad_jobset fabrication output job
+  caryatid.kicad_sym    project-local symbols
+  caryatid.pretty/      project-local footprints
+  caryatid.kicad_jobset fabrication output job
 ```
 
 Target: KiCad 8 or newer, two layers, 1.6 mm.
