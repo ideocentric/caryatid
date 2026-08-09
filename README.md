@@ -24,6 +24,7 @@ See [hardware/pcb/](hardware/pcb/).
 | The three indicators, and why three | [docs/indicators.md](docs/indicators.md) |
 | **Component values, with derivations** | [docs/values.md](docs/values.md) |
 | Part numbers, footprints, what is in stock | [docs/sourcing.md](docs/sourcing.md) |
+| **Power sheet, every connection** | [docs/power-sheet.md](docs/power-sheet.md) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 

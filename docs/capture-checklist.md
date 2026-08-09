@@ -60,6 +60,20 @@ the schematic is a *consumer* of it, not a second opinion.
 
 ## Power sheet
 
+Every net is listed in [power-sheet.md](power-sheet.md); the items below are
+the ones that bite. Two custom symbols are already drawn in
+`caryatid.kicad_sym` — `BQ24074RGT` and `TPS61023DRL`, pin numbers taken from
+the datasheet tables and rendered to check.
+
+- [ ] **`EN2` to `VOUT`, never to `VIN_DC`.** EN1/EN2/CE are 7 V absolute max
+      and VIH is valid only to 6 V; the barrel input goes to 9 V. This is the
+      one that destroys a part.
+- [ ] **`ILIM` must be populated** — leaving it open disables all charging.
+- [ ] **`ITERM` no-connect flag**, deliberately floating for 10% termination.
+- [ ] **Charge LED anodes on `VOUT`, not `+5V`** — they must work with the
+      boost off, which is the whole point of them.
+- [ ] C1 rated **25 V**: it sits on the raw barrel input.
+
 - [ ] Barrel jack → SS34 → bq24074 `IN`. **5–9 V, never 12 V** — silkscreen it.
 - [ ] `RISET` **887 Ω, 1%** — the 1% is a datasheet requirement, not a
       preference; the part short-tests this resistor.
