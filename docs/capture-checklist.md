@@ -100,9 +100,10 @@ the datasheet tables and rendered to check.
 
 ## Seed sheet
 
-Every net is in [seed-sheet.md](seed-sheet.md). The symbol `Daisy_Seed_Rev4`
-is drawn, with silkscreen pin names and numbers cross-checked between
-libDaisy's pinout CSV and the fabricated absonus board.
+Every net is in [seed-sheet.md](seed-sheet.md). The symbols
+`Daisy_Seed_Socket_A` (pins 1–20) and `Daisy_Seed_Socket_B` (21–40) are drawn
+and footprinted, with pin names and numbers cross-checked between libDaisy's
+pinout CSV and the fabricated absonus board.
 
 - [ ] **Name every Seed net after its pin** — `D0`, `A7`. That is what turns
       the cross-check against `pinmap.md` into a diff.
@@ -114,12 +115,14 @@ libDaisy's pinout CSV and the fabricated absonus board.
       one, something is missing.
 - [ ] **Two socket designators, `A1` and `A2`**, one per 1×20 strip. absonus
       used a single designator and the BOM asked for one socket where the board
-      needs two. Let the schematic carry the quantity.
-- [ ] **Draw the Seed orientation back in as silkscreen** — outline, pin-1
-      marker, and a **`USB` legend at the pin 1 end**, which is the `D0` / `GND`
-      end and the top of the symbol. Splitting the footprint loses what it was
-      providing, and a Seed inserted backwards puts `VIN` on a GPIO.
-- [ ] Silkscreen the **pin names** beside the sockets while the space is free.
+      needs two. Using both symbols is what makes the schematic carry the
+      quantity — placing one twice would put the same designator on both.
+- [x] ~~Draw the Seed orientation back in as silkscreen~~ — outline, pin-1
+      marker, `USB` legend and pin names are **inside the two footprints**, so
+      they travel with the sockets. Nothing to draw by hand.
+- [ ] **Place `A1` and `A2` exactly 15.24 mm apart** at layout. The outline and
+      USB tab are split across the two footprints and only close up at that
+      spacing — a broken outline on the board render means the spacing is wrong.
 
 ## Panel I/O sheet
 

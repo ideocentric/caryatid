@@ -1,6 +1,7 @@
 # PCB
 
-KiCad 9 project. **Skeleton in place, no schematic content yet.**
+KiCad 9 project. **Symbols and footprints built; no schematic content yet** —
+the four sheets exist and are empty.
 
 ```
 pcb/
@@ -10,8 +11,8 @@ pcb/
   seed.kicad_sch           Seed headers, battery gauge, charge-status code
   audio.kicad_sch          jacks, coupling, mic bias / preamp / pad options
   panel-io.kicad_sch       analogue bus, digital bus, switches, comms ports
-  caryatid.kicad_sym       project-local symbols (empty)
-  caryatid.pretty/         project-local footprints (empty)
+  caryatid.kicad_sym       symbols: BQ24074RGT, TPS61023DRL, Seed sockets A/B
+  caryatid.pretty/         footprints: BQ24074 QFN, Seed sockets A/B
   sym-lib-table            so the project libs resolve without global config
   fp-lib-table
 ```
@@ -76,3 +77,35 @@ The parts of it that gate everything else:
 Values are in [`docs/values.md`](../../docs/values.md), part numbers and
 footprints in [`docs/sourcing.md`](../../docs/sourcing.md). Several absonus
 footprints are reusable as-is, which turns a chunk of this into transcription.
+
+## Footprints — checked against the stock libraries
+
+Every footprint named in `sourcing.md` resolves in KiCad 9's stock libraries,
+including the four JST XH ones that were assumed by naming convention rather
+than verified. Two need a project-local variant, and both are already built.
+
+**`caryatid:BQ24074RGT_QFN-16-1EP_3x3mm_P0.5mm`** — because **none** of the five
+stock QFN-16 3×3 footprints put any paste on the exposed pad; every one is
+`F.Cu`/`F.Mask` only. Derived from `EP1.7x1.7mm_ThermalVias` with a 2×2 aperture
+array at 72% coverage. EP is 1.68 ±0.07 per SLUS810N drawing 4222419/E, so 1.7 is
+inside tolerance.
+
+Two caveats worth carrying into layout and into the order:
+
+- **The four thermal vias sit under the paste apertures and must be tented.** On
+  a 1.7 mm pad the vias and the apertures both want the corners; making them
+  disjoint drops coverage to 45%. This is a via setting, not a footprint fix.
+- The only package drawing in the datasheet is **RGT0016C**, while Table 7-1
+  lists the '74 as **RGT0016B**. TI did not publish the B drawing. If the two
+  differ, the EP dimension is what changes.
+
+**`caryatid:DaisySeed_Socket_A_1x20` / `_B_1x20`** — two 1×20 socket rows so the
+BOM asks for two sockets from the schematic. They carry the module outline, pin
+names, pin-1 dot and `USB` legend as footprint silkscreen, split on the
+centreline so wrong spacing shows as a broken outline. See
+[`docs/seed-sheet.md`](../../docs/seed-sheet.md).
+
+The 18650 holder is **not** settled: `Battery:BatteryHolder_Keystone_1042_1x18650`
+exists, but its courtyard is **87.9 × 21.7 mm**, which on a 90 mm edge leaves
+about a millimetre a side. BT1 has no part number yet — pick the holder, then the
+footprint, and expect it to run along the 100 mm axis.

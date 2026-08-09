@@ -3,9 +3,17 @@
 Every connection on `hardware/pcb/seed.kicad_sch`: the module and its sockets,
 the two analogue measurement networks, and the rails.
 
-## The symbol
+## The symbols
 
-`Daisy_Seed_Rev4` in `caryatid.kicad_sym`. Two things about it are deliberate.
+**`Daisy_Seed_Socket_A` and `Daisy_Seed_Socket_B`** in `caryatid.kicad_sym` —
+pins 1–20 and 21–40. Placed side by side they read as the Seed, with the pins
+fanning outward the way the two socket rows sit on the board.
+
+They replace a single 40-pin `Daisy_Seed_Rev4` symbol, which is in the git
+history but no longer in the library. One symbol is one designator is one
+footprint, so it could not produce the two socket BOM lines the board needs —
+see [Sockets](#sockets--they-have-their-own-designators) below. Three things
+about them are deliberate.
 
 **Pin names are the Electro-Smith silkscreen** — `D0`–`D30`, with the analogue
 pins as `A0/D15` and so on — not the peripheral names a stock symbol uses
@@ -18,6 +26,11 @@ table in someone's head.
 `doc/Daisy_Seed_Rev4_Pinout.csv` and the symbol embedded in the fabricated
 absonus board. All forty positions agree. The absonus symbol names them by
 peripheral function, which is why it was not simply reused.
+
+**The part each symbol stands for is the socket, not the module.** The pins are
+named for the Seed because that is what makes the schematic readable, but the
+BOM line is a 1×20 female socket and the Seed is bought separately. This is why
+the symbols carry `Reference = A` and land as `A1` and `A2`.
 
 ## Name every Seed net after its pin
 
@@ -121,7 +134,7 @@ DAC pins occupied by potentiometers**, and freeing one means giving up an
 analogue panel channel. Recorded here so that discovery happens now rather than
 during a board spin.
 
-## Sockets — give them their own designators
+## Sockets — they have their own designators
 
 The Seed sits on **two 1×20 female sockets, 40 pins total**. `C2897383` is the
 part absonus used; `C41361038` is the equivalent sitting in the JLC inventory.
@@ -133,9 +146,9 @@ get the footprint right — so the BOM asked for **one** socket where the board
 physically needs **two**, and the quantity had to be corrected by hand at order
 time.
 
-**Give the two strips separate designators**, `A1` and `A2`, each with its own
-1×20 socket footprint. Then the BOM quantity is right because the schematic says
-so, rather than because somebody remembered.
+**The two strips have separate designators**, `A1` and `A2`, each with its own
+1×20 socket footprint. The BOM quantity is right because the schematic says so,
+rather than because somebody remembered.
 
 The Daisy Seed module itself is **not a BOM line** — it is bought separately and
 pushed into the sockets.
@@ -147,8 +160,9 @@ providing: **which way round the module goes.** Inserted backwards, `VIN` lands
 on a GPIO and `GND` on something that is not ground, which destroys the module,
 the board, or both.
 
-The footprint was carrying that information as silkscreen. Split the footprint
-and the silkscreen has to be put back deliberately:
+The footprint was carrying that information as silkscreen, so splitting it means
+putting the silkscreen back deliberately. **This is built** —
+`caryatid:DaisySeed_Socket_A_1x20` and `_B_1x20` carry all of it:
 
 - **Module outline** — a rectangle showing the Seed's body, so it is obvious the
   two rows are one part.
@@ -159,7 +173,13 @@ and the silkscreen has to be put back deliberately:
   to check a physical module against: **the USB connector is at the `D0` /
   `GND` end**, opposite the `AGND` / `3v3A` end where pins 20 and 21 are. In the
   schematic symbol that is the top.
-- **Pin-1 marker** at `A1` pin 1: a dot, and a square pad if the footprint allows.
+
+  **Verified against a third source**, not just the pinout CSV and the absonus
+  board: KiCad's stock `Module:Electrosmith_Daisy_Seed` silkscreen carries an
+  8 mm connector tab protruding past the body, centred on the module axis, at
+  the pin-1/pin-40 end — with the pin-1 chamfer at that same end.
+- **Pin-1 marker**: a dot at `A1` pin 1, plus a **square pad at the USB end of
+  both rows** — `A1` pin 1 and `A2` pin 40. Two landmarks, one per strip.
 
 **And take the bonus.** With plain socket rows there is silkscreen space beside
 the pins that the module footprint occupied, so **print the pin names on the
@@ -167,9 +187,15 @@ board** — `D0`, `D7`, `A0`, `VIN`. The frozen map becomes visible on the coppe
 which is worth a great deal the first time something is probed with a meter at
 one in the morning.
 
-The one risk this introduces: **silkscreen is not attached to the footprints**.
-Move a socket and the graphics stay behind. Check the alignment as an explicit
-step in the layout review, not by eye while doing something else.
+**The risk this would have introduced is designed out.** Loose board graphics
+stay behind when a socket moves, so none of this is loose: every line and label
+lives inside the two footprints and travels with them.
+
+The remaining exposure is the two strips being placed at the wrong spacing, and
+that is made self-evident rather than left to a review step — **the module
+outline and the USB tab are split on the centreline**, half on each footprint.
+At exactly 15.24 mm apart they close up into one rectangle and one tab. At
+anything else the outline is visibly broken.
 
 Socket height is one of the four measurements that set the panel standoff, with
 the switch bezel, the jack barrels and the IDC headers. **Measure before any

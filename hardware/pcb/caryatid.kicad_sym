@@ -308,7 +308,7 @@
 			)
 		)
 	)
-	(symbol "Daisy_Seed_Rev4"
+	(symbol "Daisy_Seed_Socket_A"
 		(pin_names
 			(offset 0.254)
 		)
@@ -319,11 +319,11 @@
 			(at -19.05 30.48 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
-		(property "Value" "Daisy_Seed_Rev4"
+		(property "Value" "Daisy_Seed_Socket_A"
 			(at -19.05 -27.94 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" ""
+		(property "Footprint" "caryatid:DaisySeed_Socket_A_1x20"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
@@ -331,19 +331,19 @@
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
-		(property "Description" "Daisy Seed rev4. Pin NAMES are the Electro-Smith silkscreen (D0-D30, A0-A11) to match docs/pinmap.md. Pin NUMBERS are header positions 1-40, cross-checked between libDaisy Daisy_Seed_Rev4_Pinout.csv and the fabricated absonus board. USB connector is at the PIN 1 END (the D0/GND end, top of this symbol)."
+		(property "Description" "Daisy Seed Rev4 socket, row A (header pins 1-20). The BOM line is the 1x20 female socket (C2897383; C41361038 equivalent), NOT the module -- the Seed is bought separately and pushed in. Two rows means two designators, so the BOM quantity is 2 from the schematic rather than corrected by hand. Pin NAMES are the Electro-Smith silkscreen to match docs/pinmap.md; pin NUMBERS are header positions, cross-checked between libDaisy Daisy_Seed_Rev4_Pinout.csv and the fabricated absonus board. USB is at the PIN 1 / PIN 40 end."
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
-		(symbol "Daisy_Seed_Rev4_0_1"
+		(symbol "Daisy_Seed_Socket_A_0_1"
 			(rectangle
 				(start -19.05 27.94)
-				(end 19.05 -25.4)
+				(end -3.81 -25.4)
 				(stroke (width 0.254) (type default))
 				(fill (type background))
 			)
 		)
-		(symbol "Daisy_Seed_Rev4_1_1"
+		(symbol "Daisy_Seed_Socket_A_1_1"
 			(pin bidirectional line
 				(at -24.13 25.4 0)
 				(length 5.08)
@@ -443,7 +443,7 @@
 			(pin passive line
 				(at -24.13 -15.240000000000002 0)
 				(length 5.08)
-				(name "AUDIO INR" (effects (font (size 1.27 1.27))))
+				(name "AUDIO IN R" (effects (font (size 1.27 1.27))))
 				(number "17" (effects (font (size 1.27 1.27))))
 			)
 			(pin passive line
@@ -464,107 +464,55 @@
 				(name "AGND" (effects (font (size 1.27 1.27))))
 				(number "20" (effects (font (size 1.27 1.27))))
 			)
-			(pin power_in line
-				(at 24.13 25.4 180)
-				(length 5.08)
-				(name "GND" (effects (font (size 1.27 1.27))))
-				(number "40" (effects (font (size 1.27 1.27))))
+		)
+	)
+	(symbol "Daisy_Seed_Socket_B"
+		(pin_names
+			(offset 0.254)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "A"
+			(at 3.81 30.48 0)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Value" "Daisy_Seed_Socket_B"
+			(at 3.81 -27.94 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(property "Footprint" "caryatid:DaisySeed_Socket_B_1x20"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) hide)
+		)
+		(property "Datasheet" "https://electro-smith.com/products/daisy-seed"
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) hide)
+		)
+		(property "Description" "Daisy Seed Rev4 socket, row B (header pins 21-40). The BOM line is the 1x20 female socket (C2897383; C41361038 equivalent), NOT the module -- the Seed is bought separately and pushed in. Two rows means two designators, so the BOM quantity is 2 from the schematic rather than corrected by hand. Pin NAMES are the Electro-Smith silkscreen to match docs/pinmap.md; pin NUMBERS are header positions, cross-checked between libDaisy Daisy_Seed_Rev4_Pinout.csv and the fabricated absonus board. USB is at the PIN 1 / PIN 40 end."
+			(at 0 0 0)
+			(effects (font (size 1.27 1.27)) hide)
+		)
+		(symbol "Daisy_Seed_Socket_B_0_1"
+			(rectangle
+				(start 3.81 27.94)
+				(end 19.05 -25.4)
+				(stroke (width 0.254) (type default))
+				(fill (type background))
 			)
-			(pin power_in line
-				(at 24.13 22.86 180)
-				(length 5.08)
-				(name "VIN" (effects (font (size 1.27 1.27))))
-				(number "39" (effects (font (size 1.27 1.27))))
-			)
+		)
+		(symbol "Daisy_Seed_Socket_B_1_1"
 			(pin power_out line
-				(at 24.13 20.32 180)
+				(at 24.13 -22.86 180)
 				(length 5.08)
-				(name "3v3D" (effects (font (size 1.27 1.27))))
-				(number "38" (effects (font (size 1.27 1.27))))
+				(name "3v3A" (effects (font (size 1.27 1.27))))
+				(number "21" (effects (font (size 1.27 1.27))))
 			)
 			(pin bidirectional line
-				(at 24.13 17.779999999999998 180)
+				(at 24.13 -20.32 180)
 				(length 5.08)
-				(name "D30" (effects (font (size 1.27 1.27))))
-				(number "37" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 15.239999999999998 180)
-				(length 5.08)
-				(name "D29" (effects (font (size 1.27 1.27))))
-				(number "36" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 12.7 180)
-				(length 5.08)
-				(name "A11/D28" (effects (font (size 1.27 1.27))))
-				(number "35" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 10.159999999999998 180)
-				(length 5.08)
-				(name "D27" (effects (font (size 1.27 1.27))))
-				(number "34" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 7.619999999999997 180)
-				(length 5.08)
-				(name "D26" (effects (font (size 1.27 1.27))))
-				(number "33" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 5.079999999999998 180)
-				(length 5.08)
-				(name "A10/D25" (effects (font (size 1.27 1.27))))
-				(number "32" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 2.539999999999999 180)
-				(length 5.08)
-				(name "A9/D24" (effects (font (size 1.27 1.27))))
-				(number "31" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 0.0 180)
-				(length 5.08)
-				(name "A8/D23" (effects (font (size 1.27 1.27))))
-				(number "30" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -2.5400000000000027 180)
-				(length 5.08)
-				(name "A7/D22" (effects (font (size 1.27 1.27))))
-				(number "29" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -5.080000000000002 180)
-				(length 5.08)
-				(name "A6/D21" (effects (font (size 1.27 1.27))))
-				(number "28" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -7.6200000000000045 180)
-				(length 5.08)
-				(name "A5/D20" (effects (font (size 1.27 1.27))))
-				(number "27" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -10.160000000000004 180)
-				(length 5.08)
-				(name "A4/D19" (effects (font (size 1.27 1.27))))
-				(number "26" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -12.700000000000003 180)
-				(length 5.08)
-				(name "A3/D18" (effects (font (size 1.27 1.27))))
-				(number "25" (effects (font (size 1.27 1.27))))
-			)
-			(pin bidirectional line
-				(at 24.13 -15.240000000000002 180)
-				(length 5.08)
-				(name "A2/D17" (effects (font (size 1.27 1.27))))
-				(number "24" (effects (font (size 1.27 1.27))))
+				(name "A0/D15" (effects (font (size 1.27 1.27))))
+				(number "22" (effects (font (size 1.27 1.27))))
 			)
 			(pin bidirectional line
 				(at 24.13 -17.78 180)
@@ -573,16 +521,106 @@
 				(number "23" (effects (font (size 1.27 1.27))))
 			)
 			(pin bidirectional line
-				(at 24.13 -20.32 180)
+				(at 24.13 -15.240000000000002 180)
 				(length 5.08)
-				(name "A0/D15" (effects (font (size 1.27 1.27))))
-				(number "22" (effects (font (size 1.27 1.27))))
+				(name "A2/D17" (effects (font (size 1.27 1.27))))
+				(number "24" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 -12.700000000000003 180)
+				(length 5.08)
+				(name "A3/D18" (effects (font (size 1.27 1.27))))
+				(number "25" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 -10.160000000000004 180)
+				(length 5.08)
+				(name "A4/D19" (effects (font (size 1.27 1.27))))
+				(number "26" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 -7.6200000000000045 180)
+				(length 5.08)
+				(name "A5/D20" (effects (font (size 1.27 1.27))))
+				(number "27" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 -5.080000000000002 180)
+				(length 5.08)
+				(name "A6/D21" (effects (font (size 1.27 1.27))))
+				(number "28" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 -2.5400000000000027 180)
+				(length 5.08)
+				(name "A7/D22" (effects (font (size 1.27 1.27))))
+				(number "29" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 0.0 180)
+				(length 5.08)
+				(name "A8/D23" (effects (font (size 1.27 1.27))))
+				(number "30" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 2.539999999999999 180)
+				(length 5.08)
+				(name "A9/D24" (effects (font (size 1.27 1.27))))
+				(number "31" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 5.079999999999998 180)
+				(length 5.08)
+				(name "A10/D25" (effects (font (size 1.27 1.27))))
+				(number "32" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 7.619999999999997 180)
+				(length 5.08)
+				(name "D26" (effects (font (size 1.27 1.27))))
+				(number "33" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 10.159999999999998 180)
+				(length 5.08)
+				(name "D27" (effects (font (size 1.27 1.27))))
+				(number "34" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 12.7 180)
+				(length 5.08)
+				(name "A11/D28" (effects (font (size 1.27 1.27))))
+				(number "35" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 15.239999999999998 180)
+				(length 5.08)
+				(name "D29" (effects (font (size 1.27 1.27))))
+				(number "36" (effects (font (size 1.27 1.27))))
+			)
+			(pin bidirectional line
+				(at 24.13 17.779999999999998 180)
+				(length 5.08)
+				(name "D30" (effects (font (size 1.27 1.27))))
+				(number "37" (effects (font (size 1.27 1.27))))
 			)
 			(pin power_out line
-				(at 24.13 -22.86 180)
+				(at 24.13 20.32 180)
 				(length 5.08)
-				(name "3v3A" (effects (font (size 1.27 1.27))))
-				(number "21" (effects (font (size 1.27 1.27))))
+				(name "3v3D" (effects (font (size 1.27 1.27))))
+				(number "38" (effects (font (size 1.27 1.27))))
+			)
+			(pin power_in line
+				(at 24.13 22.86 180)
+				(length 5.08)
+				(name "VIN" (effects (font (size 1.27 1.27))))
+				(number "39" (effects (font (size 1.27 1.27))))
+			)
+			(pin power_in line
+				(at 24.13 25.4 180)
+				(length 5.08)
+				(name "GND" (effects (font (size 1.27 1.27))))
+				(number "40" (effects (font (size 1.27 1.27))))
 			)
 		)
 	)
