@@ -15,8 +15,8 @@ fabricated once, and reusing them turns capture into transcription.
 | **C4749194** | DS254P-2X5-L0 | `IDC-Header_2x05_P2.54mm_Vertical` | **176** | J5, J11 |
 | **C374544** | AR03BTDX1002A010, 10 kΩ **±0.1%** | 0603 | **176** | A11 divider — see below |
 | **C41361038** | DS1023-1x20S21 | `插件,P=2.54mm` | **36** | Seed sockets, 2 per board |
-| C158012 | JST-XH 2-pin vertical | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J6, J7, J8, J10 |
-| C144394 | JST-XH 3-pin vertical | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
+| C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J2, J6, J7, J8, J10 |
+| C144394 | JST **B3B-XH-A(LF)(SN)**, 3-pin | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
 | C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13a, Qwiic** |
 | C5289485 | LS18-P | `DIP787W45P254L927H533Q8` | on absonus | debounce, socketed |
 | C2897383 | Daisy Seed Rev4 | `Electrosmith_Daisy_Seed` | on absonus | the module outline |
@@ -50,9 +50,23 @@ PH would have been working close to its rating for no reason.
 | --- | --- | --- |
 | J2 battery, J6/J7/J8 switches, J10 FSR | XH 2 | ✅ C158012 |
 | J9 soft pot | XH 3 | ✅ C144394 |
-| J3 latch, J4 charge LEDs, J12 RGB | **XH 4** | ❌ source |
-| J13b, J15 module ports | **XH 6** | ❌ source |
+| J3 latch, J4 charge LEDs, J12 RGB | XH 4 | ✅ **C144395** |
+| J13b, J15 module ports | XH 6 | ✅ **C144397** |
 | J13a Qwiic | SH 4 horizontal | ✅ C160404 |
+
+**Sourced.** Both are the same JST XH family as the two already in use, so the
+housings, crimps and crimp tool carry straight over:
+
+| LCSC | Part | Pins | Rating | Price | Footprint |
+| --- | --- | --- | --- | --- | --- |
+| **C144395** | JST `B4B-XH-A(LF)(SN)` | 4 | 250 V / 3 A | ~$0.032 | `JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical` |
+| **C144397** | JST `B6B-XH-A(LF)(SN)` | 6 | 250 V / 3 A | ~$0.048 | `JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical` |
+
+Note the LCSC numbering runs with the family — C144394 is the 3-pin already in
+use, C144395 the 4, C144397 the 6 — which is a small confirmation they are the
+same listing series rather than lookalikes from another maker. Footprint names
+follow KiCad's `Connector_JST` convention exactly as the 2- and 3-pin ones do;
+confirm they are present in the library rather than assuming.
 
 ## The A11 divider can be one resistor value
 
@@ -69,13 +83,41 @@ entirely from that one value is better on every axis that matters:
 | Unique parts | 3 | **1** |
 | Resistor count | 3 | 4 |
 
-330 mV is 409 ADC counts, and the earlier tolerance work showed the scheme
-survives down to ~310 mV at 5% parts. Trading 60 mV of margin for **two fewer
-SMT feeders and a part already on the shelf** is worth it, and at 0.1% the
-worst case is 329 mV — effectively the nominal.
+### Why the smaller separation is the better choice
 
-Use the stocked 0.1% part for all four. Precision is free here; it is what is in
-the drawer.
+330 mV looks like a downgrade from 390 mV, and read on its own it is. But
+separation is not a score to maximise — it is a threshold to clear, and past
+that point more of it buys nothing.
+
+**What the number has to achieve** is that the four voltage bands never overlap
+once resistor tolerance, reference drift and ADC noise are accounted for, so the
+firmware can never mistake one charge state for another. That is a pass/fail
+question, not a scale.
+
+**Both designs pass it by an enormous margin.** 330 mV is **409 ADC counts** of
+gap between the closest two states. Noise on a filtered pin like this is a
+handful of counts. The separation could shrink by a factor of ten and the
+reading would still be unambiguous — which is exactly what the earlier
+Monte-Carlo showed when the three-value network still held at 5% parts.
+
+So the extra 60 mV is headroom that will never be touched. It is a bridge rated
+for fifty tonnes instead of forty when the heaviest thing crossing weighs two.
+
+**What it costs is real, though.** Three distinct values mean three BOM lines,
+three reels to buy, and three feeder positions on the assembly line — where one
+value means one of each. On a small run the per-unique-part handling is a
+meaningful fraction of the assembly cost, and it recurs on every build.
+
+**And the single value is the more accurate part.** The stocked 10 k is **0.1%**,
+ten times tighter than the 1% the analysis assumed. So in practice the one-value
+network degrades from 330 mV nominal to 329 mV worst case — essentially not at
+all — while the three-value network at ordinary 1% parts drops from 390 mV to
+377 mV.
+
+The one-value network is therefore *less* accurate on paper and *more* accurate
+in the drawer, and it is cheaper to build. That is the whole argument.
+
+Use the stocked 0.1% part for all four.
 
 ## Still to source
 
@@ -100,7 +142,6 @@ Nothing exotic, but none of it is in the library yet.
 - 100 nF × 8 for the J5 wiper filters — **not** 10 nF
 - 10 kΩ NTC 103AT-2, **or** a fixed 10 kΩ if the pack has no thermistor
 - Barrel jack 5.5 × 2.1
-- JST-XH 4-pin and 6-pin, per the table above
 - Illuminated latching switch — bezel diameter still to be measured
 
 ## Before ordering

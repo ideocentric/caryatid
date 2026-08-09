@@ -120,9 +120,15 @@ tolerance showed that network holding up well:
 | 1% | 377 mV | no |
 | 5% | 312 mV | **no** |
 
-That the scheme still works at 5% is what made the substitution safe: **trading
-390 mV for 330 mV buys two fewer SMT feeders and a part already on the shelf.**
-See [sourcing.md](sourcing.md).
+That it still works at 5% is what made the substitution safe. Separation here is
+a threshold to clear, not a score to maximise: at 330 mV the closest two states
+are 409 ADC counts apart, against noise of a few counts, so both networks are
+unambiguous by a wide margin and the extra 60 mV is headroom nothing will ever
+use. Meanwhile three values cost three BOM lines and three feeder positions
+where one costs one — and the stocked part is 0.1%, so the one-value network's
+worst case is 329 mV against its 330 mV nominal. Less accurate on paper, more
+accurate in the drawer, cheaper to build. Reasoning in full in
+[sourcing.md](sourcing.md).
 
 Two things that are not obvious either way:
 
