@@ -10,7 +10,8 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | Ref | Type | Carries |
 | --- | --- | --- |
 | J1 | JST-XH 2 | 5–9 V in, **from a panel-mounted barrel jack**. Never 12 V. |
-| J2 | JST-PH 2 | 18650. Protected cell or protection PCB required. |
+| BT1 | 18650 holder, on-board | **The cell.** Must accept a *protected* cell at ~69 mm. |
+| J2 | JST-XH 2 | 18650 as a **remote pack** — an alternative to BT1, never both. |
 | J3 | JST 4 | Latch switch: OUT→sw, EN return, 5 V→lamp, GND |
 | J4 | JST 4 | `/CHG` and `/PGOOD` panel LEDs, 1k each from OUT |
 | J5 | IDC 2×5 | **Analogue bus** — A0–A3, A6–A9 + 3V3A + AGND. Rails on the outer pins; **1kΩ/100nF** per wiper, board side — see [values.md](values.md). |

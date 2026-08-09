@@ -256,10 +256,17 @@ over-discharge, over-current). A protected cell carries its own PCM and satisfie
 it; a bare cell needs a separate protection board. Either way the cell has **no
 thermistor**, so the charger's `TS` pin gets a fixed 10 kΩ — it cannot float.
 
-**Holder or solder tabs.** A holder makes the cell replaceable, which for a
-gigging instrument means a spare in the bag rather than a dead instrument, and
-costs about 4 mm of height. Tabs are compact and not replaceable without an iron.
-For absonus and loa, the holder is the better trade.
+**The holder is on the board**, soldered, rather than a pack tacked into the
+enclosure. That removes the last hand-crimped power loom and with it the
+reverse-polarity risk that had no protection behind it — a soldered holder cannot
+be wired backwards. The cell stays replaceable, which for a gigging instrument
+means a spare in the bag instead of a dead instrument.
+
+**J2 remains for a remote pack**; populate one or the other, never both.
+
+**Check the holder takes a protected cell.** Protected cells run ~69 mm where
+most holders are cut for 65 mm unprotected. The protection board adds length at
+the negative end and it is the dimension that catches people.
 
 **Firmware should warn before the PCM acts.** A protected cell cuts off around
 2.5–2.8 V, at which point the instrument simply stops. The A10 gauge exists so

@@ -45,43 +45,42 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 None of this was specified before and all of it is needed before layout.
 
-**Board outline: 47.8 × 98.6 mm**, matching absonus. Grow only if layout proves
-it necessary, and grow outward from the hole pattern rather than moving it.
+**Board outline: 65 × 115 mm**, a starting target for layout to trim rather than
+a fixed edge. absonus is 47.8 × 98.6; this is bigger because caryatid carries
+about four times the part count and an on-board cell.
 
-**Mounting holes: four M3, on a 40.64 × 91.44 mm pattern inherited from
-absonus.** That is exactly **1.600″ × 3.600″** — round imperial, chosen
-deliberately over there, and worth keeping for a reason beyond continuity:
+**It has to clear the small BUD enclosure** with the 4×AA caddy removed — that
+space is what pays for the increase. Check the internal dimensions before the
+edge cuts are drawn; it is the only enclosure constraint that binds.
 
-> Same outline and same hole pattern means **the boards are mechanically
-> interchangeable.** An absonus enclosure can take a caryatid board. A spare
-> shell fits either. Standoffs, drill templates and panel jigs are shared.
+**Two layers.** Density says four would be easier, but width is cheaper than
+layers here and the enclosure has the room. At 65 × 115 the component area comes
+to about **64% fill** before the cell, which leaves a ground pour that is
+actually continuous rather than nominally so.
 
-**Fix the pattern now and never move it.** It is the one dimension three
-enclosures all have to agree on, and it costs nothing today against redrilling
-later.
+**Put the SMD and the battery holder on opposite faces.** This is what makes two
+layers work at this size. All SMD on one side, the holder and every through-hole
+connector on the other, so the copper *under the cell* is still usable instead of
+15 cm² of dead board. It also keeps SMT to a single side, which is the cheaper
+assembly.
 
-**Four layers, not two.** This is a density decision and a noise decision, and
-they point the same way. Counting the real part list — 89 passives, four ICs, the
-Seed sockets and eighteen connectors — a 2-layer board at realistic density is
-about **120% full** at the absonus size and needs roughly +50% area to breathe.
-At four layers it is **72% full at the absonus size**, which is comfortable.
+**On-board 18650 holder.** Soldered rather than a pack tacked into the enclosure,
+which removes the last hand-crimped power loom — and with it the reverse-polarity
+risk that had no protection behind it. A holder cannot be wired backwards.
 
-The noise argument is the stronger one. The layout rules call for **one unbroken
-ground plane**, and on two layers that is aspirational — the plane is cut to
-ribbons by the traces that have nowhere else to go. With inner planes for ground
-and the rails, the boost's switching return stays local by construction instead of
-by careful placement, and the analogue bus gets a quiet reference underneath it.
+**Keep J2 as well, and populate one or the other.** A remote pack stays possible
+for an enclosure that wants the weight somewhere else, which is the freedom the
+platform exists to preserve. **Silkscreen "HOLDER *or* J2 — not both"**: a cell in
+the holder and a pack on J2 are two cells in parallel.
 
-**The perimeter is the real constraint, not the area.** Eighteen connectors want
-roughly 200 mm of board edge against a 293 mm perimeter — about **69%** — before
-mounting holes, edge keep-out and cable exits. Vertical JSTs can sit inboard
-where a cable can still reach them, which is the relief valve, but connector
-placement should be planned before anything else is placed rather than fitted
-around the ICs afterwards.
+**The holder must take a protected cell.** Those are ~69 mm against the 65 mm
+most holders are cut for. Check the part before ordering, or the cell will not
+seat.
 
-**Clearance above the board** is 10.5 mm, set by a 1×20 socket at 8.5 mm plus the
-Seed sitting on it. The 2×5 IDC box headers are close behind at about 9 mm.
-Nothing else comes near.
+**Mounting holes: four M3, inset from the corners, pattern fixed once the outline
+is.** absonus's 40.64 × 91.44 mm (1.6″ × 3.6″) pattern is **not** being retained —
+the current absonus uses standard batteries with a panel cutout, so there is no
+interchangeability to preserve and no reason to inherit its geometry.
 
 **Test points.** Bring-up needs `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and
 several `GND`, as real pads rather than "somewhere to hook a probe". A board

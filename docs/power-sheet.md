@@ -34,7 +34,8 @@ never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.
 | U2 | Boost | TPS61023DRL, SOT-563 | C919459 |
 | L1 | Inductor | 1 µH, 4.2 A Isat | C354578 |
 | FB1 | Ferrite bead | **rated ≥ 1 A** | — |
-| J2 | Battery | JST-XH 2 | C158012 |
+| BT1 | 18650 holder | on-board, takes a **protected** cell (~69 mm) | — |
+| J2 | Battery, remote | JST-XH 2 — **alternative to BT1** | C158012 |
 | J3 | Latch switch | JST-XH 4 | C144395 |
 | J4 | Charge LEDs | JST-XH 4 | C144395 |
 | R1 | TS | 10 kΩ | C15401 |
@@ -99,20 +100,27 @@ needs 4.35 V minimum at `IN`, so a 5 V adapter still has margin.
 5 V, and a reversed 18650 puts −4.2 V on it.
 
 There is no protection, deliberately: a series diode wastes 0.3 V and permanent
-power on every discharge, and a P-FET is parts and board area for a fault that a
-keyed connector already prevents. The JST-XH at J2 can only mate one way.
+power on every discharge, and a P-FET is parts and board area for a fault the
+mechanics already prevent.
 
-The residual risk is a **hand-crimped loom wired backwards**, which is real on a
-board whose whole model is cable-per-instrument. Mitigate it where it is cheap:
-**silkscreen the polarity at J2**, and check the loom with a meter before the
-first connection rather than after.
+**BT1 removes the risk rather than mitigating it** — a soldered holder cannot be
+wired backwards, which is the main reason it is on the board at all. The residual
+exposure is only a build using J2 with a hand-crimped loom, where the JST-XH is
+keyed but the crimp can still be wrong. **Silkscreen the polarity at J2**, and
+meter that loom before the first connection rather than after.
 
 ### Battery and output
 
 | From | To |
 | --- | --- |
+| BT1 + | `VBAT` |
+| BT1 − | `GND` |
 | J2.1 | `VBAT` |
 | J2.2 | `GND` |
+
+**BT1 and J2 are alternatives, not both.** They land on the same net, so a cell
+in the holder and a pack on J2 would be two cells in parallel — different states
+of charge, unlimited current between them. Silkscreen it at the connector.
 | `VBAT` | C2 → `GND` |
 | `VOUT` | C3 → `GND` |
 

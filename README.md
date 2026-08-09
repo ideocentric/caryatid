@@ -72,7 +72,8 @@ cost.
 Populated on every build:
 
 - Barrel jack → SS34 → **bq24074** charger with power path, ISET 890 Ω (1 A)
-- 18650 via JST-PH — protected cell or protection PCB **required**
+- **On-board 18650 holder (BT1)**; J2 keeps a remote pack possible — one or the
+  other, never both. Protected cell or protection PCB **required**
 - **TPS61023** boost → **5.0 V** → ferrite + 100 µF → Seed VIN
 - Illuminated latching power switch (3–9 V lamp, so `R_LED` is a 0 Ω link)
 - `/CHG` + `/PGOOD` panel LEDs — the indication that works with the Seed off
