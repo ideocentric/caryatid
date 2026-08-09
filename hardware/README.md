@@ -45,4 +45,4 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 - **JLC SMT, single side** — charger, boost, filtering, all passives including
   the DNP-optional networks. Order DNP parts as explicit "do not place" lines.
-- **Hand** — IDC headers, all JSTs, LS18-P and its socket, Seed headers.
+- **Hand** — IDC headers, all JSTs, Seed headers.

@@ -74,7 +74,7 @@ A carbon capsule drawing tens of milliamps continuously is a real fraction of a
 battery instrument's budget, and it is pure waste on-hook.
 
 **A telephone hook switch has more than one pole.** Use one for the logic —
-into the LS18-P and on to D7 — and a second to physically break the mic bias.
+into the 74HC14 and on to D7 — and a second to physically break the mic bias.
 Then the current only flows off-hook, it costs no GPIO, and it keeps working if
 the firmware hangs. The board provides a two-position footprint for the bias
 return so it is either a link to ground or a wire out to the second pole.

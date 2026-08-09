@@ -18,7 +18,7 @@ fabricated once, and reusing them turns capture into transcription.
 | C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J2, J6, J7, J8, J10 |
 | C144394 | JST **B3B-XH-A(LF)(SN)**, 3-pin | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
 | C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13a, Qwiic** |
-| C5289485 | LS18-P | `DIP787W45P254L927H533Q8` | on absonus | debounce, socketed |
+| ~~C5289485~~ | ~~LS18-P~~ | — | on absonus | **superseded** by the 74HC14, [ADR 0007](decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md) |
 | C2897383 | Daisy Seed Rev4 | `Electrosmith_Daisy_Seed` | on absonus | the module outline |
 | C3337 | 220 µF electrolytic | `CP_Elec_5x5.4` | on absonus | bulk |
 | C15401 | 10 kΩ 1% | 0603 | on absonus | general |
@@ -200,6 +200,7 @@ original 3V3 scheme.
 | TPS61023DRLR | **C919459** | SOT-563, Economic assembly ✅ |
 | 1 µH inductor | **C354578** | CENKER CKCS4018-1uH/N — 4×4 mm shielded, 25 mΩ, 2 A RMS, **4.2 A Isat** |
 | SS34 Schottky | **C8678** | MDD, SMA (DO-214AC), 40 V / 3 A, 550 mV @ 3 A. **JLC Basic** — no setup fee. |
+| 74HC14 | **C5605** | Nexperia 74HC14D, SOIC-14. Hex Schmitt inverter — switch debounce. Stock KiCad symbol and footprint. |
 
 The inductor is the only one with real selection content, so here is the working.
 Worst case is a 350 mA load at a 3.0 V cell: 0.65 A of DC current and 1.2 A p-p

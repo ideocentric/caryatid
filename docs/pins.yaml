@@ -32,9 +32,13 @@ analog:
   - {pin: A3,  seed: D18, mcu: PA7, role: analog panel 4,   connector: J5,
      alt: SPI1_MOSI}
   - {pin: A4,  seed: D19, mcu: PA6, role: FSR / aux analog, connector: J10,
-     alt: SPI1_MISO, notes: "3k pulldown, DNP option"}
+     alt: SPI1_MISO,
+     notes: "10k pulldown, DNP option. NOT 3k -- the platform spec had this
+             transposed with A5, inherited from a stale ribbon-synth doc. The
+             fabricated absonus board has 10k on the FSR and 3k on the soft pot."}
   - {pin: A5,  seed: D20, mcu: PC1, role: soft pot / aux analog, connector: J9,
-     notes: "10k pulldown, DNP option"}
+     notes: "3k pulldown, DNP option. Gives the wiper a defined reading when
+             the pot is untouched -- a SoftPot wiper floats."}
   - {pin: A6,  seed: D21, mcu: PC4, role: analog panel 5,   connector: J5}
   - {pin: A7,  seed: D22, mcu: PA5, role: analog panel 6,   connector: J5,
      alt: SPI1_SCLK}
@@ -61,7 +65,7 @@ digital:
   - {pin: D5,  mcu: PD2,  role: digital panel 6, connector: J11, alt: UART5_RX}
   - {pin: D6,  mcu: PC12, role: digital panel 7, connector: J11, alt: UART5_TX}
 
-  - {pin: D7,  mcu: PG10, role: SW3 via LS18-P,  connector: J8, alt: SPI1_NSS,
+  - {pin: D7,  mcu: PG10, role: SW3 via 74HC14,  connector: J8, alt: SPI1_NSS,
      notes: "loa's hook switch lives here, NOT on SW1/SW2 -- those pins are
              comms port B and USART1 needs both of them."}
 
@@ -104,7 +108,7 @@ alternates:
   - pins: [D13, D14]
     options:
       - {name: comms port B, connector: "J15, 6-pin JST-PH module port"}
-      - {name: SW1 + SW2 via LS18-P, connector: "J6, J7"}
+      - {name: SW1 + SW2 via 74HC14, connector: "J6, J7"}
 
 # ---------------------------------------------------------------------------
 # Deliberately not on this board

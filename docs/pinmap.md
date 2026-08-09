@@ -27,8 +27,8 @@ serves every build; only the population changes.
 
 **Notes**
 
-- **`A4`** — 3k pulldown, DNP option
-- **`A5`** — 10k pulldown, DNP option
+- **`A4`** — 10k pulldown, DNP option. NOT 3k -- the platform spec had this transposed with A5, inherited from a stale ribbon-synth doc. The fabricated absonus board has 10k on the FSR and 3k on the soft pot.
+- **`A5`** — 3k pulldown, DNP option. Gives the wiper a defined reading when the pot is untouched -- a SoftPot wiper floats.
 - **`A10`** — 100k/100k from BAT + 1k/10nF. ~21 uA continuous drain, always.
 - **`A11`** — /CHG and /PGOOD encoded as four voltage levels. See indicators.md.
 
@@ -43,7 +43,7 @@ serves every build; only the population changes.
 | `D4` | D4 | PC8 | digital panel 5 | J11 | — |
 | `D5` | D5 | PD2 | digital panel 6 | J11 | `UART5_RX` |
 | `D6` | D6 | PC12 | digital panel 7 | J11 | `UART5_TX` |
-| `D7` | D7 | PG10 | SW3 via LS18-P | J8 | `SPI1_NSS` |
+| `D7` | D7 | PG10 | SW3 via 74HC14 | J8 | `SPI1_NSS` |
 | `D8` | D8 | PG11 | expansion SCLK | J16 | `SPI1_SCLK` |
 | `D9` | D9 | PB4 | expansion MISO | J16 | `SPI1_MISO` |
 | `D10` | D10 | PB5 | expansion MOSI | J16 | `SPI1_MOSI` |

@@ -112,18 +112,27 @@ libDaisy's pinout CSV and the fabricated absonus board.
 
 ## Panel I/O sheet
 
-- [ ] J5 wiper networks **1 kΩ / 100 nF**, not 220 Ω / 10 nF — the corner has to
-      sit below the control rate, and a pot's own source impedance is part of
-      the calculation.
-- [ ] J11 100 Ω series on each of D0–D6.
-- [ ] RGB **common anode to the 5 V rail**, GPIOs sinking. **510 Ω red, 300 Ω
-      green and blue** — three different values; a common one is what breaks it.
-- [ ] Comms port A: **both** footprints — 4-pin JST-SH on Qwiic pinout, and
-      6-pin JST-PH module port. One populated.
-- [ ] Comms port B on the same 6-pin module-port pinout.
-- [ ] J16 expansion 2×4: 5 V, 3V3, GND, GND, D8, D9, D10, D30.
-- [ ] Every DNP part marked DNP **in the schematic**, so the BOM and CPL inherit
-      it rather than needing a manual pass.
+Every net is in [panel-io-sheet.md](panel-io-sheet.md). No custom symbols — the
+74HC14 and all the connectors are stock KiCad.
+
+- [ ] **A4 gets 10 kΩ, A5 gets 3 kΩ.** The spec had these transposed; the
+      fabricated absonus board is the authority. FSR 10 k, soft pot 3 k.
+- [ ] **Hook switch on SW3 / J8 / `D7`.** Never SW1 or SW2 — those are comms
+      port B and USART1 needs both pins.
+- [ ] 74HC14 per channel: 10 kΩ pull-up, 10 kΩ series, C to ground. **C is a
+      population choice** — 220 nF panel, **1 µF for a hook lever**. 100 nF is
+      below typical bounce.
+- [ ] **Tie unused 74HC14 inputs (9, 11, 13) to `GND`.** Floating CMOS inputs
+      oscillate.
+- [ ] 100 nF decoupling on the 74HC14.
+- [ ] **The output is inverted — leave it that way.** An unplugged cable then
+      reads as switch-open, which for loa is on-hook and silent. See
+      [ADR 0007](decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md).
+- [ ] J5 wipers **1 kΩ / 100 nF**, not 220 Ω / 10 nF.
+- [ ] J11 **100 Ω series** on each of D0–D6.
+- [ ] RGB **510 Ω red, 300 Ω green and blue**, anode on `+5V`.
+- [ ] I2C pull-ups 4.7 kΩ **DNP** — a UART on the same pins does not want them.
+- [ ] Every unpopulated part marked **DNP in the schematic**.
 
 ## Audio sheet
 

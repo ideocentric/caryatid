@@ -26,6 +26,7 @@ See [hardware/pcb/](hardware/pcb/).
 | Part numbers, footprints, what is in stock | [docs/sourcing.md](docs/sourcing.md) |
 | **Power sheet, every connection** | [docs/power-sheet.md](docs/power-sheet.md) |
 | **Seed sheet, every connection** | [docs/seed-sheet.md](docs/seed-sheet.md) |
+| **Panel I/O sheet, every connection** | [docs/panel-io-sheet.md](docs/panel-io-sheet.md) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 
@@ -61,7 +62,7 @@ Populated on every build:
 - `/CHG` + `/PGOOD` panel LEDs — the indication that works with the Seed off
 - RGB status LED, battery gauge on A10, charge-status code on A11
 - Daisy Seed on 2×(1×20) female headers
-- LS18-P debounce, socketed
+- 74HC14 Schmitt debounce, SMT — see [ADR 0007](docs/decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md)
 - Audio out; audio in laid out on every board, DNP where unused
 
 ## Two things worth knowing before you read the map
