@@ -24,6 +24,11 @@ down it; do not skip ahead to the fun part.
       standoff height, and that number must exist *before* footprints are
       placed, not after.
 
+- [ ] **Reuse the absonus footprints** listed in [sourcing.md](sourcing.md) —
+      they are drawn and fabricated already. Check pin-1 orientation and JST
+      polarity against *this* schematic; proven to fabricate is not proven
+      correct here.
+
 ## Sheet structure
 
 Hierarchical, so the power section stays a reusable block for a future board:
@@ -60,9 +65,10 @@ the schematic is a *consumer* of it, not a second opinion.
       none.** Not optional, not floatable.
 - [ ] `/CHG`, `/PGOOD` → J4 LEDs, 1 k each **from the OUT rail** so they work
       with the Seed off. This is what satisfies P-2.
-- [ ] `/CHG`, `/PGOOD` → also into the A11 encoder: 10 k pull-up **to 3V3**,
-      11 k on `/CHG`, 18 k on `/PGOOD`, then 1 k / 10 nF to the pin. Pull-up on
-      3V3 and not OUT, so it draws nothing while off.
+- [ ] `/CHG`, `/PGOOD` → also into the A11 encoder: **four 10 k 0.1% (C374544,
+      in stock)** — pull-up **to 3V3**, 10 k on `/CHG`, 2×10 k series on
+      `/PGOOD`, then 1 k / 10 nF to the pin. Pull-up on 3V3 and not OUT, so it
+      draws nothing while off.
 - [ ] Boost `FB` divider **348 k / 47.5 k for 5.0 V**. Not 5.2 V — see
       [values.md](values.md), it leaves 109 mV to the OVP minimum.
 - [ ] Inductor 1 µH, saturation rated at minimum input and maximum load with

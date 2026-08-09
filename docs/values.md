@@ -198,8 +198,11 @@ Draws **~21 µA continuously, including while switched off**: about 0.5 mAh a
 day, 92 mAh over six months. Acceptable against 3000 mAh, but it is the one
 thing on the board that never stops.
 
-**A11 charge status** — 10 k pull-up, 11 k on `/CHG`, 18 k on `/PGOOD`. Derived
-and tolerance-checked in [indicators.md](indicators.md).
+**A11 charge status** — **superseded by the one-value version**: 10 k pull-up,
+10 k on `/CHG`, 2×10 k in series on `/PGOOD`, all from the 0.1% part already in
+stock. 330 mV minimum separation instead of 390 mV, in exchange for two fewer
+SMT feeders. See [sourcing.md](sourcing.md). Derivation of the original three-
+value network is in [indicators.md](indicators.md) and still explains the method.
 
 ## Parts
 

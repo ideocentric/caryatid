@@ -46,9 +46,8 @@ mixing only; no PWM.
 
 > **It cannot be driven from a 3V3 GPIO.** Green and blue have forward voltages
 > around 3.0-3.1 V against an output-high of roughly 3.15 V — they will not
-> light, and no resistor value fixes it. Drive from the 5 V rail instead; see
-> [values.md](values.md) for the two options and the check that picks between
-> them.
+> light, and no resistor value fixes it. **Common anode to the 5 V rail with the
+> GPIOs sinking** — all three pins verified `FT`. See [values.md](values.md).
 
 ## RGB states
 
@@ -87,44 +86,53 @@ digital inputs. A11 had no other job, so both signals are encoded onto it as
 four voltage levels: a pull-up to 3V3 and two different-valued pull-downs.
 
 ```
-        3V3 ──[ Rp 10k ]──┬──[ 1k ]──┬── A11
-                          │          │
-        /CHG ──[ 11k ]────┤        [10nF]
-                          │          │
-      /PGOOD ──[ 18k ]────┘         GND
+        3V3 ──[ 10k ]───┬──[ 1k ]──┬── A11
+                        │          │
+        /CHG ──[ 10k ]──┤        [10nF]
+                        │          │
+      /PGOOD ──[ 20k ]──┘         GND
+              (2 x 10k series)
 ```
+
+**Four resistors of one value** — the 0.1% 10 k already in stock (C374544).
 
 | `/CHG` | `/PGOOD` | State | Level | Counts |
 | --- | --- | --- | --- | --- |
 | high-Z | high-Z | idle, on battery | 3.300 V | 4095 |
-| high-Z | low | external power, not charging | 2.121 V | 2632 |
-| low | high-Z | charging | 1.729 V | 2145 |
-| low | low | charging, external present | 1.339 V | 1661 |
+| high-Z | low | external power, not charging | 2.200 V | 2730 |
+| low | high-Z | charging | 1.650 V | 2048 |
+| low | low | charging, external present | 1.320 V | 1638 |
 
-**Values chosen by search over E24, maximising the minimum separation.** The
-closest pair is 390 mV apart — 484 ADC counts — against roughly 150 mV for the
-naive first pick.
+Minimum separation **330 mV** — 409 ADC counts — and because the parts are 0.1%
+the worst case is **329 mV**, which is to say the nominal.
 
-**It survives real parts.** Monte-Carlo over resistor tolerance:
+**Decode by nearest level, not by thresholds.** The bands cannot be confused, and
+nearest-neighbour needs no constants that can later drift out of date.
+
+### How the values were arrived at
+
+A search over E24 maximising the minimum separation gives **10 k / 11 k / 18 k**
+and 390 mV, against roughly 150 mV for the naive first pick. Monte-Carlo over
+tolerance showed that network holding up well:
 
 | Tolerance | Worst gap | Bands overlap |
 | --- | --- | --- |
 | 1% | 377 mV | no |
 | 5% | 312 mV | **no** |
 
-1% is comfortable and even 5% works. **Decode by nearest level, not by
-thresholds** — the bands cannot be confused, and nearest-neighbour needs no
-constants that can drift out of date.
+That the scheme still works at 5% is what made the substitution safe: **trading
+390 mV for 330 mV buys two fewer SMT feeders and a part already on the shelf.**
+See [sourcing.md](sourcing.md).
 
-Two things that are not obvious:
+Two things that are not obvious either way:
 
-- **The levels depend only on the ratios** `Ra/Rp = 1.1` and `Rb/Rp = 1.8`, so
-  the network scales freely. 10k is the largest value that keeps the ADC source
-  impedance sane; scaling down only burns current for nothing.
+- **The levels depend only on the ratios**, so the network scales freely. 10 k is
+  the largest value that keeps the ADC source impedance sane; scaling down only
+  burns current for nothing.
 - **The pull-up sits on 3V3, the Seed's rail**, so the network draws nothing
-  while the instrument is off. The charger's status pins are alive then, but
-  with no pull-up there is no path. Unlike the A10 battery divider, this costs
-  no standby current at all.
+  while the instrument is off. The charger's status pins are alive then, but with
+  no pull-up there is no path. Unlike the A10 battery divider, this costs no
+  standby current at all.
 
 `1k + 10nF` mirrors the A10 filter, and the capacitor is doing real work: at 10k
 source impedance the ADC's sample-and-hold cannot charge fast enough on its own,

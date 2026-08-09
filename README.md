@@ -22,6 +22,7 @@ Status: **pin map frozen, no schematic yet.** `hardware/` is empty.
 | Audio in and out, and the handset problem | [docs/audio.md](docs/audio.md) |
 | The three indicators, and why three | [docs/indicators.md](docs/indicators.md) |
 | **Component values, with derivations** | [docs/values.md](docs/values.md) |
+| Part numbers, footprints, what is in stock | [docs/sourcing.md](docs/sourcing.md) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 
