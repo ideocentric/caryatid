@@ -152,9 +152,13 @@ and the silkscreen has to be put back deliberately:
 
 - **Module outline** — a rectangle showing the Seed's body, so it is obvious the
   two rows are one part.
-- **`USB` legend at the correct end.** This is the orientation cue that matters;
-  everything else is decoration. **Determine which end from a physical Seed or
-  the Electro-Smith mechanical drawing** — do not infer it from the pin numbering.
+- **`USB` legend at the pin 1 end.** This is the orientation cue that matters;
+  everything else is decoration.
+
+  Pin 1 and pin 40 sit at that same end, so there are two independent landmarks
+  to check a physical module against: **the USB connector is at the `D0` /
+  `GND` end**, opposite the `AGND` / `3v3A` end where pins 20 and 21 are. In the
+  schematic symbol that is the top.
 - **Pin-1 marker** at `A1` pin 1: a dot, and a square pad if the footprint allows.
 
 **And take the bonus.** With plain socket rows there is silkscreen space beside

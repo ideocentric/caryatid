@@ -331,7 +331,7 @@
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
-		(property "Description" "Daisy Seed rev4. Pin NAMES are the Electro-Smith silkscreen (D0-D30, A0-A11) to match docs/pinmap.md. Pin NUMBERS are header positions 1-40, cross-checked between libDaisy Daisy_Seed_Rev4_Pinout.csv and the fabricated absonus board."
+		(property "Description" "Daisy Seed rev4. Pin NAMES are the Electro-Smith silkscreen (D0-D30, A0-A11) to match docs/pinmap.md. Pin NUMBERS are header positions 1-40, cross-checked between libDaisy Daisy_Seed_Rev4_Pinout.csv and the fabricated absonus board. USB connector is at the PIN 1 END (the D0/GND end, top of this symbol)."
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
