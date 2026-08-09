@@ -9,7 +9,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 
 | Ref | Type | Carries |
 | --- | --- | --- |
-| J1 | Barrel 5.5×2.1 | 5–9 V in. **Never 12 V.** |
+| J1 | JST-XH 2 | 5–9 V in, **from a panel-mounted barrel jack**. Never 12 V. |
 | J2 | JST-PH 2 | 18650. Protected cell or protection PCB required. |
 | J3 | JST 4 | Latch switch: OUT→sw, EN return, 5 V→lamp, GND |
 | J4 | JST 4 | `/CHG` and `/PGOOD` panel LEDs, 1k each from OUT |
@@ -25,7 +25,8 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J13b | JST-PH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, AUX |
 | J15 | JST-PH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, AUX |
 | J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
-| — | jacks | Audio out stereo; audio in laid out on every board, DNP where unused |
+| J17 | JST-XH 3 | Audio out — L, R, GND, to panel jacks |
+| J18 | JST-XH 3 | Audio in — L, R, GND. Network on every board, DNP where unused |
 
 ## Every pin reaches a connector
 
@@ -39,6 +40,27 @@ signals strictly need: the extra two positions carry **5 V and a second ground**
 which cost no Seed pins and are what a display or an SD card will want. A spare
 pin on a header you can reach is worth something; a spare pin on a pad is worth
 nothing.
+
+## Nothing mounts on the board edge
+
+Every panel part is panel-mounted and reaches the board by wire: the DC jack
+(DC-099, threaded), the 3.5 mm audio jacks, the LED bezel and the latching
+switch. So **the board carries no jack footprints at all** — J1, J17 and J18 are
+JSTs, and the jacks live wherever the enclosure wants them.
+
+This is the right way round for a platform. Board-mounted jacks make the PCB
+edge *be* the panel, which suits a sandwich enclosure and rules out a telephone
+shell. Wire lets one board sit inside three different objects.
+
+The cost is real and worth stating: **audio now travels on flying leads**, past
+a 1 MHz boost converter, inside a shell. Keep J17 and J18 physically near the
+audio section and far from the switcher, run the pairs twisted with their
+grounds, and treat routing them as a layout constraint rather than something to
+tidy up at assembly.
+
+It also moves the single-point ground bond. Layout rule 5 said "at or near the
+audio jacks" on the assumption they were on the board; with panel jacks, the
+bond belongs at the panel end of the audio loom.
 
 ## Comms ports
 

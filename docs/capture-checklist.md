@@ -23,10 +23,13 @@ down it; do not skip ahead to the fun part.
       common anode confirmed, Vf 2.0–2.2 V red and 3.0–3.2 V green/blue. Start
       at 510 Ω red, 300 Ω green and blue, then **tune green down by eye** —
       equal current is not equal brightness.
-- [ ] **Buy and measure the mechanical parts.** Switch bezel diameter, jack
-      barrel length, IDC and Seed header heights. Together they set the panel
-      standoff height, and that number must exist *before* footprints are
-      placed, not after.
+- [ ] **Measure the switch bezel diameter** (Ø12 / 16 / 19). It is the only
+      mechanical number still missing — the DC jack, audio jacks and LED bezel
+      are specified in [sourcing.md](sourcing.md), and the lamp's electrical
+      side was settled by it being a 3–9 V variant.
+- [ ] **No jack footprints on the board.** Every panel part is panel-mounted and
+      arrives on a JST — J1 for DC in, J17 and J18 for audio. See
+      [connectors.md](connectors.md).
 
 - [ ] **Reuse the absonus footprints** listed in [sourcing.md](sourcing.md) —
       they are drawn and fabricated already. Check pin-1 orientation and JST
@@ -148,7 +151,9 @@ Every provision is in [audio.md](audio.md). The whole sheet is DNP-heavy by
 design — it exists so the capsule question can be answered after the boards
 arrive rather than before the gerbers go out.
 
-- [ ] Output coupling, Pod-style.
+- [ ] Output coupling, Pod-style, to **J17** — not to a board-mounted jack.
+- [ ] Earpiece attenuator: a series resistor does both jobs, raising the load
+      impedance as it drops the level. **No headphone amp on this board.**
 - [ ] Input network on **every** board, DNP where unused.
 - [ ] **U4 MCP6002 gain stage, DNP**, powered from `3V3A`, both channels laid
       out. Carbon bypasses it, electret takes ~×100, dynamic takes maximum.

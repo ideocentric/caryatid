@@ -238,14 +238,36 @@ impedance collapses exactly when it is needed. And the **100 µF output bulk sit
 at the boost output**, so its ESR shows up in the ripple; a ceramic in parallel
 with the electrolytic is the usual answer if measured ripple comes out high.
 
-**Mechanical**
+**Mechanical — all panel-mount, all reaching the board by wire**
 
-| Part | Note |
+| Part | Spec | Panel hole |
+| --- | --- | --- |
+| DC jack | **DC-099**, 5.5 × 2.1, 30 V / 10 A, threaded | ~8 mm — confirm |
+| Audio jacks | 3.5 mm stereo, panel mount | ~6 mm — confirm |
+| LED bezel | 5 mm LED, black plastic, snap-in, **12.5 mm long** | **8 mm** |
+| Illuminated latching switch | 3–9 V lamp, latching | **Ø12 / 16 / 19 — the one still unknown** |
+| Board standoffs | M3 kit | — |
+| 10 kΩ NTC `103AT-2` | **or** a fixed 10 kΩ if the pack has no thermistor — TS cannot float | — |
+| JST-XH housings and crimps, 2 / 3 / 4 / 6 way | one crimp tool covers all four | — |
+
+**The switch bezel diameter is the only outstanding mechanical number.** Its
+electrical side has been settled since the lamp turned out to be a 3–9 V variant
+with internal limiting, so `R_LED` is a 0 Ω link; measuring the lamp current at
+5 V against 6 V is a brightness sanity-check, not a gate on anything.
+
+**Board clearance**, for sizing standoffs and the shell cavity:
+
+| | Height |
 | --- | --- |
-| 10 kΩ NTC `103AT-2` | **or** a fixed 10 kΩ if the pack has no thermistor — TS cannot float |
-| Barrel jack 5.5 × 2.1 | decided with the enclosure |
-| Illuminated latching switch | in hand; **bezel diameter still to be measured** |
-| JST-XH housings and crimps, 2 / 3 / 4 / 6 way | one crimp tool covers all four |
+| 1×20 socket | 8.5 mm |
+| Seed sitting on it | +2 mm — **10.5 mm, the tallest stack** |
+| 2×5 IDC box header | ~9 mm |
+| 220 µF electrolytic | 5.4 mm |
+
+**The IDC headers do not set panel standoff.** They are internal — ribbon runs
+from them out to the panel controls — so they need clearance under the panel and
+nothing more. Standoff length is set by the enclosure, and for loa that means the
+phone shell.
 
 ## Every connector is fitted on every board
 

@@ -15,16 +15,25 @@ Two things go wrong at once: the output is loaded far below what it is designed
 for, and the DC-blocking capacitor forms a high-pass with that low impedance
 that removes most of what little bass a handset had.
 
-**Drive it from the headphone output instead.** loa's requirement A-2 already
-asks for a headphone amplifier that can drive 32 Ω; a 150 Ω earpiece is an
-easier load than the one the part was chosen for. Then attenuate — a telephone
-receiver is far more sensitive than headphones and will be painfully loud at
-anything like normal level. A series resistor sized on the bench, with the pad
-laid out as a divider so either arm can be a link.
+**A series resistor solves both problems at once**, which is the neat part.
+Put 1 kΩ in series with a 150 Ω earpiece and the output sees 1.15 kΩ instead of
+150 Ω — nearly eight times easier — while the earpiece gets about 13% of the
+voltage, which is the attenuation it needed anyway. A telephone receiver is far
+more sensitive than headphones and is painfully loud at anything like line
+level.
 
-This is a **loa population choice, not a board change**: the headphone output
-exists regardless, and whether it goes to a jack or to a handset is a loom
-question.
+**So caryatid needs no headphone amplifier**, and does not have one. An earlier
+draft of this document said to drive the earpiece from "the headphone output",
+which assumed an amplifier this board does not carry. Correcting it: the Seed's
+`AUDIO OUT` through a series resistor is the whole circuit.
+
+Size the resistor on the bench with the actual capsule, and lay the position out
+as a divider so either arm can become a link.
+
+**Confirm what drives the Seed's `AUDIO OUT`** — the WM8731 has both line and
+headphone outputs and the Seed's documentation calls its pins line level, but
+which codec output is actually routed there is worth reading off the Seed
+schematic before relying on the drive capability.
 
 ## Input
 
