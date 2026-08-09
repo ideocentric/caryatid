@@ -45,16 +45,39 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 None of this was specified before and all of it is needed before layout.
 
-**Mounting holes.** Four, M3 clearance (3.2 mm), one per corner, with keep-out
-for the standoff shoulder. The board is held on M3 standoffs inside whatever
-enclosure an instrument uses, so the hole pattern is the one thing every shell
-has to match — **fix it early and do not move it**, or three enclosures need
-redrilling.
+**Board outline: 47.8 × 98.6 mm**, matching absonus. Grow only if layout proves
+it necessary, and grow outward from the hole pattern rather than moving it.
 
-**Board outline.** Not yet decided, and it is now the gating item for layout
-rather than standoff height. The constraint that binds is loa's: **the board has
-to fit inside a telephone shell.** Measure the cavity before drawing the edge
-cuts. absonus and baby borg have roomier enclosures and will not be the limit.
+**Mounting holes: four M3, on a 40.64 × 91.44 mm pattern inherited from
+absonus.** That is exactly **1.600″ × 3.600″** — round imperial, chosen
+deliberately over there, and worth keeping for a reason beyond continuity:
+
+> Same outline and same hole pattern means **the boards are mechanically
+> interchangeable.** An absonus enclosure can take a caryatid board. A spare
+> shell fits either. Standoffs, drill templates and panel jigs are shared.
+
+**Fix the pattern now and never move it.** It is the one dimension three
+enclosures all have to agree on, and it costs nothing today against redrilling
+later.
+
+**Four layers, not two.** This is a density decision and a noise decision, and
+they point the same way. Counting the real part list — 89 passives, four ICs, the
+Seed sockets and eighteen connectors — a 2-layer board at realistic density is
+about **120% full** at the absonus size and needs roughly +50% area to breathe.
+At four layers it is **72% full at the absonus size**, which is comfortable.
+
+The noise argument is the stronger one. The layout rules call for **one unbroken
+ground plane**, and on two layers that is aspirational — the plane is cut to
+ribbons by the traces that have nowhere else to go. With inner planes for ground
+and the rails, the boost's switching return stays local by construction instead of
+by careful placement, and the analogue bus gets a quiet reference underneath it.
+
+**The perimeter is the real constraint, not the area.** Eighteen connectors want
+roughly 200 mm of board edge against a 293 mm perimeter — about **69%** — before
+mounting holes, edge keep-out and cable exits. Vertical JSTs can sit inboard
+where a cable can still reach them, which is the relief valve, but connector
+placement should be planned before anything else is placed rather than fitted
+around the ICs afterwards.
 
 **Clearance above the board** is 10.5 mm, set by a 1×20 socket at 8.5 mm plus the
 Seed sitting on it. The 2×5 IDC box headers are close behind at about 9 mm.

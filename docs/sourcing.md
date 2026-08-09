@@ -238,6 +238,40 @@ impedance collapses exactly when it is needed. And the **100 µF output bulk sit
 at the boost output**, so its ESR shows up in the ripple; a ceramic in parallel
 with the electrolytic is the usual answer if measured ripple comes out high.
 
+## The cell
+
+**Protected 18650, 3000 mAh.** ~18 × 65 mm bare, **~18 × 69 mm protected** — the
+protection PCB adds length at the negative end, which is the dimension that
+catches people fitting a holder.
+
+| | |
+| --- | --- |
+| Charge current | 1 A = **0.33C** — gentle for any 18650 |
+| Charge time | ~3.5 h |
+| Runtime | 10.8 h quiet, **6.5 h typical**, 4.6 h loud |
+| Connector | JST-XH 2, keyed, **polarity silkscreened at J2** |
+
+**Protection is a requirement, not a preference** (P-7: over-charge,
+over-discharge, over-current). A protected cell carries its own PCM and satisfies
+it; a bare cell needs a separate protection board. Either way the cell has **no
+thermistor**, so the charger's `TS` pin gets a fixed 10 kΩ — it cannot float.
+
+**Holder or solder tabs.** A holder makes the cell replaceable, which for a
+gigging instrument means a spare in the bag rather than a dead instrument, and
+costs about 4 mm of height. Tabs are compact and not replaceable without an iron.
+For absonus and loa, the holder is the better trade.
+
+**Firmware should warn before the PCM acts.** A protected cell cuts off around
+2.5–2.8 V, at which point the instrument simply stops. The A10 gauge exists so
+"battery critical" fires well above that — the amber and red states in
+[indicators.md](indicators.md) are what turns a dead stop into a warning.
+
+**Alternative if an enclosure is ever thin:** a flat LiPo pouch — a 605080 is
+6 × 50 × 80 mm for about 3000 mAh against the 18650's 18 mm diameter. Not
+replaceable, and it needs mechanical protection from puncture, so it is the
+choice only when thickness actually binds. It does not here: a telephone is
+chunky, and absonus already lives with 18 mm.
+
 **Mechanical — all panel-mount, all reaching the board by wire**
 
 | Part | Spec | Panel hole |

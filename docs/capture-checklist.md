@@ -183,10 +183,15 @@ arrive rather than before the gerbers go out.
 
 ## Board level — none of this belongs to a sheet
 
-- [ ] **Four M3 mounting holes**, one per corner, with standoff keep-out. Fix the
-      pattern early; three enclosures have to match it.
-- [ ] **Board outline** — gated on measuring the telephone shell cavity, which is
-      the tightest of the three enclosures.
+- [ ] **Four M3 holes on absonus's 40.64 × 91.44 mm pattern** (1.600″ × 3.600″).
+      Keeping it makes the two boards mechanically interchangeable. Fix it now
+      and never move it.
+- [ ] **Four layers**, with inner ground and power planes. Two layers is ~120%
+      full at this size, and the unbroken ground plane the layout rules require
+      is not achievable on two.
+- [ ] **Board outline 47.8 × 98.6 mm**, matching absonus. Confirm it clears the
+      telephone shell cavity — that is the tightest of the three enclosures and
+      the only one that could force a change.
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
 - [ ] **Fiducials** — three top-side; confirm JLC's requirement.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
