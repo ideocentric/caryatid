@@ -127,20 +127,51 @@ green and blue capsules have forward voltages around 3.0–3.1 V:
 | blue | ~3.1 V | +0.05 V | **0.15 mA** |
 
 Green and blue will be invisible, and no resistor value fixes it — there is no
-voltage to work with. Two ways out:
+voltage to work with. **Drive from the 5 V rail instead, common anode, GPIOs
+sinking.** Three resistors and nothing else: with 5 V against Vf 3.1 V there is
+1.9 V to drop, so ~390 Ω gives 5 mA. A GPIO driven high leaves the LED seeing
+5 − 3.3 = 1.7 V, which is below Vf, so it stays dark.
 
-1. **Common anode to the 5 V rail, GPIOs sinking.** Cheapest: three resistors
-   and nothing else. With 5 V and Vf 3.1 V there is 1.9 V to drop, so ~390 Ω
-   gives 5 mA. When a GPIO is driven high the LED sees 5 − 3.3 = 1.7 V and stays
-   dark. **Requires the three pins to be 5 V tolerant**, because a floating pin
-   at reset will be pulled up through the LED — verify D26/D27/D29 are `FT` in
-   the STM32H750 datasheet before committing to this.
-2. **Low-side N-FETs from 5 V.** Three transistors, immune to the tolerance
-   question, and works whatever the pin type. Six or so extra parts.
+### The 5 V tolerance question, verified
 
-Take (1) if the pins verify as FT, (2) otherwise. Either way the series
-resistors are **per channel, sized from the chosen capsule's actual Vf** — a
-common value across all three is what produced this problem.
+All three pins are `FT` — 5 V tolerant — per Table 7 of `DS12556`:
+
+| Seed | MCU | I/O structure |
+| --- | --- | --- |
+| D26 | PD11 | `FT_h` |
+| D27 | PG9 | `FT_h` |
+| D29 | PB14 | `FT_u` |
+
+`FT_u` on D29 looks alarming and is not. The `_u` marks a USB alternate
+function; footnote 6 — *"when the pin is used in USB configuration
+(OTG_HS_ID/OTG_HS_VBUS), the I/O is supplied by VDD33USB, otherwise it is
+supplied by VDD"* — is attached to **PB12 and PB13 only**, which carry the
+`(6)` marker. PB14 does not. As a GPIO it runs from VDD like any other FT pin.
+
+**The absolute maximum is conditional, though, and worth knowing:**
+
+```
+VIN(FT_xxx) max = Min( Min(VDD, VDDA, VDD33USB, VBAT) + 4.0 , 6.0 ) V
+```
+
+With all rails at 3.3 V that is **6.0 V** and 5 V drive has a volt of margin.
+If `VDD33USB` were unpowered the term collapses to **4.0 V**. The Seed's own USB
+works — DFU and USB MIDI — and its `OTG_FS` pins PA11/PA12 are themselves
+`FT_u`, so VDD33USB must be supplied. Confirm on the Seed schematic if you want
+it airtight.
+
+**In this circuit the pin never sees 5 V anyway.** With the LED between the 5 V
+rail and the pin, a floating pin only rises to `5 V − Vf`. The worst case is the
+**red** channel, whose low Vf at leakage currents puts the pin around 3.5 V —
+inside even the degraded 4.0 V limit. Green and blue float lower still. So the
+scheme is safe under either answer, and the red channel is the one to measure if
+you want certainty.
+
+Series resistors are **per channel, sized from the chosen capsule's actual Vf**.
+A common value across all three is what produced this problem.
+
+Low-side N-FETs remain the fallback if a capsule with unusual forward voltages
+turns up — three transistors, immune to all of the above, six or so extra parts.
 
 **Switch lamp** — 3–9 V rated, current limiting internal, so `R_LED` is a 0 Ω
 link on a 0603 footprint. See [indicators.md](indicators.md).

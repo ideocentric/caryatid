@@ -11,9 +11,10 @@ down it; do not skip ahead to the fun part.
       Adafruit schematic during this work.
 - [ ] **Measure the handset capsule** — DC resistance across it decides whether
       the input network gets a preamp or a pad. [audio.md](audio.md).
-- [ ] **Verify D26 / D27 / D29 are 5 V tolerant** in the STM32H750 datasheet.
-      This picks between the two RGB drive options in [values.md](values.md) and
-      changes the part count.
+- [x] ~~Verify D26 / D27 / D29 are 5 V tolerant.~~ **Done** — all three are
+      `FT` per Table 7 of `DS12556`. Common anode to 5 V with the GPIOs sinking
+      is the scheme; see [values.md](values.md) for the absolute-maximum
+      condition and why the pin never actually sees 5 V here.
 - [ ] **Check the bq24074's JLC PCBA type.** If it is Standard-only the whole
       board moves off Economic assembly.
 - [ ] **Buy and measure the mechanical parts.** Switch bezel diameter, jack
@@ -74,9 +75,9 @@ the schematic is a *consumer* of it, not a second opinion.
       sit below the control rate, and a pot's own source impedance is part of
       the calculation.
 - [ ] J11 100 Ω series on each of D0–D6.
-- [ ] RGB series resistors **per channel from the chosen capsule's Vf**, and
-      whichever drive scheme the 5 V-tolerance check selected. A common value
-      across all three is what breaks it.
+- [ ] RGB **common anode to the 5 V rail**, GPIOs sinking. Series resistors
+      **per channel from the chosen capsule's Vf** — a common value across all
+      three is what breaks it.
 - [ ] Comms port A: **both** footprints — 4-pin JST-SH on Qwiic pinout, and
       6-pin JST-PH module port. One populated.
 - [ ] Comms port B on the same 6-pin module-port pinout.
