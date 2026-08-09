@@ -19,6 +19,9 @@ down it; do not skip ahead to the fun part.
       Standard, same as the boost. The Economic assembly split holds. Library
       type is unpublished for both; assume Extended and a ~$3 setup fee each,
       which JLC prices when the BOM goes up.
+- [ ] **Measure the RGB forward voltages** at the working current, and confirm
+      the part is genuinely common anode. Three different series resistors fall
+      out of this; a common value is what broke the first scheme.
 - [ ] **Buy and measure the mechanical parts.** Switch bezel diameter, jack
       barrel length, IDC and Seed header heights. Together they set the panel
       standoff height, and that number must exist *before* footprints are
@@ -71,8 +74,8 @@ the schematic is a *consumer* of it, not a second opinion.
       draws nothing while off.
 - [ ] Boost `FB` divider **348 k / 47.5 k for 5.0 V**. Not 5.2 V — see
       [values.md](values.md), it leaves 109 mV to the OVP minimum.
-- [ ] Inductor 1 µH, saturation rated at minimum input and maximum load with
-      30% inductance derating.
+- [ ] Inductor **C354578** — 1 µH, 4.2 A Isat against a 1.51 A worst-case peak
+      at 30% derating. Working in [sourcing.md](sourcing.md).
 - [ ] `EN` 100 k pulldown; latch switch asserts EN from the OUT rail.
 - [ ] Ferrite + 100 µF between boost output and everything downstream.
 - [ ] Switch lamp from the 5 V rail through a **0 Ω 0603** link.

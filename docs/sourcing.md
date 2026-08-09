@@ -119,30 +119,90 @@ in the drawer, and it is cheaper to build. That is the whole argument.
 
 Use the stocked 0.1% part for all four.
 
-## Still to source
+## The RGB LED
 
-Nothing exotic, but none of it is in the library yet.
+**CHANZON 5 mm, common anode, 4-pin** — Amazon `B01C19ENFK`, 100 pcs.
+
+**Common anode is the one that works.** Anode to the 5 V rail, the three cathodes
+to D26/D27/D29 with the GPIOs sinking, three resistors and nothing else. The
+common-*cathode* version of the same product (`B01C19ENDM`) would have needed a
+high-side switch per channel — a PNP, a base resistor and a pull-up each, twelve
+parts instead of three — because a 3V3 GPIO cannot drive a high side off 5 V.
+Worth knowing the two listings differ by four characters.
+
+**Get the diffused version.** The same part is available diffused from
+AliExpress at the same specification, and that is the one to buy — the
+water-clear listings are a trap for this application.
+
+The status scheme in [indicators.md](indicators.md) is built on *mixed* colours:
+amber is red plus green, magenta is red plus blue. An RGB LED is three separate
+dice under one lens. Diffused blends them into a single colour; **water-clear
+shows three coloured dots**, so amber reads as a red dot beside a green dot,
+which nobody recognises as a state across a stage. Diffusion is doing real work
+here, not cosmetics.
+
+Two things to confirm on arrival, since AliExpress listings drift from their
+descriptions: that it is genuinely **common anode** (a meter across the common
+pin and each of the other three), and the forward voltages below.
+
+**Measure the forward voltages before choosing the series resistors.** ~390 Ω is
+a placeholder based on typical figures; the real values come from this part at
+the current you actually want. Red will differ from green and blue by around a
+volt, so the three resistors will differ too — a common value is what broke the
+original 3V3 scheme.
+
+## Still to source
 
 **Actives**
 
 | Part | LCSC | Note |
 | --- | --- | --- |
-| BQ24074RGTR | C54313 | QFN-16-EP 3×3, Economic assembly ✅ |
-| TPS61023DRLR | C919459 | SOT-563, Economic assembly ✅ |
-| SS34 Schottky | — | barrel-jack input protection |
-| RGB LED, **common anode** | — | see [values.md](values.md); Vf sets the series resistors |
+| BQ24074RGTR | **C54313** | QFN-16-EP 3×3, Economic assembly ✅ |
+| TPS61023DRLR | **C919459** | SOT-563, Economic assembly ✅ |
+| 1 µH inductor | **C354578** | CENKER CKCS4018-1uH/N — 4×4 mm shielded, 25 mΩ, 2 A RMS, **4.2 A Isat** |
+| SS34 Schottky | — | 40 V 3 A, SMA. Barrel-jack reverse protection. Jellybean, JLC Basic. |
 
-**Passives and mechanical**
+The inductor is the only one with real selection content, so here is the working.
+Worst case is a 350 mA load at a 3.0 V cell: 0.65 A of DC current and 1.2 A p-p
+of ripple at 1 µH. Derating inductance 30% as the datasheet instructs pushes
+ripple to 1.71 A p-p and the **peak to 1.51 A**. 4.2 A of saturation is nearly
+three times that, and 2 A RMS against 0.65 A DC is equally comfortable.
 
-- 1 µH inductor, saturation rated per [values.md](values.md)
-- 100 µF output bulk, ferrite bead
-- Resistors: 887 Ω 1% (`RISET`, 1% is a datasheet requirement), 1.2 kΩ
-  (`RILIM`), 348 k / 47.5 k (boost divider), 1 kΩ, 390 Ω × 3 (RGB), 100 kΩ
-  (`EN` pulldown)
-- 100 nF × 8 for the J5 wiper filters — **not** 10 nF
-- 10 kΩ NTC 103AT-2, **or** a fixed 10 kΩ if the pack has no thermistor
-- Barrel jack 5.5 × 2.1
-- Illuminated latching switch — bezel diameter still to be measured
+**Passives — jellybean, and all in JLC's Basic library**
+
+| Value | Qty | Where | Note |
+| --- | --- | --- | --- |
+| 10 kΩ 0.1% 0603 | 4 | A11 encoder | **C374544, already in stock** |
+| 887 Ω **1%** 0603 | 1 | `RISET` | 1% is a datasheet requirement, not a preference |
+| 1.2 kΩ 0603 | 1 | `RILIM` | |
+| 348 kΩ **1%** 0603 | 1 | boost FB upper | it sets the output voltage |
+| 47.5 kΩ **1%** 0603 | 1 | boost FB lower | |
+| 100 kΩ 0603 | 1 | boost `EN` pulldown | |
+| 10 kΩ 0603 | ~3 | TS fallback, general | C15401, already used on absonus |
+| 1 kΩ 0603 | ~4 | A10/A11 filters, charge LEDs | |
+| 100 Ω 0603 | 7 | J11 series | |
+| RGB series | 3 | J12 | **size from measured Vf**, three different values |
+| 100 nF 0603 | 8 | **J5 wiper filters** | not 10 nF — see [values.md](values.md) |
+| 10 nF 0603 | 2 | A10, A11 filters | |
+| 100 nF 0603 | ~6 | decoupling | |
+| 10 µF 0805 | ~3 | boost input, charger | X5R/X7R, ≥10 V |
+| 100 µF | 1 | boost output bulk | ≥10 V; C3337 is the absonus electrolytic |
+| Ferrite bead | 1 | boost output → Seed VIN | rated **≥1 A** |
+
+Two of those are deliberate picks rather than defaults. **The ferrite bead
+carries the whole instrument's current** — a signal-grade bead saturates and its
+impedance collapses exactly when it is needed. And the **100 µF output bulk sits
+at the boost output**, so its ESR shows up in the ripple; a ceramic in parallel
+with the electrolytic is the usual answer if measured ripple comes out high.
+
+**Mechanical**
+
+| Part | Note |
+| --- | --- |
+| 10 kΩ NTC `103AT-2` | **or** a fixed 10 kΩ if the pack has no thermistor — TS cannot float |
+| Barrel jack 5.5 × 2.1 | decided with the enclosure |
+| Illuminated latching switch | in hand; **bezel diameter still to be measured** |
+| JST-XH housings and crimps, 2 / 3 / 4 / 6 way | one crimp tool covers all four |
 
 ## Before ordering
 

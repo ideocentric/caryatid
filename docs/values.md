@@ -167,11 +167,13 @@ inside even the degraded 4.0 V limit. Green and blue float lower still. So the
 scheme is safe under either answer, and the red channel is the one to measure if
 you want certainty.
 
-Series resistors are **per channel, sized from the chosen capsule's actual Vf**.
-A common value across all three is what produced this problem.
+Series resistors are **per channel, sized from the measured Vf** of the actual
+part. A common value across all three is what produced this problem in the first
+place; red will want roughly a kilohm more than green and blue.
 
-Low-side N-FETs remain the fallback if a capsule with unusual forward voltages
-turns up — three transistors, immune to all of the above, six or so extra parts.
+The part is settled: **5 mm, diffused, common anode**, four pins — see
+[sourcing.md](sourcing.md). Common anode is what makes the three-resistor scheme
+possible at all, and diffused is what makes the mixed colours legible.
 
 **Switch lamp** — 3–9 V rated, current limiting internal, so `R_LED` is a 0 Ω
 link on a 0603 footprint. See [indicators.md](indicators.md).
