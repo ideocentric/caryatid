@@ -15,8 +15,10 @@ down it; do not skip ahead to the fun part.
       `FT` per Table 7 of `DS12556`. Common anode to 5 V with the GPIOs sinking
       is the scheme; see [values.md](values.md) for the absolute-maximum
       condition and why the pin never actually sees 5 V here.
-- [ ] **Check the bq24074's JLC PCBA type.** If it is Standard-only the whole
-      board moves off Economic assembly.
+- [x] ~~Check the bq24074's JLC PCBA type.~~ **Done** — Economic **and**
+      Standard, same as the boost. The Economic assembly split holds. Library
+      type is unpublished for both; assume Extended and a ~$3 setup fee each,
+      which JLC prices when the BOM goes up.
 - [ ] **Buy and measure the mechanical parts.** Switch bezel diameter, jack
       barrel length, IDC and Seed header heights. Together they set the panel
       standoff height, and that number must exist *before* footprints are

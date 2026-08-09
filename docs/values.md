@@ -203,19 +203,25 @@ and tolerance-checked in [indicators.md](indicators.md).
 
 ## Parts
 
-| | Part | LCSC | Package | Notes |
-| --- | --- | --- | --- | --- |
-| Charger | BQ24074RGTR | **C54313** | **QFN-16-EP 3×3** | 3,691 in stock, ~$2.13 @1 |
-| Boost | TPS61023DRLR | **C919459** | **SOT-563** | PCBA type: Economic **and** Standard |
+| | Part | LCSC | Package | PCBA type | Stock / price |
+| --- | --- | --- | --- | --- | --- |
+| Charger | BQ24074RGTR | **C54313** | QFN-16-EP 3×3 | **Economic and Standard** | 3,691, ~$2.13 @1 |
+| Boost | TPS61023DRLR | **C919459** | SOT-563 | **Economic and Standard** | — |
 
-Two things to check before ordering, neither of which the public pages state:
+**Both parts qualify for Economic assembly**, confirmed on their JLC part-detail
+pages. The assembly split in the platform spec holds: SMT everything on one
+side, economic service, hand-solder the connectors and the Seed headers.
 
-1. **Is the bq24074 available on JLC's Economic assembly?** The TPS61023's page
-   says Economic and Standard explicitly; the charger's does not. If it is
-   Standard-only, the whole board moves to Standard and the cost model changes.
-2. **Basic or Extended?** Both are almost certainly Extended — a Li-ion charger
-   and a specific boost are not stocked in the machines — which means a
-   per-unique-part setup fee each. Small, but it belongs in the estimate.
+**Library type — Basic, Preferred or Extended — is not published** on either
+page, and JLC's component search is a client-side app that returns "0 found" to
+anything that fetches it rather than runs it. That is a scraping artefact, not
+evidence about the part; the part-detail pages are proof enough that both are
+stocked.
+
+Both are near-certainly **Extended** — a Li-ion charger and a specific boost are
+not parts a machine keeps loaded — which means a per-unique-part setup fee,
+around $3 each. It resolves itself the moment a BOM is uploaded, since JLC
+prices the fee there. **Not worth blocking on**, but it belongs in the estimate.
 
 **The charger has an exposed pad.** QFN-16-EP needs a thermal via array under it
 and a segmented paste aperture, not one big opening. It is also the part
