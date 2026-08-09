@@ -19,6 +19,7 @@ Status: **pin map frozen, no schematic yet.** `hardware/` is empty.
 | --- | --- |
 | **The frozen pin map** | [docs/pinmap.md](docs/pinmap.md) — generated from [docs/pins.yaml](docs/pins.yaml) |
 | Connectors and what plugs into them | [docs/connectors.md](docs/connectors.md) |
+| Audio in and out, and the handset problem | [docs/audio.md](docs/audio.md) |
 | The three indicators, and why three | [docs/indicators.md](docs/indicators.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 

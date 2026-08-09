@@ -76,17 +76,50 @@ Magenta means something specific, or it means nothing:
 digital inputs. A11 had no other job, so both signals are encoded onto it as
 four voltage levels: a pull-up to 3V3 and two different-valued pull-downs.
 
-| `/CHG` | `/PGOOD` | Level |
-| --- | --- | --- |
-| high-Z | high-Z | 3V3 — idle, on battery |
-| low | high-Z | charging |
-| high-Z | low | external power, not charging |
-| low | low | charging with external power present |
+```
+        3V3 ──[ Rp 10k ]──┬──[ 1k ]──┬── A11
+                          │          │
+        /CHG ──[ 11k ]────┤        [10nF]
+                          │          │
+      /PGOOD ──[ 18k ]────┘         GND
+```
 
-**The resistor values need choosing for margin, not convenience.** The obvious
-first pick puts two of the four states about 150 mV apart, which a 12-bit ADC
-resolves but which leaves nothing for tolerance or noise. Spread them across the
-range and confirm the worst-case gap against resistor tolerance before layout.
+| `/CHG` | `/PGOOD` | State | Level | Counts |
+| --- | --- | --- | --- | --- |
+| high-Z | high-Z | idle, on battery | 3.300 V | 4095 |
+| high-Z | low | external power, not charging | 2.121 V | 2632 |
+| low | high-Z | charging | 1.729 V | 2145 |
+| low | low | charging, external present | 1.339 V | 1661 |
+
+**Values chosen by search over E24, maximising the minimum separation.** The
+closest pair is 390 mV apart — 484 ADC counts — against roughly 150 mV for the
+naive first pick.
+
+**It survives real parts.** Monte-Carlo over resistor tolerance:
+
+| Tolerance | Worst gap | Bands overlap |
+| --- | --- | --- |
+| 1% | 377 mV | no |
+| 5% | 312 mV | **no** |
+
+1% is comfortable and even 5% works. **Decode by nearest level, not by
+thresholds** — the bands cannot be confused, and nearest-neighbour needs no
+constants that can drift out of date.
+
+Two things that are not obvious:
+
+- **The levels depend only on the ratios** `Ra/Rp = 1.1` and `Rb/Rp = 1.8`, so
+  the network scales freely. 10k is the largest value that keeps the ADC source
+  impedance sane; scaling down only burns current for nothing.
+- **The pull-up sits on 3V3, the Seed's rail**, so the network draws nothing
+  while the instrument is off. The charger's status pins are alive then, but
+  with no pull-up there is no path. Unlike the A10 battery divider, this costs
+  no standby current at all.
+
+`1k + 10nF` mirrors the A10 filter, and the capacitor is doing real work: at 10k
+source impedance the ADC's sample-and-hold cannot charge fast enough on its own,
+so the cap supplies it and the 10k merely tops the cap back up between samples.
+**Use a long ADC sample time on A11 regardless.**
 
 This also delivers requirement P-8 — charge state exposed to the MCU, not only
 to LEDs — which had no implementation before.
