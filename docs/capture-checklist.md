@@ -19,9 +19,10 @@ down it; do not skip ahead to the fun part.
       Standard, same as the boost. The Economic assembly split holds. Library
       type is unpublished for both; assume Extended and a ~$3 setup fee each,
       which JLC prices when the BOM goes up.
-- [ ] **Measure the RGB forward voltages** at the working current, and confirm
-      the part is genuinely common anode. Three different series resistors fall
-      out of this; a common value is what broke the first scheme.
+- [x] ~~Measure the RGB forward voltages and confirm common anode.~~ **Done** —
+      common anode confirmed, Vf 2.0–2.2 V red and 3.0–3.2 V green/blue. Start
+      at 510 Ω red, 300 Ω green and blue, then **tune green down by eye** —
+      equal current is not equal brightness.
 - [ ] **Buy and measure the mechanical parts.** Switch bezel diameter, jack
       barrel length, IDC and Seed header heights. Together they set the panel
       standoff height, and that number must exist *before* footprints are
@@ -86,9 +87,8 @@ the schematic is a *consumer* of it, not a second opinion.
       sit below the control rate, and a pot's own source impedance is part of
       the calculation.
 - [ ] J11 100 Ω series on each of D0–D6.
-- [ ] RGB **common anode to the 5 V rail**, GPIOs sinking. Series resistors
-      **per channel from the chosen capsule's Vf** — a common value across all
-      three is what breaks it.
+- [ ] RGB **common anode to the 5 V rail**, GPIOs sinking. **510 Ω red, 300 Ω
+      green and blue** — three different values; a common one is what breaks it.
 - [ ] Comms port A: **both** footprints — 4-pin JST-SH on Qwiic pinout, and
       6-pin JST-PH module port. One populated.
 - [ ] Comms port B on the same 6-pin module-port pinout.

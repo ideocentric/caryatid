@@ -141,9 +141,48 @@ shows three coloured dots**, so amber reads as a red dot beside a green dot,
 which nobody recognises as a state across a stage. Diffusion is doing real work
 here, not cosmetics.
 
-Two things to confirm on arrival, since AliExpress listings drift from their
-descriptions: that it is genuinely **common anode** (a meter across the common
-pin and each of the other three), and the forward voltages below.
+**Confirmed common anode.** Specification from the vendor:
+
+| | Value |
+| --- | --- |
+| Forward voltage @ 20 mA | **R 2.0–2.2 V, G 3.0–3.2 V, B 3.0–3.2 V** |
+| Viewing angle | 30° clear lens, **20° matte** |
+| Package | 5 mm, 4 pin |
+
+Those numbers confirm why 3V3 drive was never going to work: green and blue want
+3.0–3.2 V against a GPIO that manages about 3.15 V.
+
+### Series resistors
+
+Common anode on the 5.0 V rail, cathodes through resistors to the GPIOs, which
+sink. Allowing ~0.35 V of output-low drop:
+
+| Channel | Vf | R | Resulting current |
+| --- | --- | --- | --- |
+| Red | 2.0–2.2 V | **510 Ω** | 4.80 – 5.20 mA |
+| Green | 3.0–3.2 V | **300 Ω** | 4.83 – 5.50 mA |
+| Blue | 3.0–3.2 V | **300 Ω** | 4.83 – 5.50 mA |
+
+Note the red resistor is nearly double the other two for the *same* current —
+that is the whole reason a common value fails.
+
+**These are a starting point, not the answer.** Equal current does not give equal
+perceived brightness: a green die is typically three to five times more luminous
+per milliamp than red or blue, so at 5 mA each the mix will come out
+green-dominant and amber will read as yellow-green. **Expect green's resistor to
+rise substantially** — perhaps to 900 Ω–1 kΩ — before the mixes look right.
+
+Tune by eye against the state table in [indicators.md](indicators.md), check
+that amber and magenta are nameable rather than merely different, and **record
+the values here** once they are settled.
+
+At 5 mA per channel the worst case is 15 mA with all three lit, which is inside
+both the per-pin and total sink limits and already inside the power budget.
+
+**The 20° viewing angle is narrow** for a panel indicator. It wants to point at
+the player rather than out of the front of the instrument, or to sit behind a
+diffuser or light pipe that spreads it. Worth settling with the panel rather
+than discovering on stage.
 
 **Measure the forward voltages before choosing the series resistors.** ~390 Ω is
 a placeholder based on typical figures; the real values come from this part at
@@ -160,7 +199,7 @@ original 3V3 scheme.
 | BQ24074RGTR | **C54313** | QFN-16-EP 3×3, Economic assembly ✅ |
 | TPS61023DRLR | **C919459** | SOT-563, Economic assembly ✅ |
 | 1 µH inductor | **C354578** | CENKER CKCS4018-1uH/N — 4×4 mm shielded, 25 mΩ, 2 A RMS, **4.2 A Isat** |
-| SS34 Schottky | — | 40 V 3 A, SMA. Barrel-jack reverse protection. Jellybean, JLC Basic. |
+| SS34 Schottky | **C8678** | MDD, SMA (DO-214AC), 40 V / 3 A, 550 mV @ 3 A. **JLC Basic** — no setup fee. |
 
 The inductor is the only one with real selection content, so here is the working.
 Worst case is a 350 mA load at a 3.0 V cell: 0.65 A of DC current and 1.2 A p-p
@@ -181,7 +220,8 @@ three times that, and 2 A RMS against 0.65 A DC is equally comfortable.
 | 10 kΩ 0603 | ~3 | TS fallback, general | C15401, already used on absonus |
 | 1 kΩ 0603 | ~4 | A10/A11 filters, charge LEDs | |
 | 100 Ω 0603 | 7 | J11 series | |
-| RGB series | 3 | J12 | **size from measured Vf**, three different values |
+| 510 Ω 0603 | 1 | RGB red | see above |
+| 300 Ω 0603 | 2 | RGB green, blue | **expect green to rise on tuning** |
 | 100 nF 0603 | 8 | **J5 wiper filters** | not 10 nF — see [values.md](values.md) |
 | 10 nF 0603 | 2 | A10, A11 filters | |
 | 100 nF 0603 | ~6 | decoupling | |

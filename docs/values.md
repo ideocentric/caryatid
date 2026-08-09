@@ -167,13 +167,14 @@ inside even the degraded 4.0 V limit. Green and blue float lower still. So the
 scheme is safe under either answer, and the red channel is the one to measure if
 you want certainty.
 
-Series resistors are **per channel, sized from the measured Vf** of the actual
-part. A common value across all three is what produced this problem in the first
-place; red will want roughly a kilohm more than green and blue.
+The part is settled: **5 mm, diffused, common anode**, Vf of **2.0–2.2 V red**
+and **3.0–3.2 V green and blue** at 20 mA. Those figures confirm the diagnosis
+above — green and blue want more than a 3V3 GPIO can deliver.
 
-The part is settled: **5 mm, diffused, common anode**, four pins — see
-[sourcing.md](sourcing.md). Common anode is what makes the three-resistor scheme
-possible at all, and diffused is what makes the mixed colours legible.
+Series resistors are **510 Ω red, 300 Ω green and blue** for ~5 mA each from the
+5 V rail. The red one is nearly double for the same current, which is exactly why
+a single common value fails. Expect green's to rise on tuning, since equal
+current is not equal brightness. Full working in [sourcing.md](sourcing.md).
 
 **Switch lamp** — 3–9 V rated, current limiting internal, so `R_LED` is a 0 Ω
 link on a 0603 footprint. See [indicators.md](indicators.md).
