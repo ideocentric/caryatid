@@ -105,7 +105,8 @@ names, pin-1 dot and `USB` legend as footprint silkscreen, split on the
 centreline so wrong spacing shows as a broken outline. See
 [`docs/seed-sheet.md`](../../docs/seed-sheet.md).
 
-The 18650 holder is **not** settled: `Battery:BatteryHolder_Keystone_1042_1x18650`
-exists, but its courtyard is **87.9 × 21.7 mm**, which on a 90 mm edge leaves
-about a millimetre a side. BT1 has no part number yet — pick the holder, then the
-footprint, and expect it to run along the 100 mm axis.
+**BT1 is settled and needs no project-local work**: MPD `BH-18650-PC`,
+`C5339083`, on stock `Battery:BatteryHolder_MPD_BH-18650-PC`, whose pads match
+the drawing exactly (72.90 mm terminals, 55.61 mm mounting holes). It is rated
+for protected cells, which was the open question. The Keystone 1042 was rejected
+— 87.9 mm of courtyard against the MPD's 79.2 mm.

@@ -252,9 +252,45 @@ catches people fitting a holder.
 | Connector | JST-XH 2, keyed, **polarity silkscreened at J2** |
 
 **Protection is a requirement, not a preference** (P-7: over-charge,
-over-discharge, over-current). A protected cell carries its own PCM and satisfies
-it; a bare cell needs a separate protection board. Either way the cell has **no
-thermistor**, so the charger's `TS` pin gets a fixed 10 kΩ — it cannot float.
+over-discharge, over-current). A protected cell carries a small PCM under the
+wrap at the negative end — a MOSFET pair that disconnects the cell on
+over-discharge (~2.5–2.8 V), over-charge (~4.25–4.3 V) and over-current. A bare
+cell needs a separate protection board.
+
+**On this board the PCM is the only over-discharge protection there is.** The
+bq24074 protects the cell while *charging* — it terminates properly and limits
+current — but nothing here protects it while *discharging*. There is no
+low-voltage cutoff; the boost keeps pulling until it browns out. Taking a
+lithium-ion cell below ~2.5 V dissolves copper from the anode collector, which
+can plate back as an internal short on the next charge. So P-7 is satisfied by
+the cell, not by the board, and a bare cell in this holder is a genuine hazard
+rather than a specification quibble.
+
+That is also why the A10 gauge exists: when the PCM trips the instrument stops
+dead with no warning, so "battery critical" must fire well above ~2.8 V.
+
+**The PCM is not a thermistor.** The cell has **no** thermistor either way, so
+the charger's `TS` pin gets a fixed 10 kΩ — it cannot float. Two different
+protections, easily conflated.
+
+### Which cell to buy
+
+**Protected, button-top, ~69 mm.** Protected cells are essentially always
+button-top; a flat-top bare cell may not seat or make contact.
+
+The design basis is 3000 mAh, so the runtime figures above are a **floor** — the
+readily available protected cells are 3400 mAh:
+
+- [Orbtronic 3400 mAh protected](https://www.orbtronic.com/protected-3400mah-18650-li-ion-battery-panasonic-ncr18650B-orbtronic) — Panasonic NCR18650B inside, 68.9 mm
+- [Liion Wholesale, same NCR18650B cell](https://liionwholesale.com/products/protected-panasonic-sanyo-ncr18650b-3400mah-5a-li-ion-18650-button-top-battery-wholesale-discount) — 5 A rated, ~69.0 mm
+- [Nitecore NL1834](https://18650battery.com/products/nitecore-nl1834-18650-3400mah-battery-protected-button-top) — 6 A
+
+Any of these clears the load: the worst case is the boost drawing ~1.5 A peak at
+low state of charge, well inside a 5 A rating. Charging at 1 A is 0.29C on a
+3400 mAh cell — gentler still than the 0.33C the values were derived at.
+
+**Ignore anything claiming more than ~3600 mAh.** A genuine 18650 tops out around
+3500; higher numbers are fake wraps around smaller cells.
 
 **The holder is on the board**, soldered, rather than a pack tacked into the
 enclosure. That removes the last hand-crimped power loom and with it the
@@ -264,9 +300,37 @@ means a spare in the bag instead of a dead instrument.
 
 **J2 remains for a remote pack**; populate one or the other, never both.
 
-**Check the holder takes a protected cell.** Protected cells run ~69 mm where
-most holders are cut for 65 mm unprotected. The protection board adds length at
-the negative end and it is the dimension that catches people.
+### The holder — settled
+
+**BT1 = MPD `BH-18650-PC`, `C5339083`**, footprint
+`Battery:BatteryHolder_MPD_BH-18650-PC` (stock KiCad, pads verified against the
+drawing: 72.90 mm terminals, 55.61 mm mounting holes).
+
+**It is rated for protected cells**, stated on the drawing rather than inferred:
+*"This battery holder is designed for use with protected 18650 batteries
+(PCB)."* That was the open question — protected cells run ~69 mm where most
+holders are cut for 65 mm unprotected, because the protection board adds length
+at the negative end.
+
+| | |
+| --- | --- |
+| Body | 77.7 × 20.9 mm, **21.31 mm tall** |
+| Material | self-extinguishing thermoplastic polyester, UL94V-0, −40…+180 °C |
+| Assembly | **Economic and Standard** — same tier as the charger and boost |
+| Mounting | Ø3.2 mm holes; the drawing says 2-56 screws, eyelets or adhesive |
+
+**Bolt it down as well as soldering it.** The two solder tabs are not a
+mechanical mount for 66 g of cell in something that gets carried to gigs.
+
+**Second source, pin-identical:** MPD `BK-18650-PC2` — same 72.90/55.61 layout,
+also rated for protected cells, and it carries vibration and 150 G shock test
+results the BH does not ("no dislodgement of the cell"). Polypropylene rather
+than polyester, so a narrower temperature range. Either drops into the same
+footprint.
+
+**Rejected:** Keystone 1042. Its courtyard is 87.9 mm against the MPD's 79.2 mm
+— on a 90 mm edge that leaves about a millimetre a side — and its protected-cell
+fit is unverified.
 
 **Firmware should warn before the PCM acts.** A protected cell cuts off around
 2.5–2.8 V, at which point the instrument simply stops. The A10 gauge exists so

@@ -10,7 +10,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | Ref | Type | Carries |
 | --- | --- | --- |
 | J1 | JST-XH 2 | 5–9 V in, **from a panel-mounted barrel jack**. Never 12 V. |
-| BT1 | 18650 holder, on-board | **The cell.** Must accept a *protected* cell at ~69 mm. |
+| BT1 | MPD BH-18650-PC, on-board | **The cell.** Rated for *protected* cells (~69 mm) — stated on the drawing. `C5339083`. |
 | J2 | JST-XH 2 | 18650 as a **remote pack** — an alternative to BT1, never both. |
 | J3 | JST 4 | Latch switch: OUT→sw, EN return, 5 V→lamp, GND |
 | J4 | JST 4 | `/CHG` and `/PGOOD` panel LEDs, 1k each from OUT |

@@ -34,7 +34,7 @@ never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.
 | U2 | Boost | TPS61023DRL, SOT-563 | C919459 |
 | L1 | Inductor | 1 µH, 4.2 A Isat | C354578 |
 | FB1 | Ferrite bead | **rated ≥ 1 A** | — |
-| BT1 | 18650 holder | on-board, takes a **protected** cell (~69 mm) | — |
+| BT1 | 18650 holder | MPD **BH-18650-PC** — rated for **protected** cells | **C5339083** |
 | J2 | Battery, remote | JST-XH 2 — **alternative to BT1** | C158012 |
 | J3 | Latch switch | JST-XH 4 | C144395 |
 | J4 | Charge LEDs | JST-XH 4 | C144395 |
