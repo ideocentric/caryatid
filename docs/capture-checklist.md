@@ -112,6 +112,11 @@ libDaisy's pinout CSV and the fabricated absonus board.
 - [ ] **Two socket designators, `A1` and `A2`**, one per 1×20 strip. absonus
       used a single designator and the BOM asked for one socket where the board
       needs two. Let the schematic carry the quantity.
+- [ ] **Draw the Seed orientation back in as silkscreen** — outline, `USB`
+      legend at the correct end, pin-1 marker. Splitting the footprint loses
+      what it was providing, and a Seed inserted backwards puts `VIN` on a
+      GPIO. Confirm which end the USB is on from a physical module.
+- [ ] Silkscreen the **pin names** beside the sockets while the space is free.
 
 ## Panel I/O sheet
 
@@ -186,3 +191,6 @@ Frozen with the board, from the platform spec:
 6. **QFN-16-EP exposed pad** — thermal via array, segmented paste apertures, not
    one large opening. That pad carries charge current.
 7. Route the RGB lines away from the analogue bus; status changes are edges too.
+8. **Verify the Seed silkscreen against the socket positions** as a distinct
+   step. The outline and `USB` legend are free graphics, not part of a
+   footprint, so nothing moves them if a socket moves.

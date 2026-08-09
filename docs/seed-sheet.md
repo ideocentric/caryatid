@@ -138,8 +138,34 @@ time.
 so, rather than because somebody remembered.
 
 The Daisy Seed module itself is **not a BOM line** — it is bought separately and
-pushed into the sockets. Its footprint exists on the board only to reserve the
-outline and keep the two socket rows correctly spaced.
+pushed into the sockets.
+
+### Orientation must be drawn back in
+
+Two plain socket rows lose what the single Daisy Seed footprint was quietly
+providing: **which way round the module goes.** Inserted backwards, `VIN` lands
+on a GPIO and `GND` on something that is not ground, which destroys the module,
+the board, or both.
+
+The footprint was carrying that information as silkscreen. Split the footprint
+and the silkscreen has to be put back deliberately:
+
+- **Module outline** — a rectangle showing the Seed's body, so it is obvious the
+  two rows are one part.
+- **`USB` legend at the correct end.** This is the orientation cue that matters;
+  everything else is decoration. **Determine which end from a physical Seed or
+  the Electro-Smith mechanical drawing** — do not infer it from the pin numbering.
+- **Pin-1 marker** at `A1` pin 1: a dot, and a square pad if the footprint allows.
+
+**And take the bonus.** With plain socket rows there is silkscreen space beside
+the pins that the module footprint occupied, so **print the pin names on the
+board** — `D0`, `D7`, `A0`, `VIN`. The frozen map becomes visible on the copper,
+which is worth a great deal the first time something is probed with a meter at
+one in the morning.
+
+The one risk this introduces: **silkscreen is not attached to the footprints**.
+Move a socket and the graphics stay behind. Check the alignment as an explicit
+step in the layout review, not by eye while doing something else.
 
 Socket height is one of the four measurements that set the panel standoff, with
 the switch bezel, the jack barrels and the IDC headers. **Measure before any
