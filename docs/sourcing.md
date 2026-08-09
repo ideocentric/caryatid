@@ -201,6 +201,7 @@ original 3V3 scheme.
 | 1 µH inductor | **C354578** | CENKER CKCS4018-1uH/N — 4×4 mm shielded, 25 mΩ, 2 A RMS, **4.2 A Isat** |
 | SS34 Schottky | **C8678** | MDD, SMA (DO-214AC), 40 V / 3 A, 550 mV @ 3 A. **JLC Basic** — no setup fee. |
 | 74HC14 | **C5605** | Nexperia 74HC14D, SOIC-14. Hex Schmitt inverter — switch debounce. Stock KiCad symbol and footprint. |
+| MCP6002 | **C116706** | Microchip MCP6002-I/SN, SOIC-8. Dual rail-to-rail, 1 MHz, 1.8 V min. **Audio-in gain stage, DNP.** ~$0.16 |
 
 The inductor is the only one with real selection content, so here is the working.
 Worst case is a 350 mA load at a 3.0 V cell: 0.65 A of DC current and 1.2 A p-p

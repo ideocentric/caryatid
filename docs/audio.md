@@ -68,6 +68,94 @@ milliamps from the line. Provisions:
 
 **Dynamic** — no bias, and it needs gain the line input will not provide.
 
+### The gain stage — one footprint, all three outcomes
+
+**U4 = MCP6002 dual op-amp**, SOIC-8, `C116706`, powered from `3V3A`. Laid out
+DNP with a bypass, so the capsule question can be answered *after* the boards
+arrive rather than before the gerbers go out. This is the whole point: it
+converts an unknown into a population choice.
+
+| Capsule | Populate | Gain needed |
+| --- | --- | --- |
+| Carbon | **bypass**, possibly a pad | ~×3, or attenuation |
+| Electret | stage + bias resistor | ~×100 (40 dB) |
+| Dynamic | stage at maximum, no bias | ~×1000 (60 dB) |
+
+#### Single supply needs a mid-rail bias — this is not optional
+
+An op-amp on a single 3V3 rail has no negative supply, so an AC signal must sit
+on a DC pedestal at half the rail or the negative half of the waveform clips off
+entirely. Gain-set resistors alone will not work.
+
+```
+  3V3A ──[100k]──┬──────────────┐
+                 │              │
+               [10u]         + in
+                 │              │
+  GND ──[100k]───┘              │
+                                │
+  in ──[C_in]───────────────────┘
+
+              ┌──[C_g]──[R_g]──┐
+              │                │
+  − in ───────┴────[R_f]───────┴── out ──[C_out]── to codec
+```
+
+- `R_b1`/`R_b2` 100 kΩ, `C_b` 10 µF — mid-rail reference at 1.65 V
+- `C_in` 1 µF — blocks the capsule's DC, passes audio
+- `R_f`/`R_g` set gain as `1 + Rf/Rg`
+- **`C_g` in series with `R_g` is the one that gets forgotten.** Without it the
+  stage has the same gain at DC as at audio, so the 1.65 V pedestal is amplified
+  straight into the rail and the output sits jammed at one end. With it, DC gain
+  is exactly 1 and the output rests at mid-rail where it belongs.
+- `C_out` 10 µF — strips the pedestal back off before the codec
+
+#### The gain ceiling, and where the last 12 dB comes from
+
+The MCP6002 has 1 MHz of gain-bandwidth, so usable gain and bandwidth trade
+directly:
+
+| Gain | dB | −3 dB bandwidth |
+| --- | --- | --- |
+| ×100 | 40 | 10 kHz |
+| **×294** | **49** | **3.4 kHz — the voiceband edge** |
+| ×1000 | 60 | 1 kHz — voiceband lost |
+
+**A dynamic capsule wants 60 dB, and one stage cannot give it** without
+collapsing the bandwidth below the voiceband. The resolution costs nothing: the
+WM8731's line input has its own PGA with gain as well as attenuation — roughly
++12 dB at the top — so **×250 in the op-amp plus the codec's own gain covers the
+dynamic case**. Confirm the exact PGA range from the codec datasheet before
+relying on it.
+
+Carbon and electret are the likely outcomes anyway; a dynamic capsule in a
+handset is the rarest of the three.
+
+#### Bypass as a divider, not a link
+
+The proposal called for a 0 Ω bypass. **Lay it out as a two-resistor divider
+instead** — 0 Ω plus an open position. A carbon capsule may run *hotter* than
+line level, in which case the requirement is attenuation rather than a straight
+pass. Fit 0 Ω and leave the shunt open for a true bypass; fit both for a pad. One
+extra footprint, and it is the difference between a working input and a clipped
+one.
+
+#### Use the dual, lay out both channels
+
+The Seed has `AUDIO IN L` and `AUDIO IN R`. A handset mic is mono, but caryatid
+serves three instruments and stereo line-in is a plausible future need. A dual
+op-amp is one package instead of two, so **both channels get the full network,
+DNP**. A mono build populates one.
+
+#### The fallback lands on the bypass path
+
+If the vintage element sounds bad or is dead, gutting the housing and hiding a
+modern electret capsule or a **MAX9814** AGC module inside keeps the look and
+gives a known-good signal. Worth noting the MAX9814 outputs near line level with
+its own AGC, so it uses the **bypass** — the board does not change for it. Every
+branch of this decision, including the escape hatch, lands on the same footprint
+set.
+
 ### Gate the mic bias with the hook switch, in hardware
 
 A carbon capsule drawing tens of milliamps continuously is a real fraction of a

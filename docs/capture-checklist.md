@@ -136,15 +136,28 @@ Every net is in [panel-io-sheet.md](panel-io-sheet.md). No custom symbols — th
 
 ## Audio sheet
 
+Every provision is in [audio.md](audio.md). The whole sheet is DNP-heavy by
+design — it exists so the capsule question can be answered after the boards
+arrive rather than before the gerbers go out.
+
 - [ ] Output coupling, Pod-style.
 - [ ] Input network on **every** board, DNP where unused.
+- [ ] **U4 MCP6002 gain stage, DNP**, powered from `3V3A`, both channels laid
+      out. Carbon bypasses it, electret takes ~×100, dynamic takes maximum.
+- [ ] **Mid-rail bias network** — 100 k / 100 k / 10 µF. A single-supply stage
+      without it clips half the waveform.
+- [ ] **`C_g` in series with `R_g`.** Without it, DC gain equals AC gain and the
+      bias pedestal is amplified into the rail.
+- [ ] **Bypass as a two-resistor divider**, not a 0 Ω link — a carbon capsule may
+      need padding down rather than passing through.
 - [ ] Electret bias, carbon bias and dynamic paths all footprinted; populate
       after measuring the capsule.
-- [ ] **Mic bias return brought out to a two-position footprint** — link to
-      ground, or wire to the hook switch's second pole so the current only flows
-      off-hook.
-- [ ] Earpiece fed from the **headphone** output through an attenuator, never
-      the line output.
+- [ ] **Mic bias return to a two-position footprint** — link to ground, or out to
+      the hook switch's second pole so current only flows off-hook.
+- [ ] Earpiece from the **headphone** output through an attenuator, never the
+      line output.
+- [ ] Confirm the WM8731 line PGA's gain range from the codec datasheet — the
+      dynamic case relies on ~+12 dB from it.
 
 ## Before DRC
 
