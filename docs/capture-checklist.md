@@ -183,8 +183,9 @@ arrive rather than before the gerbers go out.
 
 ## Board level — none of this belongs to a sheet
 
-- [ ] **Two layers**, 65 × 115 mm starting outline — width bought instead of
-      layers. Confirm it clears the small BUD enclosure with the AA caddy out.
+- [ ] **Two layers, 90 × 100 mm.** Fits the BUD's 95.2 × 165.1 mm usable
+      rectangle, sloped sides already allowed for, and stays inside JLC's
+      100 × 100 price tier. **Do not let either edge exceed 100 mm.**
 - [ ] **SMD on one face, holder and through-hole connectors on the other.** This
       is what makes two layers fit: the copper under the cell stays usable.
 - [ ] **Four M3 holes**, pattern chosen once the outline settles. absonus's
@@ -193,8 +194,8 @@ arrive rather than before the gerbers go out.
       "HOLDER *or* J2 — not both": two cells in parallel otherwise.
 - [ ] Holder must accept a **protected** cell at ~69 mm, not the 65 mm most are
       cut for.
-- [ ] **Confirm 65 × 115 mm clears the telephone shell**, which is now the
-      tightest enclosure of the three.
+- [ ] **Confirm 90 × 100 mm clears the telephone shell.** The BUD is settled;
+      the phone is the one enclosure still unmeasured.
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
 - [ ] **Fiducials** — three top-side; confirm JLC's requirement.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is

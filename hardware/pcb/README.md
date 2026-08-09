@@ -53,7 +53,9 @@ Set conservatively against JLCPCB's capabilities rather than at them: 0.2 mm
 minimum track and clearance, 0.5 mm minimum via with a 0.3 mm hole. JLC will
 accept finer, but a first spin is not the place to spend that margin.
 
-Two layers, 1.6 mm.
+**Two layers, 1.6 mm, 90 × 100 mm.** Inside JLCPCB's 100 × 100 price tier and
+inside the BUD's 95.2 × 165.1 mm usable rectangle. **Neither edge goes past
+100 mm** — crossing that costs money for nothing.
 
 ## Before capture
 
