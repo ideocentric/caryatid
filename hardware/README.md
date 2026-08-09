@@ -45,18 +45,21 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 None of this was specified before and all of it is needed before layout.
 
-**Board outline: 65 × 115 mm**, a starting target for layout to trim rather than
-a fixed edge. absonus is 47.8 × 98.6; this is bigger because caryatid carries
-about four times the part count and an on-board cell.
+**Board outline: 90 × 100 mm.** absonus is 47.8 × 98.6; this is bigger because
+caryatid carries roughly four times the part count and an on-board cell.
 
-**It has to clear the small BUD enclosure** with the 4×AA caddy removed — that
-space is what pays for the increase. Check the internal dimensions before the
-edge cuts are drawn; it is the only enclosure constraint that binds.
+The BUD's internal is 107.9 × 177.8 mm, and the sides slope, so the usable
+rectangle is **95.2 × 165.1 mm**. 90 × 100 sits inside that with room on both
+axes, and there is a further 65 mm of length spare if layout ever needs it.
+
+**Stay at or under 100 mm on both edges.** JLCPCB's cheapest board tier is
+100 × 100; past it, price scales with area. A 115 mm edge crosses that cliff for
+no benefit — which is exactly what an earlier draft of this document did.
 
 **Two layers.** Density says four would be easier, but width is cheaper than
-layers here and the enclosure has the room. At 65 × 115 the component area comes
-to about **64% fill** before the cell, which leaves a ground pour that is
-actually continuous rather than nominally so.
+layers and the enclosure has the room. At 90 × 100 the component area is about
+**53% fill** before the cell, which leaves a ground pour that is genuinely
+continuous rather than nominally so, and slack for a 2-layer router.
 
 **Put the SMD and the battery holder on opposite faces.** This is what makes two
 layers work at this size. All SMD on one side, the holder and every through-hole
