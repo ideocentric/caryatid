@@ -38,7 +38,7 @@ down it; do not skip ahead to the fun part.
 Hierarchical, so the power section stays a reusable block for a future board:
 
 - [ ] `power.kicad_sch` — charger, boost, latch, hardware charge LEDs
-- [ ] `seed.kicad_sch` — Seed headers, battery gauge, charge-status code
+- [ ] `seed.kicad_sch` — Seed sockets, battery gauge, charge-status code
 - [ ] `audio.kicad_sch` — jacks, coupling, mic bias and preamp/pad options
 - [ ] `panel-io.kicad_sch` — analogue bus, digital bus, switches, comms ports
 
@@ -109,6 +109,9 @@ libDaisy's pinout CSV and the fabricated absonus board.
 - [ ] A11 encoder: four 10 k 0.1%, 20 k leg made from two in series.
 - [ ] **No no-connects on this sheet.** All forty pins are used; if ERC finds
       one, something is missing.
+- [ ] **Two socket designators, `A1` and `A2`**, one per 1×20 strip. absonus
+      used a single designator and the BOM asked for one socket where the board
+      needs two. Let the schematic carry the quantity.
 
 ## Panel I/O sheet
 

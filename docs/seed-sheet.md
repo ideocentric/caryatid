@@ -121,11 +121,26 @@ DAC pins occupied by potentiometers**, and freeing one means giving up an
 analogue panel channel. Recorded here so that discovery happens now rather than
 during a board spin.
 
-## Sockets
+## Sockets — give them their own designators
 
-The Seed sits on two 1×20 female headers, C41361038 — 36 in stock, two per
-board. Hand-soldered, per the assembly split.
+The Seed sits on **two 1×20 female sockets, 40 pins total**. `C2897383` is the
+part absonus used; `C41361038` is the equivalent sitting in the JLC inventory.
+Machine-fitted, per the assembly split.
 
-Header height is one of the four measurements that set the panel standoff, along
-with the switch bezel, the jack barrels and the IDC headers. **Measure before any
+**This is where the absonus order went wrong, and it is worth not repeating.**
+absonus carried a single designator `A1` — the Daisy Seed symbol, present only to
+get the footprint right — so the BOM asked for **one** socket where the board
+physically needs **two**, and the quantity had to be corrected by hand at order
+time.
+
+**Give the two strips separate designators**, `A1` and `A2`, each with its own
+1×20 socket footprint. Then the BOM quantity is right because the schematic says
+so, rather than because somebody remembered.
+
+The Daisy Seed module itself is **not a BOM line** — it is bought separately and
+pushed into the sockets. Its footprint exists on the board only to reserve the
+outline and keep the two socket rows correctly spaced.
+
+Socket height is one of the four measurements that set the panel standoff, with
+the switch bezel, the jack barrels and the IDC headers. **Measure before any
 footprint is placed.**

@@ -40,6 +40,22 @@ python3 tools/gen_pinmap.py --check   # fail if stale
 Never edit `pinmap.md` by hand. A pin map kept in two places will disagree the
 first time a connector moves.
 
+## Terms
+
+**DNP — "do not populate."** The footprint is on the board, the symbol is in the
+schematic, the connections exist in the netlist, but **no component is soldered
+there**. A deliberately empty position.
+
+It is the mechanism this whole board rests on. caryatid lays out every option any
+of its instruments might need and each build populates only its own; without DNP
+that would be three different boards. Also written DNI (do not install), NF (not
+fitted), or NP.
+
+Since JLCPCB now fits the through-hole parts too, **DNP is an instruction someone
+acts on and bills for**, not a note to self. See
+[sourcing.md](docs/sourcing.md) for the rule about which things may be DNP and
+which never are.
+
 ## What "frozen" means
 
 An instrument may leave a pin unpopulated, and may choose between the alternates

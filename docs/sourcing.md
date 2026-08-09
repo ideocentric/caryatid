@@ -14,12 +14,13 @@ fabricated once, and reusing them turns capture into transcription.
 | --- | --- | --- | --- | --- |
 | **C4749194** | DS254P-2X5-L0 | `IDC-Header_2x05_P2.54mm_Vertical` | **176** | J5, J11 |
 | **C374544** | AR03BTDX1002A010, 10 kΩ **±0.1%** | 0603 | **176** | A11 divider — see below |
-| **C41361038** | DS1023-1x20S21 | `插件,P=2.54mm` | **36** | Seed sockets, 2 per board |
+| **C41361038** | DS1023-1x20S21, 1×20 socket | `插件,P=2.54mm` | **36** | Seed sockets — Global Sourcing |
+| C2897383 | 1×20 female socket | — | on absonus | **Seed sockets, the part actually used** |
 | C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J2, J6, J7, J8, J10 |
 | C144394 | JST **B3B-XH-A(LF)(SN)**, 3-pin | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
 | C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13a, Qwiic** |
 | ~~C5289485~~ | ~~LS18-P~~ | — | on absonus | **superseded** by the 74HC14, [ADR 0007](decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md) |
-| C2897383 | Daisy Seed Rev4 | `Electrosmith_Daisy_Seed` | on absonus | the module outline |
+| — | *Daisy Seed footprint* | `Electrosmith_Daisy_Seed` | — | outline only; the module is not a BOM line |
 | C3337 | 220 µF electrolytic | `CP_Elec_5x5.4` | on absonus | bulk |
 | C15401 | 10 kΩ 1% | 0603 | on absonus | general |
 | C4211 | 3 kΩ | 0603 | on absonus | was the absonus soft-pot pulldown |

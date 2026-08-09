@@ -60,7 +60,7 @@ Two consequences that follow from this and are easy to miss.
 DNP line is either a connector you paid for and did not want or one you needed
 and did not get.
 
-**Through-hole assembly is priced per joint**, so it scales with connector count
-in a way SMD placement does not. Confirm the current rate and whether it forces
-the Standard service rather than Economic — both ICs are cleared for Economic,
-but the THT work may not be.
+**Through-hole assembly needs the Standard service**, not Economic, and is
+priced per joint so it scales with connector count in a way SMD placement does
+not. absonus was ordered that way deliberately — the cost is accepted in exchange
+for an empty hand-solder list.
