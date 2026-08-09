@@ -17,7 +17,7 @@
 			(at -12.7 -17.78 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" ""
+		(property "Footprint" "caryatid:BQ24074RGT_QFN-16-1EP_3x3mm_P0.5mm"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
@@ -225,7 +225,7 @@
 			(at -10.16 -10.16 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-563"
 			(at 0 0 0)
 			(effects (font (size 1.27 1.27)) hide)
 		)
