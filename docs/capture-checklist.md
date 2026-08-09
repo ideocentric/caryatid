@@ -194,8 +194,15 @@ arrive rather than before the gerbers go out.
       "HOLDER *or* J2 — not both": two cells in parallel otherwise.
 - [ ] Holder must accept a **protected** cell at ~69 mm, not the 65 mm most are
       cut for.
-- [ ] **Confirm 90 × 100 mm clears the telephone shell.** The BUD is settled;
-      the phone is the one enclosure still unmeasured.
+- [ ] **Confirm 90 × 100 mm clears the telephone shell.** External is
+      129.5 × 221 mm, so the board is 31% of the footprint with ~19.8 mm clear
+      per side on the tight axis — comfortable on paper. What is unmeasured is
+      the *internal* clear floor once the keypad module, hook mechanism, cord
+      anchor and mounting bosses are accounted for.
+- [ ] **Check height, not just floor area.** The stack is ~26.6 mm — standoff,
+      PCB, and a 19 mm 18650 holder. **The holder sets it, not the Seed**, which
+      is only 10.5 mm. If the phone is shallow at the point the board wants to
+      sit, moving the cell to J2 as a remote pack recovers 19 mm.
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
 - [ ] **Fiducials** — three top-side; confirm JLC's requirement.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
