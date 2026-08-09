@@ -240,9 +240,10 @@ with the electrolytic is the usual answer if measured ripple comes out high.
 
 ## The cell
 
-**Protected 18650, 3000 mAh.** ~18 × 65 mm bare, **~18 × 69 mm protected** — the
-protection PCB adds length at the negative end, which is the dimension that
-catches people fitting a holder.
+**Protected 18650, 3000 mAh design basis** — the specified cell is 3400 mAh, so
+every derived figure below is conservative. ~18 × 65 mm bare, **~18 × 69 mm
+protected** — the protection PCB adds length at the negative end, which is the
+dimension that catches people fitting a holder.
 
 | | |
 | --- | --- |
@@ -278,16 +279,26 @@ protections, easily conflated.
 **Protected, button-top, ~69 mm.** Protected cells are essentially always
 button-top; a flat-top bare cell may not seat or make contact.
 
-The design basis is 3000 mAh, so the runtime figures above are a **floor** — the
-readily available protected cells are 3400 mAh:
+**The cell is
+[Orbtronic 3400 mAh protected](https://www.orbtronic.com/protected-3400mah-18650-li-ion-battery-panasonic-ncr18650B-orbtronic)**
+— Panasonic NCR18650B inside, button top, **68.9 mm**, inside what the
+BH-18650-PC is cut for.
 
-- [Orbtronic 3400 mAh protected](https://www.orbtronic.com/protected-3400mah-18650-li-ion-battery-panasonic-ncr18650B-orbtronic) — Panasonic NCR18650B inside, 68.9 mm
-- [Liion Wholesale, same NCR18650B cell](https://liionwholesale.com/products/protected-panasonic-sanyo-ncr18650b-3400mah-5a-li-ion-18650-button-top-battery-wholesale-discount) — 5 A rated, ~69.0 mm
+| | |
+| --- | --- |
+| Capacity | 3400 mAh — the design basis is 3000, so the runtimes above are a **floor** |
+| Length | 68.9 mm — listing figure; the vendor page timed out, so not read off the spec sheet |
+| Protection | PCM: over-charge, over-discharge, over-current |
+| Load headroom | worst case is the boost at ~1.5 A peak; the bare NCR18650B alone is rated near 4.9 A continuous |
+| Charge | 1 A = **0.29C** on 3400 mAh — gentler than the 0.33C the values were derived at |
+
+**Buy two.** The socketed holder was chosen over a soldered pack precisely so a
+spare lives in the bag instead of the instrument dying.
+
+Equivalents if Orbtronic is out of stock — all protected, button-top, ~69 mm:
+
+- [Liion Wholesale, same NCR18650B cell](https://liionwholesale.com/products/protected-panasonic-sanyo-ncr18650b-3400mah-5a-li-ion-18650-button-top-battery-wholesale-discount) — 5 A rated
 - [Nitecore NL1834](https://18650battery.com/products/nitecore-nl1834-18650-3400mah-battery-protected-button-top) — 6 A
-
-Any of these clears the load: the worst case is the boost drawing ~1.5 A peak at
-low state of charge, well inside a 5 A rating. Charging at 1 A is 0.29C on a
-3400 mAh cell — gentler still than the 0.33C the values were derived at.
 
 **Ignore anything claiming more than ~3600 mAh.** A genuine 18650 tops out around
 3500; higher numbers are fake wraps around smaller cells.
