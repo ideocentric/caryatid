@@ -22,15 +22,19 @@ hardware. That is the whole argument.
 ## The three
 
 **1. Switch lamp — power state.** The illuminated latching switch, fed from the
-5.2 V boost rail. The switch asserts the boost's EN; the boost comes up; the
+**5.0 V** boost rail. The switch asserts the boost's EN; the boost comes up; the
 lamp lights. Off means genuinely off, with no firmware in the loop.
 
 The lamp is a **3–9 V rated variant, so its current limiting is internal**:
 `R_LED` is a 0 Ω link. Keep the 0603 footprint so a different switch can be
-dropped in without a board change. At 5.2 V it runs slightly below the 4×AA
-(~6 V) reference the brightness was judged against — expect roughly 80% of the
-current, which the eye reads as near-identical. Worth a meter across the lamp at
-both voltages before committing the panel.
+dropped in without a board change.
+
+At 5.0 V it runs below the 4×AA (~6 V) reference the brightness was judged
+against — if the limiting is a plain series resistor, roughly 75% of the
+current, which the eye reads as around 85% as bright. Almost certainly
+indistinguishable, and comfortably inside a range the lamp already sees on
+depleted NiMH. **Worth a meter in series at both voltages before committing the
+panel**, since it is two minutes now against a board spin later.
 
 **2. Charge LED — charge state, hardware only.** Driven directly from the
 bq24074's open-drain `/CHG` and `/PGOOD` off the OUT rail, via J4. **This is the
@@ -39,6 +43,12 @@ the only one that must exist. Nothing about it depends on firmware running.
 
 **3. RGB — everything else, firmware driven.** J12, on D26/D27/D29. Solid on/off
 mixing only; no PWM.
+
+> **It cannot be driven from a 3V3 GPIO.** Green and blue have forward voltages
+> around 3.0-3.1 V against an output-high of roughly 3.15 V — they will not
+> light, and no resistor value fixes it. Drive from the 5 V rail instead; see
+> [values.md](values.md) for the two options and the check that picks between
+> them.
 
 ## RGB states
 

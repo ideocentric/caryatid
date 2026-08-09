@@ -1,0 +1,191 @@
+# Component values
+
+Derived from the TI datasheets — bq24074 `SLUS810N`, TPS61023 `SLVSF14B` — not
+from application notes or reference designs. Constants are quoted from the
+electrical characteristics tables so the arithmetic can be checked.
+
+Three of these changed a number in the platform spec. They are marked **changed**.
+
+## Charger — bq24074
+
+`ICHG = KISET / RISET`, with **KISET = 890 AΩ typical (797 min, 975 max)**.
+
+| Charge current | RISET | E96 1% |
+| --- | --- | --- |
+| 0.5 A | 1780 Ω | 1780 |
+| **1.0 A** | **890 Ω** | **887** |
+| 1.5 A | 593 Ω | 590 |
+
+The spec's 890 Ω for 1 A is correct. **But the tolerance is not in the
+resistor** — KISET alone spans 797–975, so 887 Ω delivers **0.90 A to 1.10 A**
+across the part distribution. Budget for ±10% and do not size a supply or a
+charge-time claim on the nominal.
+
+The datasheet is explicit that **RISET must be 1%**, and not for accuracy: the
+part runs a short test on RISET at the maximum charge setting, and a loose
+resistor can trip it.
+
+**Charge time**, 3000 mAh cell at 1 A, allowing for the constant-voltage tail:
+about **3.5 hours**. Requirement P-9 asks for "fast enough between soundcheck
+and downbeat", which this is not. 1.5 A would give ~2.4 h. The trade is heat and
+cell life; 1 A on an 18650 is 0.33C and gentle, 1.5 A is 0.5C and still within
+spec for most cells. **Left at 1 A** — the barrel jack means charging can start
+early, and cell longevity is worth more than an hour.
+
+`IIN-MAX = KILIM / RILIM`, **KILIM = 1550 AΩ**, and **RILIM must be 1.1 kΩ to
+8 kΩ**.
+
+That range is a real constraint: it caps the input limit at **1.41 A**, not the
+1.5 A the headline figure suggests. The input limit must exceed charge current
+plus system load, or the charger throttles charging to feed the system.
+
+| RILIM | Input limit |
+| --- | --- |
+| **1.2 kΩ** | **1.29 A** |
+| 1.5 kΩ | 1.03 A |
+| 2.0 kΩ | 0.78 A |
+
+**1.2 kΩ**, giving 1.29 A: 1.0 A charge plus ~290 mA of system, which matches
+the budget below.
+
+**TS** — 10 kΩ NTC, `103AT-2` type, in the battery pack. **If the pack has no
+thermistor, fit a fixed 10 kΩ from TS to VSS**; the pin is not optional and
+floating it will not work.
+
+**`/CHG` and `/PGOOD` are open-drain**, pulling to VSS. Confirmed from the pin
+table — which is what makes both the hardware charge LEDs and the A11 encoding
+possible.
+
+## Boost — TPS61023
+
+**changed: output is 5.0 V, not 5.2 V.**
+
+`VOUT = VREF × (1 + R1/R2)`, **VREF = 595 mV typical (580–610)** in PWM mode.
+
+The reason for the change is `VOVP`, the output over-voltage protection, whose
+**minimum trip is 5.5 V**. Worst case stacks the reference tolerance on the
+divider tolerance:
+
+| Target | R1 / R2 | Nominal | 1% worst case | Margin to OVP min |
+| --- | --- | --- | --- | --- |
+| 5.2 V | 365k / 47.5k | 5.167 V | 4.948 – **5.391 V** | **109 mV** |
+| **5.0 V** | **348k / 47.5k** | **4.954 V** | 4.744 – 5.168 V | **332 mV** |
+
+109 mV between a worst-case part and its own protection threshold is not a
+margin. The 5.2 V figure came from Adafruit's PowerBoost, where the extra
+200 mV pays for drop down a USB cable — there is no cable here, the boost feeds
+a Seed VIN pin two centimetres away. **Nothing downstream needs 5.2 V**, and the
+switch lamp cannot tell the difference.
+
+R2 = 47.5 kΩ keeps divider current at ~12.5 µA — comfortably over the 100× the
+datasheet asks for against FB leakage (4–20 nA), and under the 300 kΩ ceiling it
+sets for R2.
+
+**Inductor** — the part works with **0.37 µH to 2.9 µH**; 1 µH is the datasheet's
+own reference. Size the saturation rating from `IL(DC) = VOUT × IOUT / (VIN × η)`
+at **minimum** input, maximum load, and derate the inductance 30%.
+
+**Switching is 1 MHz** above 1.5 V input. Relevant to layout: keep the
+`VIN`/`L`/`SW`/`COUT` loop small, and note that 1 MHz is far enough above the
+analogue bus corner (below) to be well attenuated.
+
+## Power budget
+
+`I_in = VOUT × I_out / (VIN × η)`, η = 0.90.
+
+| Load | from 4.2 V | from 3.6 V | from 3.0 V |
+| --- | --- | --- | --- |
+| 150 mA | 0.20 A | 0.23 A | 0.28 A |
+| 250 mA | 0.33 A | 0.39 A | 0.46 A |
+| 350 mA | 0.46 A | 0.54 A | 0.65 A |
+| 600 mA *(with a radio)* | 0.79 A | 0.93 A | **1.11 A** |
+
+Runtime on a 3000 mAh cell, ~2500 mAh usable down to 3.0 V:
+
+| | Load | From cell | Runtime |
+| --- | --- | --- | --- |
+| Quiet | 150 mA | 231 mA | **10.8 h** |
+| Typical | 250 mA | 386 mA | **6.5 h** |
+| Loud, LEDs lit | 350 mA | 540 mA | **4.6 h** |
+
+A gig is covered comfortably. Note the last row of the first table: a WiFi
+module pushes cell current past 1 A at low state of charge, which is the
+quantified version of the earlier advice to keep radios on mains builds.
+
+## Indicators
+
+**changed: the RGB cannot be driven from a 3V3 GPIO.**
+
+The spec's "3 × series R (~330 Ω) from D8–D10" works for red and fails for the
+other two. An STM32 output-high is roughly 3.15 V under a few milliamps, and
+green and blue capsules have forward voltages around 3.0–3.1 V:
+
+| Channel | Vf | Headroom | Through 330 Ω |
+| --- | --- | --- | --- |
+| red | ~2.0 V | +1.15 V | 3.5 mA |
+| green | ~3.0 V | +0.15 V | **0.45 mA** |
+| blue | ~3.1 V | +0.05 V | **0.15 mA** |
+
+Green and blue will be invisible, and no resistor value fixes it — there is no
+voltage to work with. Two ways out:
+
+1. **Common anode to the 5 V rail, GPIOs sinking.** Cheapest: three resistors
+   and nothing else. With 5 V and Vf 3.1 V there is 1.9 V to drop, so ~390 Ω
+   gives 5 mA. When a GPIO is driven high the LED sees 5 − 3.3 = 1.7 V and stays
+   dark. **Requires the three pins to be 5 V tolerant**, because a floating pin
+   at reset will be pulled up through the LED — verify D26/D27/D29 are `FT` in
+   the STM32H750 datasheet before committing to this.
+2. **Low-side N-FETs from 5 V.** Three transistors, immune to the tolerance
+   question, and works whatever the pin type. Six or so extra parts.
+
+Take (1) if the pins verify as FT, (2) otherwise. Either way the series
+resistors are **per channel, sized from the chosen capsule's actual Vf** — a
+common value across all three is what produced this problem.
+
+**Switch lamp** — 3–9 V rated, current limiting internal, so `R_LED` is a 0 Ω
+link on a 0603 footprint. See [indicators.md](indicators.md).
+
+## Analogue front ends
+
+**changed: J5 wiper filtering.** The spec's 220 Ω / 10 nF is looser than it
+looks, because a pot contributes its own source impedance:
+
+| Network | Pot at either end | Pot mid-travel |
+| --- | --- | --- |
+| 220 Ω / 10 nF | 72 kHz | **5.9 kHz** |
+| **1 kΩ / 100 nF** | 1.6 kHz | **455 Hz** |
+
+At a 1 kHz control rate anything above ~500 Hz folds back into the samples. The
+220 Ω / 10 nF version attenuates the 1 MHz switcher fine but does nothing about
+the 5–20 kHz band that actually aliases. **1 kΩ / 100 nF** — which is what loa's
+own hardware doc specified before the platform existed — costs the same and
+lands the corner where it belongs. 350 µs of settling is imperceptible on a
+knob.
+
+**A10 battery gauge** — 100 k / 100 k from BAT, 1 kΩ / 10 nF into the pin.
+Draws **~21 µA continuously, including while switched off**: about 0.5 mAh a
+day, 92 mAh over six months. Acceptable against 3000 mAh, but it is the one
+thing on the board that never stops.
+
+**A11 charge status** — 10 k pull-up, 11 k on `/CHG`, 18 k on `/PGOOD`. Derived
+and tolerance-checked in [indicators.md](indicators.md).
+
+## Parts
+
+| | Part | LCSC | Package | Notes |
+| --- | --- | --- | --- | --- |
+| Charger | BQ24074RGTR | **C54313** | **QFN-16-EP 3×3** | 3,691 in stock, ~$2.13 @1 |
+| Boost | TPS61023DRLR | **C919459** | **SOT-563** | PCBA type: Economic **and** Standard |
+
+Two things to check before ordering, neither of which the public pages state:
+
+1. **Is the bq24074 available on JLC's Economic assembly?** The TPS61023's page
+   says Economic and Standard explicitly; the charger's does not. If it is
+   Standard-only, the whole board moves to Standard and the cost model changes.
+2. **Basic or Extended?** Both are almost certainly Extended — a Li-ion charger
+   and a specific boost are not stocked in the machines — which means a
+   per-unique-part setup fee each. Small, but it belongs in the estimate.
+
+**The charger has an exposed pad.** QFN-16-EP needs a thermal via array under it
+and a segmented paste aperture, not one big opening. It is also the part
+carrying charge current, so the pad is doing thermal work, not just mechanical.

@@ -21,6 +21,8 @@ Status: **pin map frozen, no schematic yet.** `hardware/` is empty.
 | Connectors and what plugs into them | [docs/connectors.md](docs/connectors.md) |
 | Audio in and out, and the handset problem | [docs/audio.md](docs/audio.md) |
 | The three indicators, and why three | [docs/indicators.md](docs/indicators.md) |
+| **Component values, with derivations** | [docs/values.md](docs/values.md) |
+| What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 
 **`docs/pins.yaml` is the source of truth.** The markdown table is generated:
@@ -50,7 +52,7 @@ Populated on every build:
 
 - Barrel jack → SS34 → **bq24074** charger with power path, ISET 890 Ω (1 A)
 - 18650 via JST-PH — protected cell or protection PCB **required**
-- **TPS61023** boost → 5.2 V → ferrite + 100 µF → Seed VIN
+- **TPS61023** boost → **5.0 V** → ferrite + 100 µF → Seed VIN
 - Illuminated latching power switch (3–9 V lamp, so `R_LED` is a 0 Ω link)
 - `/CHG` + `/PGOOD` panel LEDs — the indication that works with the Seed off
 - RGB status LED, battery gauge on A10, charge-status code on A11

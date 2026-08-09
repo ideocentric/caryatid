@@ -2,6 +2,10 @@
 
 - **Status**: Accepted
 - **Date**: 2026-08-08
+- **Note added 2026-08-08**: the boost output moved from 5.2 V to 5.0 V for
+  OVP margin — see [values.md](../values.md). The decision below is unaffected;
+  only the rail's figure changed. Recorded here rather than edited into the
+  text, because these records are append-only.
 
 ## Context
 
@@ -25,7 +29,7 @@ Three indicators, split by what has to work without firmware:
 
 | | Shows | Driven by |
 | --- | --- | --- |
-| Switch lamp | power on/off | the 5.2 V rail, no firmware |
+| Switch lamp | power on/off | the 5 V rail, no firmware |
 | Charge LED (J4) | charging, charge complete | `/CHG`, `/PGOOD`, no firmware |
 | RGB (J12) | battery, fault, and charge state while awake | firmware |
 

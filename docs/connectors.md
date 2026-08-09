@@ -13,7 +13,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J2 | JST-PH 2 | 18650. Protected cell or protection PCB required. |
 | J3 | JST 4 | Latch switch: OUT→sw, EN return, 5 V→lamp, GND |
 | J4 | JST 4 | `/CHG` and `/PGOOD` panel LEDs, 1k each from OUT |
-| J5 | IDC 2×5 | **Analogue bus** — A0–A3, A6–A9 + 3V3A + AGND. Rails on the outer pins; 220Ω/10nF per wiper, board side. |
+| J5 | IDC 2×5 | **Analogue bus** — A0–A3, A6–A9 + 3V3A + AGND. Rails on the outer pins; **1kΩ/100nF** per wiper, board side — see [values.md](values.md). |
 | J6 | JST 2 | SW1 → D13 via LS18-P — *or* J15 takes the pins |
 | J7 | JST 2 | SW2 → D14 via LS18-P — *or* J15 takes the pins |
 | J8 | JST 2 | SW3 → D7 via LS18-P |

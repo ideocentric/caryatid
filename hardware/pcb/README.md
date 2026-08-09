@@ -33,4 +33,4 @@ and that number has to exist before placement rather than after.
 
 The illuminated latching switch is the one to measure first: its Ø12/Ø16/Ø19
 bezel fixes the panel hole, and its lamp current confirms `R_LED` is genuinely a
-0 Ω link at 5.2 V.
+0 Ω link at 5.0 V.
