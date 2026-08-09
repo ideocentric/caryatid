@@ -1,0 +1,14 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "44076c7a-e995-4963-ae31-8b82bbab4f8c")
+	(paper "A4")
+	(title_block
+		(title "caryatid — jacks, coupling, mic bias / preamp / pad options")
+		(rev "A")
+		(company "ideocentric")
+	)
+	(lib_symbols)
+	(embedded_fonts no)
+)

@@ -1,0 +1,174 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "49c08c53-8a29-4df2-81cf-05d7b7c47990")
+	(paper "A4")
+	(title_block
+		(title "caryatid — common power and I/O board")
+		(rev "A")
+		(company "ideocentric")
+		(comment 1 "Pin map is frozen: docs/pinmap.md, generated from docs/pins.yaml")
+		(comment 2 "Values: docs/values.md   Sourcing: docs/sourcing.md")
+		(comment 3 "Work down docs/capture-checklist.md")
+	)
+	(lib_symbols)
+	(sheet
+		(at 30.0 35.0)
+		(size 65 32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "2a268859-e48a-4840-9d32-9349703f095d")
+		(property "Sheetname" "power"
+			(at 30.0 34.2876 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 30.0 67.58760000000001 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left top)
+			)
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 125.0 35.0)
+		(size 65 32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "ec282f9b-b5a6-47a8-bf01-1f498ec00137")
+		(property "Sheetname" "seed"
+			(at 125.0 34.2876 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "seed.kicad_sch"
+			(at 125.0 67.58760000000001 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left top)
+			)
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30.0 90.0)
+		(size 65 32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "bda31c7d-e5ef-4a38-8900-64d829b923ab")
+		(property "Sheetname" "audio"
+			(at 30.0 89.2876 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "audio.kicad_sch"
+			(at 30.0 122.58760000000001 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left top)
+			)
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 125.0 90.0)
+		(size 65 32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "810df3d0-2a5c-411d-aa14-77e2cbf45434")
+		(property "Sheetname" "panel-io"
+			(at 125.0 89.2876 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "panel-io.kicad_sch"
+			(at 125.0 122.58760000000001 0)
+			(effects
+				(font (size 1.27 1.27))
+				(justify left top)
+			)
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

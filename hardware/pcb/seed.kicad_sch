@@ -1,0 +1,14 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "85f7198e-6aa0-4fd9-a658-117139bac56e")
+	(paper "A4")
+	(title_block
+		(title "caryatid — Seed headers, battery gauge, charge-status code")
+		(rev "A")
+		(company "ideocentric")
+	)
+	(lib_symbols)
+	(embedded_fonts no)
+)

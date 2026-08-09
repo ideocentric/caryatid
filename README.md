@@ -11,7 +11,8 @@ after one of them would have implied it belonged to that one.*
 sensors, switches, comms — enters through a connector, and each instrument
 populates the subset it needs. Order once, stuff per instrument.
 
-Status: **pin map frozen, no schematic yet.** `hardware/` is empty.
+Status: **pin map frozen, KiCad skeleton in place, no schematic content yet.**
+See [hardware/pcb/](hardware/pcb/).
 
 ## Start here
 

@@ -1,0 +1,14 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "53a00268-5cf3-4a4f-88b0-36787e9d02e6")
+	(paper "A4")
+	(title_block
+		(title "caryatid — analogue bus, digital bus, switches, comms ports")
+		(rev "A")
+		(company "ideocentric")
+	)
+	(lib_symbols)
+	(embedded_fonts no)
+)

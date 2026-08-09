@@ -1,0 +1,14 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "c23903ce-bfe3-4b1d-ab17-5279de26d965")
+	(paper "A4")
+	(title_block
+		(title "caryatid — charger, boost, latch, hardware charge LEDs")
+		(rev "A")
+		(company "ideocentric")
+	)
+	(lib_symbols)
+	(embedded_fonts no)
+)
