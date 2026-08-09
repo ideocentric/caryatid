@@ -43,6 +43,24 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 ## Assembly split
 
-- **JLC SMT, single side** — charger, boost, filtering, all passives including
-  the DNP-optional networks. Order DNP parts as explicit "do not place" lines.
-- **Hand** — IDC headers, all JSTs, Seed headers.
+**JLCPCB fits everything, including the through-hole parts.** absonus was built
+this way — its BOM carries the JST-XH connectors, the 2×5 IDC header, a DIP and a
+radial electrolytic alongside the SMD — so the precedent and the part numbers are
+both proven.
+
+- **SMD** — charger, boost, 74HC14, MCP6002, all passives.
+- **Through-hole** — every JST, both IDC headers, the Seed sockets, the barrel
+  jack, the expansion header.
+- **Hand** — nothing, by intent.
+
+Two consequences that follow from this and are easy to miss.
+
+**DNP stops being advisory.** When the connectors were hand-fitted, "DNP" meant
+*don't bother*. Now it is an instruction JLC acts on and bills for, so a wrong
+DNP line is either a connector you paid for and did not want or one you needed
+and did not get.
+
+**Through-hole assembly is priced per joint**, so it scales with connector count
+in a way SMD placement does not. Confirm the current rate and whether it forces
+the Standard service rather than Economic — both ICs are cleared for Economic,
+but the THT work may not be.

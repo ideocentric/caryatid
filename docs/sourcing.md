@@ -246,6 +246,33 @@ with the electrolytic is the usual answer if measured ripple comes out high.
 | Illuminated latching switch | in hand; **bezel diameter still to be measured** |
 | JST-XH housings and crimps, 2 / 3 / 4 / 6 way | one crimp tool covers all four |
 
+## Every connector is fitted on every board
+
+JLCPCB fits the through-hole parts, which collides with "stuff per instrument" —
+a machine-populated board cannot be stuffed differently afterwards. The choice
+was between per-instrument BOM/CPL variants and fitting everything every time.
+
+**Fit everything.** All fifteen connectors come to about **$0.65 per board**, of
+which roughly half is unused on any given build. That is far less than the cost
+of maintaining three order configurations, where one wrong line wastes a batch.
+
+So the platform promise shifts one step outward, and gets stronger for it:
+
+> One PCB, one BOM, one CPL. **Cable** per instrument, not stuff per instrument.
+
+**The distinction that matters:** *connectors* are always fitted; *circuit
+options* stay DNP. A connector nobody plugs into costs four cents and some board
+area. A populated option that should not be there — an I2C pull-up on a UART, a
+gain stage on a line-level input, the wrong sensor pulldown — is a fault.
+
+| Always fitted | Stays DNP |
+| --- | --- |
+| J1–J16, all connectors and headers | I2C pull-ups (4.7 k) |
+| Seed sockets | Audio gain stage and its network |
+| | Sensor pulldowns on A4 / A5 |
+| | Mic bias, carbon / electret / dynamic paths |
+| | Audio-in coupling where a build has no input |
+
 ## Before ordering
 
 - Both ICs are near-certainly **Extended**, so budget a per-unique-part setup

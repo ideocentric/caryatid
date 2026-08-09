@@ -224,5 +224,7 @@ board is stuffed for its instrument.
 | J13b / J15 module | — | MIDI, if wanted | — |
 | J16 expansion | — | — | — |
 
-Mark every unpopulated part **DNP in the schematic**, so the BOM and CPL inherit
-it rather than needing a manual pass before each order.
+**The connectors above are fitted on every board regardless** — see
+[sourcing.md](sourcing.md). The population table describes which ones get a
+*cable*, not which ones get soldered. Only circuit options — the I2C pull-ups,
+the sensor pulldowns — are DNP.

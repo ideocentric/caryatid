@@ -61,7 +61,7 @@ Populated on every build:
 - Illuminated latching power switch (3–9 V lamp, so `R_LED` is a 0 Ω link)
 - `/CHG` + `/PGOOD` panel LEDs — the indication that works with the Seed off
 - RGB status LED, battery gauge on A10, charge-status code on A11
-- Daisy Seed on 2×(1×20) female headers
+- Daisy Seed on 2×(1×20) female headers, machine-fitted
 - 74HC14 Schmitt debounce, SMT — see [ADR 0007](docs/decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md)
 - Audio out; audio in laid out on every board, DNP where unused
 
