@@ -284,16 +284,43 @@ button-top; a flat-top bare cell may not seat or make contact.
 — Panasonic NCR18650B inside, button top, **68.9 mm**, inside what the
 BH-18650-PC is cut for.
 
-| | |
-| --- | --- |
-| Capacity | 3400 mAh — the design basis is 3000, so the runtimes above are a **floor** |
-| Length | 68.9 mm — listing figure; the vendor page timed out, so not read off the spec sheet |
-| Protection | PCM: over-charge, over-discharge, over-current |
-| Load headroom | worst case is the boost at ~1.5 A peak; the bare NCR18650B alone is rated near 4.9 A continuous |
-| Charge | 1 A = **0.29C** on 3400 mAh — gentler than the 0.33C the values were derived at |
+| | Spec | |
+| --- | --- | --- |
+| Capacity | 3400 mAh, 12.2 Wh | design basis is 3000, so runtimes above are a **floor** |
+| Length | **68.9 mm ±0.03** | the number the holder choice turned on |
+| Diameter | 18.6 mm ±0.03 | wider than a bare cell's ~18.4; the holder is cut for protected |
+| Weight | 46 g | |
+| Nominal | 3.6–3.7 V, charge to 4.2 V | matches what the bq24074 delivers |
+| Max continuous | **2C = 6.8 A** | board's worst case is ~1.5 A — 4.5× margin |
+| Pulse, 2–4 s | 10 A | |
+| Core cell | Panasonic NCR18650B, UL MH12210 | |
+| Protection ICs | Seiko-Ablic, Japan, welded external PCB | |
 
-**Buy two.** The socketed holder was chosen over a soldered pack precisely so a
-spare lives in the bag instead of the instrument dying.
+**Every protection threshold clears the board by a wide margin**, which is the
+result you want — the PCM is a backstop that should never fire in normal use:
+
+| PCM trips at | Board does | Margin |
+| --- | --- | --- |
+| Over-charge **4.33 V** | bq24074 terminates at **4.2 V** | 130 mV |
+| Over-discharge **2.5 V** | runtime figures stop at **3.0 V** | 500 mV |
+| Over-current **10–12 A** | ~1.5 A peak at low charge | ~7× |
+
+Also over-temperature and dual (internal + external) short-circuit protection.
+
+**The over-temp protection is inside the cell's PCM and is not a thermistor
+output.** `TS` still gets a fixed 10 kΩ — the charger has no way to see it. Easy
+to misread as changing that.
+
+**Charge rate** is 1 A = 0.29C on 3400 mAh, gentler than the 0.33C the values
+were derived at. The vendor warns never to charge above 4.25 V; the bq24074 is a
+4.2 V CC/CV part, so it is exactly the charger they ask for.
+
+**Buy two.** Cells are priced and sold individually. The socketed holder was
+chosen over a soldered pack precisely so a spare lives in the bag instead of the
+instrument dying — and buying a pair includes a plastic carry case, which is not
+a nicety. **A loose 18650 in a gig bag is a short-circuit hazard**: the positive
+button and the can are both exposed, and a key or a jack plug across them will
+dump 6.8 A into a dead short. Carry the spare in the case.
 
 Equivalents if Orbtronic is out of stock — all protected, button-top, ~69 mm:
 
@@ -331,7 +358,7 @@ at the negative end.
 | Mounting | Ø3.2 mm holes; the drawing says 2-56 screws, eyelets or adhesive |
 
 **Bolt it down as well as soldering it.** The two solder tabs are not a
-mechanical mount for 66 g of cell in something that gets carried to gigs.
+mechanical mount for a 46 g cell in something that gets carried to gigs.
 
 **Second source, pin-identical:** MPD `BK-18650-PC2` — same 72.90/55.61 layout,
 also rated for protected cells, and it carries vibration and 150 G shock test
