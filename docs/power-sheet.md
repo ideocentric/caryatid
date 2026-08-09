@@ -28,7 +28,7 @@ never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.
 
 | Ref | Part | Value | LCSC |
 | --- | --- | --- | --- |
-| J1 | Barrel jack | 5.5 × 2.1, centre positive | — |
+| J1 | JST-XH 2 | DC in, from the panel barrel jack | C158012 |
 | D1 | Schottky | SS34, SMA | C8678 |
 | U1 | Charger | BQ24074RGT, QFN-16-EP | C54313 |
 | U2 | Boost | TPS61023DRL, SOT-563 | C919459 |
@@ -62,8 +62,8 @@ is only protected from 28 V by the OVP.
 
 | From | To |
 | --- | --- |
-| J1.1 (centre) | D1 anode |
-| J1.2 (sleeve) | `GND` |
+| J1.1 | D1 anode — **centre pin of the panel jack** |
+| J1.2 | `GND` — sleeve |
 | D1 cathode | `VIN_DC` |
 | `VIN_DC` | C1 → `GND` |
 | `VIN_DC` | U1.13 `IN` |
@@ -92,6 +92,20 @@ needs 4.35 V minimum at `IN`, so a 5 V adapter still has margin.
 | 9 `CHG` | `~{CHG}` | open drain |
 
 `EN2 = 1, EN1 = 0` is Table 7-2's "set by an external resistor from ILIM to VSS".
+
+### Battery reverse polarity — understood, not protected
+
+**A cell connected backwards destroys the charger.** `BAT` is rated −0.3 V to
+5 V, and a reversed 18650 puts −4.2 V on it.
+
+There is no protection, deliberately: a series diode wastes 0.3 V and permanent
+power on every discharge, and a P-FET is parts and board area for a fault that a
+keyed connector already prevents. The JST-XH at J2 can only mate one way.
+
+The residual risk is a **hand-crimped loom wired backwards**, which is real on a
+board whose whole model is cable-per-instrument. Mitigate it where it is cheap:
+**silkscreen the polarity at J2**, and check the loom with a meter before the
+first connection rather than after.
 
 ### Battery and output
 
@@ -162,6 +176,15 @@ them from `+5V` would make them go dark exactly when they matter.
 At 1 kΩ from ~4.2 V through a ~2 V LED that is 2.2 mA, comfortably inside the
 15 mA the status pins can sink.
 
+## With no latch switch fitted, the board does not power up
+
+`R6` holds `EN` low, so the boost stays off until the switch pulls it high from
+`VOUT`. That is correct — it is what makes the switch a real power switch — but
+it means **a bare board on the bench is dead** until J3 is bridged.
+
+Do not treat that as a fault. Bridge J3 pins 1–2, or fit a temporary link, and
+say so in the bring-up notes.
+
 ## Leaving the sheet
 
 Rails are power symbols and global by nature: `GND`, `+5V`, `VBAT`, `VOUT`,
@@ -178,7 +201,7 @@ Two hierarchical labels go to the **seed** sheet, where the A11 encoder lives:
 
 ## Layout notes for this sheet
 
-1. Barrel jack and charger on one edge, boost in the corner beyond it.
+1. J1 and the charger on one edge, boost in the corner beyond it.
 2. **Minimise the `VIN`/L1/`SW`/C6 loop area.** This is the only genuinely
    high-frequency thing on the board.
 3. **Thermal vias under U1's exposed pad**, with segmented paste apertures. That

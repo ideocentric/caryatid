@@ -173,8 +173,10 @@ battery instrument's budget, and it is pure waste on-hook.
 **A telephone hook switch has more than one pole.** Use one for the logic —
 into the 74HC14 and on to D7 — and a second to physically break the mic bias.
 Then the current only flows off-hook, it costs no GPIO, and it keeps working if
-the firmware hangs. The board provides a two-position footprint for the bias
-return so it is either a link to ground or a wire out to the second pole.
+the firmware hangs. The bias return leaves on **J14**, so it is either a link
+to ground there or a wire out to the switch's second pole. (J14 is the number
+the soft-latch vacated when [ADR 0004](decisions/0004-keep-spi1-drop-the-soft-latch.md)
+dropped it.)
 
 Firmware still gates the *audio path* from D7. That is a musical decision and
 belongs in software. This is about current, and belongs in copper.

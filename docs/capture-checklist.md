@@ -181,6 +181,24 @@ arrive rather than before the gerbers go out.
 - [ ] **Re-run `python3 tools/gen_pinmap.py --check`.** If the map moved during
       capture, either the schematic is wrong or `pins.yaml` needed an ADR.
 
+## Board level — none of this belongs to a sheet
+
+- [ ] **Four M3 mounting holes**, one per corner, with standoff keep-out. Fix the
+      pattern early; three enclosures have to match it.
+- [ ] **Board outline** — gated on measuring the telephone shell cavity, which is
+      the tightest of the three enclosures.
+- [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
+- [ ] **Fiducials** — three top-side; confirm JLC's requirement.
+- [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
+      the number the soft-latch vacated, not a gap.
+- [ ] **Silkscreen the pin function beside every connector**, and pin 1 on all of
+      them. Assembled once, cabled many times.
+- [ ] **Battery polarity marked at J2.** There is no reverse protection and a
+      backwards cell destroys the charger — see
+      [power-sheet.md](power-sheet.md).
+- [ ] Confirm the 2×5 IDC parts are **shrouded/keyed** box headers, not bare pin
+      headers. Ribbon polarity depends on it.
+
 ## Layout, when it comes
 
 Frozen with the board, from the platform spec:

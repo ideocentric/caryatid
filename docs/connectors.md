@@ -22,6 +22,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J11 | IDC 2×5 | **Digital bus** — D0–D6 + 3V3D + DGND + spare. 100Ω series each. |
 | J12 | JST 4 | RGB status: D26, D27, D29 + GND. Common cathode, 3 × ~330Ω. |
 | J13a | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
+| J14 | JST-XH 2 | Mic bias return → the hook switch's second pole |
 | J13b | JST-PH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, AUX |
 | J15 | JST-PH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, AUX |
 | J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
@@ -40,6 +41,19 @@ signals strictly need: the extra two positions carry **5 V and a second ground**
 which cost no Seed pins and are what a display or an SD card will want. A spare
 pin on a header you can reach is worth something; a spare pin on a pad is worth
 nothing.
+
+## Silkscreen every connector's pinout
+
+This board is assembled once and **cabled differently for each instrument**, by
+hand, months apart. The loom is where the mistakes will be, not the PCB.
+
+So **print the function of every pin beside every connector** — `+3V3A`, `A5`,
+`GND` at J9; `VOUT`, `CHG`, `PGOOD`, `GND` at J4 — and mark pin 1 on all of them.
+It costs nothing at fabrication and it is the difference between crimping a loom
+from the board and crimping it from a document that may not be open.
+
+Same argument as printing the pin names beside the Seed sockets. The board should
+be readable without its documentation.
 
 ## Nothing mounts on the board edge
 
