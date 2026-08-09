@@ -95,6 +95,21 @@ the datasheet tables and rendered to check.
 - [ ] Ferrite + 100 µF between boost output and everything downstream.
 - [ ] Switch lamp from the 5 V rail through a **0 Ω 0603** link.
 
+## Seed sheet
+
+Every net is in [seed-sheet.md](seed-sheet.md). The symbol `Daisy_Seed_Rev4`
+is drawn, with silkscreen pin names and numbers cross-checked between
+libDaisy's pinout CSV and the fabricated absonus board.
+
+- [ ] **Name every Seed net after its pin** — `D0`, `A7`. That is what turns
+      the cross-check against `pinmap.md` into a diff.
+- [ ] **`AGND` (pin 20) ties to `GND`.** One plane; no split.
+- [ ] `3v3A` (21) and `3v3D` (38) stay separate — supplies, not returns.
+- [ ] Battery gauge on A10: 100 k / 100 k, then 1 k / 10 nF at the pin.
+- [ ] A11 encoder: four 10 k 0.1%, 20 k leg made from two in series.
+- [ ] **No no-connects on this sheet.** All forty pins are used; if ERC finds
+      one, something is missing.
+
 ## Panel I/O sheet
 
 - [ ] J5 wiper networks **1 kΩ / 100 nF**, not 220 Ω / 10 nF — the corner has to
