@@ -95,9 +95,9 @@ belong to another sheet.
       [values.md](values.md), it leaves 109 mV to the OVP minimum.
 - [ ] Inductor **C354578** — 1 µH, 4.2 A Isat against a 1.51 A worst-case peak
       at 30% derating. Working in [sourcing.md](sourcing.md).
-- [ ] `EN` 100 k pulldown; latch switch asserts EN from the OUT rail.
-- [ ] Ferrite + 100 µF between boost output and everything downstream.
-- [ ] Switch lamp from the 5 V rail through a **0 Ω 0603** link.
+- [x] `EN` 100 k pulldown; latch switch asserts EN from the OUT rail.
+- [x] Ferrite + 100 µF between boost output and everything downstream.
+- [x] Switch lamp from the 5 V rail through a **0 Ω 0603** link.
 
 ## Seed sheet
 
