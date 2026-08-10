@@ -36,15 +36,34 @@ pcb/
   fp-lib-table
 ```
 
-Open `caryatid.kicad_pro`. `caryatid.kicad_pcb` exists but is a **mechanical
-shell only** — outline, four M3 holes, the BT1 keep-out on `Cmts.User`, and the
-2-layer stackup. **No footprints are placed.**
+Open `caryatid.kicad_pro`. `caryatid.kicad_pcb` carries **all 125 footprints,
+placed and net-bound**, on a 100 × 90 mm outline with four M3 holes. **Nothing is
+routed** — DRC's 263 unconnected items are the full ratsnest, which is correct.
 
-`kicad-cli` has no "update PCB from schematic", so importing the 125 footprints
-has to happen in the GUI: open the board editor and run **Tools > Update PCB
-from Schematic (F8)**. Everything lands in a heap beside the board; placement is
-the next job. Zoning is in [`docs/capture-checklist.md`](../../docs/capture-checklist.md)
-under "Layout, when it comes".
+Placement is a machine first pass, not layout. It puts each block where the
+zoning says and nothing overhangs the outline, but ~33 courtyards still overlap
+and the silkscreen is a mess. Treat it as something to drag from.
+
+## How dense is it, really
+
+| | mm² |
+| --- | --- |
+| All 125 courtyards | 4510 |
+| of which BT1 | 1774 |
+| everything except BT1 | **2736** |
+| board | 9000 |
+| face left after BT1 | 7226 |
+
+**38% coverage on BT1's face**, which is at the top of the comfortable band for
+two layers but inside it. An earlier read of this said the board was "essentially
+full"; that was wrong, and it was wrong for an instructive reason — the figure
+came from a packer that added 1.6 mm around every part, which inflates an 0603
+courtyard nearly six-fold. Measure coverage from courtyards, not from packing
+margins.
+
+What *is* tight is the connector ring. The edge connectors are 920 mm² of the
+2736 and they all want board edge, which no rectangular zoning expresses. That
+is the part worth doing by hand first.
 
 Verified with `kicad-cli` rather than assumed: ERC runs clean and traverses all
 four child sheets, and a netlist export resolves the full hierarchy.
