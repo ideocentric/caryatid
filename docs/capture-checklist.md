@@ -40,8 +40,8 @@ down it; do not skip ahead to the fun part.
 
 Hierarchical, so the power section stays a reusable block for a future board:
 
-- [ ] `power.kicad_sch` — charger, boost, latch, hardware charge LEDs
-- [ ] `seed.kicad_sch` — Seed sockets, battery gauge, charge-status code
+- [x] `power.kicad_sch` — charger, boost, latch, hardware charge LEDs
+- [x] `seed.kicad_sch` — Seed sockets, battery gauge, charge-status code
 - [ ] `audio.kicad_sch` — jacks, coupling, mic bias and preamp/pad options
 - [ ] `panel-io.kicad_sch` — analogue bus, digital bus, switches, comms ports
 
@@ -50,10 +50,10 @@ Hierarchical, so the power section stays a reusable block for a future board:
 **This is the part that matters.** `docs/pins.yaml` is the source of truth, and
 the schematic is a *consumer* of it, not a second opinion.
 
-- [ ] Label every Seed net with the **pin name from `pins.yaml`** — `A7`, `D11`
+- [x] Label every Seed net with the **pin name from `pins.yaml`** — `A7`, `D11`
       — not with what the net does on one instrument. `D11` is not `SCL`; it is
       `D11`, and I2C is one thing it can be.
-- [ ] **Cross-check the finished schematic against `pinmap.md` pin by pin.** By
+- [x] **Cross-check the finished schematic against `pinmap.md` pin by pin.** By
       script if you can face writing one, by eye if not, but do it as a
       distinct pass rather than while drawing.
 - [ ] **`D8` is the only free SPI1 clock.** If anything ends up on it that is
@@ -87,7 +87,7 @@ belong to another sheet.
       none.** Not optional, not floatable.
 - [x] `/CHG`, `/PGOOD` → J4 LEDs, 1 k each **from the OUT rail** so they work
       with the Seed off. This is what satisfies P-2.
-- [ ] `/CHG`, `/PGOOD` → also into the A11 encoder: **four 10 k 0.1% (C374544,
+- [x] `/CHG`, `/PGOOD` → also into the A11 encoder: **four 10 k 0.1% (C374544,
       in stock)** — pull-up **to 3V3**, 10 k on `/CHG`, 2×10 k series on
       `/PGOOD`, then 1 k / 10 nF to the pin. Pull-up on 3V3 and not OUT, so it
       draws nothing while off.
@@ -101,20 +101,25 @@ belong to another sheet.
 
 ## Seed sheet
 
-Every net is in [seed-sheet.md](seed-sheet.md). The symbols
-`Daisy_Seed_Socket_A` (pins 1–20) and `Daisy_Seed_Socket_B` (21–40) are drawn
-and footprinted, with pin names and numbers cross-checked between libDaisy's
-pinout CSV and the fabricated absonus board.
+**Captured.** `seed.kicad_sch` holds both sockets and the two measurement
+networks. ERC has no errors; the 33 warnings are all `global_label_dangling`,
+one per Seed pin that leaves for panel-io or audio — sheets not yet captured.
+That count is a checksum: 15 `D0`–`D14`, 10 `A0`–`A9`, 4 RGB/expansion, 4 audio.
+It should fall to zero as those sheets land, and any *other* dangling label is a
+mistake.
 
-- [ ] **Name every Seed net after its pin** — `D0`, `A7`. That is what turns
+The cross-check against the frozen map was run as its own pass, by script:
+**all 31 physical pins in `pins.yaml` land on a net named after the pin.**
+
+- [x] **Name every Seed net after its pin** — `D0`, `A7`. That is what turns
       the cross-check against `pinmap.md` into a diff.
-- [ ] **`AGND` (pin 20) ties to `GND`.** One plane; no split.
-- [ ] `3v3A` (21) and `3v3D` (38) stay separate — supplies, not returns.
-- [ ] Battery gauge on A10: 100 k / 100 k, then 1 k / 10 nF at the pin.
-- [ ] A11 encoder: four 10 k 0.1%, 20 k leg made from two in series.
-- [ ] **No no-connects on this sheet.** All forty pins are used; if ERC finds
+- [x] **`AGND` (pin 20) ties to `GND`.** One plane; no split.
+- [x] `3v3A` (21) and `3v3D` (38) stay separate — supplies, not returns.
+- [x] Battery gauge on A10: 100 k / 100 k, then 1 k / 10 nF at the pin.
+- [x] A11 encoder: four 10 k 0.1%, 20 k leg made from two in series.
+- [x] **No no-connects on this sheet.** All forty pins are used; if ERC finds
       one, something is missing.
-- [ ] **Two socket designators, `A1` and `A2`**, one per 1×20 strip. absonus
+- [x] **Two socket designators, `A1` and `A2`**, one per 1×20 strip. absonus
       used a single designator and the BOM asked for one socket where the board
       needs two. Using both symbols is what makes the schematic carry the
       quantity — placing one twice would put the same designator on both.
