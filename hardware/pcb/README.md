@@ -197,10 +197,19 @@ stock QFN-16 3×3 footprints put any paste on the exposed pad; every one is
 array at 72% coverage. EP is 1.68 ±0.07 per SLUS810N drawing 4222419/E, so 1.7 is
 inside tolerance.
 
+**Thermal vias are 0.3 mm drill on 0.55 mm pads at ±0.5 mm.** TI's drawing calls
+for Ø0.2 mm, which is below JLC's 0.3 mm minimum hole; and at TI's ±0.6 position
+a 0.55 mm pad leaves only 0.176 mm to the signal pads. Moving them inboard to
+±0.5 gives 0.289 mm and satisfies both.
+
+**The exposed pad is 1.68 mm, TI's nominal.** It was briefly 1.70 — inherited
+from the stock footprint that had a ThermalVias sibling — which lands *exactly*
+on the 0.2 mm clearance boundary and fails on rounding.
+
 Two caveats worth carrying into layout and into the order:
 
 - **The four thermal vias sit under the paste apertures and must be tented.** On
-  a 1.7 mm pad the vias and the apertures both want the corners; making them
+  a 1.68 mm pad the vias and the apertures both want the corners; making them
   disjoint drops coverage to 45%. This is a via setting, not a footprint fix.
 - The only package drawing in the datasheet is **RGT0016C**, while Table 7-1
   lists the '74 as **RGT0016B**. TI did not publish the B drawing. If the two

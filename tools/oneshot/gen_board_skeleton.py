@@ -58,6 +58,13 @@ def mounting_hole(x,y,i):
     src=re.sub(r'^\(footprint "([^"]+)"', r'(footprint "MountingHole:MountingHole_3.2mm_M3"', src, count=1)
     body=src[src.index("\n")+1:src.rindex(")")]
     body=re.sub(r'\(uuid "[0-9a-f-]+"\)', lambda m: f'(uuid "{U("mh",i,m.start())}")', body)
+    # a mounting hole needs no silkscreen: the ring adds nothing a 3.2 mm hole
+    # does not already say, and the REF** text just collides with neighbours
+    # the only silk a MountingHole carries is an fp_text "${REFERENCE}"; the two
+    # circles are Cmts.User and F.CrtYd, neither of which is printed
+    body=re.sub(r'\t\(fp_text user "\$\{REFERENCE\}"\n(?:\t\t.*\n)*?\t\)\n', '', body)
+    body=re.sub(r'(\(property "(?:Reference|Value)" "[^"]*"\n(?:\t\t.*\n)*?\t\t\(effects\n(?:\t\t\t.*\n)*?)(\t\t\)\n)',
+                lambda m: m.group(1)+'\t\t\t(hide yes)\n'+m.group(2), body)
     return (f'\t(footprint "MountingHole:MountingHole_3.2mm_M3"\n'
             f'\t\t(layer "F.Cu")\n\t\t(uuid "{U("mh",i)}")\n\t\t(at {x+OX} {y+OY})\n'
             + body + "\t)\n")
