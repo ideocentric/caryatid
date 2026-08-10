@@ -70,6 +70,35 @@ runs their through-hole work is hand soldering, which is probably fine — but y
 asked for the JSTs to be machine-fitted as on absonus, and absonus had a
 component-free underside. Worth putting to JLC before the order.
 
+## The connector ring
+
+Placed by function, and stacked from measured courtyard extents rather than by
+hand — hand arithmetic on offsets produced touching parts three times running.
+
+| Edge | Connectors |
+| --- | --- |
+| Left | `J1` DC in, `J2` remote battery, `J3` latch switch, `J4` charge LEDs |
+| Left, inboard | `J11` digital bus IDC, beside A1 (the digital row) |
+| Right | `J12` RGB, `J9` soft pot, `J10` FSR, `J17` audio out |
+| Right, inboard | `J5` analogue bus IDC beside A2; `J16` expansion; `J18` audio in and `J14` mic return together |
+| Bottom | `J6` `J7` `J8` switches, then `J13B` and `J15` module ports |
+
+Power enters on the left where the charger and boost sit underneath; the
+analogue bus, both sensors and the audio pair are on the right, furthest from
+L1. `J18` and `J14` are adjacent because they are one loom — capsule signal and
+its bias return to the hook switch's second pole.
+
+**Everything is at rotation 0.** A vertical JST exits upward, so turning the pin
+row to follow the edge buys nothing — and the rotated-courtyard transform is the
+one piece of geometry here that could not be checked against a known-good file,
+so it is not used. If you rotate parts by hand in the GUI, KiCad does that
+arithmetic correctly.
+
+**The four M3 holes are part of the collision check.** They were not, at first,
+and that version passed a board where `J6` and `J18` each sat on top of a
+mounting hole. They come from the skeleton rather than from the netlist, which
+is exactly why a check built around the component list missed them.
+
 ## How dense is it, really
 
 | | mm² |

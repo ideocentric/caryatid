@@ -58,6 +58,11 @@ def load_fp(libid):
     _fpcache[libid]=t
     return t
 
+def is_smd(libid):
+    """classify from the footprint's own attr, not from its library name"""
+    m=re.search(r'^\t\(attr ([^)]*)\)', load_fp(libid), re.M)
+    return bool(m) and "smd" in m.group(1).split()
+
 def bbox(libid):
     t=load_fp(libid); xs=[];ys=[]
     for chunk in re.split(r'\(fp_line|\(fp_poly|\(fp_rect|\(fp_circle|\(fp_arc', t)[1:]:
@@ -93,7 +98,43 @@ zone("switch","U3","J6","J7","J8",*[f"R{n}" for n in range(34,40)],"C18","C19","
 zone("audio","J17","J18","J14","U4",*[f"R{n}" for n in range(47,67)],*[f"C{n}" for n in range(22,31)])
 zone("conn","J12","R40","R41","R42","J13A","R43","R44","J13B","J15","J16","J9","R45","J10","R46")
 
-ANCHOR={"BT1":(13.55,14.0,0),"A1":(38.0,29.0,0),"A2":(53.24,29.0,0)}
+# --- the front: BT1, the Seed, and a deliberate connector ring --------------
+# Cables leave a vertical JST upward, so "facing outward" matters less than
+# staying clear of the 21 mm cell and the Seed, and sitting near what they feed.
+# Left edge = power and the digital bus (near A1); right edge = analogue and
+# audio (near A2, far from the boost); bottom edge = switches and module ports.
+#
+# Edges are STACKED from measured extents rather than hand-placed. Hand
+# arithmetic on rotated courtyard offsets kept producing touching parts.
+
+def extent(ref, rot):
+    w,h,mx,my = bbox(comps[ref][1])
+    if rot in (90,270): w,h,mx,my = h,w,-my,mx
+    return w,h,mx,my
+
+def stack(refs, axis, fixed, start, gap, rot):
+    """lay refs along `axis` from `start`, so measured extents tile with `gap`"""
+    out={}; cur=start
+    for r in refs:
+        w,h,mx,my = extent(r,rot)
+        if axis=="y":
+            out[r]=(fixed, round(cur + h/2 - my, 2), rot); cur += h + gap
+        else:
+            out[r]=(round(cur + w/2 - mx, 2), fixed, rot); cur += w + gap
+    return out
+
+ANCHOR={"BT1":(13.55,14.0,0), "A1":(38.0,29.0,0), "A2":(53.24,29.0,0),
+        "J11":(23,42,0),      # digital bus IDC, inboard beside A1
+        "J5":(70,42,0),       # analogue bus IDC, inboard beside A2
+        "J14":(80,76,0),      # mic bias return -> hook switch second pole
+        "J18":(80,66,0),      # audio in, beside J14 -- same loom
+        "J16":(66,68,0)}      # expansion / SPI1, inboard right
+# Everything stays at rotation 0. A vertical JST exits upward, so orienting the
+# pin row along the edge buys nothing -- and the rotated-courtyard transform is
+# the one piece of geometry here I could not verify, so it is not used.
+ANCHOR.update(stack(["J1","J2","J3","J4"], "y", 6.5, 29.0, 2.0, 0))          # left: power
+ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 88.5, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
+ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 10.0, 1.5, 0)) # bottom: switches, module ports
 
 def shelf(zname, refs):
     x0,y0,x1,y1=ZONES[zname]
@@ -149,14 +190,25 @@ for r in list(place):
     if found:
         place[r]=(found[0],found[1],0); placed_rects.append(rect(r)); rescued.append(r)
 if rescued: print(f"  rescued onto the board: {rescued}")
+# front-side collision check: rotated extents, courtyard + 0.3 mm
+def frect(r):
+    w,h,mx,my=bbox(comps[r][1]); x,y,rot=place[r]
+    if rot in (90,270): w,h,mx,my=h,w,-my,mx
+    return (x+mx-w/2-0.3, y+my-h/2-0.3, x+mx+w/2+0.3, y+my+h/2+0.3, r)
+fr=[frect(r) for r in comps if not is_smd(comps[r][1])]
+# the four M3 holes live in the skeleton, not in comps -- the first version of
+# this check omitted them and passed a board where J6 and J18 fouled a hole
+for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+    fr.append((hx-3.4, hy-3.4, hx+3.4, hy+3.4, f"MH@{hx},{hy}"))
+clash=[(a[4],b_[4]) for i,a in enumerate(fr) for b_ in fr[i+1:]
+       if not (a[2]<=b_[0] or b_[2]<=a[0] or a[3]<=b_[1] or b_[3]<=a[1])]
+print("  front collisions:", clash if clash else "none")
+outside=[a[4] for a in fr if a[0]<0 or a[1]<0 or a[2]>100 or a[3]>90]
+print("  front parts breaking the outline:", outside if outside else "none")
+
 still=[r for r in place if not (0<=place[r][0]<=100 and 0<=place[r][1]<=90)]
 if still: print(f"  STILL off-board: {still}")
 
-
-def is_smd(libid):
-    """classify from the footprint's own attr, not from its library name"""
-    m=re.search(r'^\t\(attr ([^)]*)\)', load_fp(libid), re.M)
-    return bool(m) and "smd" in m.group(1).split()
 
 _LAYER=re.compile(r'"([FB])\.([A-Za-z]+)"')
 def to_back(body):
