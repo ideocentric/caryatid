@@ -44,6 +44,32 @@ Placement is a machine first pass, not layout. It puts each block where the
 zoning says and nothing overhangs the outline, but ~33 courtyards still overlap
 and the silkscreen is a mess. Treat it as something to drag from.
 
+## Which face
+
+**Front:** BT1, both Seed sockets, and every through-hole connector — 21 parts.
+**Back:** all 104 SMD, classified by each footprint's own `attr`, not by name.
+
+This is the checklist's "SMD on one face, holder and through-hole connectors on
+the other", and it pays immediately: `courtyards_overlap` went from 33 to **zero**,
+because SMD and through-hole can no longer collide.
+
+The flip is stored the way KiCad stores it, checked against a KiCad-written
+board rather than assumed: back-side footprints hold **Y-negated** coordinates,
+F/B layer names swapped, and `(justify mirror)` on every text. Arcs survive
+because KiCad 7+ stores start/mid/end and all three mirror together.
+
+**Two things to confirm before ordering.**
+
+`J13A` is the SMD Qwiic socket, so it classified as SMD and went to the back.
+Electrically fine; whether you want a Qwiic cable leaving from the underside is
+a mechanical question, not one the classifier can answer.
+
+**Through-hole bodies are on the front, so their pins protrude into the SMD
+side.** JLC cannot wave-solder them from the back without hitting SMD. For small
+runs their through-hole work is hand soldering, which is probably fine — but you
+asked for the JSTs to be machine-fitted as on absonus, and absonus had a
+component-free underside. Worth putting to JLC before the order.
+
 ## How dense is it, really
 
 | | mm² |

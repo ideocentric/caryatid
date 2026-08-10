@@ -152,6 +152,47 @@ if rescued: print(f"  rescued onto the board: {rescued}")
 still=[r for r in place if not (0<=place[r][0]<=100 and 0<=place[r][1]<=90)]
 if still: print(f"  STILL off-board: {still}")
 
+
+def is_smd(libid):
+    """classify from the footprint's own attr, not from its library name"""
+    m=re.search(r'^\t\(attr ([^)]*)\)', load_fp(libid), re.M)
+    return bool(m) and "smd" in m.group(1).split()
+
+_LAYER=re.compile(r'"([FB])\.([A-Za-z]+)"')
+def to_back(body):
+    """mirror a footprint body onto B.Cu, exactly as KiCad stores a flipped part.
+
+    Verified against a KiCad-written board: back-side footprints hold Y-negated
+    coordinates, F/B layer names swapped, and (justify mirror) on every text.
+    Arcs survive because KiCad 7+ stores start/mid/end and all three mirror.
+    """
+    body=_LAYER.sub(lambda m: '"%s.%s"' % ("B" if m.group(1)=="F" else "F", m.group(2)), body)
+    def negy(m):
+        pre,x,y,rest = m.group(1), m.group(2), m.group(3), m.group(4)
+        yv=-float(y)
+        return f"({pre} {x} {yv:g}{rest})"
+    body=re.sub(r'\((at|start|end|center|mid|xy) ([-\d.]+) ([-\d.]+)([^)]*)\)', negy, body)
+    body=re.sub(r'\(effects\n(\s*)\(font', lambda m: f"(effects\n{m.group(1)}(font", body)
+    # add mirror to every text effects block that lacks one
+    out=[]; i=0
+    while True:
+        j=body.find("(effects", i)
+        if j<0: out.append(body[i:]); break
+        d=0;k=j
+        while True:
+            if body[k]=='(': d+=1
+            elif body[k]==')':
+                d-=1
+                if d==0: break
+            k+=1
+        blk=body[j:k+1]
+        if "justify" not in blk:
+            blk=blk[:-1]+"\n\t\t\t\t(justify mirror)\n\t\t\t)"
+        elif "mirror" not in blk:
+            blk=re.sub(r'\(justify ([^)]*)\)', lambda m:f"(justify {m.group(1)} mirror)", blk, count=1)
+        out.append(body[i:j]); out.append(blk); i=k+1
+    return "".join(out)
+
 def emit(ref):
     val,libid=comps[ref]
     t=load_fp(libid)
@@ -190,7 +231,10 @@ def emit(ref):
         pieces.append(blk); i=k+1
     body="".join(pieces)
     body="".join(("\t"+ln if ln.strip() else ln)+"\n" for ln in body.split("\n")[:-1])
-    return (f'\t(footprint "{libid}"\n\t\t(layer "F.Cu")\n\t\t(uuid "{U(ref)}")\n'
+    back = is_smd(libid)
+    if back: body=to_back(body)
+    layer = "B.Cu" if back else "F.Cu"
+    return (f'\t(footprint "{libid}"\n\t\t(layer "{layer}")\n\t\t(uuid "{U(ref)}")\n'
             f'\t\t(at {sn(x+OX)} {sn(y+OY)}{"" if rot==0 else " "+str(rot)})\n' + body + "\t)\n")
 
 skel=open(os.path.join(PCB,"caryatid.kicad_pcb")).read()
