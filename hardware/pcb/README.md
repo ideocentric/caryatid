@@ -99,6 +99,27 @@ and that version passed a board where `J6` and `J18` each sat on top of a
 mounting hole. They come from the skeleton rather than from the netlist, which
 is exactly why a check built around the component list missed them.
 
+## Silkscreen and clearance exceptions
+
+**Back-side reference designators are hidden.** 104 SMD parts at this density
+made them illegible and they collided 87 times; JLC places from the CPL file,
+not from silkscreen. Front designators stay — that face is sparse and the
+connectors are what a human cables up. Mounting holes carry no silk either.
+
+**U1 and U2 have a footprint-level clearance override of 0.15 mm.** A 0.5 mm
+pitch package fixes its own pad gaps — 0.25 mm on the QFN, 0.15 mm on the
+SOT-563 — and the `HighCurrent` netclass asks 0.3 mm because `VBAT`, `VOUT` and
+`VIN_DC` land on those pins. No land pattern at that pitch can meet it. The
+exception is scoped to the two packages; every actual trace still answers to its
+netclass.
+
+Four violations survive that, and they are worth understanding rather than
+silencing: `min_clearance` is a **board-wide floor of 0.2 mm that a local
+override cannot go under**, and the SOT-563's own pads are 0.15 mm apart. To
+clear them the board floor would have to drop to 0.15 — still comfortably above
+JLC's 0.127 mm capability, since the netclasses would continue to govern
+routing. That is a board-setup decision, not a footprint fix.
+
 ## How dense is it, really
 
 | | mm² |

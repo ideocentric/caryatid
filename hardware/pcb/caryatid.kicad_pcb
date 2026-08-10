@@ -1384,7 +1384,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u/25V"
 			(at 0 -1.68 0)
@@ -1546,7 +1547,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -1708,7 +1710,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -1870,7 +1873,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2032,7 +2036,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2194,7 +2199,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2356,7 +2362,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2518,7 +2525,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2680,7 +2688,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -2842,7 +2851,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -3004,7 +3014,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "220n"
 			(at 0 -1.43 0)
@@ -3166,7 +3177,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -3328,7 +3340,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "220n"
 			(at 0 -1.43 0)
@@ -3490,7 +3503,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1u"
 			(at 0 -1.43 0)
@@ -3652,7 +3666,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -3814,7 +3829,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1u"
 			(at 0 -1.43 0)
@@ -3976,7 +3992,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -4138,7 +4155,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -4300,7 +4318,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -4462,7 +4481,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1u"
 			(at 0 -1.43 0)
@@ -4624,7 +4644,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -4786,7 +4807,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -4948,7 +4970,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -5110,7 +5133,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100n"
 			(at 0 -1.43 0)
@@ -5272,7 +5296,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -5434,7 +5459,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10u"
 			(at 0 -1.68 0)
@@ -5596,7 +5622,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "22u"
 			(at 0 -1.68 0)
@@ -5758,7 +5785,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100u"
 			(at 0 -4.35 0)
@@ -6128,7 +6156,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10n"
 			(at 0 -1.43 0)
@@ -6290,7 +6319,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10n"
 			(at 0 -1.43 0)
@@ -6453,7 +6483,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "SS34"
 			(at 0 -2.6 0)
@@ -6729,7 +6760,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "FB >=1A"
 			(at 0 -1.55 0)
@@ -8445,7 +8477,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "Comms A - Qwiic"
 			(at 0 -3.98 0)
@@ -14119,7 +14152,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1uH 4.2A"
 			(at 0 -3 0)
@@ -14363,7 +14397,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -14512,7 +14547,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "8fa4ccca-8988-585e-9ca7-de243c008102")
-		(at 62.0 120.0)
+		(at 80.5 56.5)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R10"
@@ -14525,7 +14560,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -14687,7 +14723,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -14849,7 +14886,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -15011,7 +15049,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -15173,7 +15212,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k 0.1%"
 			(at 0 -1.43 0)
@@ -15335,7 +15375,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k 0.1%"
 			(at 0 -1.43 0)
@@ -15497,7 +15538,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k 0.1%"
 			(at 0 -1.43 0)
@@ -15659,7 +15701,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k 0.1%"
 			(at 0 -1.43 0)
@@ -15821,7 +15864,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -15983,7 +16027,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -16145,7 +16190,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k2"
 			(at 0 -1.43 0)
@@ -16307,7 +16353,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -16469,7 +16516,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -16631,7 +16679,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -16793,7 +16842,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -16955,7 +17005,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -17117,7 +17168,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -17279,7 +17331,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -17441,7 +17494,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -17603,7 +17657,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -17765,7 +17820,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -17927,7 +17983,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "887R 1%"
 			(at 0 -1.43 0)
@@ -18089,7 +18146,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -18251,7 +18309,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -18413,7 +18472,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -18575,7 +18635,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100R"
 			(at 0 -1.43 0)
@@ -18737,7 +18798,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -18899,7 +18961,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -19061,7 +19124,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -19223,7 +19287,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -19385,7 +19450,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -19547,7 +19613,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -19709,7 +19776,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "46k4"
 			(at 0 -1.43 0)
@@ -19871,7 +19939,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "510"
 			(at 0 -1.43 0)
@@ -20033,7 +20102,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "300"
 			(at 0 -1.43 0)
@@ -20195,7 +20265,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "300"
 			(at 0 -1.43 0)
@@ -20357,7 +20428,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "4k7"
 			(at 0 -1.43 0)
@@ -20519,7 +20591,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "4k7"
 			(at 0 -1.43 0)
@@ -20681,7 +20754,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "3k"
 			(at 0 -1.43 0)
@@ -20843,7 +20917,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "10k"
 			(at 0 -1.43 0)
@@ -21005,7 +21080,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -21167,7 +21243,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "open"
 			(at 0 -1.43 0)
@@ -21329,7 +21406,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -21491,7 +21569,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "0R"
 			(at 0 -1.43 0)
@@ -21653,7 +21732,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "open"
 			(at 0 -1.43 0)
@@ -21815,7 +21895,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "2k2"
 			(at 0 -1.43 0)
@@ -21977,7 +22058,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "220R"
 			(at 0 -1.43 0)
@@ -22139,7 +22221,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "2k2"
 			(at 0 -1.43 0)
@@ -22301,7 +22384,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "220R"
 			(at 0 -1.43 0)
@@ -22463,7 +22547,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -22625,7 +22710,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -22787,7 +22873,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -22949,7 +23036,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -23111,7 +23199,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -23260,7 +23349,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "f9483f2b-4865-585b-92e9-6b4dc41caffb")
-		(at 69.0 116.5)
+		(at 54.5 56.5)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R6"
@@ -23273,7 +23362,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -23435,7 +23525,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -23597,7 +23688,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "100k"
 			(at 0 -1.43 0)
@@ -23759,7 +23851,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -23921,7 +24014,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "0R"
 			(at 0 -1.43 0)
@@ -24083,7 +24177,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "open"
 			(at 0 -1.43 0)
@@ -24245,7 +24340,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "0R"
 			(at 0 -1.43 0)
@@ -24407,7 +24503,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "open"
 			(at 0 -1.43 0)
@@ -24569,7 +24666,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "348k 1%"
 			(at 0 -1.43 0)
@@ -24731,7 +24829,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "47k5 1%"
 			(at 0 -1.43 0)
@@ -24880,7 +24979,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "6ca0055d-1cf6-5542-b0ef-9ba49f709907")
-		(at 58.0 120.0)
+		(at 58.5 56.5)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R9"
@@ -24893,7 +24992,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "1k"
 			(at 0 -1.43 0)
@@ -25043,6 +25143,7 @@
 		(layer "B.Cu")
 		(uuid "fc094957-4556-59ff-9b07-6d09a9597a7d")
 		(at 63.0 58.5)
+	(clearance 0.15)
 		(descr "TI BQ24074RGT, VQFN-16 (RGT) 3x3mm, 0.5mm pitch, 1.68mm exposed pad (TI nominal; 1.70 lands exactly on the 0.2mm clearance boundary). Thermal vias 0.3mm drill on 0.55mm pads at +/-0.5mm: JLC will not do 0.2mm holes, and TI\'s +/-0.6 position leaves only 0.176mm to the signal pads at that pad size. Land pattern per SLUS810N RGT0016C drawing 4222419/E. EP paste segmented 2x2 at 72% coverage; the 4 thermal vias sit under the apertures and MUST be tented/mask-plugged.")
 		(tags "QFN NoLead BQ24074 charger TI RGT")
 		(property "Reference" "U1"
@@ -25055,7 +25156,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "BQ24074RGT"
 			(at 0 -2.83 0)
@@ -25621,6 +25723,7 @@
 		(layer "B.Cu")
 		(uuid "3081a833-f163-583a-9e55-4c369cbc53b4")
 		(at 64.0 104.0)
+	(clearance 0.15)
 		(descr "SOT, 6 Pin (https://www.jedec.org/system/files/docs/MO-293B.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOT TO_SOT_SMD JEDEC-MO-293-UAAD Texas-DRL-6")
 		(property "Reference" "U2"
@@ -25633,7 +25736,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "TPS61023DRL"
 			(at 0 -1.65 0)
@@ -25891,7 +25995,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "74HC14"
 			(at 0 -5.28 0)
@@ -26249,7 +26354,8 @@
 				)
 			
 				(justify mirror)
-			)
+						(hide yes)
+		)
 		)
 		(property "Value" "MCP6002"
 			(at 0 -3.4 0)

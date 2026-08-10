@@ -198,7 +198,10 @@ def shelf(zname, refs):
                 cx=x0; cy+=rowh+0.8; rowh=0.0
             if not blocked(cx,cy,cx+w,cy+h) or tries>400: break
             cx+=0.5; tries+=1
-        if cy+h>y1: over.append(r)
+        if cy+h>y1:
+            # overflowing the zone used to mean running off the board -- hand it
+            # to the rescue pass, which knows about keepouts and the edge margin
+            over.append(r); out[r]=(999.0, 999.0, 0); continue
         out[r]=(sn(cx+w/2-mx), sn(cy+h/2-my), 0)
         cx+=w; rowh=max(rowh,h)
     if over: print(f'  zone {zname}: {len(over)} parts past its bottom edge -> {over}')
@@ -232,10 +235,11 @@ for r in list(place):
     if 0<=x<=100 and 0<=y<=90: continue
     w,h,mx,my=bbox(comps[r][1])
     found=None
+    EDGE=3.0                      # copper_edge_clearance needs real margin
     yy=26.0
-    while yy < 90-h and not found:
-        xx=1.0
-        while xx < 100-w and not found:
+    while yy < 90-h-EDGE and not found:
+        xx=EDGE
+        while xx < 100-w-EDGE and not found:
             cand=(xx-0.3, yy-0.3, xx+w+0.3, yy+h+0.3)
             if (not hits(cand,BT) and not blocked(*cand)
                     and not any(hits(cand,q) for q in placed_rects)):
@@ -346,6 +350,43 @@ def to_back(body):
         out.append(body[i:j]); out.append(blk); i=k+1
     return "".join(out)
 
+
+def _close_of(s, i):
+    """index of the paren closing the s-expression that starts at s[i]=='('"""
+    d=0; j=i; instr=False
+    while j < len(s):
+        c=s[j]
+        if instr:
+            if c=='\\': j+=2; continue
+            if c=='"': instr=False
+        elif c=='"': instr=True
+        elif c=='(': d+=1
+        elif c==')':
+            d-=1
+            if d==0: return j
+        j+=1
+    raise ValueError("unbalanced")
+
+def hide_reference(body):
+    """add (hide yes) to the Reference property's effects block.
+
+    Regex here is a trap: the first '\\t+)' after '(effects' closes the nested
+    (font ...), so a naive match buries (hide yes) inside the font.
+    """
+    m=re.search(r'\(property "Reference" "[^"]*"', body)
+    if not m: return body
+    pend=_close_of(body, m.start())
+    e=body.find("(effects", m.start())
+    if e<0 or e>pend: return body
+    eend=_close_of(body, e)
+    return body[:eend] + "\t\t\t(hide yes)\n\t\t" + body[eend:]
+
+def add_local_clearance(body, mm):
+    """footprint-level clearance override, placed after (attr ...) or (tags ...)"""
+    m=re.search(r'^\t\(attr [^\n]*\)\n', body, re.M) or re.search(r'^\t\(tags [^\n]*\)\n', body, re.M)
+    if not m: return "\t(clearance %s)\n" % mm + body
+    return body[:m.end()] + "\t(clearance %s)\n" % mm + body[m.end():]
+
 def emit(ref):
     val,libid=comps[ref]
     t=load_fp(libid)
@@ -385,7 +426,17 @@ def emit(ref):
     body="".join(pieces)
     body="".join(("\t"+ln if ln.strip() else ln)+"\n" for ln in body.split("\n")[:-1])
     back = is_smd(libid)
-    if back: body=to_back(body)
+    if back:
+        body=to_back(body)
+        # 104 SMD parts at this density make their designators illegible and they
+        # collided 87 times. JLC places from the CPL, not from silkscreen.
+        body=hide_reference(body)
+    if ref in ("U1","U2"):
+        # A 0.5 mm-pitch package fixes its own pad gaps: 0.25 mm on the QFN,
+        # 0.15 mm on the SOT-563. The HighCurrent netclass asks 0.3 mm, which no
+        # land pattern at this pitch can meet. Scope the exception to the two
+        # packages; every actual trace still answers to the netclass.
+        body=add_local_clearance(body, 0.15)
     layer = "B.Cu" if back else "F.Cu"
     return (f'\t(footprint "{libid}"\n\t\t(layer "{layer}")\n\t\t(uuid "{U(ref)}")\n'
             f'\t\t(at {sn(x+OX)} {sn(y+OY)}{"" if rot==0 else " "+str(rot)})\n' + body + "\t)\n")
