@@ -1,14 +1,24 @@
 # PCB
 
-KiCad 9 project. **The power sheet is captured**; seed, audio and panel-io are
-still empty.
+KiCad 9 project. **Power and seed are captured**; audio and panel-io are still
+empty.
 
-`power.kicad_sch` carries all 27 components and 19 nets from
-[`docs/power-sheet.md`](../../docs/power-sheet.md). ERC is clean at 0 violations,
-and the exported netlist was diffed node-by-node against that document — every
-net matches, and `ITERM` is the one deliberate no-connect. Placement is
-functional rather than tidy: components are on a 1.27 mm grid with labelled
-stubs, and are meant to be dragged into shape in the GUI.
+| Sheet | State | Check |
+| --- | --- | --- |
+| `power.kicad_sch` | 27 components, 19 nets | netlist diffed node-by-node against [power-sheet.md](../../docs/power-sheet.md); `ITERM` the one deliberate no-connect |
+| `seed.kicad_sch` | 12 components | all **31** physical pins in `pins.yaml` land on a net named after the pin |
+| `audio.kicad_sch` | empty | |
+| `panel-io.kicad_sch` | empty | |
+
+**ERC has no errors.** It reports 33 warnings, all `global_label_dangling`, one
+per Seed pin bound for a sheet that does not exist yet — 15 `D0`–`D14`, 10
+`A0`–`A9`, 4 RGB/expansion, 4 audio. Treat the count as a checksum: it should
+reach zero as those sheets land, and any *other* dangling label is a real fault
+hiding in an expected-looking number.
+
+Placement is functional rather than tidy — components on a 1.27 mm grid with
+labelled stubs, meant to be dragged into shape in the GUI. The bootstrap scripts
+in [`tools/oneshot/`](../../tools/oneshot/) are spent; do not re-run them.
 
 ```
 pcb/
