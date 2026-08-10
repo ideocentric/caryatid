@@ -14,6 +14,7 @@ Nothing in this directory works that way.
 | `gen_seed_sch.py` | `hardware/pcb/seed.kicad_sch` | **spent** — same |
 | `gen_panelio_sch.py` | `hardware/pcb/panel-io.kicad_sch` | **spent** — same |
 | `gen_audio_sch.py` | `hardware/pcb/audio.kicad_sch` | **spent** — same |
+| `gen_board_skeleton.py` | `hardware/pcb/caryatid.kicad_pcb` | **spent** — outline only; footprints come from the GUI |
 | `symlib.py` | — | read-only helper, safe to import |
 
 ## Why keep them at all

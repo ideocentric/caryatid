@@ -36,9 +36,15 @@ pcb/
   fp-lib-table
 ```
 
-Open `caryatid.kicad_pro`. **There is no `.kicad_pcb`** — KiCad creates it the
-first time the board editor is opened, and a hand-written one would carry no
-information a fresh file does not.
+Open `caryatid.kicad_pro`. `caryatid.kicad_pcb` exists but is a **mechanical
+shell only** — outline, four M3 holes, the BT1 keep-out on `Cmts.User`, and the
+2-layer stackup. **No footprints are placed.**
+
+`kicad-cli` has no "update PCB from schematic", so importing the 125 footprints
+has to happen in the GUI: open the board editor and run **Tools > Update PCB
+from Schematic (F8)**. Everything lands in a heap beside the board; placement is
+the next job. Zoning is in [`docs/capture-checklist.md`](../../docs/capture-checklist.md)
+under "Layout, when it comes".
 
 Verified with `kicad-cli` rather than assumed: ERC runs clean and traverses all
 four child sheets, and a netlist export resolves the full hierarchy.

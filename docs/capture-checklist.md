@@ -201,12 +201,12 @@ arrive rather than before the gerbers go out.
 
 ## Board level — none of this belongs to a sheet
 
-- [ ] **Two layers, 90 × 100 mm.** Fits the BUD's 95.2 × 165.1 mm usable
+- [x] **Two layers, 90 × 100 mm.** Fits the BUD's 95.2 × 165.1 mm usable
       rectangle, sloped sides already allowed for, and stays inside JLC's
       100 × 100 price tier. **Do not let either edge exceed 100 mm.**
 - [ ] **SMD on one face, holder and through-hole connectors on the other.** This
       is what makes two layers fit: the copper under the cell stays usable.
-- [ ] **Four M3 holes**, pattern chosen once the outline settles. absonus's
+- [x] **Four M3 holes**, pattern chosen once the outline settles. absonus's
       1.6″ × 3.6″ pattern is deliberately **not** inherited.
 - [ ] **On-board 18650 holder, and keep J2.** Populate one. Silkscreen
       "HOLDER *or* J2 — not both": two cells in parallel otherwise.
@@ -254,6 +254,8 @@ Frozen with the board, from the platform spec:
 6. **QFN-16-EP exposed pad** — thermal via array, segmented paste apertures, not
    one large opening. That pad carries charge current.
 7. Route the RGB lines away from the analogue bus; status changes are edges too.
-8. **Verify the Seed silkscreen against the socket positions** as a distinct
-   step. The outline and `USB` legend are free graphics, not part of a
-   footprint, so nothing moves them if a socket moves.
+8. **Place `A1` and `A2` exactly 15.24 mm apart.** The Seed outline, pin names
+   and `USB` legend live *inside* the two socket footprints and travel with
+   them, so there are no free graphics to fall out of step — but the outline and
+   the USB tab are split on the centreline and only close up at that spacing. A
+   broken outline on the board render means the spacing is wrong.
