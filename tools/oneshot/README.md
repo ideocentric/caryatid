@@ -12,6 +12,7 @@ Nothing in this directory works that way.
 | --- | --- | --- |
 | `gen_power_sch.py` | `hardware/pcb/power.kicad_sch` | **spent** — the schematic is now edited in KiCad |
 | `gen_seed_sch.py` | `hardware/pcb/seed.kicad_sch` | **spent** — same |
+| `gen_panelio_sch.py` | `hardware/pcb/panel-io.kicad_sch` | **spent** — same |
 | `symlib.py` | — | read-only helper, safe to import |
 
 ## Why keep them at all

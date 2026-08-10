@@ -1,20 +1,19 @@
 # PCB
 
-KiCad 9 project. **Power and seed are captured**; audio and panel-io are still
-empty.
+KiCad 9 project. **Power, seed and panel-io are captured**; audio is still empty.
 
 | Sheet | State | Check |
 | --- | --- | --- |
 | `power.kicad_sch` | 27 components, 19 nets | netlist diffed node-by-node against [power-sheet.md](../../docs/power-sheet.md); `ITERM` the one deliberate no-connect |
 | `seed.kicad_sch` | 12 components | all **31** physical pins in `pins.yaml` land on a net named after the pin |
+| `panel-io.kicad_sch` | 46 components | all **29** pins declaring a connector reach it, traversing series R and the debouncer |
 | `audio.kicad_sch` | empty | |
-| `panel-io.kicad_sch` | empty | |
 
-**ERC has no errors.** It reports 33 warnings, all `global_label_dangling`, one
-per Seed pin bound for a sheet that does not exist yet — 15 `D0`–`D14`, 10
-`A0`–`A9`, 4 RGB/expansion, 4 audio. Treat the count as a checksum: it should
-reach zero as those sheets land, and any *other* dangling label is a real fault
-hiding in an expected-looking number.
+**ERC has no errors.** It reports 4 warnings, all `global_label_dangling`:
+`AUDIO_IN_L/R` and `AUDIO_OUT_L/R`, waiting on the audio sheet. The count was
+33 before panel-io landed and the drop to exactly 4 was predicted, so treat it as
+a checksum — it should reach zero with audio, and any *other* dangling label is a
+real fault hiding in an expected-looking number.
 
 Placement is functional rather than tidy — components on a 1.27 mm grid with
 labelled stubs, meant to be dragged into shape in the GUI. The bootstrap scripts
