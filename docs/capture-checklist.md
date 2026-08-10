@@ -63,34 +63,35 @@ the schematic is a *consumer* of it, not a second opinion.
 
 ## Power sheet
 
-Every net is listed in [power-sheet.md](power-sheet.md); the items below are
-the ones that bite. Two custom symbols are already drawn in
-`caryatid.kicad_sym` — `BQ24074RGT` and `TPS61023DRL`, pin numbers taken from
-the datasheet tables and rendered to check.
+**Captured.** `power.kicad_sch` holds all 27 components and 19 nets, ERC is
+clean, and the exported netlist was diffed node-by-node against
+[power-sheet.md](power-sheet.md) — every net matches. The boxes ticked below are
+the ones that diff proves. The unticked ones are layout or silkscreen work, or
+belong to another sheet.
 
-- [ ] **`EN2` to `VOUT`, never to `VIN_DC`.** EN1/EN2/CE are 7 V absolute max
+- [x] **`EN2` to `VOUT`, never to `VIN_DC`.** EN1/EN2/CE are 7 V absolute max
       and VIH is valid only to 6 V; the barrel input goes to 9 V. This is the
       one that destroys a part.
-- [ ] **`ILIM` must be populated** — leaving it open disables all charging.
-- [ ] **`ITERM` no-connect flag**, deliberately floating for 10% termination.
-- [ ] **Charge LED anodes on `VOUT`, not `+5V`** — they must work with the
+- [x] **`ILIM` must be populated** — leaving it open disables all charging.
+- [x] **`ITERM` no-connect flag**, deliberately floating for 10% termination.
+- [x] **Charge LED anodes on `VOUT`, not `+5V`** — they must work with the
       boost off, which is the whole point of them.
-- [ ] C1 rated **25 V**: it sits on the raw barrel input.
+- [x] C1 rated **25 V**: it sits on the raw barrel input.
 
 - [ ] Barrel jack → SS34 → bq24074 `IN`. **5–9 V, never 12 V** — silkscreen it.
-- [ ] `RISET` **887 Ω, 1%** — the 1% is a datasheet requirement, not a
+- [x] `RISET` **887 Ω, 1%** — the 1% is a datasheet requirement, not a
       preference; the part short-tests this resistor.
-- [ ] `RILIM` **1.2 kΩ** → 1.29 A input limit. Valid range is 1.1 k–8 k; below
+- [x] `RILIM` **1.2 kΩ** → 1.29 A input limit. Valid range is 1.1 k–8 k; below
       1.1 k does not mean more current, it means undefined.
-- [ ] `TS` → 10 kΩ NTC in the pack, **or a fixed 10 kΩ to VSS if the pack has
+- [x] `TS` → 10 kΩ NTC in the pack, **or a fixed 10 kΩ to VSS if the pack has
       none.** Not optional, not floatable.
-- [ ] `/CHG`, `/PGOOD` → J4 LEDs, 1 k each **from the OUT rail** so they work
+- [x] `/CHG`, `/PGOOD` → J4 LEDs, 1 k each **from the OUT rail** so they work
       with the Seed off. This is what satisfies P-2.
 - [ ] `/CHG`, `/PGOOD` → also into the A11 encoder: **four 10 k 0.1% (C374544,
       in stock)** — pull-up **to 3V3**, 10 k on `/CHG`, 2×10 k series on
       `/PGOOD`, then 1 k / 10 nF to the pin. Pull-up on 3V3 and not OUT, so it
       draws nothing while off.
-- [ ] Boost `FB` divider **348 k / 47.5 k for 5.0 V**. Not 5.2 V — see
+- [x] Boost `FB` divider **348 k / 47.5 k for 5.0 V**. Not 5.2 V — see
       [values.md](values.md), it leaves 109 mV to the OVP minimum.
 - [ ] Inductor **C354578** — 1 µH, 4.2 A Isat against a 1.51 A worst-case peak
       at 30% derating. Working in [sourcing.md](sourcing.md).

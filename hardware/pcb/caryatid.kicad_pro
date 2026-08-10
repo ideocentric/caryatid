@@ -561,7 +561,7 @@
       },
       {
         "netclass": "HighCurrent",
-        "pattern": "SW"
+        "pattern": "/power/SW"
       },
       {
         "netclass": "Analog",

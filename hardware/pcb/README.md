@@ -1,7 +1,14 @@
 # PCB
 
-KiCad 9 project. **Symbols and footprints built; no schematic content yet** —
-the four sheets exist and are empty.
+KiCad 9 project. **The power sheet is captured**; seed, audio and panel-io are
+still empty.
+
+`power.kicad_sch` carries all 27 components and 19 nets from
+[`docs/power-sheet.md`](../../docs/power-sheet.md). ERC is clean at 0 violations,
+and the exported netlist was diffed node-by-node against that document — every
+net matches, and `ITERM` is the one deliberate no-connect. Placement is
+functional rather than tidy: components are on a 1.27 mm grid with labelled
+stubs, and are meant to be dragged into shape in the GUI.
 
 ```
 pcb/
@@ -47,6 +54,14 @@ switching current — 1.51 A peak at worst case. Those are not signal nets.
 
 **Name the nets to match the patterns.** A net called `BAT+` will land in
 Default and be routed at 0.25 mm, which is how a board gets warm.
+
+**Local labels are sheet-qualified, and that defeats a bare pattern.** A power
+symbol makes a global net called `VBAT`; a *local* label on the power sheet makes
+a net called `/power/SW`. The pattern `SW` does not match `/power/SW`, so the
+boost switching node — 1.51 A peak — would have silently fallen into Default.
+The pattern is therefore `/power/SW`, spelled out. Any future HighCurrent or
+Analog net carried on a local label needs the same treatment; global labels and
+power symbols do not.
 
 ## Design rules
 

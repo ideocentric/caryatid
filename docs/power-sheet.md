@@ -202,10 +202,17 @@ Rails are power symbols and global by nature: `GND`, `+5V`, `VBAT`, `VOUT`,
 pattern, so `VBAT` lands in HighCurrent at 1.2 mm while a net called `BAT+`
 silently falls into Default at 0.25 mm.
 
-Two hierarchical labels go to the **seed** sheet, where the A11 encoder lives:
+Two labels go to the **seed** sheet, where the A11 encoder lives:
 
 - `~{CHG}`
 - `~{PGOOD}`
+
+**They are captured as global labels, not hierarchical ones.** Hierarchical
+labels need matching sheet pins on the root sheet, and a sheet pin that leads to
+a sheet which has not been captured yet is an ERC error rather than a promise.
+Global labels connect across sheets directly, which for four sheets and two
+signals is the proportionate mechanism. If the sheets are ever made reusable,
+this is the thing to revisit.
 
 ## Layout notes for this sheet
 
