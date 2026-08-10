@@ -42,7 +42,7 @@ Hierarchical, so the power section stays a reusable block for a future board:
 
 - [x] `power.kicad_sch` — charger, boost, latch, hardware charge LEDs
 - [x] `seed.kicad_sch` — Seed sockets, battery gauge, charge-status code
-- [ ] `audio.kicad_sch` — jacks, coupling, mic bias and preamp/pad options
+- [x] `audio.kicad_sch` — jacks, coupling, mic bias and preamp/pad options
 - [x] `panel-io.kicad_sch` — analogue bus, digital bus, switches, comms ports
 
 ## Enforcing the pin map

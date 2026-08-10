@@ -1,19 +1,22 @@
 # PCB
 
-KiCad 9 project. **Power, seed and panel-io are captured**; audio is still empty.
+KiCad 9 project. **All four sheets are captured.** 125 components, 101 nets,
+**ERC clean at 0 violations.**
 
 | Sheet | State | Check |
 | --- | --- | --- |
 | `power.kicad_sch` | 27 components, 19 nets | netlist diffed node-by-node against [power-sheet.md](../../docs/power-sheet.md); `ITERM` the one deliberate no-connect |
 | `seed.kicad_sch` | 12 components | all **31** physical pins in `pins.yaml` land on a net named after the pin |
 | `panel-io.kicad_sch` | 46 components | all **29** pins declaring a connector reach it, traversing series R and the debouncer |
-| `audio.kicad_sch` | empty | |
+| `audio.kicad_sch` | 35 placements, 28 DNP | 17 nets diffed against [audio.md](../../docs/audio.md), including `C_g` in series with `R_g` |
 
-**ERC has no errors.** It reports 4 warnings, all `global_label_dangling`:
-`AUDIO_IN_L/R` and `AUDIO_OUT_L/R`, waiting on the audio sheet. The count was
-33 before panel-io landed and the drop to exactly 4 was predicted, so treat it as
-a checksum — it should reach zero with audio, and any *other* dangling label is a
-real fault hiding in an expected-looking number.
+**The dangling-global count reached zero.** It ran 33 → 4 → 0 as seed, panel-io
+and audio landed, and each drop was predicted before the sheet was drawn. Five
+no-connects remain and all five are deliberate: `ITERM` on the charger, `J11`
+pin 9 (the spare), and the three unused 74HC14 outputs.
+
+Treat any *new* ERC message as real. The design now has nothing expected to be
+wrong, so there is no noise for a fault to hide in.
 
 Placement is functional rather than tidy — components on a 1.27 mm grid with
 labelled stubs, meant to be dragged into shape in the GUI. The bootstrap scripts
