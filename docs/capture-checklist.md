@@ -207,7 +207,10 @@ arrive rather than before the gerbers go out.
       100 × 100 price tier. **Do not let either edge exceed 100 mm.**
 - [ ] **SMD on one face, holder and through-hole connectors on the other.** This
       is what makes two layers fit: the copper under the cell stays usable.
-- [x] **Four M3 holes**, pattern chosen once the outline settles. absonus's
+- [x] **Four M3 holes**, pattern chosen once the outline settles.
+- [ ] **Drill the CU-477 floor** to the 90 × 80 mm pattern — ±40 / ±45 mm
+      from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
+      STEP are in the walls and flanges. See [sourcing.md](sourcing.md). absonus's
       1.6″ × 3.6″ pattern is deliberately **not** inherited.
 - [ ] **On-board 18650 holder, and keep J2.** Populate one. Silkscreen
       "HOLDER *or* J2 — not both": two cells in parallel otherwise.
