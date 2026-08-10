@@ -43,7 +43,7 @@ Hierarchical, so the power section stays a reusable block for a future board:
 - [x] `power.kicad_sch` — charger, boost, latch, hardware charge LEDs
 - [x] `seed.kicad_sch` — Seed sockets, battery gauge, charge-status code
 - [ ] `audio.kicad_sch` — jacks, coupling, mic bias and preamp/pad options
-- [ ] `panel-io.kicad_sch` — analogue bus, digital bus, switches, comms ports
+- [x] `panel-io.kicad_sch` — analogue bus, digital bus, switches, comms ports
 
 ## Enforcing the pin map
 
@@ -56,9 +56,9 @@ the schematic is a *consumer* of it, not a second opinion.
 - [x] **Cross-check the finished schematic against `pinmap.md` pin by pin.** By
       script if you can face writing one, by eye if not, but do it as a
       distinct pass rather than while drawing.
-- [ ] **`D8` is the only free SPI1 clock.** If anything ends up on it that is
+- [x] **`D8` is the only free SPI1 clock.** If anything ends up on it that is
       not the expansion header, stop.
-- [ ] **Hook switch on `D7`, never `D13`/`D14`.** Those two are comms port B and
+- [x] **Hook switch on `D7`, never `D13`/`D14`.** Those two are comms port B and
       USART1 needs both.
 
 ## Power sheet
@@ -132,12 +132,21 @@ The cross-check against the frozen map was run as its own pass, by script:
 
 ## Panel I/O sheet
 
-Every net is in [panel-io-sheet.md](panel-io-sheet.md). No custom symbols — the
-74HC14 and all the connectors are stock KiCad.
+**Captured.** `panel-io.kicad_sch` holds 59 placements across 46 components. No
+custom symbols — the 74HC14 and every connector are stock KiCad.
 
-- [ ] **A4 gets 10 kΩ, A5 gets 3 kΩ.** The spec had these transposed; the
+ERC has no errors, and the dangling-global count has fallen **33 → 4**: the only
+labels still unresolved are `AUDIO_IN_L/R` and `AUDIO_OUT_L/R`, waiting on the
+audio sheet. That was the predicted number, and it landing exactly is the check.
+
+The pin-map enforcement pass was run by script against `pins.yaml`, traversing
+series resistors and the debouncer rather than demanding a direct connection:
+**all 29 pins that declare a connector reach it**, and A10/A11 correctly reach
+none because they are on-board measurements.
+
+- [x] **A4 gets 10 kΩ, A5 gets 3 kΩ.** The spec had these transposed; the
       fabricated absonus board is the authority. FSR 10 k, soft pot 3 k.
-- [ ] **Hook switch on SW3 / J8 / `D7`.** Never SW1 or SW2 — those are comms
+- [x] **Hook switch on SW3 / J8 / `D7`.** Never SW1 or SW2 — those are comms
       port B and USART1 needs both pins.
 - [ ] 74HC14 per channel: 10 kΩ pull-up, 10 kΩ series, C to ground. **C is a
       population choice** — 220 nF panel, **1 µF for a hook lever**. 100 nF is

@@ -78,3 +78,22 @@ def flat_entry(lib, name):
         s=symbol_text(lib,name)
         return "\t"+s.replace(f'(symbol "{name}"', f'(symbol "{lib}:{name}"',1)
     raise NotImplementedError(f"{lib}:{name} is derived (extends {root}); use a base symbol instead")
+
+def pins_unit(lib, name, unit):
+    """pins belonging to one unit of a multi-unit symbol, in SYMBOL coords.
+
+    Unit 0 blocks (NAME_0_n) hold shared graphics; real pins live in NAME_<u>_n.
+    """
+    root,_=resolve(lib,name)
+    s=symbol_text(lib,root); out=[]
+    for m in re.finditer(r'\(symbol "%s_(\d+)_\d+"' % re.escape(root), s):
+        if int(m.group(1))!=unit: continue
+        blk=_balanced(s, m.start())
+        for pm in re.finditer(r'\(pin\s+(\S+)\s+\S+\s*\n', blk):
+            pb=_balanced(blk, pm.start())
+            at=re.search(r'\(at\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)\)', pb)
+            num=re.search(r'\(number\s+"([^"]*)"', pb)
+            if at and num:
+                out.append((num.group(1), float(at.group(1)), float(at.group(2)),
+                            int(at.group(3)), pm.group(1)))
+    return out
