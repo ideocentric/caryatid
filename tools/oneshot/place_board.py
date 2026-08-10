@@ -76,15 +76,16 @@ def bbox(libid):
     if not xs: return (3.0,3.0,0.0,0.0)
     return (max(xs)-min(xs), max(ys)-min(ys), (max(xs)+min(xs))/2, (max(ys)+min(ys))/2)
 
-ZONES={  # x0,y0,x1,y1 -- board coords, tiling the area BT1 and the Seed leave
- "digbus":  (1,26,33,45),     # left, near A1 (digital row)
- "charger": (1,46,33,64),
- "boost":   (1,65,33,88),     # switcher hard left, away from analogue and audio
- "conn":    (35,82,99,89),    # bottom strip -- edge connectors want the edge anyway
- "seedsup": (35,26,58,40),    # A10 / A11 networks
- "anabus":  (61,26,99,48),    # analogue bus by the Seed's analogue row
- "audio":   (61,50,99,80),    # furthest point from L1
- "switch":  (35,41,58,52),
+ZONES={  # back-side zones. The strip under BT1 is the largest genuinely free
+ # area on this face: the cell's only pads are its two end terminals.
+ "anabus":  (17,3,50,24),      # analogue bus + its RC, under the cell
+ "audio":   (52,3,84,24),      # audio block, under the cell
+ "seedsup": (41,28,51,60),     # A10/A11 networks, between the Seed pad columns
+ "digbus":  (31,62,50,80),     # digital bus series resistors
+ "switch":  (56,26,64,78),     # 74HC14 channel, clear of both socket columns
+ "charger": (1,26,30,50),      # charger, left, under the power connectors
+ "boost":   (6,62,30,86),      # boost cluster is hand-placed inside this
+ "conn":    (66,62,84,80),     # RGB / I2C / sensor resistors
 }
 ZONE_OF={}
 def zone(z,*refs):
@@ -136,21 +137,74 @@ ANCHOR.update(stack(["J1","J2","J3","J4"], "y", 6.5, 29.0, 2.0, 0))          # l
 ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 88.5, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
 ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 10.0, 1.5, 0)) # bottom: switches, module ports
 
+# --- the back: hand-placed clusters, the rest shelf-packed -------------------
+# A back-side pad sits at (X + px, Y - py): the body is stored Y-negated. So on
+# U2 (SOT-563) the pins land GND top-right, SW middle-right, VOUT bottom-right.
+#
+# The hot loop on a boost is VOUT -> C6 -> GND -> back into the IC ground pin,
+# and the SW node is the radiator. C6 therefore sits hard against pin 6 and L1
+# hard against pin 5. L1 is turned 180 so its SW pad faces the IC -- 180 is
+# (px,py) -> (-px,-py), which is checkable, unlike the 90 transform.
+UX,UY = 14.0, 74.0
+# Spacings below are computed from measured courtyards (all centre offsets are
+# zero), not eyeballed. C6 takes the one adjacent slot because the output cap
+# carries the discontinuous current and is the dominant radiator; L1 gets the
+# next-best position above the IC.
+BACK_ANCHOR={
+ "U2":(UX,UY,0),                 # courtyard 2.40 x 1.90
+ "C6":(17.3, 74.5, 0),           # pad 1 -> pin 6, 1.64 mm
+ "L1":(15.0, 70.2, 180),         # 180 faces the SW pad at the IC
+ "C4":(10.5, 73.5, 180),         # pad 1 -> pin 3, 1.44 mm
+ "C5":(19.4, 70.5, 0),           # at L1's VOUT pad
+ "R7":(10.9, 76.5, 0),           # FB divider, against pin 1
+ "R8":(10.9, 78.6, 0),
+ "FB1":(21.5, 74.5, 0),          # ferrite, downstream of +5V_RAW
+ # C7 (100 uF, 9.6 x 7.1) is bulk after the ferrite, not loop-critical. Hand-
+ # anchoring put it on the J6/J7 pads, so the keepout-aware packer places it.
+}
+
+def tht_keepouts():
+    """front through-hole pads occupy every copper layer -- keepouts for the back"""
+    out=[]
+    for r,(val,libid) in comps.items():
+        if is_smd(libid) or r not in ANCHOR: continue
+        x,y,rot = ANCHOR[r]
+        for m in re.finditer(r'\(pad "[^"]*" (thru_hole|np_thru_hole)[^\n]*\n\s*\(at ([-\d.]+) ([-\d.]+)[^)]*\)\s*\n\s*\(size ([-\d.]+) ([-\d.]+)\)', load_fp(libid)):
+            px,py,sw,sh = (float(m.group(i)) for i in (2,3,4,5))
+            if rot==180: px,py=-px,-py
+            out.append((x+px-sw/2-0.3, y+py-sh/2-0.3, x+px+sw/2+0.3, y+py+sh/2+0.3))
+    for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+        out.append((hx-3.6,hy-3.6,hx+3.6,hy+3.6))
+    # hand-anchored back parts are keepouts too -- the packer would otherwise
+    # drop shelf-packed parts straight on top of the boost cluster
+    for r,(x,y,rot) in BACK_ANCHOR.items():
+        w,h,mx,my=bbox(comps[r][1])
+        if rot==180: mx,my=-mx,-my
+        out.append((x+mx-w/2-0.4, y+my-h/2-0.4, x+mx+w/2+0.4, y+my+h/2+0.4))
+    return out
+KEEP=tht_keepouts()
+def blocked(x0,y0,x1,y1):
+    return any(not (x1<=k[0] or k[2]<=x0 or y1<=k[1] or k[3]<=y0) for k in KEEP)
+
 def shelf(zname, refs):
     x0,y0,x1,y1=ZONES[zname]
     items=sorted(refs, key=lambda r:-bbox(comps[r][1])[1])
     out={}; over=[]; cx,cy,rowh=x0,y0,0.0
     for r in items:
-        w,h,mx,my=bbox(comps[r][1]); w+=0.6; h+=0.6
-        if cx+w>x1:
-            cx=x0; cy+=rowh+0.8; rowh=0.0
+        w,h,mx,my=bbox(comps[r][1]); w+=1.0; h+=1.0
+        tries=0
+        while True:
+            if cx+w>x1:
+                cx=x0; cy+=rowh+0.8; rowh=0.0
+            if not blocked(cx,cy,cx+w,cy+h) or tries>400: break
+            cx+=0.5; tries+=1
         if cy+h>y1: over.append(r)
         out[r]=(sn(cx+w/2-mx), sn(cy+h/2-my), 0)
         cx+=w; rowh=max(rowh,h)
     if over: print(f'  zone {zname}: {len(over)} parts past its bottom edge -> {over}')
     return out
 
-place=dict(ANCHOR)
+place=dict(ANCHOR); place.update(BACK_ANCHOR)
 for z in ZONES:
     refs=[r for r,zz in ZONE_OF.items() if zz==z and r in comps and r not in place]
     place.update(shelf(z,refs))
@@ -183,7 +237,8 @@ for r in list(place):
         xx=1.0
         while xx < 100-w and not found:
             cand=(xx-0.3, yy-0.3, xx+w+0.3, yy+h+0.3)
-            if not hits(cand,BT) and not any(hits(cand,q) for q in placed_rects):
+            if (not hits(cand,BT) and not blocked(*cand)
+                    and not any(hits(cand,q) for q in placed_rects)):
                 found=(sn(xx+w/2-mx), sn(yy+h/2-my))
             xx+=1.0
         yy+=1.0
@@ -206,6 +261,51 @@ print("  front collisions:", clash if clash else "none")
 outside=[a[4] for a in fr if a[0]<0 or a[1]<0 or a[2]>100 or a[3]>90]
 print("  front parts breaking the outline:", outside if outside else "none")
 
+# back-side collisions (rot 0 or 180 only, so the bbox transform is exact)
+def brect(r):
+    w,h,mx,my=bbox(comps[r][1]); x,y,rot=place[r]
+    if rot==180: mx,my=-mx,-my
+    return (x+mx-w/2-0.2, y+my-h/2-0.2, x+mx+w/2+0.2, y+my+h/2+0.2, r)
+br=[brect(r) for r in comps if is_smd(comps[r][1])]
+# A through-hole pad on the front occupies EVERY copper layer, so it is a
+# keepout for back-side SMD. Courtyard-vs-courtyard checks never see this:
+# the front part is on the other face. Missing it put the A10/A11 network and
+# the 74HC14 straight on top of the Seed sockets' pad columns.
+def thtpads(r):
+    fp=load_fp(comps[r][1]); x,y,rot=place[r]; out=[]
+    for m in re.finditer(r'\(pad "[^"]*" (thru_hole|np_thru_hole)[^\n]*\n\s*\(at ([-\d.]+) ([-\d.]+)[^)]*\)\s*\n\s*\(size ([-\d.]+) ([-\d.]+)\)', fp):
+        px,py,sw,sh=float(m.group(2)),float(m.group(3)),float(m.group(4)),float(m.group(5))
+        if rot==180: px,py=-px,-py
+        out.append((x+px-sw/2-0.25, y+py-sh/2-0.25, x+px+sw/2+0.25, y+py+sh/2+0.25))
+    return out
+keep=[]
+for r in comps:
+    if not is_smd(comps[r][1]): keep += thtpads(r)
+for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+    keep.append((hx-3.4,hy-3.4,hx+3.4,hy+3.4))
+foul=sorted({a[4] for a in br for k in keep
+             if not (a[2]<=k[0] or k[2]<=a[0] or a[3]<=k[1] or k[3]<=a[1])})
+print(f"  back parts over front through-hole pads: {len(foul)}" + (f" -> {foul[:12]}{' ...' if len(foul)>12 else ''}" if foul else " (none)"))
+bc=[(a[4],b_[4]) for i,a in enumerate(br) for b_ in br[i+1:]
+    if not (a[2]<=b_[0] or b_[2]<=a[0] or a[3]<=b_[1] or b_[3]<=a[1])]
+print(f"  back collisions: {len(bc)}" + (f" -> {bc[:6]}{' ...' if len(bc)>6 else ''}" if bc else " (none)"))
+
+def padpos(ref,pin):
+    for n,px,py,_,_ in symlib.pins_resolved.__self__ if False else []: pass
+    t=load_fp(comps[ref][1])
+    m=re.search(r'\(pad "%s"[^\n]*\n\s*\(at ([-\d.]+) ([-\d.]+)' % re.escape(pin), t)
+    px,py=float(m.group(1)),float(m.group(2))
+    x,y,rot=place[ref]
+    if rot==180: px,py=-px,-py
+    return (x+px, y-py)          # back side: body stored Y-negated
+p6=padpos("U2","6"); p4=padpos("U2","4"); p5=padpos("U2","5")
+c6a=padpos("C6","1"); c6b=padpos("C6","2"); l1b=padpos("L1","2")
+import math
+def d(a,b): return math.hypot(a[0]-b[0],a[1]-b[1])
+print(f"  boost hot loop: U2.6->C6 {d(p6,c6a):.2f} mm, C6->U2.4 return {d(c6b,p4):.2f} mm, "
+      f"perimeter {d(p6,c6a)+d(c6a,c6b)+d(c6b,p4)+d(p4,p6):.2f} mm")
+print(f"  SW node: U2.5 -> L1.2 = {d(p5,l1b):.2f} mm")
+
 still=[r for r in place if not (0<=place[r][0]<=100 and 0<=place[r][1]<=90)]
 if still: print(f"  STILL off-board: {still}")
 
@@ -222,6 +322,7 @@ def to_back(body):
     def negy(m):
         pre,x,y,rest = m.group(1), m.group(2), m.group(3), m.group(4)
         yv=-float(y)
+        if yv==0: yv=0.0          # avoid emitting "-0", which reads as a diff
         return f"({pre} {x} {yv:g}{rest})"
     body=re.sub(r'\((at|start|end|center|mid|xy) ([-\d.]+) ([-\d.]+)([^)]*)\)', negy, body)
     body=re.sub(r'\(effects\n(\s*)\(font', lambda m: f"(effects\n{m.group(1)}(font", body)

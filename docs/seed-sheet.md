@@ -181,11 +181,19 @@ putting the silkscreen back deliberately. **This is built** —
 - **Pin-1 marker**: a dot at `A1` pin 1, plus a **square pad at the USB end of
   both rows** — `A1` pin 1 and `A2` pin 40. Two landmarks, one per strip.
 
-**And take the bonus.** With plain socket rows there is silkscreen space beside
-the pins that the module footprint occupied, so **print the pin names on the
-board** — `D0`, `D7`, `A0`, `VIN`. The frozen map becomes visible on the copper,
-which is worth a great deal the first time something is probed with a meter at
-one in the morning.
+**No per-pin labels.** An earlier version of this document called for printing
+`D0`, `D7`, `A0`, `VIN` beside all forty pins, on the grounds that the frozen map
+would become visible on the copper. That was drawn and then removed: a label
+that only restates the pin name still leaves you tracing the net to learn
+anything, so it earns very little for forty pieces of silkscreen.
+
+It also did not survive contact with the fab. At 2.54 mm pitch the labels only
+fitted at 0.7 mm, which is **below JLCPCB's 0.8 mm floor** — they would have
+printed blurred or been dropped. Growing them to a legible size ran the longer
+names (`AUDIO OUT L`) into J11's pads.
+
+**The orientation cue is the marking that earns its space**, because it prevents
+an error rather than describing one.
 
 **The risk this would have introduced is designed out.** Loose board graphics
 stay behind when a socket moves, so none of this is loose: every line and label

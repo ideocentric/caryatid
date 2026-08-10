@@ -123,9 +123,10 @@ The cross-check against the frozen map was run as its own pass, by script:
       used a single designator and the BOM asked for one socket where the board
       needs two. Using both symbols is what makes the schematic carry the
       quantity — placing one twice would put the same designator on both.
-- [x] ~~Draw the Seed orientation back in as silkscreen~~ — outline, pin-1
-      marker, `USB` legend and pin names are **inside the two footprints**, so
-      they travel with the sockets. Nothing to draw by hand.
+- [x] ~~Draw the Seed orientation back in as silkscreen~~ — outline, pin-1 dot,
+      square pads at the USB end of both rows, and the `USB` legend are **inside
+      the two footprints**, so they travel with the sockets. Per-pin labels were
+      drawn and then dropped: see [seed-sheet.md](seed-sheet.md).
 - [ ] **Place `A1` and `A2` exactly 15.24 mm apart** at layout. The outline and
       USB tab are split across the two footprints and only close up at that
       spacing — a broken outline on the board render means the spacing is wrong.

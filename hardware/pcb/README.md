@@ -207,10 +207,25 @@ Two caveats worth carrying into layout and into the order:
   differ, the EP dimension is what changes.
 
 **`caryatid:DaisySeed_Socket_A_1x20` / `_B_1x20`** — two 1×20 socket rows so the
-BOM asks for two sockets from the schematic. They carry the module outline, pin
-names, pin-1 dot and `USB` legend as footprint silkscreen, split on the
-centreline so wrong spacing shows as a broken outline. See
-[`docs/seed-sheet.md`](../../docs/seed-sheet.md).
+BOM asks for two sockets from the schematic. They carry the module outline,
+pin-1 dot, square pads at the USB end of both rows and the `USB` legend, split on
+the centreline so wrong spacing shows as a broken outline. Per-pin labels were
+drawn and dropped — see [`docs/seed-sheet.md`](../../docs/seed-sheet.md).
+
+## Silkscreen: JLCPCB's numbers
+
+| | Absolute minimum | Recommended |
+| --- | --- | --- |
+| Character height | **0.8 mm** | ≥ 1.0 mm |
+| Line width | **0.15 mm** | ≥ 0.2 mm |
+| Pad-to-silk clearance | — | ≥ 0.25 mm |
+
+Two project rules were looser than that and have been tightened:
+`min_text_thickness` 0.08 → **0.15**, and `min_silk_clearance` 0 → **0.25**,
+which was disabled entirely. `min_text_height` was already correct at 0.8.
+
+Expect the silk-overlap count to *rise* after that change. It is not a
+regression — the rule was previously not checking.
 
 **BT1 is settled and needs no project-local work**: MPD `BH-18650-PC`,
 `C5339083`, on stock `Battery:BatteryHolder_MPD_BH-18650-PC`, whose pads match
