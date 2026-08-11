@@ -149,6 +149,40 @@ exit necks to 0.2 mm and widens only once clear of the pad field. With that, the
 routing adds **no** DRC violations of its own — the four clearance items are the
 pre-existing SOT-563 pad-pitch ones.
 
+## Routing the rest: Specctra DSN
+
+`kicad-cli` has no router and no `dsn` export, so `tools/export_dsn.py` writes one:
+
+```sh
+python3 tools/export_dsn.py                 # -> hardware/pcb/caryatid.dsn
+freerouting -de hardware/pcb/caryatid.dsn -do hardware/pcb/caryatid.ses
+# KiCad: File > Import > Specctra Session
+```
+
+KiCad's own GUI export (File > Export > Specctra DSN) is more authoritative; this
+exists so the export can be produced headlessly. The `.dsn` and `.ses` are
+gitignored — regenerate rather than commit.
+
+Two things it does that the GUI export does not:
+
+- **GND is excluded from the routed nets.** F.Cu is a ground plane, which
+  Freerouting cannot see, so it would otherwise scribble 72 ground traces across
+  the board. GND wants stitching vias instead. `--with-gnd` overrides.
+- **Existing copper is emitted `(type protect)`.** The boost hot loop and the SW
+  node were placed and measured by hand; this stops the router discarding them.
+
+**Not verified against Freerouting** — there is none on this machine. The file is
+checked structurally (balanced, every padstack and net pin resolves, placements
+inside the boundary) but has never been loaded by the tool it targets. Treat the
+first import as the real test.
+
+The conventions worth knowing if it ever needs debugging: coordinates are
+millimetres × 10000, **DSN is Y-up so `dsn_y = -kicad_y`**, and images are the
+canonical library footprint — unrotated and unmirrored — with side and rotation
+carried in `(place ...)`. That last one matters because the board stores
+back-side footprints already Y-negated, so using the placed copy would mirror
+them twice.
+
 ## Silkscreen and clearance exceptions
 
 **Back-side reference designators are hidden.** 104 SMD parts at this density

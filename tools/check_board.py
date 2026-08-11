@@ -227,6 +227,20 @@ def main():
                 if ring < JLC_ANNULAR_MIN and pad["drill"] < 1.0:
                     fail("annular", f"{p['ref']} pad {pad['num']} ring {ring:.3f} < {JLC_ANNULAR_MIN}")
 
+    # 6b -- netclass via defaults. The checker originally only inspected vias that
+    # already existed, so a netclass whose default via is below the fab floor went
+    # unnoticed until an autorouter would have placed hundreds of them.
+    try:
+        import json as _json
+        for c in _json.load(open(PRO))["net_settings"]["classes"]:
+            dia, dr = c.get("via_diameter"), c.get("via_drill")
+            if dia is None or dr is None: continue
+            if (dia - dr) / 2 < JLC_ANNULAR_MIN:
+                fail("annular-netclass",
+                     f"netclass {c['name']} default via {dia}/{dr} -> ring {(dia-dr)/2:.3f}")
+    except Exception as e:
+        fail("annular-netclass", f"could not read netclass vias: {e}")
+
     # 7 -- track width vs the pitch of the pad it starts on
     padindex = []
     for p in B.parts:
