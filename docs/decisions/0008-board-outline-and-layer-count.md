@@ -1,0 +1,81 @@
+# 8. Board outline and layer count
+
+Date: 2026-08-10
+
+## Status
+
+Accepted. Supersedes the undocumented 90 × 100 decision and the "neither edge
+past 100 mm" rule.
+
+## Context
+
+The outline and layer count were settled early in three commits over about
+thirteen minutes — `91a0556` (four layers, absonus outline), `ac6d02b` (two
+layers, 65 × 115), `d4b1fec` (90 × 100) — and **never written up**, despite
+[ADR 0001](0001-record-architecture-decisions.md) saying a decision belongs here
+if reversing it would cost a board spin. This one would.
+
+Three of the premises turned out not to hold.
+
+**The price tier was never priced.** "JLCPCB's cheapest board tier is 100 × 100;
+past it, price scales with area" appears in three documents and is sourced in
+none. Priced properly, going to 100 × 200 turned out to be a small increase — so
+the rule that shaped the outline was protecting against a cost nobody had
+measured.
+
+**The four-layer case was half answered.** `91a0556` argued two things: density
+("two layers is about 120% full at this size") and plane integrity ("the layout
+rules already demand one unbroken ground plane, and on two layers that is
+aspirational: the plane gets cut to ribbons by traces with nowhere else to go").
+The density half was answered by growing the board — the 120% was measured at the
+old 47.8 × 98.6 outline. **The plane-integrity half was never addressed.**
+
+**The two-layer preference was inherited from a project that no longer describes
+this board.** It comes from loa's [ADR 0002](../../../loa/docs/decisions/0002-daisy-seed-as-compute-platform.md),
+whose reasoning is hand-solderability. caryatid is fully machine-assembled with a
+0.5 mm-pitch QFN and a SOT-563; its own README says "**Hand** — nothing, by
+intent."
+
+## Decision
+
+**150 × 90 mm, two layers.**
+
+The growth is entirely on the long axis, where the conservative BUD working
+rectangle leaves 15 mm spare at 150 mm. **The 90 mm axis is unchanged** because it
+is the one proven to fit, and the alternative — 100 mm — relies on a STEP reading
+of ~110 mm that is explicitly marked indicative and has never been checked against
+the physical box.
+
+| | area | coverage | perimeter | connector ring |
+| --- | --- | --- | --- | --- |
+| 90 × 100 (was) | 9000 | 50.1% | 380 mm | 53% |
+| **150 × 90** | **13500** | **33.4%** | **480 mm** | **42%** |
+
+The perimeter number matters as much as the area: `91a0556` identified **the
+perimeter, not the area, as the binding constraint** — eighteen connectors want
+about 200 mm of edge.
+
+**Two layers is retained**, on the basis that the growth answers the plane
+argument as well as the density one: more room means fewer signals forced through
+the F.Cu pour. This is the premise to revisit if routing proves it wrong, and it
+is now written down so that revisiting it is a decision rather than a rediscovery.
+
+**The "neither edge past 100 mm" rule is retired.** It was a proxy for a price
+that was never checked.
+
+## Consequences
+
+- The CU-477 drill pattern changes from 90 × 80 mm to **140 × 80 mm** — X ±40,
+  Z ±70 in the STEP frame. `docs/sourcing.md` carries the numbers.
+- **The standoff is 7 mm, and that is set by the board, not by preference.** C7
+  is 5.4 mm on the back face; 4–5 mm does not clear it. The ~29 mm stack already
+  on record implied ~6 mm, but the figure had never been written down.
+- Placement was redone. The schematic, symbols, footprints and BOM are unaffected
+  — this is an outline change only.
+- 150 mm exceeds the JLC 100 × 100 tier deliberately. **100 × 200 was also
+  considered and rejected**: it does not fit the BUD, and
+  [ADR 0002](0002-one-board-many-instruments.md) requires one layout to serve
+  absonus and baby borg as well as loa.
+- Still unmeasured, and still gating: the BUD's real interior, and the telephone
+  shell's internal clear floor. Both are recorded as open in the capture
+  checklist.

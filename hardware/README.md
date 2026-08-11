@@ -45,16 +45,18 @@ Layout rules are inherited from the platform spec and are frozen with the board:
 
 None of this was specified before and all of it is needed before layout.
 
-**Board outline: 90 × 100 mm.** absonus is 47.8 × 98.6; this is bigger because
+**Board outline: 150 × 90 mm.** absonus is 47.8 × 98.6; this is bigger because
 caryatid carries roughly four times the part count and an on-board cell.
 
 The BUD's internal is 107.9 × 177.8 mm, and the sides slope, so the usable
 rectangle is **95.2 × 165.1 mm**. 90 × 100 sits inside that with room on both
 axes, and there is a further 65 mm of length spare if layout ever needs it.
 
-**Stay at or under 100 mm on both edges.** JLCPCB's cheapest board tier is
-100 × 100; past it, price scales with area. A 115 mm edge crosses that cliff for
-no benefit — which is exactly what an earlier draft of this document did.
+**The 100 mm rule is retired.** It claimed JLCPCB's cheapest tier is 100 × 100 and
+that crossing it costs money for nothing. The tier is real, but the cost of
+crossing it was never checked and turns out to be small — so the rule was
+protecting against a number nobody had measured. See
+[ADR 0008](docs/decisions/0008-board-outline-and-layer-count.md).
 
 **Two layers.** Density says four would be easier, but width is cheaper than
 layers and the enclosure has the room. At 90 × 100 the component area is about

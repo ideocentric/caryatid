@@ -16,9 +16,11 @@ PCB=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","hardware"
 NS=uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
 def U(*k): return str(uuid.uuid5(NS,"caryatid-board:"+":".join(map(str,k))))
 
-W,H = 100.0, 90.0            # long axis is X so BT1 has 10.4 mm clear per end
+W,H = 150.0, 90.0            # long axis is X; BT1 gets 35 mm clear per end
+# 90 is unchanged and proven against the BUD; all growth is on the long axis,
+# where the conservative working rectangle leaves 165.1 - 150 = 15 mm spare.
 OX,OY = 50.0, 30.0           # page origin offset, keeps the board off the margin
-HOLES=[(5,5),(95,5),(5,85),(95,85)]
+HOLES=[(5,5),(145,5),(5,85),(145,85)]
 
 LAYERS="""	(layers
 		(0 "F.Cu" signal)
@@ -74,11 +76,11 @@ out=[]
 out += [line(0,0,W,0,tag="n"), line(W,0,W,H,tag="e"), line(W,H,0,H,tag="s"), line(0,H,0,0,tag="w")]
 for i,(hx,hy) in enumerate(HOLES): out.append(mounting_hole(hx,hy,i))
 # BT1 keep-out, drawn so the cell's footprint is obvious before anything is placed
-bx0,bx1,by0,by1 = 11.15, 88.85, 3.55, 24.45
+bx0,bx1,by0,by1 = 35.40, 114.60, 3.55, 24.45
 for a,b,c,d,t in ((bx0,by0,bx1,by0,"a"),(bx1,by0,bx1,by1,"b"),(bx1,by1,bx0,by1,"c"),(bx0,by1,bx0,by0,"d")):
     out.append(line(a,b,c,d,layer="Cmts.User",w=0.15,tag="bt"+t))
 out.append(text("BT1 18650 - 21.3 mm tall, sets the enclosure stack", bx0+2, by0-2.5, size=2.0))
-out.append(text("caryatid  90 x 100 mm  2 layer", 2, H+5, size=2.5))
+out.append(text("caryatid  150 x 90 mm  2 layer", 2, H+5, size=2.5))
 
 doc=('(kicad_pcb\n\t(version 20241229)\n\t(generator "pcbnew")\n\t(generator_version "9.0")\n'
      '\t(general\n\t\t(thickness 1.6)\n\t\t(legacy_teardrops no)\n\t)\n\t(paper "A3")\n'

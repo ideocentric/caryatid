@@ -394,7 +394,7 @@ file.
 | Interior clear, 6–25 mm above the floor | ~110 × 170 | approximate |
 
 The interior figure is read off a sparse point cloud and should be treated as
-indicative. The working rectangle stays **95.2 × 165.1 mm** (6.5″ × 3.75″), which
+indicative. The working rectangle stays **95.2 × 165.1 mm** (3.75″ × 6.5″), which
 is the deliberately conservative number allowing for the sloped sides.
 
 **The floor is blank.** The model carries 108 M3-sized holes, and every one of
@@ -403,16 +403,16 @@ the case has to be drilled for the board standoffs, and there is no existing
 pattern to reuse or to avoid.
 
 **Drill pattern for the standoffs.** caryatid's four M3 holes sit at board
-(5, 5), (95, 5), (5, 85), (95, 85), which is a **90 × 80 mm rectangle**
-centre-to-centre. The board's 100 mm axis runs along the enclosure's long axis.
+(5, 5), (145, 5), (5, 85), (145, 85), which is a **140 × 80 mm rectangle**
+centre-to-centre. The board's 150 mm axis runs along the enclosure's long axis.
 Centred on the floor, in the STEP file's own coordinate frame:
 
 | Hole | X | Z |
 | --- | --- | --- |
-| ×4 | **±40 mm** | **±45 mm** |
+| ×4 | **±40 mm** | **±70 mm** |
 
-That leaves ~19 mm of floor beyond the holes on the short axis and ~48 mm on the
-long one, so the pattern is nowhere near the walls.
+That leaves ~19 mm of floor beyond the holes on the short axis and ~23 mm on the
+long one, so the pattern still clears the walls.
 
 **Mechanical — all panel-mount, all reaching the board by wire**
 

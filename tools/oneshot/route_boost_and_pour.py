@@ -55,7 +55,7 @@ def seg(a,b,width,net,tag):
     return (f'\t(segment\n\t\t(start {a[0]} {a[1]})\n\t\t(end {b[0]} {b[1]})\n'
             f'\t\t(width {width})\n\t\t(layer "B.Cu")\n\t\t(net {net})\n\t\t(uuid "{U(tag)}")\n\t)\n')
 def via(p,net,tag):
-    return (f'\t(via\n\t\t(at {p[0]} {p[1]})\n\t\t(size 0.6)\n\t\t(drill 0.3)\n'
+    return (f'\t(via\n\t\t(at {p[0]} {p[1]})\n\t\t(size 0.7)\n\t\t(drill 0.3)\n'
             f'\t\t(layers "F.Cu" "B.Cu")\n\t\t(net {net})\n\t\t(uuid "{U(tag)}")\n\t)\n')
 
 # every back-side pad, so via placement is searched rather than eyeballed
@@ -127,7 +127,7 @@ for ref,padnum,tag in (("C6","2","c6"),("U2","4","u2")):
     print(f"  GND via for {ref}.{padnum}: {v}  ({math.hypot(v[0]-p0[0],v[1]-p0[1]):.2f} mm from the pad)")
 
 # --- F.Cu ground plane -------------------------------------------------------
-OX,OY,W,H,INSET = 50.0, 30.0, 100.0, 90.0, 0.6
+OX,OY,W,H,INSET = 50.0, 30.0, 150.0, 90.0, 0.6
 x0,y0,x1,y1 = OX+INSET, OY+INSET, OX+W-INSET, OY+H-INSET
 zone=(f'\t(zone\n\t\t(net {nets["GND"]})\n\t\t(net_name "GND")\n\t\t(layer "F.Cu")\n'
       f'\t\t(uuid "{U("zone")}")\n\t\t(name "GND plane")\n\t\t(hatch edge 0.5)\n'

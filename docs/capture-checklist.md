@@ -202,13 +202,14 @@ arrive rather than before the gerbers go out.
 
 ## Board level — none of this belongs to a sheet
 
-- [x] **Two layers, 90 × 100 mm.** Fits the BUD's 95.2 × 165.1 mm usable
-      rectangle, sloped sides already allowed for, and stays inside JLC's
-      100 × 100 price tier. **Do not let either edge exceed 100 mm.**
+- [x] **Two layers, 150 × 90 mm.** All growth is on the long axis, where the
+      conservative BUD rectangle leaves 15 mm spare; the 90 mm axis is unchanged
+      because it is the one proven to fit. See
+      [ADR 0008](decisions/0008-board-outline-and-layer-count.md).
 - [ ] **SMD on one face, holder and through-hole connectors on the other.** This
       is what makes two layers fit: the copper under the cell stays usable.
 - [x] **Four M3 holes**, pattern chosen once the outline settles.
-- [ ] **Drill the CU-477 floor** to the 90 × 80 mm pattern — ±40 / ±45 mm
+- [ ] **Drill the CU-477 floor** to the **140 × 80 mm** pattern — X ±40, Z ±70
       from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
       STEP are in the walls and flanges. See [sourcing.md](sourcing.md). absonus's
       1.6″ × 3.6″ pattern is deliberately **not** inherited.
@@ -225,7 +226,9 @@ arrive rather than before the gerbers go out.
       per side on the tight axis — comfortable on paper. What is unmeasured is
       the *internal* clear floor once the keypad module, hook mechanism, cord
       anchor and mounting bosses are accounted for.
-- [ ] **Check height, not just floor area.** The stack is **~29 mm** — standoff,
+- [ ] **Standoffs are 7 mm minimum** — set by C7 at 5.4 mm on the back face, not
+      by preference. 4–5 mm does not clear it.
+- [ ] **Check height, not just floor area.** The stack is **~30 mm** — standoff,
       PCB, and the **21.31 mm** BH-18650-PC. **The holder sets it, not the
       Seed**, which is only 10.5 mm. If the phone is shallow at the point the
       board wants to sit, moving the cell to J2 as a remote pack recovers 21 mm.

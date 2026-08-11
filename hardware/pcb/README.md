@@ -37,7 +37,7 @@ pcb/
 ```
 
 Open `caryatid.kicad_pro`. `caryatid.kicad_pcb` carries **all 125 footprints,
-placed and net-bound**, on a 100 × 90 mm outline with four M3 holes. **Nothing is
+placed and net-bound**, on a 150 × 90 mm outline with four M3 holes. **Nothing is
 routed** — DRC's 263 unconnected items are the full ratsnest, which is correct.
 
 Placement is a machine first pass, not layout. It puts each block where the
@@ -177,11 +177,11 @@ routing. That is a board-setup decision, not a footprint fix.
 | All 125 courtyards | 4510 |
 | of which BT1 | 1774 |
 | everything except BT1 | **2736** |
-| board | 9000 |
-| face left after BT1 | 7226 |
+| board | 13500 |
+| face left after BT1 | 11726 |
 
-**38% coverage on BT1's face**, which is at the top of the comfortable band for
-two layers but inside it. An earlier read of this said the board was "essentially
+**23% coverage on BT1's face** at 150 × 90 — comfortably inside the band for two
+layers. It was 38% at the old 90 × 100. An earlier read of this said the board was "essentially
 full"; that was wrong, and it was wrong for an instructive reason — the figure
 came from a packer that added 1.6 mm around every part, which inflates an 0603
 courtyard nearly six-fold. Measure coverage from courtyards, not from packing
@@ -232,9 +232,11 @@ Set conservatively against JLCPCB's capabilities rather than at them: 0.2 mm
 minimum track and clearance, 0.5 mm minimum via with a 0.3 mm hole. JLC will
 accept finer, but a first spin is not the place to spend that margin.
 
-**Two layers, 1.6 mm, 90 × 100 mm.** Inside JLCPCB's 100 × 100 price tier and
-inside the BUD's 95.2 × 165.1 mm usable rectangle. **Neither edge goes past
-100 mm** — crossing that costs money for nothing.
+**Two layers, 1.6 mm, 150 × 90 mm.** See
+[ADR 0008](../../docs/decisions/0008-board-outline-and-layer-count.md). The old
+"neither edge past 100 mm" rule is retired — it was a proxy for a price nobody
+had checked, and checking it showed the increase is small. The 90 mm axis is
+unchanged because it is the one proven against the BUD.
 
 ## Before capture
 

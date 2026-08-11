@@ -76,16 +76,16 @@ def bbox(libid):
     if not xs: return (3.0,3.0,0.0,0.0)
     return (max(xs)-min(xs), max(ys)-min(ys), (max(xs)+min(xs))/2, (max(ys)+min(ys))/2)
 
-ZONES={  # back-side zones. The strip under BT1 is the largest genuinely free
- # area on this face: the cell's only pads are its two end terminals.
- "anabus":  (17,3,50,24),      # analogue bus + its RC, under the cell
- "audio":   (52,3,84,24),      # audio block, under the cell
- "seedsup": (41,28,51,60),     # A10/A11 networks, between the Seed pad columns
- "digbus":  (31,62,50,80),     # digital bus series resistors
- "switch":  (56,26,64,78),     # 74HC14 channel, clear of both socket columns
- "charger": (1,26,30,50),      # charger, left, under the power connectors
- "boost":   (6,62,30,86),      # boost cluster is hand-placed inside this
- "conn":    (66,62,84,80),     # RGB / I2C / sensor resistors
+ZONES={  # back-side zones on the 150 x 90 board. The strip under BT1 is still
+ # the largest genuinely free area: the cell's only pads are its two terminals.
+ "anabus":  (40,3,110,24),     # analogue bus + its RC, under the cell
+ "charger": (2,28,44,52),      # charger, left
+ "boost":   (2,55,44,86),      # switcher hard left, away from analogue and audio
+ "digbus":  (46,28,64,54),     # digital bus series resistors, near A1
+ "switch":  (46,58,64,86),     # 74HC14 channel
+ "seedsup": (71,28,79,80),     # A10/A11 networks, between the Seed pad columns
+ "audio":   (92,28,118,62),    # audio block, right, furthest from L1
+ "conn":    (124,28,148,86),   # RGB / I2C / sensor resistors
 }
 ZONE_OF={}
 def zone(z,*refs):
@@ -124,18 +124,19 @@ def stack(refs, axis, fixed, start, gap, rot):
             out[r]=(round(cur + w/2 - mx, 2), fixed, rot); cur += w + gap
     return out
 
-ANCHOR={"BT1":(13.55,14.0,0), "A1":(38.0,29.0,0), "A2":(53.24,29.0,0),
-        "J11":(23,42,0),      # digital bus IDC, inboard beside A1
-        "J5":(70,42,0),       # analogue bus IDC, inboard beside A2
-        "J14":(80,76,0),      # mic bias return -> hook switch second pole
-        "J18":(80,66,0),      # audio in, beside J14 -- same loom
-        "J16":(66,68,0)}      # expansion / SPI1, inboard right
+ANCHOR={"BT1":(38.55,14.0,0), "A1":(67.50,29.0,0), "A2":(82.74,29.0,0),
+        "J11":(50,42,0),      # digital bus IDC, inboard beside A1
+        "J5":(100,42,0),       # analogue bus IDC, inboard beside A2
+        "J14":(120,76,0),      # mic bias return -> hook switch second pole
+        "J18":(120,66,0),      # audio in, beside J14 -- same loom
+        "J16":(104,68,0)}      # expansion / SPI1, inboard right
 # Everything stays at rotation 0. A vertical JST exits upward, so orienting the
 # pin row along the edge buys nothing -- and the rotated-courtyard transform is
 # the one piece of geometry here I could not verify, so it is not used.
 ANCHOR.update(stack(["J1","J2","J3","J4"], "y", 6.5, 29.0, 2.0, 0))          # left: power
-ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 88.5, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
-ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 10.0, 1.5, 0)) # bottom: switches, module ports
+# 139.0 not 142: these courtyards sit +3.7 mm of their origin
+ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 139.0, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
+ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 12.0, 2.5, 0)) # bottom: switches, module ports
 
 # --- the back: hand-placed clusters, the rest shelf-packed -------------------
 # A back-side pad sits at (X + px, Y - py): the body is stored Y-negated. So on
@@ -145,20 +146,20 @@ ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 10.0, 1.5, 0)) # b
 # and the SW node is the radiator. C6 therefore sits hard against pin 6 and L1
 # hard against pin 5. L1 is turned 180 so its SW pad faces the IC -- 180 is
 # (px,py) -> (-px,-py), which is checkable, unlike the 90 transform.
-UX,UY = 14.0, 74.0
+UX,UY = 14.0, 66.0
 # C6 sits BELOW U2 rather than beside it. Beside was the obvious spot and it cost
 # the SW node: pin 5 can only exit right, and C6 was standing in that gap, so SW
 # had no path to L1 at any useful width. Below is shorter for the hot loop too --
 # pin 6 is on the near edge either way.
 BACK_ANCHOR={
  "U2":(UX,UY,0),
- "C6":(14.0, 76.45, 180),        # 180 turns pad 1 back toward pin 6
- "L1":(18.6, 74.0, 180),        # now level with pin 5, SW routes straight across
- "C5":(23.0, 74.0, 0),          # at L1's VOUT pad
- "C4":(10.5, 73.5, 180),        # input cap, pad 1 toward pin 3
- "R7":(10.0, 76.5, 0),          # FB divider, against pin 1
- "R8":(10.0, 78.6, 0),
- "FB1":(14.5, 79.0, 0),         # ferrite, downstream of +5V_RAW
+ "C6":(14.0, 68.45, 180),        # 180 turns pad 1 back toward pin 6
+ "L1":(18.6, 66.0, 180),        # now level with pin 5, SW routes straight across
+ "C5":(23.0, 66.0, 0),          # at L1's VOUT pad
+ "C4":(10.5, 65.5, 180),        # input cap, pad 1 toward pin 3
+ "R7":(10.0, 68.5, 0),          # FB divider, against pin 1
+ "R8":(10.0, 70.6, 0),
+ "FB1":(14.5, 71.0, 0),         # ferrite, downstream of +5V_RAW
 }
 
 def tht_keepouts():
@@ -171,7 +172,7 @@ def tht_keepouts():
             px,py,sw,sh = (float(m.group(i)) for i in (2,3,4,5))
             if rot==180: px,py=-px,-py
             out.append((x+px-sw/2-0.3, y+py-sh/2-0.3, x+px+sw/2+0.3, y+py+sh/2+0.3))
-    for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+    for hx,hy in [(5,5),(145,5),(5,85),(145,85)]:
         out.append((hx-3.6,hy-3.6,hx+3.6,hy+3.6))
     # hand-anchored back parts are keepouts too
     for r,(x,y,rot) in BACK_ANCHOR.items():
@@ -216,7 +217,7 @@ if missing: sys.exit(f"unplaced: {missing}")
 # board. Sweep a grid for the first slot whose courtyard clears everything
 # already down, and BT1's strip, and move them there. Zone purity loses to
 # being on the board.
-BT=(11.15,3.55,88.85,24.45)
+BT=(35.40,3.55,114.60,24.45)
 def rect(r):
     w,h,mx,my=bbox(comps[r][1]); x,y,_=place[r]
     return (x+mx-w/2-0.3, y+my-h/2-0.3, x+mx+w/2+0.3, y+my+h/2+0.3)
@@ -225,18 +226,18 @@ placed_rects=[]
 order=sorted(place, key=lambda r: 0 if r in ANCHOR else 1)
 for r in order:
     x,y,_=place[r]
-    if 0<=x<=100 and 0<=y<=90: placed_rects.append(rect(r))
+    if 0<=x<=150 and 0<=y<=90: placed_rects.append(rect(r))
 rescued=[]
 for r in list(place):
     x,y,_=place[r]
-    if 0<=x<=100 and 0<=y<=90: continue
+    if 0<=x<=150 and 0<=y<=90: continue
     w,h,mx,my=bbox(comps[r][1])
     found=None
     EDGE=3.0                      # copper_edge_clearance needs real margin
     yy=26.0
     while yy < 90-h-EDGE and not found:
         xx=EDGE
-        while xx < 100-w-EDGE and not found:
+        while xx < 150-w-EDGE and not found:
             cand=(xx-0.3, yy-0.3, xx+w+0.3, yy+h+0.3)
             if (not hits(cand,BT) and not blocked(*cand)
                     and not any(hits(cand,q) for q in placed_rects)):
@@ -254,12 +255,12 @@ def frect(r):
 fr=[frect(r) for r in comps if not is_smd(comps[r][1])]
 # the four M3 holes live in the skeleton, not in comps -- the first version of
 # this check omitted them and passed a board where J6 and J18 fouled a hole
-for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+for hx,hy in [(5,5),(145,5),(5,85),(145,85)]:
     fr.append((hx-3.4, hy-3.4, hx+3.4, hy+3.4, f"MH@{hx},{hy}"))
 clash=[(a[4],b_[4]) for i,a in enumerate(fr) for b_ in fr[i+1:]
        if not (a[2]<=b_[0] or b_[2]<=a[0] or a[3]<=b_[1] or b_[3]<=a[1])]
 print("  front collisions:", clash if clash else "none")
-outside=[a[4] for a in fr if a[0]<0 or a[1]<0 or a[2]>100 or a[3]>90]
+outside=[a[4] for a in fr if a[0]<0 or a[1]<0 or a[2]>150 or a[3]>90]
 print("  front parts breaking the outline:", outside if outside else "none")
 
 # back-side collisions (rot 0 or 180 only, so the bbox transform is exact)
@@ -282,7 +283,7 @@ def thtpads(r):
 keep=[]
 for r in comps:
     if not is_smd(comps[r][1]): keep += thtpads(r)
-for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
+for hx,hy in [(5,5),(145,5),(5,85),(145,85)]:
     keep.append((hx-3.4,hy-3.4,hx+3.4,hy+3.4))
 foul=sorted({a[4] for a in br for k in keep
              if not (a[2]<=k[0] or k[2]<=a[0] or a[3]<=k[1] or k[3]<=a[1])})
@@ -307,7 +308,7 @@ print(f"  boost hot loop: U2.6->C6 {d(p6,c6a):.2f} mm, C6->U2.4 return {d(c6b,p4
       f"perimeter {d(p6,c6a)+d(c6a,c6b)+d(c6b,p4)+d(p4,p6):.2f} mm")
 print(f"  SW node: U2.5 -> L1.2 = {d(p5,l1b):.2f} mm")
 
-still=[r for r in place if not (0<=place[r][0]<=100 and 0<=place[r][1]<=90)]
+still=[r for r in place if not (0<=place[r][0]<=150 and 0<=place[r][1]<=90)]
 if still: print(f"  STILL off-board: {still}")
 
 
