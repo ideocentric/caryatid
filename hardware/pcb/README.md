@@ -99,6 +99,41 @@ and that version passed a board where `J6` and `J18` each sat on top of a
 mounting hole. They come from the skeleton rather than from the netlist, which
 is exactly why a check built around the component list missed them.
 
+## Routing: the pour and the boost loop only
+
+**Everything else is unrouted, deliberately.** kicad-cli has no router, KiCad
+ships none, and Freerouting is not installed — and routing follows placement,
+which is still a machine first pass. Two pieces were worth doing now because
+their geometry is settled and the stakes are high.
+
+**A GND zone on F.Cu.** That face carries only 21 through-hole parts, so it can
+be a near-solid plane. This is what putting the SMD on the back bought, and it is
+the textbook 2-layer arrangement: plane on one side, signals on the other.
+
+**The zone is not filled.** `kicad-cli pcb drc` has no fill option, so DRC
+reports the two GND vias as `via_dangling` — they touch a zone that has no copper
+in it yet. **Fill zones in the board editor (`B`) and both clear.** That is a
+tooling limit, not a fault.
+
+**The boost hot loop.** `+5V_RAW` runs U2 pin 6 to C6 at 0.8 mm. The return is
+deliberately **not a track**: C6's ground pad and U2's ground pad each drop a via
+into the plane, so the return current runs directly beneath the outgoing current.
+That is the smallest loop available and a track would be strictly worse.
+
+Two things learned the hard way and worth keeping:
+
+- **A track wider than the pad pitch shorts to the neighbouring pad.** 0.8 mm
+  centred on U2 pin 6 overlapped pin 5. Every exit from a 0.5 mm-pitch pad now
+  necks to 0.25 mm and widens once clear of the pad field.
+- **Via positions are searched against every back-side pad**, not chosen by eye.
+  The first attempt put a GND via straight through C7's `+5V` pad.
+
+**`SW` is not routed.** U2's pin 5 can only exit to the right, and C6 sits in
+that gap — there is no path to L1 at any useful width. That is a placement
+consequence, not a routing one, and the fix is to move C6 or L1 rather than to
+thread a thin track. Note the trade: C6 adjacent gives the tight hot loop, L1
+adjacent gives the short SW node, and this cluster has room for only one of them.
+
 ## Silkscreen and clearance exceptions
 
 **Back-side reference designators are hidden.** 104 SMD parts at this density
