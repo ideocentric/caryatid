@@ -146,21 +146,19 @@ ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 10.0, 1.5, 0)) # b
 # hard against pin 5. L1 is turned 180 so its SW pad faces the IC -- 180 is
 # (px,py) -> (-px,-py), which is checkable, unlike the 90 transform.
 UX,UY = 14.0, 74.0
-# Spacings below are computed from measured courtyards (all centre offsets are
-# zero), not eyeballed. C6 takes the one adjacent slot because the output cap
-# carries the discontinuous current and is the dominant radiator; L1 gets the
-# next-best position above the IC.
+# C6 sits BELOW U2 rather than beside it. Beside was the obvious spot and it cost
+# the SW node: pin 5 can only exit right, and C6 was standing in that gap, so SW
+# had no path to L1 at any useful width. Below is shorter for the hot loop too --
+# pin 6 is on the near edge either way.
 BACK_ANCHOR={
- "U2":(UX,UY,0),                 # courtyard 2.40 x 1.90
- "C6":(17.3, 74.5, 0),           # pad 1 -> pin 6, 1.64 mm
- "L1":(15.0, 70.2, 180),         # 180 faces the SW pad at the IC
- "C4":(10.5, 73.5, 180),         # pad 1 -> pin 3, 1.44 mm
- "C5":(19.4, 70.5, 0),           # at L1's VOUT pad
- "R7":(10.9, 76.5, 0),           # FB divider, against pin 1
- "R8":(10.9, 78.6, 0),
- "FB1":(21.5, 74.5, 0),          # ferrite, downstream of +5V_RAW
- # C7 (100 uF, 9.6 x 7.1) is bulk after the ferrite, not loop-critical. Hand-
- # anchoring put it on the J6/J7 pads, so the keepout-aware packer places it.
+ "U2":(UX,UY,0),
+ "C6":(14.0, 76.45, 180),        # 180 turns pad 1 back toward pin 6
+ "L1":(18.6, 74.0, 180),        # now level with pin 5, SW routes straight across
+ "C5":(23.0, 74.0, 0),          # at L1's VOUT pad
+ "C4":(10.5, 73.5, 180),        # input cap, pad 1 toward pin 3
+ "R7":(10.0, 76.5, 0),          # FB divider, against pin 1
+ "R8":(10.0, 78.6, 0),
+ "FB1":(14.5, 79.0, 0),         # ferrite, downstream of +5V_RAW
 }
 
 def tht_keepouts():
@@ -175,8 +173,7 @@ def tht_keepouts():
             out.append((x+px-sw/2-0.3, y+py-sh/2-0.3, x+px+sw/2+0.3, y+py+sh/2+0.3))
     for hx,hy in [(5,5),(95,5),(5,85),(95,85)]:
         out.append((hx-3.6,hy-3.6,hx+3.6,hy+3.6))
-    # hand-anchored back parts are keepouts too -- the packer would otherwise
-    # drop shelf-packed parts straight on top of the boost cluster
+    # hand-anchored back parts are keepouts too
     for r,(x,y,rot) in BACK_ANCHOR.items():
         w,h,mx,my=bbox(comps[r][1])
         if rot==180: mx,my=-mx,-my

@@ -5446,7 +5446,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "B.Cu")
 		(uuid "5f378de2-a0dc-5552-a4e1-bc7b8778de90")
-		(at 69.5 100.5)
+		(at 73.0 104.0)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C5"
@@ -5609,7 +5609,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "B.Cu")
 		(uuid "152d9ac2-4f04-5b90-a27d-3c2f3d1d4497")
-		(at 67.5 104.5)
+		(at 64.0 106.5 180)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C6"
@@ -5772,7 +5772,7 @@
 	(footprint "Capacitor_SMD:CP_Elec_6.3x5.4"
 		(layer "B.Cu")
 		(uuid "1f8565a6-8ff8-56fc-a543-d6a2a0dee37a")
-		(at 73.0 107.0)
+		(at 61.5 96.0)
 		(descr "SMD capacitor, aluminum electrolytic, Panasonic C55, 6.3x5.4mm")
 		(tags "capacitor electrolytic")
 		(property "Reference" "C7"
@@ -6747,7 +6747,7 @@
 	(footprint "Inductor_SMD:L_0805_2012Metric"
 		(layer "B.Cu")
 		(uuid "9614ccc0-37da-57d1-a497-10a923b18634")
-		(at 71.5 104.5)
+		(at 64.5 109.0)
 		(descr "Inductor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 80, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "inductor")
 		(property "Reference" "FB1"
@@ -14138,7 +14138,7 @@
 	(footprint "Inductor_SMD:L_Vishay_IFSC-1515AH_4x4x1.8mm"
 		(layer "B.Cu")
 		(uuid "4b2de233-58a2-5fe0-8f54-bc58c3a60bfa")
-		(at 65.0 100.0 180)
+		(at 68.5 104.0 180)
 		(descr "Low Profile, High Current Inductors (https://www.vishay.com/docs/34295/sc15ah01.pdf)")
 		(tags "SMD Vishay Inductor Low Profile")
 		(property "Reference" "L1"
@@ -14547,7 +14547,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "8fa4ccca-8988-585e-9ca7-de243c008102")
-		(at 80.5 56.5)
+		(at 77.5 102.0)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R10"
@@ -21556,7 +21556,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "9ea19d36-f423-59af-86ac-4928ea9dae3b")
-		(at 69.0 113.5)
+		(at 68.5 93.0)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R5"
@@ -23349,7 +23349,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "f9483f2b-4865-585b-92e9-6b4dc41caffb")
-		(at 54.5 56.5)
+		(at 72.5 93.0)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R6"
@@ -24653,7 +24653,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "d35c8a2e-5922-5432-b788-16db386eb835")
-		(at 61.0 106.5)
+		(at 60.0 106.5)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R7"
@@ -24816,7 +24816,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "223e5a44-a103-5794-95fc-89ab6892617c")
-		(at 61.0 108.5)
+		(at 60.0 108.5)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R8"
@@ -24979,7 +24979,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
 		(uuid "6ca0055d-1cf6-5542-b0ef-9ba49f709907")
-		(at 58.5 56.5)
+		(at 76.5 93.0)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R9"
@@ -26651,30 +26651,46 @@
 	)
 	(segment
 		(start 64.713 104.5)
-		(end 65.6 104.5)
-		(width 0.25)
+		(end 64.713 105.5)
+		(width 0.2)
 		(layer "B.Cu")
 		(net 4)
 		(uuid "cd07f534-9ba1-5be7-90ca-56bc70c135d0")
 	)
 	(segment
-		(start 65.6 104.5)
-		(end 66.55 104.5)
+		(start 64.713 105.5)
+		(end 64.95 106.5)
 		(width 0.8)
 		(layer "B.Cu")
 		(net 4)
 		(uuid "b72d9837-821e-558a-8063-105f8d1be1f3")
 	)
 	(segment
+		(start 64.713 104.0)
+		(end 66.4 104.0)
+		(width 0.2)
+		(layer "B.Cu")
+		(net 50)
+		(uuid "2ea0adb3-d491-58c0-8e38-aec13a0c2272")
+	)
+	(segment
+		(start 66.4 104.0)
+		(end 67.025 104.0)
+		(width 1.2)
+		(layer "B.Cu")
+		(net 50)
+		(uuid "2a198754-7b60-58ce-b4eb-a53eebd99d93")
+	)
+	(segment
 		(start 63.288 103.5)
-		(end 62.4 103.5)
-		(width 0.25)
+		(end 61.9 103.5)
+		(width 0.2)
 		(layer "B.Cu")
 		(net 94)
 		(uuid "e75ef9d1-0fb5-547d-bbeb-640af5bb3aa1")
 	)
 	(segment
-		(start 62.4 103.5)
+		(start 61.9 103.5)
 		(end 61.45 103.5)
 		(width 1.2)
 		(layer "B.Cu")
@@ -26682,23 +26698,23 @@
 		(uuid "eeb6b65e-7f39-5cf8-9b5f-33b4a6ddfb1e")
 	)
 	(segment
-		(start 66.475 100.0)
-		(end 68.55 100.5)
+		(start 69.975 104.0)
+		(end 72.05 104.0)
 		(width 1.2)
 		(layer "B.Cu")
 		(net 94)
 		(uuid "7d3be2e6-b862-5412-94fe-ccfa2f88b3d8")
 	)
 	(segment
-		(start 68.45 104.5)
-		(end 68.95 104.5)
-		(width 0.25)
+		(start 63.05 106.5)
+		(end 63.55 106.5)
+		(width 0.2)
 		(layer "B.Cu")
 		(net 91)
 		(uuid "0f6317c8-d3a7-5711-86cd-0bae7395aac9")
 	)
 	(via
-		(at 68.95 104.5)
+		(at 63.55 106.5)
 		(size 0.6)
 		(drill 0.3)
 		(layers "F.Cu" "B.Cu")
@@ -26708,7 +26724,7 @@
 	(segment
 		(start 64.713 103.5)
 		(end 64.28 103.25)
-		(width 0.25)
+		(width 0.2)
 		(layer "B.Cu")
 		(net 91)
 		(uuid "7d5debc5-67f3-509d-a3db-bf3a04d2fc49")

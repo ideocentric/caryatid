@@ -128,11 +128,26 @@ Two things learned the hard way and worth keeping:
 - **Via positions are searched against every back-side pad**, not chosen by eye.
   The first attempt put a GND via straight through C7's `+5V` pad.
 
-**`SW` is not routed.** U2's pin 5 can only exit to the right, and C6 sits in
-that gap — there is no path to L1 at any useful width. That is a placement
-consequence, not a routing one, and the fix is to move C6 or L1 rather than to
-thread a thin track. Note the trade: C6 adjacent gives the tight hot loop, L1
-adjacent gives the short SW node, and this cluster has room for only one of them.
+**`SW` is routed, and C6 moved to make it possible.** Putting the output cap
+beside U2 was the obvious choice and it quietly cost the switching node: pin 5
+can only exit right, and C6 was standing in that gap. C6 now sits **below** U2,
+which frees the right side for L1 and — because pin 6 is on the near edge either
+way — barely lengthens the hot loop.
+
+| | beside | **below** |
+| --- | --- | --- |
+| Hot loop, pin 6 → C6 | 1.84 mm | 2.01 mm |
+| SW node, pin 5 → L1 | 4.17 mm, **unroutable** | **2.31 mm at 1.2 mm wide** |
+
+Trading 0.17 mm of hot loop for a routable 1.5 A switching node is not a close
+call. The lesson is that *routability* is a placement constraint, and optimising
+loop length without it produced an arrangement that measured well and could not
+be built.
+
+Three power pins leaving a 0.5 mm-pitch package share a 1.5 mm band, so every
+exit necks to 0.2 mm and widens only once clear of the pad field. With that, the
+routing adds **no** DRC violations of its own — the four clearance items are the
+pre-existing SOT-563 pad-pitch ones.
 
 ## Silkscreen and clearance exceptions
 

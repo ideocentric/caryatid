@@ -98,14 +98,23 @@ def free_via(near, net, r=0.3, clr=0.25):
     raise RuntimeError("no free via location")
 
 out=[]
-NECK=0.25
+NECK=0.2
 def escape(p, to_x, net, tag):
     mid=(to_x, p[1])
     return seg(p, mid, NECK, net, tag+"-neck"), mid
 
-s,mid = escape(pad("U2","6"), 65.6, nets["+5V_RAW"], "raw")
-out.append(s); out.append(seg(mid, pad("C6","1"), 0.8, nets["+5V_RAW"], "raw-wide"))
-s,mid = escape(pad("U2","3"), 62.4, nets["VOUT"], "vout-c4")
+# +5V_RAW: pin 6 down to C6, which now sits below U2
+p6=pad("U2","6"); c61=pad("C6","1")
+kink=(p6[0], round((p6[1]+c61[1])/2,3))
+out.append(seg(p6, kink, NECK, nets["+5V_RAW"], "raw-neck"))
+out.append(seg(kink, c61, 0.8, nets["+5V_RAW"], "raw-wide"))
+
+# SW: pin 5 straight across to L1, which is now level with it. This is the net
+# the rearrangement was for -- 1.5 A peak and the loudest radiator on the board.
+p5=pad("U2","5"); l2=pad("L1","2")
+s,mid = escape(p5, 66.4, nets["/power/SW"], "sw")
+out.append(s); out.append(seg(mid, l2, 1.2, nets["/power/SW"], "sw-wide"))
+s,mid = escape(pad("U2","3"), 61.9, nets["VOUT"], "vout-c4")
 out.append(s); out.append(seg(mid, pad("C4","1"), 1.2, nets["VOUT"], "vout-c4-wide"))
 out.append(seg(pad("L1","1"), pad("C5","1"), 1.2, nets["VOUT"], "vout-c5"))
 
@@ -139,4 +148,4 @@ import math as _m
 d=lambda a,b: _m.hypot(a[0]-b[0],a[1]-b[1])
 print(f"  hot loop out : U2.6 -> C6.1  {d(pad('U2','6'),pad('C6','1')):.2f} mm, 0.8 mm wide")
 print(f"  hot loop back: vias to plane at C6.2 and U2.4 (no track)")
-print(f"  SW node      : U2.5 -> L1.2  {d(pad('U2','5'),pad('L1','2')):.2f} mm  -- NOT ROUTED, see notes")
+print(f"  SW node      : U2.5 -> L1.2  {d(pad('U2','5'),pad('L1','2')):.2f} mm, routed at 1.2 mm")
