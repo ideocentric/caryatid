@@ -17,6 +17,9 @@ that modelled one thing and silently ignored another. Each is a class here.
   4 everything inside the outline, with edge clearance
   5 component height vs standoff, per face -- C7 is 5.4 mm on the back and does
     not clear a 4 mm standoff. Nothing in KiCad checks this
+ 5b front height vs the ENCLOSURE CEILING -- check 5 asks what clears the
+    standoff below, and for a while nothing asked what clears the lid above, so
+    the front heights sat in the table unused. BT1 at 21.31 mm sets the stack
   6 via annular ring vs the fab floor -- the project rule was set BELOW JLC's
     0.18 mm, so DRC reported a pass on vias the fab would reject
   7 track width vs the pitch of the pad it leaves -- 0.8 mm copper leaving a
@@ -42,6 +45,16 @@ COURTYARD_GAP     = 0.0    # courtyards may touch, not overlap
 STANDOFF_MM       = 2.0    # The back face is empty -- every component is on the
                            # front -- so the standoff only has to clear solder
                            # joints. It was 7 mm when C7 (5.4 mm) hung underneath.
+                           # This is the ELECTRICAL minimum, not the build spec.
+BUILD_STANDOFF_MM = 4.0    # What actually gets fitted. Costs 2 mm of headroom.
+PCB_THICKNESS_MM  = 1.6
+
+# Interior heights. The BUD is the binding case, not the phone. Its figure is
+# DERIVED from local/reference/CU-477.STEP (loa), not measured: 38.10 mm external
+# with a 1.98 mm wall given independently by the base and the cover solids, so
+# 38.10 - 2 x 1.98 = 34.14. A plane 1.60 mm proud of the floor would leave 32.54
+# if the standoffs seat on it rather than on the floor.
+ENCLOSURES = {"BUD CU-477": 34.14, "telephone shell": 40.0}
 
 # Heights are not in the footprint files. Most encode it in the name; the rest
 # are from the datasheets. A part missing here is reported, not assumed safe.
@@ -53,7 +66,7 @@ HEIGHTS = {
     "C_0603_1608Metric": 0.95, "R_0603_1608Metric": 0.55,
     "SOT-563": 0.6, "BQ24074RGT_QFN-16-1EP_3x3mm_P0.5mm": 1.0,
     "JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal": 1.35,
-    # front side -- not standoff-limited, but recorded for completeness
+    # front side -- checked against the enclosure ceiling by check 5b
     "BatteryHolder_MPD_BH-18650-PC": 21.31,
     "DaisySeed_Socket_A_1x20": 8.5, "DaisySeed_Socket_B_1x20": 8.5,
     "IDC-Header_2x05_P2.54mm_Vertical": 9.0,
@@ -63,6 +76,13 @@ HEIGHTS = {
     "JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical": 5.75,
     "PinHeader_2x04_P2.54mm_Vertical": 8.5,
     "MountingHole_3.2mm_M3": 0.0,
+}
+
+# Height with the thing that plugs INTO it fitted. The socket alone is 8.5 mm;
+# the Seed sitting in it reaches 10.5. Check 5b uses these in preference, because
+# the lid has to clear the assembly, not the bare footprint.
+ASSEMBLED = {
+    "DaisySeed_Socket_A_1x20": 10.5, "DaisySeed_Socket_B_1x20": 10.5,
 }
 
 def sexp(text, start):
@@ -211,6 +231,24 @@ def main():
         elif h > STANDOFF_MM:
             fail("height", f"{p['ref']} is {h} mm on the back, over the {STANDOFF_MM} mm standoff")
 
+    # 5b -- front height vs the enclosure ceiling.
+    #
+    # Check 5 asks whether a part clears the standoff underneath. Nothing asked
+    # whether a part clears the LID, so the front heights above were recorded and
+    # then never compared to anything -- the comment in HEIGHTS said as much. That
+    # is the same shape as every other miss on this board: a check that models one
+    # thing and silently ignores another. BT1 at 21.31 mm sets the stack, and the
+    # BUD's 34.14 mm interior is the binding case, not the phone's 40+.
+    enc, interior = min(ENCLOSURES.items(), key=lambda kv: kv[1])
+    for p in front:
+        h = ASSEMBLED.get(p["name"], HEIGHTS.get(p["name"]))
+        if h is None:
+            fail("height-unknown", f"{p['ref']} ({p['name']}) has no recorded height")
+            continue
+        stack = BUILD_STANDOFF_MM + PCB_THICKNESS_MM + h
+        if stack > interior:
+            fail("ceiling", f"{p['ref']} stacks to {stack:.2f} mm, over {enc}'s {interior} mm interior")
+
     # 6 -- via annular ring
     for m in re.finditer(r"^\t\(via", B.t, re.M):
         blk = sexp(B.t, m.start() + 1)
@@ -276,7 +314,7 @@ def main():
     print(f"board {x1-x0:.1f} x {y1-y0:.1f} mm   "
           f"{len(front)} front / {len(back)} back   standoff {STANDOFF_MM} mm\n")
     if not fails:
-        print("  all eight checks pass")
+        print("  all nine checks pass")
         return 0
     from collections import Counter
     for cls, n in Counter(c for c, _ in fails).most_common():

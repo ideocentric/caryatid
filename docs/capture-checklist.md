@@ -235,17 +235,32 @@ arrive rather than before the gerbers go out.
       5.8 mm per side spare, so **~7.5 mm per end and ~12.1 mm per side** of true
       clearance. External is 129.5 × 221 mm. See
       [loa 12-phone-build.md](../../loa/docs/design/12-phone-build.md).
-- [x] ~~Standoffs are 7 mm minimum~~ — **2 mm** now. The back face is empty, so
-      the standoff only clears solder joints. Stack is ~25 mm, not ~30.
-- [ ] **Check height, not just floor area.** Both floor rectangles are settled and
-      both clear; **height is the last enclosure dimension that can still force a
-      design change.** The stack is **~25 mm** — 2 mm standoff, 1.6 mm
-      PCB, and the **21.31 mm** BH-18650-PC. **The holder sets it, not the
-      Seed**, which is only 10.5 mm. If the phone is shallow at the point the
-      board wants to sit, the cell has to move off-board — which now means adding a
-      connector back, since J2 was removed.
-      *(Was written as a 19 mm holder giving ~26.6 mm, before the part was
-      chosen, and again as ~30 mm before every component moved to the front.)*
+- [x] ~~Standoffs are 7 mm minimum~~ — **4 mm, as built.** The back face is empty,
+      so **2 mm** is all the electrical clearance needs; 4 mm is the mechanical
+      choice and there is headroom for it. Do not read the 2 mm as a build spec.
+      Stack is **26.91 mm** — 4 + 1.6 PCB + 21.31 BT1.
+- [x] ~~Check height, not just floor area.~~ **Both enclosures clear the 26.91 mm
+      stack** (4 mm standoff + 1.6 mm PCB + **21.31 mm** BH-18650-PC — **the
+      holder sets the height, not the Seed**, which is only 10.5 mm).
+
+      | | interior height | headroom |
+      | --- | --- | --- |
+      | telephone shell | > 40 mm | > 13 mm |
+      | **BUD CU-477** | **34.14 mm** | **7.23 mm** |
+
+      The BUD is the binding case. Its interior height is **derived from the STEP
+      model**, not measured: external is 38.10 mm (1.500″) and both the base and
+      the cover independently give a **1.98 mm wall**, which reconciles exactly
+      (38.10 − 2 × 1.98 = 34.14). Two solids agreeing is good corroboration but it
+      is still inference from the model — **confirm with calipers before the cell
+      is committed to the board.**
+
+      One reservation: a plane sits **1.60 mm proud of the base floor**. If the
+      standoffs land on that rather than on the floor itself, headroom is
+      **5.63 mm**. Still adequate; check which surface they seat on.
+
+      *(Was written as a 19 mm holder giving ~26.6 mm before the part was chosen,
+      then ~30 mm, then ~25 mm at a 2 mm standoff.)*
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
 - [ ] **Fiducials** — three top-side; confirm JLC's requirement.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is

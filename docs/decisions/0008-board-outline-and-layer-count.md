@@ -92,7 +92,26 @@ that was never checked.
   true clearance there is ~12.1 mm per side and ~7.5 mm per end. The 1.2 mm is
   spare inside a rectangle that is itself derated — not a 1.2 mm gap to a wall.
 
-- **Height is now the only open enclosure dimension**, and the only one that can
-  still force a change. The stack is ~25 mm and **BT1 sets it**. If the phone is
-  shallow where the board sits, the cell moves off-board, which means restoring a
-  `VBAT` connector — the thing this design deliberately removed with J2.
+- **Height clears too, and the BUD is the binding case** — not the phone:
+
+  | | interior height | headroom at 26.91 mm stack |
+  | --- | --- | --- |
+  | telephone shell | > 40 mm | > 13 mm |
+  | **BUD CU-477** | **34.14 mm** | **7.23 mm** |
+
+  The BUD figure is **derived from the STEP, not measured**: 38.10 mm external
+  (1.500″) with a 1.98 mm wall given independently by the base and the cover,
+  reconciling exactly. A plane 1.60 mm proud of the floor would reduce headroom to
+  5.63 mm if the standoffs seat on it. Confirm with calipers.
+
+- **The standoff is 4 mm as built, not 2 mm.** 2 mm is the *electrical* minimum
+  that follows from the front-side flip — the back face is bare, so the standoff
+  only has to clear solder joints — and it was recorded above as though it were
+  the build spec. It is not. 4 mm is the mechanical choice, it costs 2 mm of
+  headroom, and the BUD has room for it. `tools/check_board.py` uses 2 mm because
+  the check it performs is the electrical one.
+
+- No enclosure dimension is open any more. The cell stays on the board, so **J2
+  does not come back** — the `VBAT` connector was removed as the last path by
+  which a reversed cell could reach an unprotected charger input, and nothing now
+  requires restoring it.
