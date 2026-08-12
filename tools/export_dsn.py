@@ -21,6 +21,24 @@ WHAT THIS DOES THAT THE GUI EXPORT DOES NOT
 * **Existing copper is emitted as protected wiring.** The boost hot loop and the
   SW node were placed and measured by hand; `(type protect)` stops Freerouting
   ripping them up.
+* **All four net classes are emitted, not just Default.** This file originally
+  wrote one class, so Freerouting returned VBAT, VOUT, VIN_DC and SW at 0.25 mm
+  -- about 0.86 A at a 10 C rise on 1 oz, against a 1.51 A boost peak. That is
+  not a fab-rule violation, it is an electrical one, and DRC would not have
+  caught it because 0.25 mm is legal copper.
+* **The boundary is inset by EDGE_COPPER_MM** so Freerouting cannot route to the
+  board edge. JLC wants 0.20 mm copper-to-edge and the outline tolerance is
+  +/-0.2 mm, so the inset is 0.30.
+
+WHAT FREEROUTING STILL DOES NOT CHECK
+-------------------------------------
+The DSN can only carry clearance, track width, via padstacks and the boundary.
+**Annular ring, minimum drill, hole-to-hole, silkscreen and component height are
+not expressible in it at all** -- Freerouting will happily return a board that
+violates every one of them, because it was never told. Those are enforced before
+export (via padstacks come from the netclasses) and after import, by
+`tools/check_board.py` and KiCad's own DRC. A clean Freerouting run is not
+evidence of a fabricable board.
 
 CONVENTIONS, which are where this format goes wrong
 ---------------------------------------------------
@@ -35,7 +53,7 @@ NOT VERIFIED AGAINST FREEROUTING. There is no Freerouting on this machine, so
 this has been checked structurally (balanced, complete, coordinates in range) but
 never loaded by the tool it targets. Treat the first import as the real test.
 """
-import sys, os, re, math, json
+import sys, os, re, math, json, fnmatch
 from collections import OrderedDict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +65,12 @@ KFP  = "/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints"
 SCALE = 10000.0          # mm -> DSN units, matching (resolution um 10)
 def X(mm): return int(round(mm * SCALE))
 def Y(mm): return int(round(-mm * SCALE))      # DSN is Y-up
+
+# JLC wants 0.20 mm copper-to-edge; the outline tolerance is +/-0.2 mm. The DSN
+# boundary is the only way to tell Freerouting about either, so inset by both.
+EDGE_COPPER_MM = 0.30
+
+def via_id(diameter, drill): return f"Via_{X(diameter)}_{X(drill)}"
 
 
 def sexp(text, start):
@@ -187,8 +211,11 @@ def main():
     b = Pcb()
     rules = json.load(open(PRO))["net_settings"]
     default = next(c for c in rules["classes"] if c["name"] == "Default")
+    byname = {c["name"]: c for c in rules["classes"]}
 
     x0, y0, x1, y1 = b.outline
+    x0 += EDGE_COPPER_MM; y0 += EDGE_COPPER_MM
+    x1 -= EDGE_COPPER_MM; y1 -= EDGE_COPPER_MM
 
     # ---- library: one image per footprint, one padstack per distinct pad ----
     images, stacks = OrderedDict(), OrderedDict()
@@ -248,11 +275,12 @@ def main():
     for pid, pd in stacks.items():
         L.append(padstack_def(pid, pd))
     d = default
-    L.append(f'    (padstack "Via_{X(d["via_diameter"])}_{X(d["via_drill"])}"')
-    L.append(f'      (shape (circle F.Cu {X(d["via_diameter"])}))')
-    L.append(f'      (shape (circle B.Cu {X(d["via_diameter"])}))')
-    L.append('      (attach off)')
-    L.append('    )')
+    for vd, vdr in sorted({(c["via_diameter"], c["via_drill"]) for c in rules["classes"]}):
+        L.append(f'    (padstack "{via_id(vd, vdr)}"')
+        L.append(f'      (shape (circle F.Cu {X(vd)}))')
+        L.append(f'      (shape (circle B.Cu {X(vd)}))')
+        L.append('      (attach off)')
+        L.append('    )')
     L.append('  )')
 
     # ---- network ------------------------------------------------------------
@@ -262,6 +290,7 @@ def main():
             if not net: continue
             pins.setdefault(net, []).append(f'{p["ref"]}-{num}')
     skipped = []
+    emitted = []
     L.append('  (network')
     for net, pl in sorted(pins.items()):
         if net == "GND" and not with_gnd:
@@ -270,10 +299,33 @@ def main():
         L.append(f'    (net "{net}"')
         L.append('      (pins ' + " ".join(sorted(pl)) + ')')
         L.append('    )')
-    L.append('    (class kicad_default ""')
-    L.append(f'      (circuit (use_via "Via_{X(d["via_diameter"])}_{X(d["via_drill"])}"))')
-    L.append(f'      (rule (width {X(d["track_width"])}) (clearance {X(d["clearance"])}))')
-    L.append('    )')
+        emitted.append(net)
+
+    # One class per netclass, carrying its own width, clearance and via. Emitting
+    # only Default sent every net out at 0.25 mm -- see the header.
+    members = OrderedDict((c["name"], []) for c in rules["classes"])
+    ambiguous = []
+    for net in emitted:
+        hit = {p["netclass"] for p in rules.get("netclass_patterns", [])
+               if fnmatch.fnmatchcase(net, p["pattern"])}
+        if len(hit) > 1:
+            # Precedence between overlapping patterns is not something to guess
+            # at. Today nothing overlaps; if that changes, say so rather than
+            # silently pick one.
+            ambiguous.append((net, sorted(hit)))
+        members[hit.pop() if len(hit) == 1 else "Default"].append(net)
+    if ambiguous:
+        for net, hit in ambiguous:
+            print(f"  ERROR net {net} matches {', '.join(hit)} -- precedence undefined")
+        sys.exit(1)
+
+    for name, nets in members.items():
+        c = byname[name]
+        quoted = " ".join(f'"{n}"' for n in nets)
+        L.append(f'    (class {name} {quoted}'.rstrip())
+        L.append(f'      (circuit (use_via "{via_id(c["via_diameter"], c["via_drill"])}"))')
+        L.append(f'      (rule (width {X(c["track_width"])}) (clearance {X(c["clearance"])}))')
+        L.append('    )')
     L.append('  )')
 
     # ---- wiring: existing copper, protected ---------------------------------
