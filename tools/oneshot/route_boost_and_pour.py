@@ -5,8 +5,8 @@
 Everything else on this board is unrouted and is meant to be done interactively.
 This does the two pieces where the geometry is settled and the stakes are high:
 
-  * a GND zone on F.Cu -- that face carries only 21 through-hole parts, so it can
-    be a near-solid plane. This is what putting the SMD on the back bought.
+  * a GND zone on B.Cu. That face is empty: every component sits on the front so
+    the standoff can stay short, which leaves the whole back as a solid plane.
   * the boost hot loop. The return is NOT a track: C6's ground pad and U2's
     ground pad each drop a via straight into the plane, so the return runs
     directly under the outgoing current. That is the smallest loop available and
@@ -53,7 +53,7 @@ def pad(ref, num):
 
 def seg(a,b,width,net,tag):
     return (f'\t(segment\n\t\t(start {a[0]} {a[1]})\n\t\t(end {b[0]} {b[1]})\n'
-            f'\t\t(width {width})\n\t\t(layer "B.Cu")\n\t\t(net {net})\n\t\t(uuid "{U(tag)}")\n\t)\n')
+            f'\t\t(width {width})\n\t\t(layer "F.Cu")\n\t\t(net {net})\n\t\t(uuid "{U(tag)}")\n\t)\n')
 def via(p,net,tag):
     return (f'\t(via\n\t\t(at {p[0]} {p[1]})\n\t\t(size 0.7)\n\t\t(drill 0.3)\n'
             f'\t\t(layers "F.Cu" "B.Cu")\n\t\t(net {net})\n\t\t(uuid "{U(tag)}")\n\t)\n')
@@ -71,7 +71,7 @@ def all_back_pads():
                 if d==0: break
             k+=1
         b=t[s:k+1]
-        if '(layer "B.Cu")' not in b[:200]: continue
+        if '(layer "F.Cu")' not in b[:200]: continue
         am=re.search(r'^\t\t\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)', b, re.M)
         ox,oy,rot=float(am.group(1)),float(am.group(2)),float(am.group(3) or 0)
         th=math.radians(rot); cs,sn=math.cos(th),math.sin(th)
@@ -99,8 +99,13 @@ def free_via(near, net, r=0.3, clr=0.25):
 
 out=[]
 NECK=0.2
-def escape(p, to_x, net, tag):
-    mid=(to_x, p[1])
+def escape(p, dx, net, tag):
+    """neck OUT OF a fine-pitch pad by dx, then widen.
+
+    dx is a DELTA. It was an absolute x, tuned to one cluster position -- moving
+    U2 turned every escape into an 11 mm track running backwards across the board.
+    """
+    mid=(round(p[0]+dx,3), p[1])
     return seg(p, mid, NECK, net, tag+"-neck"), mid
 
 # +5V_RAW: pin 6 down to C6, which now sits below U2
@@ -112,9 +117,9 @@ out.append(seg(kink, c61, 0.8, nets["+5V_RAW"], "raw-wide"))
 # SW: pin 5 straight across to L1, which is now level with it. This is the net
 # the rearrangement was for -- 1.5 A peak and the loudest radiator on the board.
 p5=pad("U2","5"); l2=pad("L1","2")
-s,mid = escape(p5, 66.4, nets["/power/SW"], "sw")
+s,mid = escape(p5, +1.7, nets["/power/SW"], "sw")
 out.append(s); out.append(seg(mid, l2, 1.2, nets["/power/SW"], "sw-wide"))
-s,mid = escape(pad("U2","3"), 61.9, nets["VOUT"], "vout-c4")
+s,mid = escape(pad("U2","3"), -1.4, nets["VOUT"], "vout-c4")
 out.append(s); out.append(seg(mid, pad("C4","1"), 1.2, nets["VOUT"], "vout-c4-wide"))
 out.append(seg(pad("L1","1"), pad("C5","1"), 1.2, nets["VOUT"], "vout-c5"))
 
@@ -129,7 +134,7 @@ for ref,padnum,tag in (("C6","2","c6"),("U2","4","u2")):
 # --- F.Cu ground plane -------------------------------------------------------
 OX,OY,W,H,INSET = 50.0, 30.0, 150.0, 90.0, 0.6
 x0,y0,x1,y1 = OX+INSET, OY+INSET, OX+W-INSET, OY+H-INSET
-zone=(f'\t(zone\n\t\t(net {nets["GND"]})\n\t\t(net_name "GND")\n\t\t(layer "F.Cu")\n'
+zone=(f'\t(zone\n\t\t(net {nets["GND"]})\n\t\t(net_name "GND")\n\t\t(layer "B.Cu")\n'
       f'\t\t(uuid "{U("zone")}")\n\t\t(name "GND plane")\n\t\t(hatch edge 0.5)\n'
       '\t\t(connect_pads\n\t\t\t(clearance 0.3)\n\t\t)\n'
       '\t\t(min_thickness 0.25)\n\t\t(filled_areas_thickness no)\n'

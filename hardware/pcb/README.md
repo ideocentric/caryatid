@@ -46,12 +46,15 @@ and the silkscreen is a mess. Treat it as something to drag from.
 
 ## Which face
 
-**Front:** BT1, both Seed sockets, and every through-hole connector — 21 parts.
-**Back:** all 104 SMD, classified by each footprint's own `attr`, not by name.
+**Everything is on the front.** The back carries nothing but the ground pour.
 
-This is the checklist's "SMD on one face, holder and through-hole connectors on
-the other", and it pays immediately: `courtyards_overlap` went from 33 to **zero**,
-because SMD and through-hole can no longer collide.
+The SMD was briefly on the back, which is the textbook arrangement and was right
+when the board was 90 × 100 and the copper under the cell was worth reclaiming.
+It is wrong here: **the enclosure is shallow, so the standoff must be short**, and
+C7 at 5.4 mm cannot hang underneath a 2 mm gap. Moving everything to the front
+fixes three things at once — the standoff drops to 2 mm, SMT stays single-sided
+and therefore Economic, and B.Cu is freed as a routing layer instead of carrying
+104 parts *and* every signal.
 
 The flip is stored the way KiCad stores it, checked against a KiCad-written
 board rather than assumed: back-side footprints hold **Y-negated** coordinates,
@@ -106,9 +109,8 @@ ships none, and Freerouting is not installed — and routing follows placement,
 which is still a machine first pass. Two pieces were worth doing now because
 their geometry is settled and the stakes are high.
 
-**A GND zone on F.Cu.** That face carries only 21 through-hole parts, so it can
-be a near-solid plane. This is what putting the SMD on the back bought, and it is
-the textbook 2-layer arrangement: plane on one side, signals on the other.
+**A GND zone on B.Cu**, which is now the empty face — a genuinely solid plane,
+and the whole layer still available for routing around it.
 
 **The zone is not filled.** `kicad-cli pcb drc` has no fill option, so DRC
 reports the two GND vias as `via_dangling` — they touch a zone that has no copper

@@ -76,16 +76,16 @@ def bbox(libid):
     if not xs: return (3.0,3.0,0.0,0.0)
     return (max(xs)-min(xs), max(ys)-min(ys), (max(xs)+min(xs))/2, (max(ys)+min(ys))/2)
 
-ZONES={  # back-side zones on the 150 x 90 board. The strip under BT1 is still
- # the largest genuinely free area: the cell's only pads are its two terminals.
- "anabus":  (40,3,110,24),     # analogue bus + its RC, under the cell
- "charger": (2,28,44,52),      # charger, left
- "boost":   (2,55,44,86),      # switcher hard left, away from analogue and audio
- "digbus":  (46,28,64,54),     # digital bus series resistors, near A1
- "switch":  (46,58,64,86),     # 74HC14 channel
- "seedsup": (71,28,79,80),     # A10/A11 networks, between the Seed pad columns
- "audio":   (92,28,118,62),    # audio block, right, furthest from L1
- "conn":    (124,28,148,86),   # RGB / I2C / sensor resistors
+ZONES={  # Front-face zones. Everything shares one side now, so these are the
+ # gaps between BT1, the Seed and the connector ring -- not free board.
+ "anabus":  (3,3,34,25),        # top-left corner, clear of the cell
+ "conn":    (116,3,147,25),     # top-right corner
+ "charger": (19,28,44,49),      # left column, above the boost
+ "boost":   (19,52,44,80),      # switcher, hard left
+ "digbus":  (56,28,64,80),      # narrow column left of the Seed, near A1
+ "seedsup": (87,28,95,80),      # narrow column right of the Seed, near A2
+ "switch":  (107,28,131,60),    # right of J5
+ "audio":   (105,62,148,88),    # bottom-right, furthest from L1
 }
 ZONE_OF={}
 def zone(z,*refs):
@@ -146,32 +146,36 @@ ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 12.0, 2.5, 0)) # b
 # and the SW node is the radiator. C6 therefore sits hard against pin 6 and L1
 # hard against pin 5. L1 is turned 180 so its SW pad faces the IC -- 180 is
 # (px,py) -> (-px,-py), which is checkable, unlike the 90 transform.
-UX,UY = 14.0, 66.0
+UX,UY = 26.0, 66.0    # x=26 keeps the cluster clear of the J1-J4 column at x 2..16
 # C6 sits BELOW U2 rather than beside it. Beside was the obvious spot and it cost
 # the SW node: pin 5 can only exit right, and C6 was standing in that gap, so SW
 # had no path to L1 at any useful width. Below is shorter for the hot loop too --
 # pin 6 is on the near edge either way.
 BACK_ANCHOR={
+ # Moving to the front mirrors the pin layout vertically: on B.Cu pin 6 sat below
+ # U2's centre, on F.Cu it sits above. Every y offset here is flipped from the
+ # back-side version -- the relative arrangement is unchanged.
  "U2":(UX,UY,0),
- "C6":(14.0, 68.45, 180),        # 180 turns pad 1 back toward pin 6
- "L1":(18.6, 66.0, 180),        # now level with pin 5, SW routes straight across
- "C5":(23.0, 66.0, 0),          # at L1's VOUT pad
- "C4":(10.5, 65.5, 180),        # input cap, pad 1 toward pin 3
- "R7":(10.0, 68.5, 0),          # FB divider, against pin 1
- "R8":(10.0, 70.6, 0),
- "FB1":(14.5, 71.0, 0),         # ferrite, downstream of +5V_RAW
+ "C6":(UX, UY-2.45, 180),       # above, pad 1 turned back toward pin 6
+ "L1":(UX+4.6, UY, 180),        # level with pin 5, SW pad facing the IC
+ "C5":(UX+9.0, UY, 0),          # at L1's VOUT pad
+ "C4":(UX-3.5, UY+0.5, 180),    # input cap, pad 1 toward pin 3
+ "R7":(UX-4.0, UY-2.5, 0),      # FB divider, against pin 1
+ "R8":(UX-4.0, UY-4.6, 0),
+ "FB1":(UX+0.5, UY-5.0, 0),     # ferrite, downstream of +5V_RAW
 }
 
 def tht_keepouts():
-    """front through-hole pads occupy every copper layer -- keepouts for the back"""
+    """Everything is on one face now, so the fixed parts block by COURTYARD, not
+    just by pad. Using pads here was right when the SMD was on the other side."""
     out=[]
-    for r,(val,libid) in comps.items():
-        if is_smd(libid) or r not in ANCHOR: continue
+    for r in ANCHOR:
+        if r not in comps: continue
         x,y,rot = ANCHOR[r]
-        for m in re.finditer(r'\(pad "[^"]*" (thru_hole|np_thru_hole)[^\n]*\n\s*\(at ([-\d.]+) ([-\d.]+)[^)]*\)\s*\n\s*\(size ([-\d.]+) ([-\d.]+)\)', load_fp(libid)):
-            px,py,sw,sh = (float(m.group(i)) for i in (2,3,4,5))
-            if rot==180: px,py=-px,-py
-            out.append((x+px-sw/2-0.3, y+py-sh/2-0.3, x+px+sw/2+0.3, y+py+sh/2+0.3))
+        w,h,mx,my = bbox(comps[r][1])
+        if rot in (90,270): w,h,mx,my = h,w,-my,mx
+        elif rot==180: mx,my = -mx,-my
+        out.append((x+mx-w/2-0.4, y+my-h/2-0.4, x+mx+w/2+0.4, y+my+h/2+0.4))
     for hx,hy in [(5,5),(145,5),(5,85),(145,85)]:
         out.append((hx-3.6,hy-3.6,hx+3.6,hy+3.6))
     # hand-anchored back parts are keepouts too
@@ -299,7 +303,7 @@ def padpos(ref,pin):
     px,py=float(m.group(1)),float(m.group(2))
     x,y,rot=place[ref]
     if rot==180: px,py=-px,-py
-    return (x+px, y-py)          # back side: body stored Y-negated
+    return (x+px, y+py)          # front face: stored coords are not mirrored
 p6=padpos("U2","6"); p4=padpos("U2","4"); p5=padpos("U2","5")
 c6a=padpos("C6","1"); c6b=padpos("C6","2"); l1b=padpos("L1","2")
 import math
@@ -423,11 +427,11 @@ def emit(ref):
         pieces.append(blk); i=k+1
     body="".join(pieces)
     body="".join(("\t"+ln if ln.strip() else ln)+"\n" for ln in body.split("\n")[:-1])
-    back = is_smd(libid)
-    if back:
-        body=to_back(body)
-        # 104 SMD parts at this density make their designators illegible and they
-        # collided 87 times. JLC places from the CPL, not from silkscreen.
+    back = False          # everything on the front: the standoff must stay short,
+                          # and C7 at 5.4 mm cannot hang under a 2 mm gap
+    if is_smd(libid):
+        # the SMD designators are illegible at this density and collide in
+        # dozens of places. JLC places from the CPL, not from silkscreen.
         body=hide_reference(body)
     if ref in ("U1","U2"):
         # A 0.5 mm-pitch package fixes its own pad gaps: 0.25 mm on the QFN,

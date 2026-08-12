@@ -15,7 +15,7 @@ export` has no dsn subcommand.
 
 WHAT THIS DOES THAT THE GUI EXPORT DOES NOT
 -------------------------------------------
-* **GND is excluded by default.** F.Cu is a ground plane, so GND wants stitching
+* **GND is excluded by default.** B.Cu is a ground plane, so GND wants stitching
   vias, not 72 routed traces. Freerouting cannot see the zone and would scribble
   ground all over the board. Pass --with-gnd if you want it routed anyway.
 * **Existing copper is emitted as protected wiring.** The boost hot loop and the
@@ -307,7 +307,7 @@ def main():
     print(f"wrote {out_path}")
     print(f"  board      {x1-x0:.1f} x {y1-y0:.1f} mm")
     print(f"  components {len(b.parts)}   images {len(images)}   padstacks {len(stacks)}")
-    print(f"  nets to route {routed}" + (f"   (GND excluded -- the F.Cu plane carries it)" if skipped else ""))
+    print(f"  nets to route {routed}" + (f"   (GND excluded -- the B.Cu plane carries it)" if skipped else ""))
     print(f"  protected  {nseg} tracks, {nvia} vias")
     print(f"  parens balanced")
     return 0

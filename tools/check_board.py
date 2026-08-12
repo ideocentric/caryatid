@@ -39,9 +39,9 @@ JLC_SILK_HEIGHT   = 0.8
 JLC_SILK_STROKE   = 0.15
 EDGE_CLEARANCE    = 0.5
 COURTYARD_GAP     = 0.0    # courtyards may touch, not overlap
-STANDOFF_MM       = 7.0    # board standoff. Set by C7 (5.4 mm) on the back face,
-                           # not by preference: 4-5 mm does not clear it. The ~29 mm
-                           # stack already on record implies ~6 mm; 7 gives margin.
+STANDOFF_MM       = 2.0    # The back face is empty -- every component is on the
+                           # front -- so the standoff only has to clear solder
+                           # joints. It was 7 mm when C7 (5.4 mm) hung underneath.
 
 # Heights are not in the footprint files. Most encode it in the name; the rest
 # are from the datasheets. A part missing here is reported, not assumed safe.

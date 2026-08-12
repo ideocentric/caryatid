@@ -67,9 +67,12 @@ that was never checked.
 
 - The CU-477 drill pattern changes from 90 × 80 mm to **140 × 80 mm** — X ±40,
   Z ±70 in the STEP frame. `docs/sourcing.md` carries the numbers.
-- **The standoff is 7 mm, and that is set by the board, not by preference.** C7
-  is 5.4 mm on the back face; 4–5 mm does not clear it. The ~29 mm stack already
-  on record implied ~6 mm, but the figure had never been written down.
+- **The standoff is 2 mm.** Every component sits on the front and the back is
+  bare copper, so the standoff only clears solder joints. This reverses the
+  SMD-to-back flip: that was right at 90 × 100, where the copper under the cell
+  was worth reclaiming, but the enclosure is shallow and C7 at 5.4 mm cannot hang
+  underneath. Single-sided SMT is also the cheaper assembly, and it leaves B.Cu
+  free as a routing layer. Stack is ~25 mm, not ~30.
 - Placement was redone. The schematic, symbols, footprints and BOM are unaffected
   — this is an outline change only.
 - 150 mm exceeds the JLC 100 × 100 tier deliberately. **100 × 200 was also

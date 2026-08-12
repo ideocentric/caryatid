@@ -206,8 +206,10 @@ arrive rather than before the gerbers go out.
       conservative BUD rectangle leaves 15 mm spare; the 90 mm axis is unchanged
       because it is the one proven to fit. See
       [ADR 0008](decisions/0008-board-outline-and-layer-count.md).
-- [ ] **SMD on one face, holder and through-hole connectors on the other.** This
-      is what makes two layers fit: the copper under the cell stays usable.
+- [x] ~~SMD on one face, holder and through-hole connectors on the other.~~
+      **Everything is on the front**; the back is bare copper. The enclosure is
+      shallow, so the standoff has to be short, and C7 at 5.4 mm cannot hang
+      under it. Single-sided SMT is also the cheaper assembly.
 - [x] **Four M3 holes**, pattern chosen once the outline settles.
 - [ ] **Drill the CU-477 floor** to the **140 × 80 mm** pattern — X ±40, Z ±70
       from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
@@ -226,9 +228,9 @@ arrive rather than before the gerbers go out.
       per side on the tight axis — comfortable on paper. What is unmeasured is
       the *internal* clear floor once the keypad module, hook mechanism, cord
       anchor and mounting bosses are accounted for.
-- [ ] **Standoffs are 7 mm minimum** — set by C7 at 5.4 mm on the back face, not
-      by preference. 4–5 mm does not clear it.
-- [ ] **Check height, not just floor area.** The stack is **~30 mm** — standoff,
+- [x] ~~Standoffs are 7 mm minimum~~ — **2 mm** now. The back face is empty, so
+      the standoff only clears solder joints. Stack is ~25 mm, not ~30.
+- [ ] **Check height, not just floor area.** The stack is **~25 mm** — standoff,
       PCB, and the **21.31 mm** BH-18650-PC. **The holder sets it, not the
       Seed**, which is only 10.5 mm. If the phone is shallow at the point the
       board wants to sit, moving the cell to J2 as a remote pack recovers 21 mm.
