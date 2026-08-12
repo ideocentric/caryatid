@@ -229,12 +229,17 @@ arrive rather than before the gerbers go out.
       short axis and +15.1 mm on the long against the 95.2 × 165.1 working
       rectangle, and +20 mm on both against the ~110 × 170 the STEP model reads.
       See [sourcing.md](sourcing.md).
-- [ ] **Record the telephone shell's measured internal floor.** The fit has been
-      checked against the physical phone, but the numbers are not written down —
-      so nothing here can be derived from them. External is 129.5 × 221 mm.
+- [x] ~~Record the telephone shell's measured internal floor.~~ **6″ × 4″ usable
+      — 152.4 × 101.6 mm — and that figure already holds ≥ 0.25″ (6.35 mm)
+      clearance on every side.** 150 × 90 lands inside it with 1.2 mm per end and
+      5.8 mm per side spare, so **~7.5 mm per end and ~12.1 mm per side** of true
+      clearance. External is 129.5 × 221 mm. See
+      [loa 12-phone-build.md](../../loa/docs/design/12-phone-build.md).
 - [x] ~~Standoffs are 7 mm minimum~~ — **2 mm** now. The back face is empty, so
       the standoff only clears solder joints. Stack is ~25 mm, not ~30.
-- [ ] **Check height, not just floor area.** The stack is **~25 mm** — standoff,
+- [ ] **Check height, not just floor area.** Both floor rectangles are settled and
+      both clear; **height is the last enclosure dimension that can still force a
+      design change.** The stack is **~25 mm** — 2 mm standoff, 1.6 mm
       PCB, and the **21.31 mm** BH-18650-PC. **The holder sets it, not the
       Seed**, which is only 10.5 mm. If the phone is shallow at the point the
       board wants to sit, the cell has to move off-board — which now means adding a

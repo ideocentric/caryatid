@@ -79,6 +79,20 @@ that was never checked.
   considered and rejected**: it does not fit the BUD, and
   [ADR 0002](0002-one-board-many-instruments.md) requires one layout to serve
   absonus and baby borg as well as loa.
-- Still unmeasured, and still gating: the BUD's real interior, and the telephone
-  shell's internal clear floor. Both are recorded as open in the capture
-  checklist.
+- **Both enclosure floors have since been checked, and 150 × 90 clears both**
+  (2026-08-11, after this decision was accepted):
+
+  | enclosure | usable floor | margin at 150 × 90 |
+  | --- | --- | --- |
+  | BUD CU-477, conservative | 95.2 × 165.1 | +5.2 short / +15.1 long |
+  | BUD CU-477, STEP interior | ~110 × 170 | +20 / +20 |
+  | telephone shell | 152.4 × 101.6 (6″ × 4″) | 5.8 mm per side / 1.2 mm per end |
+
+  The phone's 6 × 4 figure **already reserves ≥ 6.35 mm on every side**, so the
+  true clearance there is ~12.1 mm per side and ~7.5 mm per end. The 1.2 mm is
+  spare inside a rectangle that is itself derated — not a 1.2 mm gap to a wall.
+
+- **Height is now the only open enclosure dimension**, and the only one that can
+  still force a change. The stack is ~25 mm and **BT1 sets it**. If the phone is
+  shallow where the board sits, the cell moves off-board, which means restoring a
+  `VBAT` connector — the thing this design deliberately removed with J2.
