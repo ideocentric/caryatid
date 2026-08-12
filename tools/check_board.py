@@ -36,7 +36,7 @@ Geometry rules established by reading KiCad-written boards, not assumed:
 import sys, os, re, math, json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PCB  = os.path.join(HERE, "..", "hardware", "pcb", "caryatid.kicad_pcb")
+PCB  = os.environ.get("CARYATID_PCB") or os.path.join(HERE, "..", "hardware", "pcb", "caryatid.kicad_pcb")
 PRO  = os.path.join(HERE, "..", "hardware", "pcb", "caryatid.kicad_pro")
 
 # --- fab and mechanical limits ----------------------------------------------

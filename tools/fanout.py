@@ -305,17 +305,46 @@ def main():
     # Retry with the widening pushed progressively further off the pad row until
     # nothing is squeezed. A solution that is merely legal is not good enough --
     # that is what shipped last time.
+    # Retry with the widening pushed further off the pad row until nothing is
+    # squeezed. If that never converges, DROP the group that is doing the
+    # squeezing and keep the rest -- refusing outright emits no escapes at all,
+    # which on a stripped board meant 0 protected tracks and 87 unrouted
+    # connections. Refusing was right when the alternative was a slightly worse
+    # board; it is wrong when the alternative is no board.
+    live = dict(groups)
     good = bad = None
+    settled = False
     for attempt in range(RETRIES):
         mr = MIN_REACH0 + attempt * RETRY_STEP
-        good, bad = solve(D, groups, mr)
+        good, bad = solve(D, live, mr)
         sq = neighbours(D, good)
         if not sq and not bad:
             print(f"  settled at minimum reach {mr:.2f} mm after {attempt + 1} attempt(s)\n")
-            break
+            settled = True; break
         print(f"    reach {mr:.2f}: {len(bad)} blocked, squeezed {sq or 'none'}")
-    else:
-        print("\n  could not find a set that leaves the neighbours room")
+    dropped = []
+    while not settled and live:
+        good, bad = solve(D, live, MIN_REACH0)
+        sq = neighbours(D, good)
+        if not sq and not bad:
+            settled = True; break
+        if not sq: break
+        # whichever group's escape sits nearest the squeezed pad is the culprit
+        ref, num = sq[0].rsplit("-", 1)
+        pd = next((q for r, _, q in D.pads if r == ref and q["num"] == num), None)
+        if pd is None: break
+        here = (pd["x"], pd["y"])
+        key = min(live, key=lambda k: min(math.dist(here, (m[1]["x"], m[1]["y"]))
+                                          for m in live[k]))
+        dropped.append(f"{key[0]} {key[1]}")
+        del live[key]
+        print(f"    dropping {dropped[-1]} so {sq[0]} keeps its room")
+    if dropped:
+        print(f"\n  {len(dropped)} group(s) left unescaped to keep neighbours routable: "
+              f"{', '.join(dropped)}")
+        print("  the router will have to reach those pads at class width, or fail on them\n")
+    if not settled and not good:
+        print("\n  could not find any workable set")
         return 1
 
     print(f"  {'group':<22}{'link':>6}{'esc w':>7}{'reach':>7}{'wide':>7}{'margin':>9}  limiting")

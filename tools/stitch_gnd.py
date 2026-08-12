@@ -156,6 +156,42 @@ class Stitcher(Design):
         return True, None
 
 
+GRID_MM = 6.0     # stitching pitch away from the switcher
+GRID_HOT = 3.0    # tighter near the boost node, where return current is worst
+HOT = ("U2", "L1", "C6", "C4", "C5", "U1")
+
+
+def grid_stitch(S, clr, x0, y0, x1, y1, existing):
+    """A via grid tying the two pours together.
+
+    Pads-only stitching leaves the pours joined at whatever points happen to have
+    a ground pad, which can be a long way round for return current. A grid gives
+    every point on the board a short path down. Tighter near the switcher, where
+    the 1 MHz return path is the one that matters."""
+    if not S.isl or not S.fisl: return []
+    bmain = S.isl[0][1]; fmain = S.fisl[0][1]
+    margin = VIA_D / 2 + ZONE_CLEAR
+    hot = [(p["x"], p["y"]) for p in S.B.parts if p["ref"] in HOT]
+    out = list(existing)
+    placed = []
+    y = y0 + GRID_MM
+    while y < y1:
+        x = x0 + GRID_MM
+        while x < x1:
+            step = GRID_HOT if any(math.dist((x, y), h) < 12 for h in hot) else GRID_MM
+            c = (x, y)
+            x += step
+            if any(math.dist(c, q) < step * 0.8 for q in out): continue
+            if not poly_contains(fmain, c) or poly_edge_dist(fmain, c) < margin: continue
+            if not poly_contains(bmain, c) or poly_edge_dist(bmain, c) < margin: continue
+            if not S.via_ok(c, "GND", clr)[0]: continue
+            placed.append(c); out.append(c)
+            S.vias.append((c[0], c[1], VIA_D, VIA_DRILL, S.netid["GND"]))
+            S.holes.append((c[0], c[1], VIA_DRILL))
+        y += GRID_MM
+    return placed
+
+
 def drc_unconnected_gnd():
     """(ref, pad) of every front-side GND pad KiCad reports as unconnected"""
     exe = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
@@ -270,7 +306,14 @@ def main():
         return 1 if bad else 0
 
     nid = S.netid["GND"]
+    grid = grid_stitch(S, clr, x0, y0, x1, y1, [(c[0], c[1]) for _, _, _, c, _ in good]) \
+        if "--grid" in sys.argv else []
+    if grid: print(f"  plus {len(grid)} grid stitching vias tying the two pours")
     out = []
+    for c in grid:
+        out.append(f'\t(via\n\t\t(at {c[0]:.4f} {c[1]:.4f})\n\t\t(size {VIA_D})\n'
+                   f'\t\t(drill {VIA_DRILL})\n\t\t(layers "F.Cu" "B.Cu")\n'
+                   f'\t\t(net {nid})\n\t\t(uuid "{uuid.uuid4()}")\n\t)\n')
     for ref, pd, a, c, kind in good:
         if kind == "trace":
             out.append(f'\t(segment\n\t\t(start {a[0]:.4f} {a[1]:.4f})\n'
@@ -282,7 +325,7 @@ def main():
     t = S.t
     i = t.rfind("\n)")
     open(C.PCB, "w").write(t[:i] + "\n" + "".join(out).rstrip("\n") + t[i:])
-    print(f"  wrote {len(good)} vias and {len(good)} traces into {os.path.relpath(C.PCB)}")
+    print(f"  wrote {len(good)} pad vias, {len(grid)} grid vias into {os.path.relpath(C.PCB)}")
     print("  NOW REFILL THE ZONES (B) -- until then these still read unconnected")
     return 0
 

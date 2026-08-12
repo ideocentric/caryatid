@@ -203,6 +203,7 @@ def padstack_def(pid, p):
 
 
 def main():
+    both_layers = "--both-layers" in sys.argv
     args = sys.argv[1:]
     with_gnd = "--with-gnd" in args
     out_path = os.path.join(HERE, "..", "hardware", "pcb", "caryatid.dsn")
@@ -239,7 +240,13 @@ def main():
     L.append('  (unit um)')
     L.append('  (structure')
     L.append('    (layer F.Cu (type signal) (property (index 0)))')
-    L.append('    (layer B.Cu (type signal) (property (index 1)))')
+    if both_layers:
+        L.append('    (layer B.Cu (type signal) (property (index 1)))')
+    # else B.Cu is not declared a signal layer at all, so the router cannot put
+    # anything on it. That is the honest model when B.Cu is a ground plane: the
+    # last route placed ~130 tracks there, cut the plane into 13 islands and
+    # produced three hole_clearance violations. A route that succeeds by
+    # shredding the return path reports a placement as fine when it is not.
     L.append(f'    (boundary (rect pcb {X(x0)} {Y(y1)} {X(x1)} {Y(y0)}))')
     L.append(f'    (via "Via_{X(default["via_diameter"])}_{X(default["via_drill"])}")')
     L.append('    (rule')
