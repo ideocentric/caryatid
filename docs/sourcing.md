@@ -399,6 +399,10 @@ The interior figure is read off a sparse point cloud and should be treated as
 indicative. The working rectangle stays **95.2 × 165.1 mm** (3.75″ × 6.5″), which
 is the deliberately conservative number allowing for the sloped sides.
 
+**The 150 × 90 board clears all three.** Against the conservative rectangle it
+has +5.2 mm on the short axis and +15.1 mm on the long; against the STEP
+interior, +20 mm on both. The enclosure is not a constraint on this outline.
+
 **The floor is blank.** The model carries 108 M3-sized holes, and every one of
 them is in a wall or a flange, at six distinct heights — none in the bottom. So
 the case has to be drilled for the board standoffs, and there is no existing

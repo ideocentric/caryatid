@@ -224,11 +224,14 @@ arrive rather than before the gerbers go out.
       for protected cells. Economic assembly, same tier as the charger.
 - [ ] **Bolt BT1 down**, don't rely on the two solder tabs. Ø3.2 mm holes at
       55.61 mm — put the mounting holes in the board outline.
-- [ ] **Confirm 90 × 100 mm clears the telephone shell.** External is
-      129.5 × 221 mm, so the board is 31% of the footprint with ~19.8 mm clear
-      per side on the tight axis — comfortable on paper. What is unmeasured is
-      the *internal* clear floor once the keypad module, hook mechanism, cord
-      anchor and mounting bosses are accounted for.
+- [x] ~~Confirm the outline clears the BUD CU-477.~~ **150 × 90 fits every
+      reading of the enclosure**, including the most conservative: +5.2 mm on the
+      short axis and +15.1 mm on the long against the 95.2 × 165.1 working
+      rectangle, and +20 mm on both against the ~110 × 170 the STEP model reads.
+      See [sourcing.md](sourcing.md).
+- [ ] **Record the telephone shell's measured internal floor.** The fit has been
+      checked against the physical phone, but the numbers are not written down —
+      so nothing here can be derived from them. External is 129.5 × 221 mm.
 - [x] ~~Standoffs are 7 mm minimum~~ — **2 mm** now. The back face is empty, so
       the standoff only clears solder joints. Stack is ~25 mm, not ~30.
 - [ ] **Check height, not just floor area.** The stack is **~25 mm** — standoff,
@@ -237,7 +240,7 @@ arrive rather than before the gerbers go out.
       board wants to sit, the cell has to move off-board — which now means adding a
       connector back, since J2 was removed.
       *(Was written as a 19 mm holder giving ~26.6 mm, before the part was
-      chosen — measure against 29 mm.)*
+      chosen, and again as ~30 mm before every component moved to the front.)*
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
 - [ ] **Fiducials** — three top-side; confirm JLC's requirement.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
