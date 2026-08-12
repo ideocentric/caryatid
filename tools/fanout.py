@@ -34,15 +34,29 @@ So every proposal here is verified as a swept rectangle along its actual path,
 against every other-net pad and every other-net track on the same layer.
 """
 import sys, os, re, math, json, fnmatch, uuid
+from collections import OrderedDict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import check_board as C
 
 JLC_MIN_TRACK = 0.10
-NECK_CHOICES  = (0.30, 0.25, 0.20, 0.15, 0.12, 0.10)   # widest that fits wins
+# Escape widths, NARROWEST-ADEQUATE first. Taking the widest that fits is the
+# mistake that cost more connections than the fanout gained: a 0.30 mm escape
+# per pad left the signal pins beside it 0.025 mm of slack, and 0.90 mm from a
+# tied pair left 0.013 mm. The neck only has to carry what the pads themselves
+# provide -- it is 1 mm long between a pad and a wide plane, and the pad is the
+# real constriction -- so the target is (pad width x how many pads feed it).
+# Everything past that is room taken from a neighbour that also has to get out.
+ESCAPE_WIDTHS = (0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.80, 0.90, 1.00, 1.20)
+NEIGHBOUR_SLACK = 0.05    # every other pad must still escape with this to spare
+LINK_W        = 0.20      # ties adjacent same-net pads together
+MAX_LINK_MM   = 2.0
 WIDE_STUB_MM  = 0.60      # length of class-width copper proved at the far end
 STEP          = 0.05
 MAX_REACH     = 4.0
+MIN_REACH0    = 0.0       # grows on retry: pushes the WIDE copper off the pad row
+RETRY_STEP    = 0.10
+RETRIES       = 12
 
 
 # --- geometry ---------------------------------------------------------------
@@ -158,23 +172,112 @@ def outward(p, pd):
     return (math.copysign(1, dx), 0.0) if abs(dx) >= abs(dy) else (0.0, math.copysign(1, dy))
 
 
+def group_key(p, pd, d):
+    return (p["ref"], pd["net"], d)
+
+
+def solve(D, groups, min_reach):
+    """propose link + escape + wide stub for every group, at this minimum reach"""
+    good, bad = [], []
+    for (ref, net, d), members in groups.items():
+        ux, uy = d
+        pads = [m[1] for m in members]
+        k, want, clr = members[0][2], members[0][3], members[0][4]
+        pads.sort(key=lambda q: q["y"] if ux else q["x"])
+        links = [((pads[i]["x"], pads[i]["y"]), (pads[i+1]["x"], pads[i+1]["y"]))
+                 for i in range(len(pads) - 1)]
+        if any(math.dist(a, b) > MAX_LINK_MM for a, b in links):
+            bad.append((ref, net, "pads too far apart to tie")); continue
+        lm = (1e9, None)
+        for a, b in links:
+            w = D.clear_of_everything(a, b, LINK_W, net, clr)[1]
+            if w[0] < lm[0]: lm = w
+        if links and lm[0] < 0:
+            bad.append((ref, net, f"link blocked by {lm[1]}")); continue
+        origin = (sum(q["x"] for q in pads) / len(pads),
+                  sum(q["y"] for q in pads) / len(pads))
+        target = min(min(q["w"], q["h"]) for q in pads) * len(pads)
+        order = ([w for w in ESCAPE_WIDTHS if target <= w <= want] +
+                 [w for w in reversed(ESCAPE_WIDTHS) if w < target])
+        sol = None; near = (-1e9, None)
+        for ew in order:
+            L = max(STEP, min_reach)
+            while L <= MAX_REACH:
+                b = (origin[0] + ux * L, origin[1] + uy * L)
+                ok1, w1 = D.clear_of_everything(origin, b, ew, net, clr)
+                best2 = None
+                for vx, vy in ((ux, uy), (-uy, ux), (uy, -ux)):
+                    c = (b[0] + vx * WIDE_STUB_MM, b[1] + vy * WIDE_STUB_MM)
+                    ok2, w2 = D.clear_of_everything(b, c, want, net, clr)
+                    if best2 is None or w2[0] > best2[1][0]: best2 = (c, w2, ok2)
+                c, w2, ok2 = best2
+                m = min(w1[0], w2[0], lm[0] if links else 1e9)
+                lim = w1[1] if w1[0] < w2[0] else w2[1]
+                if m > near[0]: near = (m, lim)
+                if ok1 and ok2:
+                    sol = (ew, L, b, c, m, lim); break
+                L += STEP
+            if sol: break
+        if not sol:
+            bad.append((ref, net, f"escape blocked, best {near[0]:+.3f} by {near[1]}")); continue
+        ew, L, b, c, m, lim = sol
+        good.append((ref, net, pads, links, origin, b, c, ew, want, L, m, lim))
+    return good, bad
+
+
+def segments_of(D, good):
+    out = []
+    for ref, net, pads, links, origin, b, c, ew, want, L, m, lim in good:
+        nid = D.netid[net]
+        for (s, e, w) in ([(a2, b2, LINK_W) for a2, b2 in links] +
+                          [(origin, b, ew), (b, c, want)]):
+            out.append((s, e, w, nid))
+    return out
+
+
+def neighbours(D, good, report=False):
+    """with the escapes treated as copper, can every other pad still get out?
+
+    THE CHECK WHOSE ABSENCE CAUSED THE REGRESSION. Each escape was verified
+    against the board as it stood and every one passed -- but they were never
+    checked against the pins that still had to get out PAST them. The shipped
+    version was legal by DRC and left U1's signal pins 0.025 mm of working room,
+    which cost two more connections than the fanout gained."""
+    saved = D.tracks
+    D.tracks = list(D.tracks) + [(s, e, w, "F.Cu", nid) for s, e, w, nid in segments_of(D, good)]
+    escaped = {(g[0], q["num"]) for g in good for q in g[2]}
+    affected = {g[0] for g in good}
+    squeezed, rows = [], []
+    for ref, p, pd in D.pads:
+        if ref not in affected or not pd["net"] or pd["net"] == "GND": continue
+        if (ref, pd["num"]) in escaped or D.has_copper(pd): continue
+        k = D.klass(pd["net"]); w = D.cls[k]["track_width"]; clr = D.cls[k]["clearance"]
+        ux, uy = outward(p, pd); a = (pd["x"], pd["y"])
+        best = (-9e9, None)
+        for L in [x / 100 for x in range(20, 200, 5)]:
+            ok, worst = D.clear_of_everything(a, (a[0]+ux*L, a[1]+uy*L), w, pd["net"], clr)
+            if worst[0] > best[0]: best = worst
+            if ok: break
+        rows.append((ref, pd["num"], pd["net"], best[0]))
+        if best[0] < NEIGHBOUR_SLACK - 1e-9: squeezed.append(f"{ref}-{pd['num']}")
+    D.tracks = saved
+    if report:
+        print(f"\n  can the neighbours still get out? (need {NEIGHBOUR_SLACK:.2f} mm to spare)")
+        for ref, num, net, mgn in rows:
+            flag = "" if mgn >= NEIGHBOUR_SLACK - 1e-9 else "   <-- SQUEEZED"
+            print(f"    {ref}-{num:<4}{net:<30}{mgn:8.3f}{flag}")
+    return squeezed
+
+
 def main():
     apply_ = "--apply" in sys.argv
     D = Design()
 
-    # A pad needs an escape only if the class-width trace cannot leave it
-    # DIRECTLY. "Track wider than the pad" is not the test -- a 1.20 mm trace off
-    # a 1.00 mm pad with nothing beside it is fine, and necking it would add
-    # clutter and two more joints for no reason. What matters is whether the wide
-    # copper clears the neighbours.
     targets, trivial, done = [], [], []
     for ref, p, pd in D.pads:
         if not pd["net"] or pd["net"] == "GND" or not pd["smd"]: continue
         k = D.klass(pd["net"]); want = D.cls[k]["track_width"]
         if want <= min(pd["w"], pd["h"]): continue
-        # Already escaped by hand -- U2 and C4 carry the boost loop, routed and
-        # measured earlier. Adding a second escape to the same pad would be
-        # duplicate copper, and re-running --apply would keep piling it on.
         if D.has_copper(pd):
             done.append((ref, pd)); continue
         ux, uy = outward(p, pd)
@@ -187,70 +290,55 @@ def main():
         (trivial if ok else targets).append((ref, p, pd, k, want, D.cls[k]["clearance"]))
     if done:
         print(f"  {len(done)} pads already escaped by hand, left alone:")
-        print("    " + ", ".join(f"{r}-{pd['num']}" for r, pd in
+        print("    " + ", ".join("%s-%s" % (r, pd["num"]) for r, pd in
                                  sorted(done, key=lambda x: (x[0], x[1]["num"]))) + "\n")
     if trivial:
         print(f"  {len(trivial)} pads take the class width directly, no neck needed:")
-        print("    " + ", ".join(f"{r}-{pd['num']}" for r, _, pd, *_ in
+        print("    " + ", ".join("%s-%s" % (r, pd["num"]) for r, _, pd, *_ in
                                  sorted(trivial, key=lambda x: (x[0], x[2]["num"]))) + "\n")
 
-    print(f"  {len(targets)} fine-pitch pads to escape\n")
-    print(f"  {'pad':<9}{'net':<11}{'neck':>6}{'reach':>7}{'wide':>7}   {'margin':>7}  limiting")
-    good, bad = [], []
-    for ref, p, pd, k, want, clr in sorted(targets, key=lambda x: (x[0], x[2]["num"])):
-        ux, uy = outward(p, pd)
-        a = (pd["x"], pd["y"])
-        sol = None; near = (-1e9, None, None)   # best near-miss, for diagnosis
-        for neck in NECK_CHOICES:
-            if neck < JLC_MIN_TRACK: continue
-            L = STEP
-            while L <= MAX_REACH:
-                b = (a[0] + ux * L, a[1] + uy * L)
-                ok1, w1 = D.clear_of_everything(a, b, neck, pd["net"], clr)
-                # The wide copper does not have to continue straight. Going only
-                # straight out declared U1-10/11 impossible because D1 sits in
-                # that direction -- but a human would turn, so try turning.
-                best2 = None
-                for vx, vy in ((ux, uy), (-uy, ux), (uy, -ux)):
-                    c = (b[0] + vx * WIDE_STUB_MM, b[1] + vy * WIDE_STUB_MM)
-                    ok2, w2 = D.clear_of_everything(b, c, want, pd["net"], clr)
-                    if best2 is None or w2[0] > best2[1][0]: best2 = (c, w2, ok2)
-                c, w2, ok2 = best2
-                m = min(w1[0], w2[0]); lim = w1[1] if w1[0] < w2[0] else w2[1]
-                if m > near[0]: near = (m, lim, f"neck {neck} reach {L:.2f}")
-                if ok1 and ok2:
-                    sol = (neck, L, b, c, m, lim)
-                    break
-                L += STEP
-            if sol: break
-        if sol:
-            neck, L, b, c, margin, lim = sol
-            good.append((ref, pd, neck, a, b, c, want))
-            print(f"  {ref+'-'+pd['num']:<9}{pd['net']:<11}{neck:6.2f}{L:7.2f}{want:7.2f}   {margin:7.3f}  {lim}")
-        else:
-            bad.append((ref, pd, near))
-            print(f"  {ref+'-'+pd['num']:<9}{pd['net']:<11}     --  blocked, best "
-                  f"{near[0]:+.3f} vs {clr:.2f} needed by {near[1]} @ {near[2]}")
+    groups = OrderedDict()
+    for ref, p, pd, k, want, clr in targets:
+        groups.setdefault(group_key(p, pd, outward(p, pd)), []).append((p, pd, k, want, clr))
+    print(f"  {len(targets)} pads in {len(groups)} escape groups")
 
-    print(f"\n  {len(good)} escapes verified, {len(bad)} impossible")
-    if bad:
-        print("  impossible:", ", ".join(f"{r}-{pd['num']}" for r, pd, _ in bad))
+    # Retry with the widening pushed progressively further off the pad row until
+    # nothing is squeezed. A solution that is merely legal is not good enough --
+    # that is what shipped last time.
+    good = bad = None
+    for attempt in range(RETRIES):
+        mr = MIN_REACH0 + attempt * RETRY_STEP
+        good, bad = solve(D, groups, mr)
+        sq = neighbours(D, good)
+        if not sq and not bad:
+            print(f"  settled at minimum reach {mr:.2f} mm after {attempt + 1} attempt(s)\n")
+            break
+        print(f"    reach {mr:.2f}: {len(bad)} blocked, squeezed {sq or 'none'}")
+    else:
+        print("\n  could not find a set that leaves the neighbours room")
+        return 1
+
+    print(f"  {'group':<22}{'link':>6}{'esc w':>7}{'reach':>7}{'wide':>7}{'margin':>9}  limiting")
+    for ref, net, pads, links, origin, b, c, ew, want, L, m, lim in good:
+        tag = f"{ref} {net} x{len(pads)}"
+        print(f"  {tag:<22}{LINK_W if links else 0:6.2f}{ew:7.2f}{L:7.2f}{want:7.2f}{m:9.3f}  {lim}")
+    for ref, net, why in bad:
+        print(f"  {ref+' '+net:<22}  BLOCKED  {why}")
+    neighbours(D, good, report=True)
+    print(f"\n  {len(good)} groups verified, {len(bad)} blocked")
     if not apply_:
         print("\n  dry run -- pass --apply to write them into the board")
         return 1 if bad else 0
 
     out = []
-    for ref, pd, neck, a, b, c, want in good:
-        nid = D.netid[pd["net"]]
-        for (s, e, w) in ((a, b, neck), (b, c, want)):
-            out.append(f'\t(segment\n\t\t(start {s[0]:.4f} {s[1]:.4f})\n'
-                       f'\t\t(end {e[0]:.4f} {e[1]:.4f})\n\t\t(width {w})\n'
-                       f'\t\t(layer "F.Cu")\n\t\t(net {nid})\n'
-                       f'\t\t(uuid "{uuid.uuid4()}")\n\t)\n')
+    for s, e, w, nid in segments_of(D, good):
+        out.append(f'\t(segment\n\t\t(start {s[0]:.4f} {s[1]:.4f})\n'
+                   f'\t\t(end {e[0]:.4f} {e[1]:.4f})\n\t\t(width {w})\n'
+                   f'\t\t(layer "F.Cu")\n\t\t(net {nid})\n'
+                   f'\t\t(uuid "{uuid.uuid4()}")\n\t)\n')
     t = D.t
     i = t.rfind("\n)")
-    t = t[:i] + "\n" + "".join(out).rstrip("\n") + t[i:]
-    open(C.PCB, "w").write(t)
+    open(C.PCB, "w").write(t[:i] + "\n" + "".join(out).rstrip("\n") + t[i:])
     print(f"  wrote {len(out)} segments into {os.path.relpath(C.PCB)}")
     return 0
 
