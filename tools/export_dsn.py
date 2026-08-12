@@ -319,10 +319,18 @@ def main():
             print(f"  ERROR net {net} matches {', '.join(hit)} -- precedence undefined")
         sys.exit(1)
 
+    # KiCad's own export names the default class `kicad_default` and gives it a
+    # single empty member; everything unlisted falls into it. Naming it "Default"
+    # and listing all 72 nets explicitly parsed fine but Freerouting applied none
+    # of the widths -- every new segment came back at the default 0.25 mm. Follow
+    # the convention the router is actually tested against.
     for name, nets in members.items():
         c = byname[name]
-        quoted = " ".join(f'"{n}"' for n in nets)
-        L.append(f'    (class {name} {quoted}'.rstrip())
+        if name == "Default":
+            head = '    (class kicad_default ""'
+        else:
+            head = f'    (class {name} ' + " ".join(f'"{n}"' for n in nets)
+        L.append(head.rstrip())
         L.append(f'      (circuit (use_via "{via_id(c["via_diameter"], c["via_drill"])}"))')
         L.append(f'      (rule (width {X(c["track_width"])}) (clearance {X(c["clearance"])}))')
         L.append('    )')
