@@ -72,6 +72,64 @@ EDGE_COPPER_MM = 0.30
 
 def via_id(diameter, drill): return f"Via_{X(diameter)}_{X(drill)}"
 
+# B.Cu window margin around the parts named by --bcu-under. Wide enough that a
+# track can drop through, run clear of the pin field and climb back.
+BCU_WINDOW_MARGIN = 6.0
+
+
+def windows_for(b, refs):
+    """bounding box of each named part's pads, grown by BCU_WINDOW_MARGIN"""
+    out = []
+    for ref in refs:
+        pads = [pd for p in b.parts if p["ref"] == ref for pd in pad_xy(p)]
+        if not pads:
+            # A window built from the footprint ORIGIN instead of its pads came
+            # out 12 mm square for a socket whose pin field is 48 mm long, and
+            # the check that should have caught it passed vacuously over an
+            # empty pad list. Refuse instead.
+            raise SystemExit(f"  {ref}: no pads found -- cannot size a B.Cu window")
+        xs = [q[0] for q in pads]
+        ys = [q[1] for q in pads]
+        out.append((min(xs) - BCU_WINDOW_MARGIN, min(ys) - BCU_WINDOW_MARGIN,
+                    max(xs) + BCU_WINDOW_MARGIN, max(ys) + BCU_WINDOW_MARGIN))
+    # merge overlapping windows so the complement stays simple
+    merged = []
+    for w in sorted(out):
+        if merged and w[0] <= merged[-1][2] and not (w[3] < merged[-1][1] or w[1] > merged[-1][3]):
+            m = merged[-1]
+            merged[-1] = (min(m[0], w[0]), min(m[1], w[1]), max(m[2], w[2]), max(m[3], w[3]))
+        else:
+            merged.append(w)
+    return merged
+
+
+def pad_xy(p):
+    blk = p.get("blk")
+    out = []
+    for m in re.finditer(r'\(pad "', blk or ""):
+        pb = sexp(blk, m.start())
+        am = re.search(r"\(at ([-\d.]+) ([-\d.]+)", pb)
+        if am:
+            px, py = float(am.group(1)), float(am.group(2))
+            th = math.radians(p["rot"]); cs, sn = math.cos(th), math.sin(th)
+            out.append((p["x"] + px * cs + py * sn, p["y"] - px * sn + py * cs))
+    return out
+
+
+def complement_rects(board, windows):
+    """the board minus the windows, as axis-aligned rectangles"""
+    x0, y0, x1, y1 = board
+    if not windows: return [(x0, y0, x1, y1)]
+    rects = []
+    xs = sorted({x0, x1} | {v for w in windows for v in (w[0], w[2])})
+    ys = sorted({y0, y1} | {v for w in windows for v in (w[1], w[3])})
+    for i in range(len(xs) - 1):
+        for j in range(len(ys) - 1):
+            cx, cy = (xs[i] + xs[i+1]) / 2, (ys[j] + ys[j+1]) / 2
+            if any(w[0] <= cx <= w[2] and w[1] <= cy <= w[3] for w in windows): continue
+            rects.append((xs[i], ys[j], xs[i+1], ys[j+1]))
+    return rects
+
 
 def sexp(text, start):
     d = 0; i = start; instr = False
@@ -128,7 +186,8 @@ class Pcb:
                 num = re.match(r'\(pad "([^"]*)"', pb).group(1)
                 nm = re.search(r'\(net (\d+) "([^"]*)"\)', pb)
                 if nm: pads[num] = nm.group(2)
-            yield {"lib": m.group(1), "ref": ref.group(1) if ref else "?",
+            yield {"blk": blk,
+                   "lib": m.group(1), "ref": ref.group(1) if ref else "?",
                    "val": val.group(1) if val else "",
                    "x": float(at.group(1)), "y": float(at.group(2)),
                    "rot": float(at.group(3) or 0),
@@ -204,6 +263,9 @@ def padstack_def(pid, p):
 
 def main():
     both_layers = "--both-layers" in sys.argv
+    bcu_under = []
+    if "--bcu-under" in sys.argv:
+        bcu_under = sys.argv[sys.argv.index("--bcu-under") + 1].split(",")
     args = sys.argv[1:]
     with_gnd = "--with-gnd" in args
     out_path = os.path.join(HERE, "..", "hardware", "pcb", "caryatid.dsn")
@@ -240,7 +302,7 @@ def main():
     L.append('  (unit um)')
     L.append('  (structure')
     L.append('    (layer F.Cu (type signal) (property (index 0)))')
-    if both_layers:
+    if both_layers or bcu_under:
         L.append('    (layer B.Cu (type signal) (property (index 1)))')
     # else B.Cu is not declared a signal layer at all, so the router cannot put
     # anything on it. That is the honest model when B.Cu is a ground plane: the
@@ -248,6 +310,19 @@ def main():
     # produced three hole_clearance violations. A route that succeeds by
     # shredding the return path reports a placement as fine when it is not.
     L.append(f'    (boundary (rect pcb {X(x0)} {Y(y1)} {X(x1)} {Y(y0)}))')
+    if bcu_under:
+        # B.Cu is a ground plane EXCEPT under these parts. 40 header pins at
+        # 2.54 mm leave exactly one 0.25 mm channel between neighbours, so on one
+        # layer the Seed sockets alone accounted for 29 of 83 unrouted. This
+        # gives them a second layer precisely where the congestion is, and fences
+        # the rest of the back off so the plane stays whole under the switcher
+        # and the audio section.
+        wins = windows_for(b, bcu_under)
+        for r in complement_rects((x0, y0, x1, y1), wins):
+            L.append(f'    (keepout "" (rect B.Cu {X(r[0])} {Y(r[3])} {X(r[2])} {Y(r[1])}))')
+            L.append(f'    (via_keepout "" (rect B.Cu {X(r[0])} {Y(r[3])} {X(r[2])} {Y(r[1])}))')
+        print(f"  B.Cu open only under {', '.join(bcu_under)}: "
+              f"{len(wins)} window(s), {len(complement_rects((x0,y0,x1,y1), wins))} keepouts")
     L.append(f'    (via "Via_{X(default["via_diameter"])}_{X(default["via_drill"])}")')
     L.append('    (rule')
     L.append(f'      (width {X(default["track_width"])})')

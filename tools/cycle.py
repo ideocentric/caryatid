@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Placement -> fully routed board, in one command. Repeat after every move.
 
-    python3 tools/cycle.py                # F.Cu only; B.Cu stays a ground plane
+    python3 tools/cycle.py                # F.Cu, plus B.Cu only under A1/A2
+    python3 tools/cycle.py --bcu-under A1,A2,J5
+    python3 tools/cycle.py --bcu-under ""  # F.Cu only, B.Cu wholly a plane
     python3 tools/cycle.py --both-layers  # let the router use B.Cu as well
     python3 tools/cycle.py --passes 60    # shorter run while iterating
 
@@ -103,6 +105,12 @@ def fill_zones():
 
 def main():
     both = "--both-layers" in sys.argv
+    bcu = None
+    if "--bcu-under" in sys.argv:
+        bcu = sys.argv[sys.argv.index("--bcu-under") + 1]
+    elif not both:
+        bcu = "A1,A2"        # the Seed sockets: 40 pins, one 0.25 mm channel
+                             # between neighbours, 29 of 83 unrouted on one layer
     passes = "200"
     if "--passes" in sys.argv:
         passes = sys.argv[sys.argv.index("--passes") + 1]
@@ -110,7 +118,8 @@ def main():
     backup = PCB + ".before-cycle"
     shutil.copy(PCB, backup)
     print(f"  backup: {os.path.basename(backup)}")
-    print(f"  routing layer(s): {'F.Cu + B.Cu' if both else 'F.Cu only -- B.Cu is a ground plane'}")
+    print("  routing layer(s): " + ("F.Cu + B.Cu everywhere" if both else
+          f"F.Cu, plus B.Cu only under {bcu}" if bcu else "F.Cu only"))
 
     step(1, "stripping routed copper")
     print(f"    removed {strip_copper()} segments/vias")
@@ -120,7 +129,9 @@ def main():
     print("   ", (r.stdout.strip().splitlines() or ["-"])[-1])
 
     step(3, "exporting DSN")
-    cmd = [sys.executable, os.path.join(HERE, "export_dsn.py")] + (["--both-layers"] if both else [])
+    cmd = [sys.executable, os.path.join(HERE, "export_dsn.py")]
+    if both: cmd += ["--both-layers"]
+    elif bcu: cmd += ["--bcu-under", bcu]
     r = run(cmd)
     for l in r.stdout.strip().splitlines()[1:]: print("   ", l)
 
