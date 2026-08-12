@@ -761,7 +761,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Battery positive, direct from the cell / BT1 / J2. HighCurrent net class. Power symbol -- a global label."
+		(property "Description" "Battery positive, direct from the cell in BT1. HighCurrent net class. Power symbol -- a global label."
 			(at 0 0 0)
 			(effects
 				(font

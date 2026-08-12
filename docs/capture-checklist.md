@@ -215,8 +215,9 @@ arrive rather than before the gerbers go out.
       from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
       STEP are in the walls and flanges. See [sourcing.md](sourcing.md). absonus's
       1.6″ × 3.6″ pattern is deliberately **not** inherited.
-- [ ] **On-board 18650 holder, and keep J2.** Populate one. Silkscreen
-      "HOLDER *or* J2 — not both": two cells in parallel otherwise.
+- [x] ~~On-board 18650 holder, and keep J2.~~ **J2 is removed.** The cell reaches
+      the board only through BT1, so there is no "one or the other" to silkscreen
+      and no way to present a reversed cell to the charger.
 - [x] ~~Holder must accept a **protected** cell at ~69 mm~~ **Settled** — BT1 is
       MPD **BH-18650-PC**, `C5339083`, footprint
       `Battery:BatteryHolder_MPD_BH-18650-PC`. The drawing states it is designed
@@ -233,7 +234,8 @@ arrive rather than before the gerbers go out.
 - [ ] **Check height, not just floor area.** The stack is **~25 mm** — standoff,
       PCB, and the **21.31 mm** BH-18650-PC. **The holder sets it, not the
       Seed**, which is only 10.5 mm. If the phone is shallow at the point the
-      board wants to sit, moving the cell to J2 as a remote pack recovers 21 mm.
+      board wants to sit, the cell has to move off-board — which now means adding a
+      connector back, since J2 was removed.
       *(Was written as a 19 mm holder giving ~26.6 mm, before the part was
       chosen — measure against 29 mm.)*
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
@@ -242,9 +244,8 @@ arrive rather than before the gerbers go out.
       the number the soft-latch vacated, not a gap.
 - [ ] **Silkscreen the pin function beside every connector**, and pin 1 on all of
       them. Assembled once, cabled many times.
-- [ ] **Battery polarity marked at J2.** There is no reverse protection and a
-      backwards cell destroys the charger — see
-      [power-sheet.md](power-sheet.md).
+- [x] ~~Battery polarity marked at J2.~~ Moot: J2 is gone, and a soldered holder
+      cannot be wired backwards.
 - [ ] Confirm the 2×5 IDC parts are **shrouded/keyed** box headers, not bare pin
       headers. Ribbon polarity depends on it.
 

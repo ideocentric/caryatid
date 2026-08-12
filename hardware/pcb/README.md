@@ -80,7 +80,7 @@ hand — hand arithmetic on offsets produced touching parts three times running.
 
 | Edge | Connectors |
 | --- | --- |
-| Left | `J1` DC in, `J2` remote battery, `J3` latch switch, `J4` charge LEDs |
+| Left | `J1` DC in, `J3` latch switch, `J4` charge LEDs |
 | Left, inboard | `J11` digital bus IDC, beside A1 (the digital row) |
 | Right | `J12` RGB, `J9` soft pot, `J10` FSR, `J17` audio out |
 | Right, inboard | `J5` analogue bus IDC beside A2; `J16` expansion; `J18` audio in and `J14` mic return together |

@@ -72,7 +72,7 @@ cost.
 Populated on every build:
 
 - Barrel jack → SS34 → **bq24074** charger with power path, ISET 890 Ω (1 A)
-- **On-board 18650 holder (BT1)**; J2 keeps a remote pack possible — one or the
+- **On-board 18650 holder (BT1)**, the only path to `VBAT` — a soldered holder cannot be wired backwards. Protected cell or protection PCB **required**
   other, never both. Protected cell or protection PCB **required**
 - **TPS61023** boost → **5.0 V** → ferrite + 100 µF → Seed VIN
 - Illuminated latching power switch (3–9 V lamp, so `R_LED` is a 0 Ω link)

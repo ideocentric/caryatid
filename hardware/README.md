@@ -73,10 +73,11 @@ assembly.
 which removes the last hand-crimped power loom — and with it the reverse-polarity
 risk that had no protection behind it. A holder cannot be wired backwards.
 
-**Keep J2 as well, and populate one or the other.** A remote pack stays possible
-for an enclosure that wants the weight somewhere else, which is the freedom the
-platform exists to preserve. **Silkscreen "HOLDER *or* J2 — not both"**: a cell in
-the holder and a pack on J2 are two cells in parallel.
+**There is no remote-pack connector.** J2 carried that option until layout, and
+was removed: no instrument on the platform asked for it, and it was the only way
+a reversed cell could reach the charger, which has no reverse protection. A cell
+now reaches the board only through a soldered holder, which cannot be wired
+backwards.
 
 **The holder must take a protected cell.** Those are ~69 mm against the 65 mm
 most holders are cut for. Check the part before ordering, or the cell will not
@@ -98,7 +99,7 @@ matter. Confirm JLC's current requirement rather than assuming three is right.
 
 **Silkscreen carries the wiring.** See [connectors.md](../docs/connectors.md):
 every connector's pin functions and pin 1, the Seed pin names, `USB` at the pin 1
-end, and battery polarity at J2. This board is assembled once and cabled many
+end. This board is assembled once and cabled many
 times, so the board itself should be readable without the documents.
 
 ## Assembly split

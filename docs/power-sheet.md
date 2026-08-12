@@ -35,7 +35,6 @@ never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.
 | L1 | Inductor | 1 µH, 4.2 A Isat | C354578 |
 | FB1 | Ferrite bead | **rated ≥ 1 A** | — |
 | BT1 | 18650 holder | MPD **BH-18650-PC** — rated for **protected** cells | **C5339083** |
-| J2 | Battery, remote | JST-XH 2 — **alternative to BT1** | C158012 |
 | J3 | Latch switch | JST-XH 4 | C144395 |
 | J4 | Charge LEDs | JST-XH 4 | C144395 |
 | R1 | TS | 10 kΩ | C15401 |
@@ -104,10 +103,12 @@ power on every discharge, and a P-FET is parts and board area for a fault the
 mechanics already prevent.
 
 **BT1 removes the risk rather than mitigating it** — a soldered holder cannot be
-wired backwards, which is the main reason it is on the board at all. The residual
-exposure is only a build using J2 with a hand-crimped loom, where the JST-XH is
-keyed but the crimp can still be wrong. **Silkscreen the polarity at J2**, and
-meter that loom before the first connection rather than after.
+wired backwards, which is the main reason it is on the board at all.
+
+**With J2 gone there is no residual exposure at all.** The only way to present a
+reversed cell used to be a hand-crimped loom on J2, where the JST-XH is keyed but
+the crimp can still be wrong. There is now no connector on the board that reaches
+`VBAT`, so the unprotected charger input cannot be miswired.
 
 ### Battery and output
 
@@ -115,14 +116,13 @@ meter that loom before the first connection rather than after.
 | --- | --- |
 | BT1 + | `VBAT` |
 | BT1 − | `GND` |
-| J2.1 | `VBAT` |
-| J2.2 | `GND` |
-
-**BT1 and J2 are alternatives, not both.** They land on the same net, so a cell
-in the holder and a pack on J2 would be two cells in parallel — different states
-of charge, unlimited current between them. Silkscreen it at the connector.
 | `VBAT` | C2 → `GND` |
 | `VOUT` | C3 → `GND` |
+
+**The cell reaches the board only through BT1.** J2, a JST-XH for a remote pack,
+was carried until the board was laid out and then removed: nothing on the
+platform wanted it, and it was the last path by which a reversed cell could reach
+an unprotected charger input.
 
 ### Latch switch J3
 

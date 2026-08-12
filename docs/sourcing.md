@@ -16,7 +16,7 @@ fabricated once, and reusing them turns capture into transcription.
 | **C374544** | AR03BTDX1002A010, 10 kΩ **±0.1%** | 0603 | **176** | A11 divider — see below |
 | **C41361038** | DS1023-1x20S21, 1×20 socket | `插件,P=2.54mm` | **36** | Seed sockets — Global Sourcing |
 | C2897383 | 1×20 female socket | — | on absonus | **Seed sockets, the part actually used** |
-| C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J2, J6, J7, J8, J10 |
+| C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J6, J7, J8, J10 |
 | C144394 | JST **B3B-XH-A(LF)(SN)**, 3-pin | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
 | C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13a, Qwiic** |
 | ~~C5289485~~ | ~~LS18-P~~ | — | on absonus | **superseded** by the 74HC14, [ADR 0007](decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md) |
@@ -49,7 +49,7 @@ PH would have been working close to its rating for no reason.
 
 | Connector | Size | Have it? |
 | --- | --- | --- |
-| J2 battery, J6/J7/J8 switches, J10 FSR | XH 2 | ✅ C158012 |
+| J6/J7/J8 switches, J10 FSR | XH 2 | ✅ C158012 |
 | J9 soft pot | XH 3 | ✅ C144394 |
 | J3 latch, J4 charge LEDs, J12 RGB | XH 4 | ✅ **C144395** |
 | J13b, J15 module ports | XH 6 | ✅ **C144397** |
@@ -250,7 +250,7 @@ dimension that catches people fitting a holder.
 | Charge current | 1 A = **0.33C** — gentle for any 18650 |
 | Charge time | ~3.5 h |
 | Runtime | 10.8 h quiet, **6.5 h typical**, 4.6 h loud |
-| Connector | JST-XH 2, keyed, **polarity silkscreened at J2** |
+| Connector | none — the cell seats in BT1, which cannot be wired backwards |
 
 **Protection is a requirement, not a preference** (P-7: over-charge,
 over-discharge, over-current). A protected cell carries a small PCM under the
@@ -336,7 +336,9 @@ reverse-polarity risk that had no protection behind it — a soldered holder can
 be wired backwards. The cell stays replaceable, which for a gigging instrument
 means a spare in the bag instead of a dead instrument.
 
-**J2 remains for a remote pack**; populate one or the other, never both.
+**There is no remote-pack option.** J2 was removed at layout: nothing on the
+platform wanted it, and it was the last route by which a reversed cell could
+reach an unprotected charger input.
 
 ### The holder — settled
 

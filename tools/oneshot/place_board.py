@@ -90,7 +90,7 @@ ZONES={  # Front-face zones. Everything shares one side now, so these are the
 ZONE_OF={}
 def zone(z,*refs):
     for r in refs: ZONE_OF[r]=z
-zone("charger","J1","D1","C1","U1","R1","R2","R3","R4","C2","C3","J2")
+zone("charger","J1","D1","C1","U1","R1","R2","R3","R4","C2","C3")
 zone("boost","U2","L1","C4","C5","C6","R7","R8","FB1","C7","J3","R5","R6","J4","R9","R10")
 zone("seedsup","R11","R12","R13","C8","R14","R15","R16","R17","R18","C9")
 zone("anabus","J5",*[f"R{n}" for n in range(19,27)],*[f"C{n}" for n in range(10,18)])
@@ -133,7 +133,7 @@ ANCHOR={"BT1":(38.55,14.0,0), "A1":(67.50,29.0,0), "A2":(82.74,29.0,0),
 # Everything stays at rotation 0. A vertical JST exits upward, so orienting the
 # pin row along the edge buys nothing -- and the rotated-courtyard transform is
 # the one piece of geometry here I could not verify, so it is not used.
-ANCHOR.update(stack(["J1","J2","J3","J4"], "y", 6.5, 29.0, 2.0, 0))          # left: power
+ANCHOR.update(stack(["J1","J3","J4"], "y", 6.5, 29.0, 2.0, 0))               # left: power
 # 139.0 not 142: these courtyards sit +3.7 mm of their origin
 ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 139.0, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
 ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 12.0, 2.5, 0)) # bottom: switches, module ports
@@ -158,7 +158,7 @@ BACK_ANCHOR={
  "U2":(UX,UY,0),
  "C6":(UX, UY-2.45, 180),       # above, pad 1 turned back toward pin 6
  "L1":(UX+4.6, UY, 180),        # level with pin 5, SW pad facing the IC
- "C5":(UX+9.0, UY, 0),          # at L1's VOUT pad
+ "C5":(UX+9.5, UY, 0),          # at L1's VOUT pad
  "C4":(UX-3.5, UY+0.5, 180),    # input cap, pad 1 toward pin 3
  "R7":(UX-4.0, UY-2.5, 0),      # FB divider, against pin 1
  "R8":(UX-4.0, UY-4.6, 0),
@@ -256,14 +256,14 @@ def frect(r):
     w,h,mx,my=bbox(comps[r][1]); x,y,rot=place[r]
     if rot in (90,270): w,h,mx,my=h,w,-my,mx
     return (x+mx-w/2-0.3, y+my-h/2-0.3, x+mx+w/2+0.3, y+my+h/2+0.3, r)
-fr=[frect(r) for r in comps if not is_smd(comps[r][1])]
+fr=[frect(r) for r in comps if r in ANCHOR]
 # the four M3 holes live in the skeleton, not in comps -- the first version of
 # this check omitted them and passed a board where J6 and J18 fouled a hole
 for hx,hy in [(5,5),(145,5),(5,85),(145,85)]:
     fr.append((hx-3.4, hy-3.4, hx+3.4, hy+3.4, f"MH@{hx},{hy}"))
 clash=[(a[4],b_[4]) for i,a in enumerate(fr) for b_ in fr[i+1:]
        if not (a[2]<=b_[0] or b_[2]<=a[0] or a[3]<=b_[1] or b_[3]<=a[1])]
-print("  front collisions:", clash if clash else "none")
+print("  fixed-part collisions:", clash if clash else "none")
 outside=[a[4] for a in fr if a[0]<0 or a[1]<0 or a[2]>150 or a[3]>90]
 print("  front parts breaking the outline:", outside if outside else "none")
 
@@ -272,7 +272,11 @@ def brect(r):
     w,h,mx,my=bbox(comps[r][1]); x,y,rot=place[r]
     if rot==180: mx,my=-mx,-my
     return (x+mx-w/2-0.2, y+my-h/2-0.2, x+mx+w/2+0.2, y+my+h/2+0.2, r)
-br=[brect(r) for r in comps if is_smd(comps[r][1])]
+# Everything is on one face now, so splitting by is_smd() no longer means
+# front/back -- it just compared SMD to SMD and missed SMD-to-connector entirely.
+# tools/check_board.py reads the board itself and is the authority; this stays
+# only as a fast in-loop signal.
+br=[brect(r) for r in comps]
 # A through-hole pad on the front occupies EVERY copper layer, so it is a
 # keepout for back-side SMD. Courtyard-vs-courtyard checks never see this:
 # the front part is on the other face. Missing it put the A10/A11 network and
@@ -294,7 +298,7 @@ foul=sorted({a[4] for a in br for k in keep
 print(f"  back parts over front through-hole pads: {len(foul)}" + (f" -> {foul[:12]}{' ...' if len(foul)>12 else ''}" if foul else " (none)"))
 bc=[(a[4],b_[4]) for i,a in enumerate(br) for b_ in br[i+1:]
     if not (a[2]<=b_[0] or b_[2]<=a[0] or a[3]<=b_[1] or b_[3]<=a[1])]
-print(f"  back collisions: {len(bc)}" + (f" -> {bc[:6]}{' ...' if len(bc)>6 else ''}" if bc else " (none)"))
+print(f"  courtyard collisions: {len(bc)}" + (f" -> {bc[:6]}{' ...' if len(bc)>6 else ''}" if bc else " (none)"))
 
 def padpos(ref,pin):
     for n,px,py,_,_ in symlib.pins_resolved.__self__ if False else []: pass
