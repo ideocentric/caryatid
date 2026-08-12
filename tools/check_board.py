@@ -171,8 +171,14 @@ class Board:
             if p["rot"] in (90, 270): w, h = h, w
             cx, cy = self._xform(p, float(am.group(1)), float(am.group(2)))
             dm = re.search(r"\(drill ([-\d.]+)\)", blk)
+            nm = re.search(r'\(net \d+ "([^"]*)"\)', blk)
+            cm = re.search(r"\(clearance ([\d.]+)\)", blk)
             out.append({"num": num, "x": cx, "y": cy, "w": w, "h": h,
-                        "drill": float(dm.group(1)) if dm else None})
+                        "drill": float(dm.group(1)) if dm else None,
+                        "net": nm.group(1) if nm else None,
+                        "smd": "smd" in head,
+                        "clear": float(cm.group(1)) if cm else None,
+                        "span": (m.start(), m.start() + len(blk))})
         return out
 
 
