@@ -574,6 +574,14 @@
       {
         "netclass": "Analog",
         "pattern": "AUDIO_*"
+      },
+      {
+        "netclass": "HighCurrent",
+        "pattern": "/power/DC_IN"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "+5V_RAW"
       }
     ]
   },

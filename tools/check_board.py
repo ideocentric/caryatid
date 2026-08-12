@@ -25,6 +25,9 @@ that modelled one thing and silently ignored another. Each is a class here.
   7 track width vs the pitch of the pad it leaves -- 0.8 mm copper leaving a
     0.5 mm-pitch package shorts to the neighbouring pad
   8 silkscreen height and stroke vs JLC's floors
+  9 a series part (diode, ferrite, inductor, fuse) carries ONE current, so the
+    nets either side of it must be in the same netclass. /power/DC_IN was in
+    Default at 0.25 mm while VIN_DC, across D1 from it, was HighCurrent at 1.20
 
 Geometry rules established by reading KiCad-written boards, not assumed:
   * rotation is applied at compute time; stored pad coords are PRE-rotation
@@ -316,11 +319,43 @@ def main():
         if tm and float(tm.group(1)) < JLC_SILK_STROKE:
             fail("silk-stroke", f'"{label}" stroke {tm.group(1)} mm, under JLC {JLC_SILK_STROKE}')
 
+    # 9 -- a series part must have the same netclass on both sides
+    #
+    # A diode, ferrite, inductor or fuse passes the SAME CURRENT through both
+    # pads, so the nets either side of it belong in the same class. Two did not,
+    # and nothing noticed until a human looked at the board: /power/DC_IN sat in
+    # Default at 0.25 mm while VIN_DC, the other side of D1, was HighCurrent at
+    # 1.20; and +5V_RAW sat in Default while +5V, the other side of FB1, was
+    # Power at 0.80. Both because netclass patterns are literal names -- nothing
+    # matched DC_IN, and "+5V" does not match "+5V_RAW" under fnmatch.
+    try:
+        import json as _json, fnmatch as _fn
+        _pro = _json.load(open(PRO))["net_settings"]
+        _cls = {c["name"]: c for c in _pro["classes"]}
+        _pat = _pro.get("netclass_patterns", [])
+        def _k(n):
+            h = {q["netclass"] for q in _pat if _fn.fnmatchcase(n, q["pattern"])}
+            return h.pop() if len(h) == 1 else "Default"
+        for p in B.parts:
+            if not re.match(r"(D|L|FB|F)\d+$", p["ref"]): continue
+            pads = [pd for pd in B.pads(p) if pd["net"]]
+            nets = {pd["net"] for pd in pads}
+            if len(nets) != 2: continue
+            a, b = sorted(nets)
+            ka, kb = _k(a), _k(b)
+            if ka != kb:
+                wa, wb = _cls[ka]["track_width"], _cls[kb]["track_width"]
+                fail("series-netclass",
+                     f"{p['ref']} passes one current but {a} is {ka} ({wa} mm) "
+                     f"and {b} is {kb} ({wb} mm)")
+    except Exception as e:
+        fail("series-netclass", f"could not check series netclasses: {e}")
+
     # --- report -------------------------------------------------------------
     print(f"board {x1-x0:.1f} x {y1-y0:.1f} mm   "
           f"{len(front)} front / {len(back)} back   standoff {STANDOFF_MM} mm\n")
     if not fails:
-        print("  all nine checks pass")
+        print("  all ten checks pass")
         return 0
     from collections import Counter
     for cls, n in Counter(c for c, _ in fails).most_common():
