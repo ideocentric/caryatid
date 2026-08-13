@@ -219,6 +219,21 @@ class Pcb:
                        float(d.group(1)), self.nets.get(int(n.group(1)), ""))
 
 
+def pad_xy_one(p, num):
+    """placed centre of one pad of a footprint"""
+    blk = p.get("blk")
+    if not blk: return None
+    for m in re.finditer(r'\(pad "', blk):
+        pb = sexp(blk, m.start())
+        if re.match(r'\(pad "([^"]*)"', pb).group(1) != num: continue
+        am = re.search(r"\(at ([-\d.]+) ([-\d.]+)", pb)
+        if not am: return None
+        px, py = float(am.group(1)), float(am.group(2))
+        th = math.radians(p["rot"]); cs, sn = math.cos(th), math.sin(th)
+        return (p["x"] + px * cs + py * sn, p["y"] - px * sn + py * cs)
+    return None
+
+
 def image_of(libid):
     """canonical image: pads from the LIBRARY footprint, unrotated and unmirrored"""
     t = load_footprint(libid)
@@ -371,11 +386,54 @@ def main():
         for num, net in p["netof"].items():
             if not net: continue
             pins.setdefault(net, []).append(f'{p["ref"]}-{num}')
+    # Nets that are poured as copper zones are already connected by that zone.
+    # Emitting them here makes the router lay a redundant track alongside the
+    # pour, or fail trying -- and those were among the hardest nets, which is the
+    # whole reason for pouring them.
+    # A pour connects the pads INSIDE it and nothing else. Dropping the whole net
+    # from the DSN -- which this did at first -- left every pad outside the pour
+    # unconnected for good: +5V_RAW still had to reach R7 and FB1, VOUT had J4
+    # and C3, EN_SW had J3. Only /power/SW was genuinely complete.
+    #
+    # So instead of hiding the net, tell the router what the pour already joins,
+    # as protected wiring between those pads. It then routes only the remainder.
+    pour_pads = {}
+    for m in re.finditer(r"^\t\(zone", b.t, re.M):
+        z = sexp(b.t, m.start() + 1)
+        nm = re.search(r'\(net_name "([^"]*)"\)', z)
+        pr = re.search(r"\(priority (\d+)\)", z)
+        if not (nm and nm.group(1) and pr and int(pr.group(1)) > 0): continue
+        net = nm.group(1)
+        pm = re.search(r"\(polygon", z)
+        poly = [(float(u), float(v)) for u, v in
+                re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", sexp(z, pm.start()))]
+        def inside(q):
+            x, y = q; c = False
+            for i in range(len(poly)):
+                x0, y0 = poly[i]; x1, y1 = poly[(i+1) % len(poly)]
+                if (y0 > y) != (y1 > y):
+                    if x < x0 + (y - y0) * (x1 - x0) / (y1 - y0): c = not c
+            return c
+        for p_ in b.parts:
+            for num, n2 in p_["netof"].items():
+                if n2 != net: continue
+                q = pad_xy_one(p_, num)
+                if q and inside(q):
+                    pour_pads.setdefault(net, []).append((f'{p_["ref"]}-{num}', q))
+    if pour_pads:
+        for net, lst in sorted(pour_pads.items()):
+            allp = sum(1 for p_ in b.parts for n2 in p_["netof"].values() if n2 == net)
+            print(f"  pour on {net}: joins {len(lst)} of {allp} pads"
+                  + ("  (complete)" if len(lst) == allp else "  (rest still routed)"))
+    poured = set()
+
     skipped = []
     emitted = []
     L.append('  (network')
     for net, pl in sorted(pins.items()):
         if net == "GND" and not with_gnd:
+            skipped.append(net); continue
+        if net in poured:
             skipped.append(net); continue
         if len(pl) < 2: continue
         L.append(f'    (net "{net}"')
@@ -421,6 +479,19 @@ def main():
     # ---- wiring: existing copper, protected ---------------------------------
     L.append('  (wiring')
     nseg = nvia = 0
+    # what each pour already joins, as protected wiring, so the router treats
+    # those pads as connected and spends its effort on the pads outside
+    npour = 0
+    for net, lst in sorted(pour_pads.items()):
+        if net == "GND" and not with_gnd: continue
+        pts = [q for _, q in lst]
+        ins, out = [0], list(range(1, len(pts)))
+        while out:
+            i, j = min(((a, c) for a in ins for c in out),
+                       key=lambda e: math.dist(pts[e[0]], pts[e[1]]))
+            L.append(f'    (wire (path F.Cu {X(0.25)} {X(pts[i][0])} {Y(pts[i][1])} '
+                     f'{X(pts[j][0])} {Y(pts[j][1])}) (net "{net}") (type protect))')
+            ins.append(j); out.remove(j); npour += 1
     for sx, sy, ex, ey, w, layer, net in b.tracks():
         if not net: continue
         L.append(f'    (wire (path {layer} {X(w)} {X(sx)} {Y(sy)} {X(ex)} {Y(ey)})'
@@ -445,12 +516,16 @@ def main():
     if depth != 0: raise SystemExit(f"unbalanced output, depth {depth}")
 
     open(out_path, "w").write(text)
-    routed = sum(1 for n, pl in pins.items() if len(pl) > 1 and (n != "GND" or with_gnd))
+    # count what was actually emitted, not what was eligible -- this recomputed
+    # the filter independently and so kept reporting 95 after three nets were
+    # dropped to pours
+    routed = len(emitted)
     print(f"wrote {out_path}")
     print(f"  board      {x1-x0:.1f} x {y1-y0:.1f} mm")
     print(f"  components {len(b.parts)}   images {len(images)}   padstacks {len(stacks)}")
-    print(f"  nets to route {routed}" + (f"   (GND excluded -- the B.Cu plane carries it)" if skipped else ""))
-    print(f"  protected  {nseg} tracks, {nvia} vias")
+    print(f"  nets to route {routed}" + (f"   ({len(skipped)} skipped: plane + pours)" if skipped else ""))
+    print(f"  protected  {nseg} tracks, {nvia} vias"
+          + (f", {npour} pour links" if npour else ""))
     print(f"  parens balanced")
     return 0
 

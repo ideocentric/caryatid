@@ -96,6 +96,54 @@ def strip_copper(path=None):
     return len(spans)
 
 
+def pours(t):
+    out = []
+    for m in re.finditer(r"^\t\(zone", t, re.M):
+        z = C.sexp(t, m.start() + 1)
+        nm = re.search(r'\(net_name "([^"]*)"\)', z)
+        pr = re.search(r"\(priority (\d+)\)", z)
+        pm = re.search(r"\(polygon", z)
+        if nm and pr and pm and int(pr.group(1)) > 0:
+            poly = [(float(u), float(v)) for u, v in
+                    re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", C.sexp(z, pm.start()))]
+            if len(poly) >= 3: out.append((nm.group(1), poly))
+    return out
+
+
+def inpoly(poly, q):
+    x, y = q; c = False
+    for i in range(len(poly)):
+        x0, y0 = poly[i]; x1, y1 = poly[(i + 1) % len(poly)]
+        if (y0 > y) != (y1 > y):
+            if x < x0 + (y - y0) * (x1 - x0) / (y1 - y0): c = not c
+    return c
+
+
+def strip_pour_links():
+    t = open(PCB).read()
+    nets = {int(i): n for i, n in re.findall(r'\(net (\d+) "([^"]*)"\)', t)}
+    pz = pours(t)
+    spans = []
+    for m in re.finditer(r"^\t\(segment", t, re.M):
+        b = C.sexp(t, m.start() + 1)
+        n = re.search(r"\(net (\d+)\)", b)
+        s = re.search(r"\(start ([-\d.]+) ([-\d.]+)\)", b)
+        e = re.search(r"\(end ([-\d.]+) ([-\d.]+)\)", b)
+        if not (n and s and e): continue
+        net = nets.get(int(n.group(1)))
+        a = (float(s.group(1)), float(s.group(2)))
+        c = (float(e.group(1)), float(e.group(2)))
+        for pnet, poly in pz:
+            if pnet == net and inpoly(poly, a) and inpoly(poly, c):
+                end = m.start() + 1 + len(b)
+                while end < len(t) and t[end] == "\n": end += 1
+                spans.append((m.start(), end)); break
+    for s, e in sorted(spans, reverse=True):
+        t = t[:s] + t[e:]
+    open(PCB, "w").write(t)
+    return len(spans)
+
+
 def fill_zones():
     return run([KPY, "-c",
         f"import sys;sys.path.insert(0,'{KSP}');import wx;wx.App(False);import pcbnew;"
@@ -154,6 +202,17 @@ def main():
         f"b=pcbnew.LoadBoard('{PCB}');print('ok',pcbnew.ImportSpecctraSES(b,'{SES}'),len(b.GetTracks()));"
         f"pcbnew.SaveBoard('{PCB}',b)"])
     print("   ", [l for l in r.stdout.splitlines() if l.startswith("ok")] or r.stderr[-200:])
+
+    step(7, "removing pour links")
+    # export_dsn emits a straight wire between the pads a pour already joins, so
+    # the router does not re-route across the pour. Those are INFORMATION, not
+    # copper -- but Freerouting echoes them into the session and they import as
+    # real tracks. One ran 6.70 mm from U2-3 to L1-1 straight through the middle
+    # of a SOT-563, shorting SW to VOUT and bridging solder mask to two more pads.
+    # The pour weaves around those pins; a straight line between pad centres does
+    # not. So drop any track whose net is poured and whose BOTH ends lie inside
+    # that pour -- the zone is the real copper there.
+    print(f"    removed {strip_pour_links()} link(s) that imported as copper")
 
     step(7, "filling zones")
     fill_zones()

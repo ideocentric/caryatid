@@ -40,6 +40,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import check_board as C
 
 JLC_MIN_TRACK = 0.10
+MIN_TRACK     = 0.20   # the board's own minimum track width
 # Escape widths, NARROWEST-ADEQUATE first. Taking the widest that fits is the
 # mistake that cost more connections than the fanout gained: a 0.30 mm escape
 # per pad left the signal pins beside it 0.025 mm of slack, and 0.90 mm from a
@@ -47,7 +48,7 @@ JLC_MIN_TRACK = 0.10
 # provide -- it is 1 mm long between a pad and a wide plane, and the pad is the
 # real constriction -- so the target is (pad width x how many pads feed it).
 # Everything past that is room taken from a neighbour that also has to get out.
-ESCAPE_WIDTHS = (0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.80, 0.90, 1.00, 1.20)
+ESCAPE_WIDTHS = (0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50, 0.60, 0.80, 0.90, 1.00, 1.20)
 NEIGHBOUR_SLACK = 0.05    # every other pad must still escape with this to spare
 LINK_W        = 0.20      # ties adjacent same-net pads together
 MAX_LINK_MM   = 2.0
@@ -115,6 +116,16 @@ class Design:
                 if any(s <= m.start() < e for s, e in spans): continue
                 self.fp_clear[p["ref"]] = float(m.group(1))
                 break
+        self.pours = []
+        for m in re.finditer(r"^\t\(zone", self.t, re.M):
+            z = C.sexp(self.t, m.start() + 1)
+            nm = re.search(r'\(net_name "([^"]*)"\)', z)
+            pr = re.search(r"\(priority (\d+)\)", z)
+            pm = re.search(r"\(polygon", z)
+            if nm and pr and pm and int(pr.group(1)) > 0:
+                poly = [(float(u), float(v)) for u, v in
+                        re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", C.sexp(z, pm.start()))]
+                if len(poly) >= 3: self.pours.append((poly, nm.group(1)))
         self.pads = [(p["ref"], p, pd) for p in self.B.parts for pd in self.B.pads(p)]
         self.tracks = []
         for m in re.finditer(r"^\t\(segment", self.t, re.M):
@@ -127,6 +138,18 @@ class Design:
             self.tracks.append(((float(s.group(1)), float(s.group(2))),
                                 (float(e.group(1)), float(e.group(2))),
                                 float(w.group(1)), l.group(1), int(n.group(1))))
+
+    def in_pour(self, pd):
+        """pad sits inside a copper pour of its own net, so it is already joined"""
+        for poly, net in self.pours:
+            if net != pd["net"]: continue
+            x, y = pd["x"], pd["y"]; c = False
+            for i in range(len(poly)):
+                x0, y0 = poly[i]; x1, y1 = poly[(i+1) % len(poly)]
+                if (y0 > y) != (y1 > y):
+                    if x < x0 + (y - y0) * (x1 - x0) / (y1 - y0): c = not c
+            if c: return True
+        return False
 
     def has_copper(self, pd):
         """a track already terminates inside this pad"""
@@ -250,8 +273,13 @@ def neighbours(D, good, report=False):
     squeezed, rows = [], []
     for ref, p, pd in D.pads:
         if ref not in affected or not pd["net"] or pd["net"] == "GND": continue
-        if (ref, pd["num"]) in escaped or D.has_copper(pd): continue
-        k = D.klass(pd["net"]); w = D.cls[k]["track_width"]; clr = D.cls[k]["clearance"]
+        if (ref, pd["num"]) in escaped or D.has_copper(pd) or D.in_pour(pd): continue
+        k = D.klass(pd["net"]); clr = D.cls[k]["clearance"]
+        # Ask whether a LEGAL escape exists, not whether a full class-width one
+        # does. A HighCurrent pad on a SOT-563 can never be left at 1.20 mm --
+        # that is the whole reason it needs a neck -- so testing at class width
+        # flagged exactly the pads being escaped as blocked by their own escape.
+        w = min(D.cls[k]["track_width"], MIN_TRACK)
         ux, uy = outward(p, pd); a = (pd["x"], pd["y"])
         best = (-9e9, None)
         for L in [x / 100 for x in range(20, 200, 5)]:
@@ -278,7 +306,7 @@ def main():
         if not pd["net"] or pd["net"] == "GND" or not pd["smd"]: continue
         k = D.klass(pd["net"]); want = D.cls[k]["track_width"]
         if want <= min(pd["w"], pd["h"]): continue
-        if D.has_copper(pd):
+        if D.has_copper(pd) or D.in_pour(pd):
             done.append((ref, pd)); continue
         ux, uy = outward(p, pd)
         a = (pd["x"], pd["y"])
