@@ -41,6 +41,49 @@ bq24074's open-drain `/CHG` and `/PGOOD` off the OUT rail, via J4. **This is the
 indicator that satisfies the charge-complete-while-off requirement**, and it is
 the only one that must exist. Nothing about it depends on firmware running.
 
+### One bicolour LED instead of two singles
+
+J4 already carries a red/green **common-anode bicolour** with no board change. A
+part like that has exactly three terminals and they land on pins 1–3 as they
+stand; pin 4 stays unused, as it is now.
+
+| J4 pin | Net | Bicolour |
+| --- | --- | --- |
+| 1 | `VOUT` | common anode |
+| 2 | R9 1 kΩ → `~{CHG}` | red cathode |
+| 3 | R10 1 kΩ → `~{PGOOD}` | green cathode |
+| 4 | `GND` | unused |
+
+It reads better than two separate LEDs, because the charger's two open-drain
+outputs mix in one lens:
+
+| `/CHG` | `/PGOOD` | Colour | Meaning |
+| --- | --- | --- | --- |
+| high-Z | high-Z | **off** | on battery, no charger |
+| low | low | **amber** | charging |
+| high-Z | low | **green** | external power, charge complete |
+| low | high-Z | red | anomalous; should not occur |
+
+Amber-while-charging going green-when-done is read without a legend, and it
+matches the *off means fine* logic the RGB already uses.
+
+> **The green die decides whether this works, and J4 runs from `VOUT`.** That is
+> the cell, not a regulated rail — roughly **4.2 V falling to ~3.0 V** in use. An
+> **AlGaInP** yellowish-green around 2.1 V is fine across the whole range. An
+> **InGaN true green at 3.0–3.2 V will dim and then go dark as the cell drains**,
+> and no resistor value fixes it. This is the same physics that stops the RGB
+> being driven from 3V3, one rail down.
+
+Current is unchanged: 1 kΩ from 4.2 V through ~2.1 V is 2.1 mA per die, 4.2 mA
+in amber, and each status pin sinks only its own — well inside the 15 mA limit.
+
+**Expect to trim the balance.** Red is usually brighter than green at equal
+current, so amber can read orange-red. R9 and R10 are separate resistors for
+exactly that, the same way the RGB already anticipates green rising toward a
+kilohm.
+
+Part choice and its open question are in [sourcing.md](sourcing.md).
+
 **3. RGB — everything else, firmware driven.** J12, on D26/D27/D29. Solid on/off
 mixing only; no PWM.
 

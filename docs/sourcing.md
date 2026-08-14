@@ -191,6 +191,49 @@ the current you actually want. Red will differ from green and blue by around a
 volt, so the three resistors will differ too — a common value is what broke the
 original 3V3 scheme.
 
+## The charge LED — J4
+
+J4 takes a **red/green common-anode bicolour** with no board change: three
+terminals onto pins 1–3, pin 4 unused. The state table and the reasoning are in
+[indicators.md](indicators.md).
+
+**Candidate:** Amazon `B01CFZMO3I`, listed as diffused —
+<https://www.amazon.com/Diffused-Lighting-Electronics-Components-Emitting/dp/B01CFZMO3I>
+
+> **Its specification is UNVERIFIED.** The listing could not be read
+> automatically, so nothing here is quoted from the vendor — not the forward
+> voltages, not the package, not the pinout. Everything below is a requirement
+> the part must be *shown* to meet, not a claim about this one.
+
+**The green die is the whole question**, because J4 hangs on `VOUT` — the cell,
+about **4.2 V falling to 3.0 V**, not a regulated rail.
+
+| Green chemistry | Vf | Verdict |
+| --- | --- | --- |
+| AlGaInP, yellowish-green | ~2.1 V | works across the whole range |
+| InGaN, true green | 3.0–3.2 V | **dims, then dies as the cell drains** |
+
+That is the identical failure that stopped the RGB being driven from 3V3, one
+rail further down. The RGB part was confirmed at 3.0–3.2 V green; **if this
+bicolour uses the same die it is the wrong part for J4**, however good it looks
+on the bench at full charge.
+
+Before committing:
+
+1. **Measure Vf on the green die**, or find it stated. Under ~2.4 V is safe;
+   3.0 V and above is disqualifying.
+2. **Confirm common anode**, not common cathode. The two RGB listings differ by
+   four characters for exactly this, and the wrong one needs a high-side switch.
+3. **Confirm diffused.** Amber here is red and green mixed in one lens; a
+   water-clear part shows two coloured dots, which nobody reads as a state —
+   the same argument that governs the RGB.
+4. **Test it at 3.0 V, not 4.2 V.** A green that looks fine on a full cell is
+   precisely the failure mode: it goes dark when the battery is low, which is
+   when you most want to see the charger working.
+
+Then trim R9 and R10 by eye — red usually swamps green at equal current, so
+amber tends to read orange-red.
+
 ## Still to source
 
 **Actives**
