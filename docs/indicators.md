@@ -90,7 +90,29 @@ mixing only; no PWM.
 > **It cannot be driven from a 3V3 GPIO.** Green and blue have forward voltages
 > around 3.0-3.1 V against an output-high of roughly 3.15 V — they will not
 > light, and no resistor value fixes it. **Common anode to the 5 V rail with the
-> GPIOs sinking** — all three pins verified `FT`. See [values.md](values.md).
+> GPIOs sinking.** See [values.md](values.md).
+
+**Tolerance confirmed against the datasheet**, not assumed. `DS12556` Rev 8,
+Table 7, via the Daisy-to-STM32 mapping in `Seed_pinout.csv`:
+
+| Daisy | STM32 | I/O structure | |
+| --- | --- | --- | --- |
+| D26 red | PD11 | **FT_h** | 5 V tolerant, high-speed low-voltage |
+| D27 green | PG9 | **FT_h** | 5 V tolerant, high-speed low-voltage |
+| D29 blue | PB14 | **FT_u** | 5 V tolerant, USB option on VDD33USB |
+
+`FT` is 5 V tolerant, `TT` would be 3.3 V only. Positive injection is not
+possible on an FT pin — there is no upper clamp to VDD, which is what the
+tolerance consists of. Sink is 20 mA per I/O against the ~5 mA per channel here.
+
+> **FIRMWARE: the internal pull-up and pull-down must stay disabled on D26, D27
+> and D29.** `DS12556` Table 9 note 4: *"To sustain a voltage higher than 4 V the
+> internal pull-up/pull-down resistors must be disabled."* These pins sit at the
+> full 5 V whenever their LED is off, because the anode is on the 5 V rail. A
+> GPIO configured with either pull enabled is outside the absolute maximum
+> rating. Push-pull or open-drain output with no pull, and nothing else.
+
+Files and links for both documents are in [datasheets.md](datasheets.md).
 
 ## RGB states
 
