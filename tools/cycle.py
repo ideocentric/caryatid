@@ -79,9 +79,19 @@ def strip_copper(path=None):
     path = path or PCB
     t = open(path).read()
     spans = []
+    kept = 0
     for kind in ("segment", "via", "arc"):
         for m in re.finditer(rf"^\t\({kind}\b", t, re.M):
             blk = C.sexp(t, m.start() + 1)
+            # LOCKED COPPER SURVIVES. The router regenerates everything it laid,
+            # but it cannot regenerate hand work: fanout only escapes radially,
+            # so the SW route out of U2-5 -- which goes LEFT into the channel
+            # between the pad columns, per SLVSF14B Figure 10-1 -- would be
+            # deleted and never come back. Lock a track and the cycle leaves it,
+            # and export_dsn already emits it to Freerouting as (type protect).
+            if "(locked yes)" in blk:
+                kept += 1
+                continue
             end = m.start() + 1 + len(blk)
             while end < len(t) and t[end] == "\n": end += 1
             spans.append((m.start(), end))
@@ -93,6 +103,7 @@ def strip_copper(path=None):
     for s, e in reversed(merged):
         t = t[:s] + t[e:]
     open(path, "w").write(t)
+    strip_copper.kept = kept
     return len(spans)
 
 
@@ -133,8 +144,16 @@ def strip_pour_links():
         net = nets.get(int(n.group(1)))
         a = (float(s.group(1)), float(s.group(2)))
         c = (float(e.group(1)), float(e.group(2)))
+        # both ends in ANY pour of this net -- not necessarily the SAME pour.
+        # +5V_RAW and VOUT are each drawn as several separate polygons, so a link
+        # between two of them failed the same-pour test and survived as real
+        # copper. Two of those ran straight across a foreign pad: U2-6 to R7-1
+        # is 3.27 mm with R7-2 (/power/FB) directly between them, and a 25.7 mm
+        # VOUT link crossed R6-1 (/power/EN_SW). Both were reported as shorts.
+        ina = any(pnet == net and inpoly(poly, a) for pnet, poly in pz)
+        inc = any(pnet == net and inpoly(poly, c) for pnet, poly in pz)
         for pnet, poly in pz:
-            if pnet == net and inpoly(poly, a) and inpoly(poly, c):
+            if pnet == net and ina and inc:
                 end = m.start() + 1 + len(b)
                 while end < len(t) and t[end] == "\n": end += 1
                 spans.append((m.start(), end)); break
@@ -170,7 +189,8 @@ def main():
           f"F.Cu, plus B.Cu only under {bcu}" if bcu else "F.Cu only"))
 
     step(1, "stripping routed copper")
-    print(f"    removed {strip_copper()} segments/vias")
+    n = strip_copper()
+    print(f"    removed {n} segments/vias, kept {getattr(strip_copper,'kept',0)} locked")
 
     step(2, "regenerating fine-pitch escapes")
     r = run([sys.executable, os.path.join(HERE, "fanout.py"), "--apply"])
