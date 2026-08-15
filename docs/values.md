@@ -4,6 +4,10 @@ Derived from the TI datasheets — bq24074 `SLUS810N`, TPS61023 `SLVSF14B` — n
 from application notes or reference designs. Constants are quoted from the
 electrical characteristics tables so the arithmetic can be checked.
 
+Document numbers, revisions and links for every part are in
+[datasheets.md](datasheets.md); the PDFs live in `local/datasheets/`, which is
+gitignored because they are the manufacturers' copyright.
+
 Three of these changed a number in the platform spec. They are marked **changed**.
 
 ## Charger — bq24074
