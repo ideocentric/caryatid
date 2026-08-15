@@ -39,7 +39,18 @@ sys.path.insert(0, HERE)
 import check_board as C
 
 PRIORITY = 1
-CLEARANCE = 0.2
+CLEARANCE = 0.2      # default; overridden per-pour below
+
+# A pour hugging a fine-pitch part must use THAT PART'S clearance, not the
+# board default. Beside U2-5 the corridor between its neighbours is
+# 2 x (0.5 pitch - 0.175 half-pad - clearance):
+#
+#   clearance 0.20  ->  0.250 mm, exactly min_thickness -- fills or vanishes
+#   clearance 0.15  ->  0.350 mm, comfortable
+#
+# U2 carries a 0.15 mm footprint override for exactly this reason, and a pour
+# that ignores it is 0.05 mm too tight to survive the fill. So take the
+# tightest override among the parts the pour actually touches.
 
 
 def inpoly(poly, q):
@@ -65,6 +76,12 @@ def main():
     t = B.t
     netid = {n: int(i) for i, n in re.findall(r'\(net (\d+) "([^"]*)"\)', t)}
     pads = [(p["ref"], pd) for p in B.parts for pd in B.pads(p) if pd["net"]]
+    D_fp = {}
+    for p in B.parts:
+        spans = [q["span"] for q in B.pads(p)]
+        for m in re.finditer(r"\(clearance ([\d.]+)\)", p["blk"]):
+            if any(s <= m.start() < e for s, e in spans): continue
+            D_fp[p["ref"]] = float(m.group(1)); break
 
     found = []
     for m in re.finditer(r"^\t\(gr_poly", t, re.M):
@@ -83,12 +100,14 @@ def main():
         area = abs(sum(pts[k][0]*pts[(k+1) % len(pts)][1] - pts[(k+1) % len(pts)][0]*pts[k][1]
                        for k in range(len(pts)))) / 2
         refs = ", ".join(f"{r}-{pd['num']}" for r, pd in inside)
+        fpclr = [D_fp.get(r) for r, _ in inside if D_fp.get(r)]
+        clearance = min([CLEARANCE] + fpclr)
         if len(nets) == 1 and nets[0] in skip:
-            drop.append((start, length))
-            print(f"  {i:>2}  {nets[0]:<16}{len(pts):>4}{area:8.2f}   DELETE (stays a track)")
+            print(f"  {i:>2}  {nets[0]:<16}{len(pts):>4}{area:8.2f}   SKIPPED, drawing left in place")
         elif len(nets) == 1:
-            ok.append((start, length, pts, nets[0]))
-            print(f"  {i:>2}  {nets[0]:<16}{len(pts):>4}{area:8.2f}   {refs}")
+            ok.append((start, length, pts, nets[0], clearance))
+            tag = f"   clr {clearance}" if clearance != CLEARANCE else ""
+            print(f"  {i:>2}  {nets[0]:<16}{len(pts):>4}{area:8.2f}   {refs}{tag}")
         else:
             bad.append((i, nets))
             why = "encloses no pad" if not nets else f"spans {len(nets)} nets: {', '.join(nets)}"
@@ -101,7 +120,7 @@ def main():
     if not ok:
         print("\n  nothing to convert"); return 0
 
-    missing = [n for _, _, _, n in ok if n not in netid]
+    missing = [n for _, _, _, n, _ in ok if n not in netid]
     if missing:
         print(f"\n  net(s) not on this board: {missing}"); return 1
 
@@ -111,19 +130,19 @@ def main():
 
     # rebuild the file: drop each gr_poly, append a zone with the same outline
     blocks = []
-    for _, _, pts, net in ok:
+    for _, _, pts, net, clearance in ok:
         xy = " ".join(f"(xy {q[0]:.4f} {q[1]:.4f})" for q in pts)
         blocks.append(
             f'\t(zone\n\t\t(net {netid[net]})\n\t\t(net_name "{net}")\n'
             f'\t\t(layer "F.Cu")\n\t\t(uuid "{uuid.uuid4()}")\n'
             f'\t\t(name "{net} pour")\n\t\t(hatch edge 0.5)\n'
             f'\t\t(priority {PRIORITY})\n'
-            f'\t\t(connect_pads yes\n\t\t\t(clearance {CLEARANCE})\n\t\t)\n'
+            f'\t\t(connect_pads yes\n\t\t\t(clearance {clearance})\n\t\t)\n'
             f'\t\t(min_thickness 0.25)\n\t\t(filled_areas_thickness no)\n'
             f'\t\t(fill yes\n\t\t\t(thermal_gap 0.3)\n\t\t\t(thermal_bridge_width 0.5)\n\t\t)\n'
             f'\t\t(polygon\n\t\t\t(pts\n\t\t\t\t{xy}\n\t\t\t)\n\t\t)\n\t)\n')
 
-    for start, length in sorted([(s, l) for s, l, _, _ in ok] + drop, key=lambda z: -z[0]):
+    for start, length in sorted([(s, l) for s, l, _, _, _ in ok] + drop, key=lambda z: -z[0]):
         end = start + length
         while end < len(t) and t[end] == "\n": end += 1
         t = t[:start] + t[end:]

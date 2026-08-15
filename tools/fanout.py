@@ -33,7 +33,7 @@ that captured one thing and ignored another:
 So every proposal here is verified as a swept rectangle along its actual path,
 against every other-net pad and every other-net track on the same layer.
 """
-import sys, os, re, math, json, fnmatch, uuid
+import sys, os, re, math, json, fnmatch, uuid, subprocess, tempfile
 from collections import OrderedDict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -116,6 +116,7 @@ class Design:
                 if any(s <= m.start() < e for s, e in spans): continue
                 self.fp_clear[p["ref"]] = float(m.group(1))
                 break
+        self._drc = None
         self.pours = []
         for m in re.finditer(r"^\t\(zone", self.t, re.M):
             z = C.sexp(self.t, m.start() + 1)
@@ -139,8 +140,54 @@ class Design:
                                 (float(e.group(1)), float(e.group(2))),
                                 float(w.group(1)), l.group(1), int(n.group(1))))
 
+    def drc_unconnected(self):
+        """(ref, pad) of every pad KiCad reports as part of a missing connection
+
+        Cached. Runs the real DRC rather than reasoning about geometry, because
+        geometry got this wrong: see pour_connects below."""
+        if self._drc is not None: return self._drc
+        exe = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+        exe = exe if os.path.exists(exe) else "kicad-cli"
+        rpt = tempfile.NamedTemporaryFile(suffix=".rpt", delete=False).name
+        self._drc = set()
+        try:
+            subprocess.run([exe, "pcb", "drc", "-o", rpt, C.PCB],
+                           capture_output=True, timeout=900)
+            lines = open(rpt).read().splitlines()
+            i = 0
+            while i < len(lines):
+                if lines[i].strip().startswith("[unconnected_items]"):
+                    j = i + 1
+                    while j < len(lines) and not lines[j].strip().startswith("["):
+                        m = re.search(r"[Pp]ad (\S+) \[[^\]]*\] of (\S+)", lines[j])
+                        if m: self._drc.add((m.group(2), m.group(1)))
+                        j += 1
+                    i = j
+                else:
+                    i += 1
+        except Exception:
+            pass
+        finally:
+            if os.path.exists(rpt): os.remove(rpt)
+        return self._drc
+
+    def pour_connects(self, ref, pd):
+        """does a pour ACTUALLY join this pad -- not merely enclose it?
+
+        in_pour() answers a geometry question: is the pad centre inside a pour
+        outline. That is not the same question, and the difference is not
+        academic. The SW pour drawn round U2-5 and L1-2 encloses both, but the
+        fill can only squeeze a 0.15-0.20 mm neck between U2-4 and U2-6, and at
+        the 0.25 mm min_thickness that neck vanishes -- so the fill bonds L1-2
+        and leaves U2-5 floating. Trusting containment, fanout skipped the one
+        escape that pad needed.
+
+        So: enclosed AND not reported unconnected by DRC."""
+        return self.in_pour(pd) and (ref, pd["num"]) not in self.drc_unconnected()
+
     def in_pour(self, pd):
-        """pad sits inside a copper pour of its own net, so it is already joined"""
+        """pad centre sits inside a pour outline of its own net -- GEOMETRY ONLY.
+        Use pour_connects() to decide anything; see the note there."""
         for poly, net in self.pours:
             if net != pd["net"]: continue
             x, y = pd["x"], pd["y"]; c = False
@@ -273,7 +320,7 @@ def neighbours(D, good, report=False):
     squeezed, rows = [], []
     for ref, p, pd in D.pads:
         if ref not in affected or not pd["net"] or pd["net"] == "GND": continue
-        if (ref, pd["num"]) in escaped or D.has_copper(pd) or D.in_pour(pd): continue
+        if (ref, pd["num"]) in escaped or D.has_copper(pd) or D.pour_connects(ref, pd): continue
         k = D.klass(pd["net"]); clr = D.cls[k]["clearance"]
         # Ask whether a LEGAL escape exists, not whether a full class-width one
         # does. A HighCurrent pad on a SOT-563 can never be left at 1.20 mm --
@@ -306,7 +353,7 @@ def main():
         if not pd["net"] or pd["net"] == "GND" or not pd["smd"]: continue
         k = D.klass(pd["net"]); want = D.cls[k]["track_width"]
         if want <= min(pd["w"], pd["h"]): continue
-        if D.has_copper(pd) or D.in_pour(pd):
+        if D.has_copper(pd) or D.pour_connects(ref, pd):
             done.append((ref, pd)); continue
         ux, uy = outward(p, pd)
         a = (pd["x"], pd["y"])
