@@ -61,13 +61,51 @@ depends on the Schmitt hysteresis, so the part matters and not just the function
 supply**, with rail-to-rail input and output. The gain-bandwidth is what bounds
 the usable gain in [audio.md](audio.md).
 
-## Not yet gathered
+## The compute module
 
-These are referenced by the design but have no datasheet on file:
+The Seed is not on the BOM — it plugs into A1/A2 — but the pin map is derived
+from its documentation, so the documentation is load-bearing.
+
+| Part | Document | Rev | Local file |
+| --- | --- | --- | --- |
+| Electrosmith **Daisy Seed** | datasheet | **v1.2.0** | `Daisy_Seed_datasheet.pdf` |
+| — schematic, **redacted** | ES_Daisy_Seed_Rev7 | Feb 2024 | `ES_Daisy_Seed_Rev7.pdf` |
+| — pinout drawing | Daisy_Seed_pinout-25 | — | `Daisy_Seed_pinout-25.pdf` |
+| — pinout table, 40 pins | Seed_pinout.csv | — | `Seed_pinout.csv` |
+| ST **STM32H750IBK6** | `DS12556` | **Rev 8**, Jan 2026 | `stm32h750ib.pdf` |
+
+- Daisy Seed — <https://docs.daisy.audio/hardware/Seed/> links all four; the files
+  themselves are under
+  `https://daisy.nyc3.cdn.digitaloceanspaces.com/products/seed/`
+- STM32H750 — <https://www.st.com/resource/en/datasheet/stm32h750ib.pdf>
+
+**The Daisy documents are MIT licensed.** The datasheet carries the MIT text in
+its colophon, covering "the Software and associated documentation files". Unlike
+the four IC datasheets above, these *can* be committed to a public repository if
+the licence notice goes with them. They are in `local/` only for consistency.
+
+**st.com could not be reached from tooling** — it refuses both a plain fetch and
+a browser-headed request, where TI, Nexperia, Microchip and the Daisy CDN all
+succeed. `stm32h750ib.pdf` was downloaded by hand. Worth knowing before anyone
+tries to script this.
+
+Two cautions about the Seed documents:
+
+- **The schematic is redacted and omits the MCU.** It shows the headers, USB, the
+  TPS62170 buck, the LP2985 analogue LDO and the codec, but the STM32 is not on
+  it. The part number is not confirmable from Electrosmith's own published
+  schematic; it comes from `DS12556`'s package list matching the module and from
+  secondary sources.
+- **`Seed_pinout.csv` does not mark 5 V tolerance.** It gives Daisy pin → STM32
+  pin → primary and alternate functions, and that is the authority behind
+  [pins.yaml](pins.yaml). The claim in [indicators.md](indicators.md) that D26,
+  D27 and D29 are `FT` has to come from the pin-definitions table in `DS12556`,
+  which is now on file and can be checked.
+
+## Not yet gathered
 
 | Part | Why it matters | Status |
 | --- | --- | --- |
-| **Daisy Seed** / STM32H750 | the pin map in [pins.yaml](pins.yaml), and which pins are 5 V tolerant | pin map came from the vendor docs; **no file** |
 | MPD **BH-18650-PC** holder | 21.31 mm height sets the enclosure stack; rated for protected cells | drawing cited in [sourcing.md](sourcing.md); **no file** |
 | RGB LED `B01C19ENFK` | forward voltages 3.0–3.2 V green and blue, the reason it needs 5 V | vendor specification quoted; **no datasheet** |
 | Bicolour LED `B01CFZMO3I` | the green die decides whether J4 works at all | **UNVERIFIED** — see [sourcing.md](sourcing.md) |
