@@ -314,7 +314,7 @@
 		(layer "F.SilkS")
 	)
 	(fp_text user "USB"
-		(at 7.62 -4.0 0)
+		(at 7.62 -5 0)
 		(layer "F.SilkS")
 		(effects
 			(font

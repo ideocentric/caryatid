@@ -297,7 +297,7 @@
 	)
 	(fp_line
 		(start -3.62 -2.6)
-		(end -7.62 -2.6)
+		(end -7.01 -2.6)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -306,7 +306,7 @@
 	)
 	(fp_line
 		(start 1.28 49.6)
-		(end -7.62 49.6)
+		(end -7.01 49.6)
 		(stroke
 			(width 0.12)
 			(type solid)
