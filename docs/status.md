@@ -20,10 +20,11 @@ sides, 146 GND vias. Power nets around U1 and U2 are poured from hand-drawn
 outlines rather than routed; see [ADR 0008](decisions/0008-board-outline-and-layer-count.md)
 and the commit history for why.
 
-Three DRC items remain **deliberately**:
+Three kinds of DRC item remain **deliberately**:
 
 - **2 `silk_overlap`** at 0.21 mm — J11's reference against its own outline, and
-  BT1's outline against its `+` marker. Our rule is 0.25; JLC's floor is 0.15.
+  BT1's outline against its `+` marker. These are the only two left after the
+  connector labelling; all 77 pin labels are clear. Our rule is 0.25; JLC's floor is 0.15.
   They print and read correctly.
 - **5 `via_dangling`**. These are junctions where two or three tracks meet, not
   loose ends. Removing this kind wholesale broke two connections once already.
@@ -49,17 +50,19 @@ Three DRC items remain **deliberately**:
    get clipped by solder mask, which puts ink on bare copper. The rest is a
    decision nobody has made rather than one that was made — worth taking as its
    own sweep, not part by part.
-3. **Human-readable silkscreen at the connectors** — `SW1`, `SW2`, `SW3` and so
-   on beside each jack, not just reference designators. This is already a
-   requirement: [connectors.md](connectors.md) says to print the function of
-   every pin beside every connector, because the board is assembled once and
-   cabled differently for each instrument, months apart.
+3. ~~**Human-readable silkscreen at the connectors.**~~ **Done** — all **77
+   connector pins** are labelled, by `tools/pin_labels.py`. 61 at the full
+   1 × 1 mm absonus size, 5 at 0.9, 4 at 0.85, 7 at 0.8; zero DRC issues.
+   Re-run the tool after any placement change — the labels are board-level
+   `gr_text` and do **not** follow a connector that moves.
 
-   **absonus did exactly this and the sizes are known**: `SW1`, `SW2`,
-   `Audio Out`, `Pressure`, `Position`, `L`, `R`, all **1 × 1 mm at 0.15
-   thickness**, F.SilkS, rotated 90°. Note 0.15 is precisely JLC's stroke floor
-   and `check_board.py`'s minimum — zero margin, though absonus was fabricated
-   with it. Consider 0.16–0.18 here.
+   Pin pitch decided the design. At 2.50 mm with 0.25 mm clearance, one row of
+   1 mm text fits **two characters** — not enough for `3V3`. Staggering
+   alternate pins into two rows doubles the effective pitch and buys five.
+
+   **Seven connector references moved** to make room: J6, J7, J8, J9, J10, J13B
+   and J15 sat directly above their connectors, in the only band the labels
+   could use. They are now rotated 90° in the gap beside each connector.
 4. **Logo and font from absonus**, placed on silkscreen. **Located, and there is
    no artwork to import.** The source is
    `synths/daisy/ribbon-synth/archive/hardware/pcb-v0.1/absonus-v0.1.kicad_pcb`,
@@ -98,6 +101,7 @@ python3 tools/cleanup.py            # duplicate tracks, co-located vias, priorit
 python3 tools/pour_from_drawing.py  # convert hand-drawn F.Cu polygons into pours
 python3 tools/reset_placement.py    # back up and strip to placement only
 python3 tools/round_corners.py      # corner radius on the Edge.Cuts rectangle
+python3 tools/pin_labels.py         # silkscreen every connector pin's function
 ```
 
 **Lock any copper you place by hand.** `cycle.py` strips everything unlocked and
