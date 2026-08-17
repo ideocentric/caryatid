@@ -22,7 +22,8 @@ and the commit history for why.
 
 Three DRC items remain **deliberately**:
 
-- **3 `silk_overlap`** at 0.21–0.22 mm. Our rule is 0.25; JLC's floor is 0.15.
+- **2 `silk_overlap`** at 0.21 mm — J11's reference against its own outline, and
+  BT1's outline against its `+` marker. Our rule is 0.25; JLC's floor is 0.15.
   They print and read correctly.
 - **5 `via_dangling`**. These are junctions where two or three tracks meet, not
   loose ends. Removing this kind wholesale broke two connections once already.
@@ -37,11 +38,17 @@ Three DRC items remain **deliberately**:
    what did *not* constrain the radius are in
    [ADR 0008](decisions/0008-board-outline-and-layer-count.md); change it with
    `python3 tools/round_corners.py --radius N --apply`.
-2. **Component silkscreen.** D1 has a known fix. 108 of 128 references are
-   hidden — residue of "hide the back references" from when every SMD part was
-   on the back face. U1, U3, U4, C7 and D1 are now visible; U2, L1 and FB1 stay
-   hidden because their labels collide with their own outlines and get clipped
-   by solder mask, which puts ink on bare copper.
+2. **Component silkscreen.** **D1 and U1 are done** — D1's reference moved from
+   below the body to above it, `-2.5` to `+2.5`, the exact mirror; U1's went
+   `0` to `0.2875` on X. Both clear the 0.25 mm rule outright.
+
+   Still open: **106 of 128 references are hidden** — residue of "hide the back
+   references" from when every SMD part was on the back face, which no longer
+   describes the board. U1, U3, U4, C7 and D1 are visible; U2, L1 and FB1 stay
+   hidden deliberately, because their labels collide with their own outlines and
+   get clipped by solder mask, which puts ink on bare copper. The rest is a
+   decision nobody has made rather than one that was made — worth taking as its
+   own sweep, not part by part.
 3. **Human-readable silkscreen at the connectors** — `SW1`, `SW2`, `SW3` and so
    on beside each jack, not just reference designators. This is already a
    requirement: [connectors.md](connectors.md) says to print the function of

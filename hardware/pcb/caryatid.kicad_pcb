@@ -15179,7 +15179,7 @@
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D1"
-			(at 0 -2.5 0)
+			(at 0 2.5 0)
 			(layer "F.SilkS")
 			(uuid "a4ef298c-8b10-575e-9480-4d30aa7e513b")
 			(effects
@@ -29834,7 +29834,7 @@
 		(descr "TI BQ24074RGT, VQFN-16 (RGT) 3x3mm, 0.5mm pitch, 1.68mm exposed pad (TI nominal; 1.70 lands exactly on the 0.2mm clearance boundary). Thermal vias 0.3mm drill on 0.70mm pads at +/-0.45mm (0.20mm annular ring, JLC floor is 0.18): JLC will not do 0.2mm holes, and TI\\'s +/-0.6 position leaves only 0.176mm to the signal pads at that pad size. Land pattern per SLUS810N RGT0016C drawing 4222419/E. EP paste segmented 2x2 at 72% coverage; the 4 thermal vias sit under the apertures and MUST be tented/mask-plugged.")
 		(tags "QFN NoLead BQ24074 charger TI RGT")
 		(property "Reference" "U1"
-			(at 0 -2.83 0)
+			(at 0.2875 -2.825 0)
 			(layer "F.SilkS")
 			(uuid "0e1397c3-4e2c-45d5-b549-df0e079cd5d2")
 			(effects
