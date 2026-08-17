@@ -20,14 +20,23 @@ sides, 146 GND vias. Power nets around U1 and U2 are poured from hand-drawn
 outlines rather than routed; see [ADR 0008](decisions/0008-board-outline-and-layer-count.md)
 and the commit history for why.
 
-Three kinds of DRC item remain **deliberately**:
+Two kinds of DRC item remain **deliberately**:
 
 - **2 `silk_overlap`** at 0.21 mm — J11's reference against its own outline, and
   BT1's outline against its `+` marker. These are the only two left after the
   connector labelling; all 77 pin labels are clear. Our rule is 0.25; JLC's floor is 0.15.
   They print and read correctly.
-- **5 `via_dangling`**. These are junctions where two or three tracks meet, not
-  loose ends. Removing this kind wholesale broke two connections once already.
+- ~~5 `via_dangling`~~ **Removed.** They were called "junctions where two or
+  three tracks meet, not loose ends" here, which was true and beside the point.
+  Two or three tracks did meet at each — **on F.Cu, with nothing whatever on
+  B.Cu**. B.Cu carries only the ground pour, so a `+5V` or `RGB_B` via reaching
+  it had nothing to land on, and since the pour must clear around each one they
+  were punching holes in the ground plane for no purpose. The F.Cu tracks meet
+  at a coincident point and stay connected without them.
+
+  This was **not** the earlier cascade, where deleting a via orphaned the track
+  feeding it. Only the vias went; no track was touched. Verified on a copy
+  before applying — real unconnected stayed 0 and no `track_dangling` appeared.
 - **5 `lib_footprint_mismatch`**. Metadata only — `Datasheet` and `Description`
   fields KiCad adds on placement, plus reference visibility. No geometry
   differs, so nothing about the fabricated board changes.
