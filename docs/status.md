@@ -43,10 +43,24 @@ Three DRC items remain **deliberately**:
    requirement: [connectors.md](connectors.md) says to print the function of
    every pin beside every connector, because the board is assembled once and
    cabled differently for each instrument, months apart.
-4. **Logo and font from absonus**, placed on silkscreen. **The absonus KiCad
-   source has not been located** — `ribbon-synth/absonus` holds firmware only,
-   and the two PDFs at the GitHub root are outputs, not sources. Point at the
-   project before starting this one.
+
+   **absonus did exactly this and the sizes are known**: `SW1`, `SW2`,
+   `Audio Out`, `Pressure`, `Position`, `L`, `R`, all **1 × 1 mm at 0.15
+   thickness**, F.SilkS, rotated 90°. Note 0.15 is precisely JLC's stroke floor
+   and `check_board.py`'s minimum — zero margin, though absonus was fabricated
+   with it. Consider 0.16–0.18 here.
+4. **Logo and font from absonus**, placed on silkscreen. **Located, and there is
+   no artwork to import.** The source is
+   `synths/daisy/ribbon-synth/archive/hardware/pcb-v0.1/absonus-v0.1.kicad_pcb`,
+   and it contains **zero image objects** — the branding is plain KiCad stroke
+   text in the built-in font. No font file, no bitmap, nothing to convert:
+
+   | text | size | thickness | |
+   | --- | --- | --- | --- |
+   | `absonus` | 3.556 × 2.54 mm | 0.20 | bold |
+   | `v0.2` | 1 × 1 mm | 0.15 | |
+
+   Both `(layer "F.SilkS")`, rotated 90°, `(justify left bottom)`.
 5. **Manufacturing readiness**, then anything still unticked.
 
 ## Known open, beyond that list
