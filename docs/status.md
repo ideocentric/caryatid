@@ -32,7 +32,11 @@ Three DRC items remain **deliberately**:
 
 ## Next, in order
 
-1. **Round the board corners.** Edge.Cuts is currently four straight lines.
+1. ~~**Round the board corners.**~~ **Done** — 3 mm radius, four `gr_line` sides
+   and four 90° `gr_arc` corners, pours refilled to follow them. Reasoning and
+   what did *not* constrain the radius are in
+   [ADR 0008](decisions/0008-board-outline-and-layer-count.md); change it with
+   `python3 tools/round_corners.py --radius N --apply`.
 2. **Component silkscreen.** D1 has a known fix. 108 of 128 references are
    hidden — residue of "hide the back references" from when every SMD part was
    on the back face. U1, U3, U4, C7 and D1 are now visible; U2, L1 and FB1 stay
@@ -86,6 +90,7 @@ python3 tools/cycle.py              # placement -> fully routed, ~10 min
 python3 tools/cleanup.py            # duplicate tracks, co-located vias, priorities
 python3 tools/pour_from_drawing.py  # convert hand-drawn F.Cu polygons into pours
 python3 tools/reset_placement.py    # back up and strip to placement only
+python3 tools/round_corners.py      # corner radius on the Edge.Cuts rectangle
 ```
 
 **Lock any copper you place by hand.** `cycle.py` strips everything unlocked and

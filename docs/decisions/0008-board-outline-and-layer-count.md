@@ -63,6 +63,17 @@ is now written down so that revisiting it is a decision rather than a rediscover
 **The "neither edge past 100 mm" rule is retired.** It was a proxy for a price
 that was never checked.
 
+**The four corners are rounded to a 3 mm radius.** Nothing on the board forces a
+value, and that is worth recording so it is not re-derived: the M3 holes sit
+5 mm in from both edges and keep their full 5 mm to the straight edge at any
+radius below 5, the nearest copper of any kind to a corner is 5.47 mm, and the
+CU-477 leaves ~10 mm per side so the box's own internal fillets cannot foul a
+corner either way. The only real floor is the fab's router bit, and JLC's gives
+1 mm. 3 mm is chosen for handling — a square corner on a board carried to gigs
+is the thing that catches on a bag. It is applied by `tools/round_corners.py`,
+which reconstructs the implied rectangle before cutting, so the radius can be
+changed or removed with one flag rather than re-typed as coordinates.
+
 ## Consequences
 
 - The CU-477 drill pattern changes from 90 × 80 mm to **140 × 80 mm** — X ±40,

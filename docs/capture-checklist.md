@@ -210,7 +210,13 @@ arrive rather than before the gerbers go out.
       **Everything is on the front**; the back is bare copper. The enclosure is
       shallow, so the standoff has to be short, and C7 at 5.4 mm cannot hang
       under it. Single-sided SMT is also the cheaper assembly.
-- [x] **Four M3 holes**, pattern chosen once the outline settles.
+- [x] **Corners rounded, 3 mm radius.** Nothing electrical or mechanical forced
+      a value — see ADR 0008 for what was checked and ruled out. Re-run
+      `tools/round_corners.py` to change it; refill the zones afterwards.
+- [x] **Four M3 holes**, pattern chosen once the outline settles. **Unaffected by
+      the corner radius** — they sit 5 mm in from both edges and keep their full
+      5 mm to the straight edge, so the ±40 / ±70 CU-477 drill pattern below
+      still stands.
 - [ ] **Drill the CU-477 floor** to the **140 × 80 mm** pattern — X ±40, Z ±70
       from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
       STEP are in the walls and flanges. See [sourcing.md](sourcing.md). absonus's
