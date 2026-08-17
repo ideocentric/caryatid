@@ -23,11 +23,30 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J12 | JST 4 | RGB status. **Common anode**: pin 1 `+5V`, then D26/D27/D29 cathodes sinking through **510Ω red, 300Ω green, 300Ω blue**. Not GND, not 3V3 — see [panel-io-sheet.md](panel-io-sheet.md). |
 | J13a | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
 | J14 | JST-XH 2 | Mic bias return → the hook switch's second pole |
-| J13b | JST-PH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, AUX |
-| J15 | JST-PH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, AUX |
+| J13b | JST-XH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, GND |
+| J15 | JST-XH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, GND |
 | J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
 | J17 | JST-XH 3 | Audio out — L, R, GND, to panel jacks |
-| J18 | JST-XH 3 | Audio in — L, R, GND. Network on every board, DNP where unused |
+| J18 | JST-XH 3 | Audio in — L, R, **`MIC_RTN`**. Network on every board, DNP where unused |
+
+> **Three entries in that table were wrong until the silkscreen work checked
+> them against the schematic.** They are recorded here because the error was in
+> this file, not on the board, and the next person to read it should know it has
+> been reconciled rather than merely written:
+>
+> - **J13b and J15 pin 6 were listed as `AUX`. Both are `GND`.** There is no
+>   `AUX` net anywhere in the schematic or the board — the name existed only
+>   here. Each port carries **two grounds**, which is what a six-way cable to a
+>   module wants anyway.
+> - **J13b and J15 were listed as JST-PH. Both are JST-XH**, `B6B-XH-A` at
+>   2.50 mm, per the schematic's own Footprint property. Ordering PH housings
+>   against this table would have produced parts that do not mate.
+> - **J18 pin 3 was listed as `GND`. It is `MIC_RTN`** — the mic bias return,
+>   which pairs with J14 pin 1 and is precisely *not* a ground; that is the whole
+>   point of J14.
+>
+> Nothing on the board changed. The schematic and the PCB agreed with each other
+> throughout; only this file disagreed with both.
 
 ## Every pin reaches a connector
 
