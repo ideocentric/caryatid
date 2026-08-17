@@ -11,13 +11,16 @@ after one of them would have implied it belonged to that one.*
 sensors, switches, comms — enters through a connector, and each instrument
 populates the subset it needs. Order once, stuff per instrument.
 
-Status: **pin map frozen, KiCad skeleton in place, no schematic content yet.**
-See [hardware/pcb/](hardware/pcb/).
+Status: **schematic captured, board placed and fully routed.** Every electrical
+check is at zero — no unconnected nets, no shorts, no clearance or hole
+violations, no copper under the width rule, no floating ground. See
+[docs/status.md](docs/status.md) for what is left and what happens next.
 
 ## Start here
 
 | | |
 | --- | --- |
+| **Where the board is, and what is next** | [docs/status.md](docs/status.md) |
 | **The frozen pin map** | [docs/pinmap.md](docs/pinmap.md) — generated from [docs/pins.yaml](docs/pins.yaml) |
 | Connectors and what plugs into them | [docs/connectors.md](docs/connectors.md) |
 | Audio in and out, and the handset problem | [docs/audio.md](docs/audio.md) |
@@ -28,6 +31,7 @@ See [hardware/pcb/](hardware/pcb/).
 | **Seed sheet, every connection** | [docs/seed-sheet.md](docs/seed-sheet.md) |
 | **Panel I/O sheet, every connection** | [docs/panel-io-sheet.md](docs/panel-io-sheet.md) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
+| Datasheets, links and document numbers | [docs/datasheets.md](docs/datasheets.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 
 **`docs/pins.yaml` is the source of truth.** The markdown table is generated:
