@@ -56,6 +56,10 @@ Three kinds of DRC item remain **deliberately**:
    Re-run the tool after any placement change — the labels are board-level
    `gr_text` and do **not** follow a connector that moves.
 
+   **All 77 are locked.** A hand-moved label keeps the uuid the tool gave it,
+   so without a lock the next `--apply` silently reverts it. `--apply` is now a
+   byte-for-byte no-op; `--relock --apply` is the deliberate override.
+
    Pin pitch decided the design. At 2.50 mm with 0.25 mm clearance, one row of
    1 mm text fits **two characters** — not enough for `3V3`. Staggering
    alternate pins into two rows doubles the effective pitch and buys five.
@@ -104,7 +108,7 @@ python3 tools/round_corners.py      # corner radius on the Edge.Cuts rectangle
 python3 tools/pin_labels.py         # silkscreen every connector pin's function
 ```
 
-**Lock any copper you place by hand.** `cycle.py` strips everything unlocked and
+**Lock anything you place or adjust by hand — copper and silkscreen both.** `cycle.py` strips everything unlocked and
 re-routes; `export_dsn.py` hands locked copper to Freerouting as `(type protect)`
 so it routes around it. Without the lock, hand work is deleted and not
 regenerated — `fanout.py` only escapes radially, and routes like SW's channel

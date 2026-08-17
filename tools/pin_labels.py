@@ -5,6 +5,8 @@
     python3 tools/pin_labels.py              # report placement and collisions
     python3 tools/pin_labels.py --apply
     python3 tools/pin_labels.py --strip --apply     # remove them again
+    python3 tools/pin_labels.py --lock --apply      # protect them from re-runs
+    python3 tools/pin_labels.py --relock --apply    # regenerate even locked ones
 
 WHY
 ---
@@ -50,6 +52,12 @@ wrote and nothing a human placed.
 
 MOVE A CONNECTOR AND THE LABELS DO NOT FOLLOW. Re-run this after any placement
 change, and check the collision report rather than assuming.
+
+LOCK ANYTHING YOU ADJUST BY HAND. A hand-moved label keeps the uuid this tool
+gave it, so without a lock the next --apply silently reverts it to the computed
+position -- the same trap the board already documents for copper. --lock marks
+every label this tool owns; strip() then refuses to touch them and treats them
+as obstacles instead, and --relock is the deliberate override.
 """
 import sys, os, re, math, uuid
 
@@ -245,12 +253,15 @@ def classify(pads):
 def plan(B, p, obst, outline):
     """Label boxes for one connector, or a reason it could not be placed."""
     ref = ref = p["ref"]
-    pads = [d for d in B.pads(p) if str(d["num"]).isdigit()]
-    if not pads: return [], "no numbered pads"
+    # A pin whose label survived the strip is locked: KNOWN no longer holds its
+    # uuid, so it drops out here and is neither replanned nor re-emitted.
+    pads = [d for d in B.pads(p) if str(d["num"]).isdigit()
+            and str(uuid.uuid5(NS, f"caryatid-pinlabel-{p['ref']}-{d['num']}")) in KNOWN]
+    if not pads: return [], "no unlocked pins", []
     box = silk_box(B, p)
-    if not box: return [], "no silk outline"
+    if not box: return [], "no silk outline", []
     kind, xs, ys = classify(pads)
-    if kind == "other": return [], f"unhandled pad pattern ({len(xs)}x{len(ys)})"
+    if kind == "other": return [], f"unhandled pad pattern ({len(xs)}x{len(ys)})", []
     bx0, by0, bx1, by1 = box
     ox0, oy0, ox1, oy1 = outline
     h = th()
@@ -398,22 +409,76 @@ def emit(t, labels):
     return t[:at] + "".join(chunks) + t[at:]
 
 
-def strip(t):
-    n = 0
+def strip(t, force=False):
+    """Remove this tool's own labels -- but NEVER a locked one.
+
+    Hand-adjusted labels keep the uuid the tool gave them, so without this a
+    plain --apply silently reverts every manual nudge to the computed position.
+    That is the same trap the repo already documents for copper ("lock any
+    copper you place by hand"), and the same answer: cycle.py's strip_copper()
+    skips (locked yes), so this does too. --relock is how a locked label gets
+    regenerated deliberately rather than by accident."""
+    n, kept = 0, 0
     while True:
         hit = None
         for m in re.finditer(r"^\t\(gr_text\b", t, re.M):
             blk = C.sexp(t, m.start()+1)
             u = re.search(r'\(uuid "([^"]+)"\)', blk)
-            if u and u.group(1) in KNOWN:
-                e = m.start()+1+len(blk)
-                while e < len(t) and t[e] == "\n": e += 1
-                hit = (m.start(), e); break
-        if not hit: return t, n
+            if not (u and u.group(1) in KNOWN): continue
+            if "(locked yes)" in blk and not force:
+                kept += 1; KNOWN.discard(u.group(1)); continue
+            e = m.start()+1+len(blk)
+            while e < len(t) and t[e] == "\n": e += 1
+            hit = (m.start(), e); break
+        if not hit: return t, n, kept
         t = t[:hit[0]] + t[hit[1]:]; n += 1
 
 
+def lock_all(t):
+    """Mark every label this tool owns as locked, in place."""
+    n = 0
+    for m in reversed(list(re.finditer(r"^\t\(gr_text \"", t, re.M))):
+        blk = C.sexp(t, m.start()+1)
+        u = re.search(r'\(uuid "([^"]+)"\)', blk)
+        if not (u and u.group(1) in KNOWN) or "(locked yes)" in blk: continue
+        head = blk.index("\n") + 1
+        t = t[:m.start()+1] + blk[:head] + "\t\t(locked yes)\n" + blk[head:] \
+            + t[m.start()+1+len(blk):]
+        n += 1
+    return t, n
+
+
 KNOWN = set()
+
+
+def surviving_labels(t):
+    """Boxes of every F.SilkS gr_text still in the file after a strip.
+
+    A locked label is not regenerated, but it is still ink on the board -- the
+    next connector along has to route around it, so it has to be an obstacle."""
+    out = []
+    for m in re.finditer(r"^\t\(gr_text \"([^\"]*)\"", t, re.M):
+        blk = C.sexp(t, m.start()+1)
+        if '"F.SilkS"' not in blk: continue
+        at = re.search(r"\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)", blk)
+        sm = re.search(r"\(size ([\d.]+)", blk)
+        if not (at and sm): continue
+        x, y, rot = float(at.group(1)), float(at.group(2)), float(at.group(3) or 0)
+        size = float(sm.group(1))
+        w = tw(m.group(1), size)
+        up, dn = th_split(size)
+        ju = re.search(r"\(justify ([a-z ]+)\)", blk)
+        j = ju.group(1) if ju else ""
+        if abs(rot) % 180 == 90:
+            box = (x - up, y - w/2, x + up, y + w/2)
+        elif "right" in j:
+            box = (x - w, y - up, x, y + dn)
+        elif "left" in j:
+            box = (x, y - up, x + w, y + dn)
+        else:
+            box = (x - w/2, y - up, x + w/2, y + dn)
+        out.append((box, f"locked '{m.group(1)}'"))
+    return out
 
 
 def main():
@@ -427,19 +492,33 @@ def main():
         for d in B.pads(p):
             KNOWN.add(str(uuid.uuid5(NS, f"caryatid-pinlabel-{p['ref']}-{d['num']}")))
 
-    if "--strip" in sys.argv:
-        t, n = strip(t)
-        print(f"  removed {n} generated labels")
+    if "--lock" in sys.argv:
+        t, n = lock_all(t)
+        print(f"  locked {n} labels ({len(KNOWN)} owned by this tool)")
         if apply_: open(C.PCB, "w").write(t)
         else: print("  dry run -- pass --apply to write")
         return 0
 
-    t, removed = strip(t)                      # regenerate from clean
-    if removed: print(f"  removed {removed} labels from a previous run\n")
+    force = "--relock" in sys.argv
+    if "--strip" in sys.argv:
+        t, n, kept = strip(t, force)
+        print(f"  removed {n} generated labels"
+              + (f", kept {kept} locked (--relock to take those too)" if kept else ""))
+        if apply_: open(C.PCB, "w").write(t)
+        else: print("  dry run -- pass --apply to write")
+        return 0
+
+    t, removed, kept = strip(t, force)         # regenerate from clean
+    if removed: print(f"  removed {removed} labels from a previous run")
+    if kept: print(f"  kept {kept} LOCKED labels -- not regenerated, "
+                   f"and treated as obstacles (--relock to override)")
+    if removed or kept: print()
     B = C.Board.__new__(C.Board); C.Board.__init__(B, C.PCB)
     B.t = t
     B.parts = C.Board(C.PCB).parts             # placement is unchanged by strip
     obst = Obstacles(B)
+    for box, name in surviving_labels(t):      # locked ones still occupy space
+        obst.add_label(box, name)
 
     all_labels, clashes, longs = [], 0, []
     print(f"  {'ref':<6} {'pins':>4}  {'placement':<26} labels")
