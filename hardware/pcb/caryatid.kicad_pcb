@@ -17036,7 +17036,7 @@
 			(uuid "11bd4c4f-46d5-4d18-86ff-92354ca53e90")
 		)
 		(fp_text user "+"
-			(at -4.5 0.05 0)
+			(at -5.5 0.05 0)
 			(layer "F.SilkS")
 			(uuid "88901747-300c-4e25-93d7-58b3c2d4ce78")
 			(effects
@@ -27117,7 +27117,7 @@
 		(descr "Through hole IDC box header, 2x05, 2.54mm pitch, DIN 41651 / IEC 60603-13, double rows, https://docs.google.com/spreadsheets/d/16SsEcesNF15N3Lb4niX7dcUr-NY5_MFPQhobNuNppn4/edit#gid=0")
 		(tags "Through hole vertical IDC box header THT 2x05 2.54mm double row")
 		(property "Reference" "J11"
-			(at 1.27 -6.1 0)
+			(at 1.29 -6.345 0)
 			(layer "F.SilkS")
 			(uuid "2d677eb4-9699-4d2f-986d-024837b1bb67")
 			(effects

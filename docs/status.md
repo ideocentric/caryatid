@@ -20,13 +20,12 @@ sides, 146 GND vias. Power nets around U1 and U2 are poured from hand-drawn
 outlines rather than routed; see [ADR 0008](decisions/0008-board-outline-and-layer-count.md)
 and the commit history for why.
 
-Two kinds of DRC item remain **deliberately**, all seven recorded with reasons
-in `tools/drc_exclusions.py` and gated by it:
+**A plain `kicad-cli pcb drc` run now reports zero.** One kind of item remains,
+excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
 
-- **2 `silk_overlap`** at 0.21 mm — J11's reference against its own outline, and
-  BT1's outline against its `+` marker. These are the only two left after the
-  connector labelling; all 77 pin labels are clear. Our rule is 0.25; JLC's floor is 0.15.
-  They print and read correctly.
+- ~~2 `silk_overlap`~~ **Both fixed rather than accepted.** J11's reference
+  nudged clear; BT1's `+` marker moved from local x −4.5 to −5.5, giving
+  0.448 mm. There is no `silk_overlap` anywhere on the board.
 - ~~5 `via_dangling`~~ **Removed.** They were called "junctions where two or
   three tracks meet, not loose ends" here, which was true and beside the point.
   Two or three tracks did meet at each — **on F.Cu, with nothing whatever on
@@ -129,6 +128,13 @@ DRC violation against an explicit table of accepted ones, each with a written
 reason, and exits nonzero on anything unrecognised. It cannot bless a new
 violation — that is the point. Seven known-good warnings are worse than none,
 because the eighth arrives looking exactly like the noise.
+
+> **KiCad's project save can silently drop design data.** Saving after the DRC
+> exclusions were made removed two netclass patterns — `HighCurrent →
+> /power/DC_IN` and `Power → +5V_RAW`, the exact gaps fixed earlier in this
+> project — and emptied `track_widths`. `check_board.py` check 9 caught it;
+> nothing in KiCad's own DRC would have. **Run `check_board.py` after any KiCad
+> session that saves the project**, not just after tool runs.
 
 **Excluding is done in KiCad, not by the tool.** Right-click a violation in the
 DRC panel → **Exclude this violation**, save, then run the tool: it attaches the
