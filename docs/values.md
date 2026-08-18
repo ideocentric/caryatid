@@ -104,6 +104,52 @@ analogue bus corner (below) to be well attenuated.
 | 350 mA | 0.46 A | 0.54 A | 0.65 A |
 | 600 mA *(with a radio)* | 0.79 A | 0.93 A | **1.11 A** |
 
+### Where the 5 V load actually goes
+
+The scenario totals above are estimates, not a tally. This is the tally — every
+pad on `+5V`, so the scenarios can be checked rather than trusted. **Ten pads
+are on the rail; two of them are not loads**: C7 is the 100 µF bulk cap, and
+FB1 pin 2 is the source, the ferrite's output side.
+
+| Load | Ref | Basis | Current |
+| --- | --- | --- | --- |
+| **Daisy Seed** | A2-39 | **derived, see below** | **~100 mA MCU alone** |
+| RGB status | J12-1 | R40 510 Ω red, R41/R42 300 Ω green/blue, common anode | 5.9 / 6.7 / 6.3 mA per die |
+| — worst assigned state | | amber (red+green) | **12.6 mA** |
+| — all three | | white, deliberately unassigned | 18.9 mA |
+| **Mic bias L** | R52 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
+| **Mic bias R** | R54 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
+| **Switch lamp** | R5 | 0 Ω link; lamp limits internally, **unmeasured** | **unknown** |
+| Comms A module | J13B-1 | external, no allowance stated | unknown |
+| Comms B module | J15-1 | external, no allowance stated | unknown |
+| Expansion | J16-1 | external, no allowance stated | unknown |
+| Bulk decoupling | C7-1 | 100 µF, no DC path | 0 |
+
+**The Seed's own datasheet publishes no current figure.** The ~100 mA is derived,
+not quoted: `DS12556` Rev 8 Table 20 gives the STM32H750 at **135 mA typical**
+in Run mode, VOS1, 400 MHz, all peripherals enabled, T<sub>J</sub> = 25 °C; that
+is 3.3 V current, and it reaches the 5 V rail through the Seed's own TPS62170
+buck, so 135 × 3.3 / (5 × 0.9) ≈ **99 mA**. **It excludes the module's SDRAM,
+codec, QSPI flash and analogue LDO**, none of which are separately sourced, and
+the same table reaches 730 mA at 125 °C. Treat 100 mA as a floor for the MCU
+core, not as the module's consumption.
+
+Three entries are genuinely open, and they are the reason the tally cannot yet
+be reconciled against the 250 mA "typical" row:
+
+- **The mic bias pair is the largest unresolved item — up to 41 mA together**,
+  which is 16% of the typical scenario. 220 Ω is a low bias value, and
+  [audio.md](audio.md) still lists *measure the handset capsule* as open: the
+  capsule type sets where it sits and therefore the current.
+- **The switch lamp is unmeasured.** [capture-checklist.md](capture-checklist.md)
+  already asks for a meter in series at both voltages; that reading lands here.
+- **The three connector 5 V pins have no stated allowance.** The 600 mA "with a
+  radio" row implicitly reserves headroom for them, but nothing attributes it.
+
+None of this threatens the copper — the `+5V_RAW` pour necks to 0.80 mm, good
+for 2.03 A at a 10 °C rise, which is 3.4× the worst documented case. **These
+numbers matter for runtime**, which is what the table below quotes.
+
 Runtime on a 3000 mAh cell, ~2500 mAh usable down to 3.0 V:
 
 | | Load | From cell | Runtime |

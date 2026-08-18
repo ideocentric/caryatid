@@ -10,7 +10,11 @@ down it; do not skip ahead to the fun part.
       from someone else's source file it cannot be un-derived. Nobody opens an
       Adafruit schematic during this work.
 - [ ] **Measure the handset capsule** — DC resistance across it decides whether
-      the input network gets a preamp or a pad. [audio.md](audio.md).
+      the input network gets a preamp or a pad. [audio.md](audio.md). **It also
+      sets the largest unresolved term in the 5 V budget**: R52/R54 bias at
+      220 Ω each, so 23–41 mA for the pair depending where the capsule sits —
+      up to 16% of the typical rail load. See the line-item table in
+      [values.md](values.md).
 - [x] ~~Verify D26 / D27 / D29 are 5 V tolerant.~~ **Done** — all three are
       `FT` per Table 7 of `DS12556`. Common anode to 5 V with the GPIOs sinking
       is the scheme; see [values.md](values.md) for the absolute-maximum

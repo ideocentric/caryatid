@@ -34,7 +34,9 @@ against — if the limiting is a plain series resistor, roughly 75% of the
 current, which the eye reads as around 85% as bright. Almost certainly
 indistinguishable, and comfortably inside a range the lamp already sees on
 depleted NiMH. **Worth a meter in series at both voltages before committing the
-panel**, since it is two minutes now against a board spin later.
+panel**, since it is two minutes now against a board spin later. **That reading
+is also the switch lamp's line in the 5 V budget**, which is currently the only
+entry marked unknown — see the line-item table in [values.md](values.md).
 
 **2. Charge LED — charge state, hardware only.** Driven directly from the
 bq24074's open-drain `/CHG` and `/PGOOD` off the OUT rail, via J4. **This is the
