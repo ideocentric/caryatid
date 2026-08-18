@@ -76,26 +76,28 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    **Seven connector references moved** to make room: J6, J7, J8, J9, J10, J13B
    and J15 sat directly above their connectors, in the only band the labels
    could use. They are now rotated 90° in the gap beside each connector.
-4. ~~**Logo and font from absonus**~~ **Done.** `caryatid` + `v0.1` on
-   F.SilkS at the bottom right, by `tools/branding.py`. absonus's exact style —
-   3.556 × 2.54 mm, thickness 0.20, bold — but **not** its 90° rotation, which
-   was a placement decision for a tall board. There was no artwork to import:
-   absonus's branding is plain KiCad stroke text and that board holds zero
-   image objects.
+4. ~~**Logo and font from absonus**~~ **Done, including the mark.** The ensō is
+   on F.SilkS at **18 mm, centred (174, 55.5)**, converted from
+   `local/enso-oro.svg` by `tools/svg_to_silk.py` — 153 filled polygons,
+   12 255 points. The wordmark `caryatid` + `v0.1` is separately at the bottom
+   right by `tools/branding.py`.
 
-   **`v0.1` is an inference.** The repo has no version tag, no title block and
-   no version in the docs; it is the obvious label for a first spin, recorded
-   in the tool so nobody later reads it as sourced.
+   **The artwork was never in the v0.1 archive.** absonus v0.1 has zero images,
+   zero silk polygons and no logo footprint across all three of its boards —
+   which is why the earlier answer was "there is nothing to import". The mark
+   arrived in **v0.3**, and the source is the SVG.
 
-   **No licence line, deliberately.** [ADR 0006](decisions/0006-licensing-is-open.md)
-   still reads *"licence still open"* and there is no LICENSE file. Silkscreen
-   is permanent; a notice would settle by accident a decision not yet taken.
+   **Size is measured, not chosen**: 18.50 × 18.71 mm on the fabricated
+   absonus v0.3, read off `local/absonus-v0.3-pcb.pdf` at 600 dpi against its
+   stated 3.6000 in width. caryatid's largest clear front-side square is 18 mm
+   — within 3%.
 
-   The block sits 2 mm left of the clear area's centre. Centred, `v0.1` landed
-   where the M3 screw head goes at (195,115) — a Ø6 head or any washer would
-   hide the revision marking. **Nothing in DRC models a screw head**; it was
-   caught by rendering the silkscreen and looking at it.
+   That measurement overturned an analysis of mine. Opening the artwork at
+   JLC's 0.15 mm silk floor removes 27% of the ink at 18 mm and fragments the
+   rings, which said **unusable**. A board fabricated at 18.5 mm says
+   otherwise. The model was worst case; the board is evidence.
 
+   `.venv` is required for this tool (`svgelements`), and is gitignored.
 
 5. **Manufacturing readiness**, then anything still unticked.
 
