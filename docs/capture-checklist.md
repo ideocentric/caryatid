@@ -272,11 +272,13 @@ arrive rather than before the gerbers go out.
       *(Was written as a 19 mm holder giving ~26.6 mm before the part was chosen,
       then ~30 mm, then ~25 mm at a 2 mm standoff.)*
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
-- [ ] **Fiducials** — three top-side; confirm JLC's requirement. **Currently
-      none on the board.** JLC treats them as optional and uses pads or holes
-      instead, so this is a decision, not a blocker. Adding them means adding
-      footprints the schematic must also carry, or DRC reports
-      `extra_footprint`.
+- [x] ~~**Fiducials** — three top-side; confirm JLC's requirement.~~ **Done.**
+      FID1 (58.25, 40.25), FID2 (191.75, 41.00), FID3 (69.25, 108.75) —
+      `Fiducial_1mm_Mask2mm`, 1 mm bare copper in a 2 mm mask opening, no net.
+      An **L, not a symmetric trio**: rotated 180° none of the three lands on
+      another, so orientation is unambiguous. Separations 69/134/140 mm.
+      Board-only footprints like the mounting holes, so they carry no schematic
+      symbol and no BOM or CPL line.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
       the number the soft-latch vacated, not a gap.
 - [ ] **Silkscreen the pin function beside every connector**, and pin 1 on all of

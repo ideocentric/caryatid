@@ -110,6 +110,8 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    | --- | --- |
    | ERC | 0 |
    | DRC | 0 (5 accepted `lib_footprint_mismatch`, excluded) |
+   | DRC schematic parity | 0 |
+   | LCSC coverage | **92 of 92** |
    | `check_board.py` | 10/10 |
    | min track | 0.225 mm vs JLC 0.127 |
    | min via annular | 0.200 mm vs JLC 0.130 |
@@ -129,11 +131,14 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    BOM and CPL are exported with `--exclude-dnp`. Without it an assembler
    places U4 and every `open` resistor.
 
-   **No fiducials.** [capture-checklist.md](capture-checklist.md) asks for three
-   top-side. JLC treats them as optional and falls back to pads or holes, so
-   this is a decision rather than a blocker — but adding them means adding
-   footprints, which the schematic must agree with or DRC reports
-   `extra_footprint`.
+   **Fiducials: three, placed.** FID1/FID2/FID3 as an L so orientation is
+   unambiguous. They are `board_only` footprints, which is what stops the
+   schematic-parity check reporting them.
+
+   **Run DRC with `--schematic-parity`.** Plain `kicad-cli pcb drc` does not
+   check it, and it was hiding **7 issues**: 4 `extra_footprint` and 3
+   `duplicate_footprints` from the four mounting holes all sharing `REF**`.
+   They now have H1–H4 and `board_only`. Parity is **0**.
 
 ## Known open, beyond that list
 

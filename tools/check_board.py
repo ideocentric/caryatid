@@ -62,6 +62,7 @@ ENCLOSURES = {"BUD CU-477": 34.14, "telephone shell": 40.0}
 # Heights are not in the footprint files. Most encode it in the name; the rest
 # are from the datasheets. A part missing here is reported, not assumed safe.
 HEIGHTS = {
+    "Fiducial_1mm_Mask2mm": 0.0,   # bare copper, nothing stands on it
     "CP_Elec_6.3x5.4": 5.4, "D_SMA": 2.3,
     "L_Vishay_IFSC-1515AH_4x4x1.8mm": 1.8,
     "SOIC-14_3.9x8.7mm_P1.27mm": 1.75, "SOIC-8_3.9x4.9mm_P1.27mm": 1.75,
@@ -147,11 +148,35 @@ class Board:
         return (p["x"] + px * cs + py * sn, p["y"] - px * sn + py * cs)
 
     def courtyard(self, p):
+        """Bounding box of the courtyard in page coordinates.
+
+        A CIRCLE IS NOT TWO CORNERS. fp_circle stores (center, end-on-the-rim),
+        and reading those as box corners collapses the courtyard to a line --
+        the M3 mounting holes came back 3.45 x 0.00 mm. Every overlap test built
+        on that silently passed anything above or below the hole, which is how a
+        fiducial ended up 4.29 mm from H2 against a 4.45 mm requirement with
+        this checker reporting 10/10. Circles and arcs are expanded to their
+        full extent here."""
         xs, ys = [], []
         want = "B.CrtYd" if p["back"] else "F.CrtYd"
         for m in re.finditer(r"\(fp_(?:line|poly|rect|circle|arc)", p["blk"]):
             blk = sexp(p["blk"], m.start())
             if f'"{want}"' not in blk: continue
+            if blk.startswith("(fp_circle"):
+                c = re.search(r"\(center ([-\d.]+) ([-\d.]+)\)", blk)
+                e = re.search(r"\(end ([-\d.]+) ([-\d.]+)\)", blk)
+                if c and e:
+                    cx, cy = float(c.group(1)), float(c.group(2))
+                    r = math.dist((cx, cy), (float(e.group(1)), float(e.group(2))))
+                    xs += [cx - r, cx + r]; ys += [cy - r, cy + r]
+                    continue
+            if blk.startswith("(fp_arc"):
+                pts = [(float(a), float(b)) for a, b in re.findall(
+                    r"\((?:start|mid|end) ([-\d.]+) ([-\d.]+)\)", blk)]
+                # the arc's own points bound it unless it sweeps past an axis;
+                # taking the chord plus the mid point is enough for a courtyard
+                xs += [q[0] for q in pts]; ys += [q[1] for q in pts]
+                continue
             for mm in re.finditer(r"\((?:start|end|xy|center|mid) ([-\d.]+) ([-\d.]+)\)", blk):
                 xs.append(float(mm.group(1))); ys.append(float(mm.group(2)))
         if not xs:
