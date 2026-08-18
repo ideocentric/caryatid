@@ -575,30 +575,70 @@ family choice settles every value inside it.
 | 1k2 | 1 | | 510 Ω | 1 |
 | 887 Ω **1%** | 1 | | | |
 
-Pick one Basic 1% 0603 series and every value follows. **Three constraints are
-already fixed and must not be relaxed:**
+**Specification: 0603 thick film, 1%, 100 mW, ±100 ppm/°C.** One family covers
+all eleven.
+
+**Power is not a constraint.** The worst placed part is R40 at **17.6 mW**
+against the 100 mW 0603 rating — nearly 6× margin. Nothing else exceeds 18 mW.
+
+> **One exception, and it is DNP today.** R52/R54, the 220 Ω mic bias pair,
+> reach **92 mW** if the capsule sits at 0.5 V — essentially at the 0603 limit.
+> They are not populated now, and the capsule type is unmeasured, so the current
+> is unknown within a factor of two. **If the audio section is fitted, check
+> this before ordering 0603 for those two.** See [audio.md](audio.md).
+
+**Tolerance is a constraint, in three places:**
 
 - **R3 887 Ω must be 1%** — a datasheet requirement, not a preference. The
   bq24074 short-tests `RISET` at maximum charge setting.
-- **R7 348 kΩ and R8 47k5 set the boost output voltage.** Tolerance here is
-  output accuracy, and [values.md](values.md) leaves only 109 mV to the OVP
-  minimum.
-- **R4 46k4 and the three above are E96 values**, which are frequently
-  *Extended* rather than Basic at JLC. That is the one thing to check before
-  assuming a single family covers the set — it is where a per-part setup fee
-  would appear.
+- **R7 348 kΩ and R8 47k5 set the boost output voltage**, and
+  [values.md](values.md) leaves only 109 mV to the OVP minimum.
+- **R4 46k4** is the A10 divider.
+
+**887R, 348k, 47k5 and 46k4 are E96 values**, frequently *Extended* rather than
+Basic at JLC. That is the one thing to check before assuming a single family
+covers the set — it is where a per-part setup fee appears, not in the commodity
+values.
 
 ### B — one 0603 MLCC choice: 4 values, 14 parts
 
-100 nF ×9, 10 nF ×2, 220 nF ×2, 1 µF ×1. All sit on rails at 5 V or below, so
-16 V X7R is ample and cheap. One dielectric-and-voltage decision covers all four.
+100 nF ×9, 10 nF ×2, 220 nF ×2, 1 µF ×1.
 
-### C — one 0805 MLCC choice: 3 values, 6 parts
+**Specification: X7R, ≥ 16 V, ±10%.** Every one of these sits on a rail at
+**3.3 V or below** — the eight analogue-input filters on A0–A9, the `+3V3` and
+`+3V3A` decoupling, the A10/A11 filters, and the three Schmitt debounce nodes.
+16 V is generous and the cheapest common rating. **X7R rather than X5R** for the
+decoupling, for temperature stability across an instrument that goes outdoors.
 
-10 µF ×4, 10 µF ×1 **at 25 V**, 22 µF ×1. **C1's 25 V rating is not
-negotiable** — it sits on the raw barrel input, which reaches 9 V, and
-[power-sheet.md](power-sheet.md) states it. The other five are on the cell and
-5 V rails.
+### C — one 0805 MLCC choice: 3 values, 6 parts, and one of them matters
+
+| ref | value | net | working V | rating |
+| --- | --- | --- | --- | --- |
+| C1 | 10 µF | `VIN_DC` | up to 9 V | **25 V**, documented |
+| C2 | 10 µF | `VBAT` | ≤ 4.2 V | 16 V |
+| C3, C4, C5 | 10 µF | `VOUT` | ≤ ~4.5 V | 16 V |
+| **C6** | **22 µF** | **`+5V_RAW`** | **5.0 V** | **≥ 16 V — see below** |
+
+**C6 is a stability part, not a decoupling part**, and its voltage rating is not
+about breakdown. `SLVSF14B` §8.2.2.3 is explicit on both points:
+
+> *"A ceramic capacitor can lose more than 50% of its capacitance at its rated
+> voltage. Therefore, always leave margin on the voltage rating to ensure
+> adequate capacitance at the required output voltage."*
+>
+> *"TI recommends using the X5R or X7R ceramic output capacitor in the range of
+> 4 µF to 1000 µF **effective** capacitance... If the output capacitor is below
+> the range, the boost regulator can potentially become unstable."*
+
+So the requirement on C6 is **≥ 4 µF effective at 5.0 V DC bias**, not 22 µF
+nominal. A 22 µF 0805 in a low voltage rating can lose most of that. **Specify
+16 V or 25 V X5R/X7R and check the chosen part's own DC-bias curve at 5 V** —
+retention is part-specific and cannot be assumed from the rating alone.
+
+**Nothing in the repository addressed capacitor DC-bias derating before this.**
+Inductor derating was handled — [values.md](values.md) derates L1 by 30% per the
+datasheet — but the same datasheet's warning about capacitors was not carried
+across.
 
 ### D — C7, 100 µF electrolytic
 
