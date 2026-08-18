@@ -99,46 +99,38 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
 
    `.venv` is required for this tool (`svgelements`), and is gitignored.
 
-5. **Manufacturing readiness** — *bare boards are ready; assembly is not.*
+5. **Manufacturing readiness** — *bare boards ready; assembly ready but for
+   one part.*
 
-   `python3 tools/fab_package.py --apply` builds the package into `local/fab/`
-   and **exits nonzero while anything is missing**.
+   `python3 tools/fab_package.py --apply` writes `local/fab/` and exits nonzero
+   while anything is missing.
 
-   **Ready to order as bare boards:**
-
-   | | |
+   | gate | |
    | --- | --- |
-   | ERC | 0 |
-   | DRC | 0 (5 accepted `lib_footprint_mismatch`, excluded) |
-   | DRC schematic parity | 0 |
+   | ERC | **0** |
+   | DRC, plain | **0** |
+   | DRC, all severities + `--schematic-parity` | **0 parity, 5 excluded** |
+   | `check_board.py` | **10/10** over 131 footprints |
+   | `drc_exclusions.py` | **0 new, 5 accepted** |
+   | `verify_parts.py` | **0 of 37 flagged** against JLC's live data |
    | LCSC coverage | **92 of 92** |
-   | `check_board.py` | 10/10 |
-   | min track | 0.225 mm vs JLC 0.127 |
-   | min via annular | 0.200 mm vs JLC 0.130 |
-   | min drill | 0.300 mm vs JLC 0.300 |
-   | package | 9 Gerber layers + drill + map, 277 kB |
 
-   **Blocking assembly: 65 of 92 placed parts have no LCSC number.** The
-   schematic carries no supplier field at all. `hardware/pcb/lcsc.yaml` holds
-   the 27 that [sourcing.md](sourcing.md) actually states; the rest are mostly
-   generic passives, plus the Seed sockets, C7, FB1 and J16. **Nothing is
-   guessed** — an invented LCSC code does not fail loudly, it arrives as the
-   wrong component. Filling these is a sourcing decision (Basic against
-   Extended is a cost choice), not a transcription.
+   Package is 14 files, 279 kB: 9 Gerber layers, drill, drill map, job file,
+   BOM and CPL. **Run DRC with `--schematic-parity`** — plain `kicad-cli pcb
+   drc` does not check it and once hid 7 issues.
 
-   **DNP is handled and is not cosmetic**: 32 of 124 components are
-   Do-Not-Populate by design — the audio network is fitted per instrument. Both
-   BOM and CPL are exported with `--exclude-dnp`. Without it an assembler
-   places U4 and every `open` resistor.
+   **The one blocker is BT1.** `C5339083`, the MPD BH-18650-PC, is at **stock 0
+   and presale 0** — it cannot be assembled or pre-ordered. Either fit it by
+   hand (it is a through-hole holder, and the drawing already asks for it to be
+   bolted down) or move to the second source, MPD `BK-18650-PC2`, which
+   [sourcing.md](sourcing.md) records as pin-identical.
 
-   **Fiducials: three, placed.** FID1/FID2/FID3 as an L so orientation is
-   unambiguous. They are `board_only` footprints, which is what stops the
-   schematic-parity check reporting them.
-
-   **Run DRC with `--schematic-parity`.** Plain `kicad-cli pcb drc` does not
-   check it, and it was hiding **7 issues**: 4 `extra_footprint` and 3
-   `duplicate_footprints` from the four mounting holes all sharing `REF**`.
-   They now have H1–H4 and `board_only`. Parity is **0**.
+   **Cost is dominated by setup fees, not parts.** $5.17 of components per
+   board, but **36 Extended lines against 11 Basic** — roughly $108 in one-off
+   fees at the ~$3 each this repo cites. Every line moved to Basic is worth far
+   more than its unit price. Two obvious candidates: C2–C5 at $0.256 each
+   (`C440198`, already used for C1, is the same value at 50 V and **Basic**),
+   and C10–C18 100 nF, the most commonly stocked passive there is.
 
 ## Known open, beyond that list
 
