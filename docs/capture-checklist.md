@@ -272,7 +272,11 @@ arrive rather than before the gerbers go out.
       *(Was written as a 19 mm holder giving ~26.6 mm before the part was chosen,
       then ~30 mm, then ~25 mm at a 2 mm standoff.)*
 - [ ] **Test points** on `VBAT`, `VOUT`, `+5V`, `+3V3`, `+3V3A` and `GND`.
-- [ ] **Fiducials** — three top-side; confirm JLC's requirement.
+- [ ] **Fiducials** — three top-side; confirm JLC's requirement. **Currently
+      none on the board.** JLC treats them as optional and uses pads or holes
+      instead, so this is a decision, not a blocker. Adding them means adding
+      footprints the schematic must also carry, or DRC reports
+      `extra_footprint`.
 - [ ] **J14** carries the mic bias return to the hook switch's second pole. It is
       the number the soft-latch vacated, not a gap.
 - [ ] **Silkscreen the pin function beside every connector**, and pin 1 on all of

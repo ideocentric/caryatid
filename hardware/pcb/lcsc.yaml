@@ -1,0 +1,57 @@
+# LCSC part numbers, keyed by what identifies the part on the board.
+#
+# WHY A FILE AND NOT A FIELD ON EACH SYMBOL
+# Same reason pins.yaml exists: one reviewable source of truth that generators
+# consume, rather than the same decision scattered across 180 symbol instances
+# where it cannot be diffed. tools/fab_package.py joins this into the BOM.
+#
+# EVERY ENTRY HERE IS TRANSCRIBED FROM docs/sourcing.md, NOT LOOKED UP.
+# Nothing in this file was invented. A part whose number is not written down in
+# sourcing.md is absent here and is reported as a gap, because guessing an LCSC
+# code has a real cost: it orders the wrong component.
+#
+# Match order: `ref` exactly, then `value` + `footprint`, then `footprint`.
+
+by_ref:
+  U1:   {lcsc: C54313,    note: "TI BQ24074RGTR, QFN-16-EP. Economic assembly."}
+  U2:   {lcsc: C919459,   note: "TI TPS61023DRLR, SOT-563. Economic assembly."}
+  U3:   {lcsc: C5605,     note: "Nexperia 74HC14D, SOIC-14."}
+  U4:   {lcsc: C116706,   note: "Microchip MCP6002-I/SN, SOIC-8. DNP."}
+  D1:   {lcsc: C8678,     note: "MDD SS34, SMA. JLC Basic, no setup fee."}
+  L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
+  BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. Extended -- setup fee applies."}
+
+by_footprint:
+  IDC-Header_2x05_P2.54mm_Vertical:
+    {lcsc: C4749194, note: "DS254P-2X5-L0"}
+  JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical:
+    {lcsc: C158012,  note: "JST B2B-XH-A(LF)(SN)"}
+  JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical:
+    {lcsc: C144394,  note: "JST B3B-XH-A(LF)(SN)"}
+  JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical:
+    {lcsc: C144395,  note: "JST B4B-XH-A(LF)(SN)"}
+  JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical:
+    {lcsc: C144397,  note: "JST B6B-XH-A(LF)(SN)"}
+  JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal:
+    {lcsc: C160404,  note: "JST-SH 4-pin horizontal, Qwiic"}
+
+by_value_footprint:
+  "10k 0.1%|R_0603_1608Metric":
+    {lcsc: C374544, note: "AR03BTDX1002A010, 0.1%. Already in stock -- 176 of them."}
+
+# Deliberately NOT mapped, with the reason:
+#
+#   Seed sockets (A1, A2) -- sourcing.md names TWO candidates and does not
+#     settle between them: C41361038 (DS1023-1x20S21, Global Sourcing) and
+#     C2897383, described as "the part actually used" on absonus. Two numbers
+#     for one decision is not a mapping.
+#
+#   C7 100u electrolytic -- sourcing.md mentions C3337 as "the absonus
+#     electrolytic" for the 220 uF part, not for this 100 uF one. Close enough
+#     to be tempting and not the same component.
+#
+#   Generic passives -- every 0603 resistor and 0805 capacitor except the 0.1%
+#     group. sourcing.md names C15401 for "10 kOhm 1% general" but the board
+#     carries fifteen distinct resistor values and eight capacitor values, and
+#     choosing Basic against Extended for each is a cost decision, not a
+#     transcription.

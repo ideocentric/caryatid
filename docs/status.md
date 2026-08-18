@@ -99,7 +99,41 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
 
    `.venv` is required for this tool (`svgelements`), and is gitignored.
 
-5. **Manufacturing readiness**, then anything still unticked.
+5. **Manufacturing readiness** — *bare boards are ready; assembly is not.*
+
+   `python3 tools/fab_package.py --apply` builds the package into `local/fab/`
+   and **exits nonzero while anything is missing**.
+
+   **Ready to order as bare boards:**
+
+   | | |
+   | --- | --- |
+   | ERC | 0 |
+   | DRC | 0 (5 accepted `lib_footprint_mismatch`, excluded) |
+   | `check_board.py` | 10/10 |
+   | min track | 0.225 mm vs JLC 0.127 |
+   | min via annular | 0.200 mm vs JLC 0.130 |
+   | min drill | 0.300 mm vs JLC 0.300 |
+   | package | 9 Gerber layers + drill + map, 277 kB |
+
+   **Blocking assembly: 65 of 92 placed parts have no LCSC number.** The
+   schematic carries no supplier field at all. `hardware/pcb/lcsc.yaml` holds
+   the 27 that [sourcing.md](sourcing.md) actually states; the rest are mostly
+   generic passives, plus the Seed sockets, C7, FB1 and J16. **Nothing is
+   guessed** — an invented LCSC code does not fail loudly, it arrives as the
+   wrong component. Filling these is a sourcing decision (Basic against
+   Extended is a cost choice), not a transcription.
+
+   **DNP is handled and is not cosmetic**: 32 of 124 components are
+   Do-Not-Populate by design — the audio network is fitted per instrument. Both
+   BOM and CPL are exported with `--exclude-dnp`. Without it an assembler
+   places U4 and every `open` resistor.
+
+   **No fiducials.** [capture-checklist.md](capture-checklist.md) asks for three
+   top-side. JLC treats them as optional and falls back to pads or holes, so
+   this is a decision rather than a blocker — but adding them means adding
+   footprints, which the schematic must agree with or DRC reports
+   `extra_footprint`.
 
 ## Known open, beyond that list
 
