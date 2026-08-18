@@ -94,8 +94,13 @@ Two kinds of DRC item remain **deliberately**:
 
 From [capture-checklist.md](capture-checklist.md) and [sourcing.md](sourcing.md):
 
-- **Tent the QFN thermal vias.** They sit under paste apertures and MUST be
-  mask-plugged, or paste wicks down them during reflow.
+- ~~Tent the QFN thermal vias.~~ **Done, and it needed a redesign rather than a
+  tent.** All four barrels were OPEN on the top face — the vias declare
+  `(layers "*.Cu")` and open no mask themselves, but the EP pad declares
+  `F.Mask` across the whole 1.68 mm square and the vias sit inside it. Open on
+  top, sealed at the bottom, paste printed over the hole: a blind cavity that
+  wicks paste in and traps expanding gas. Now **two** vias, mask-tented on both
+  faces, with the EP mask opening moved clear of them. `tools/fix_ep_thermal.py`.
 - **Extended-part loading fee** on `C5339083`, the cell holder.
 - **The J4 bicolour LED is UNVERIFIED** — Amazon `B01CFZMO3I`. The green die
   decides whether it works: J4 hangs on `VOUT`, which falls to ~3.0 V, so an

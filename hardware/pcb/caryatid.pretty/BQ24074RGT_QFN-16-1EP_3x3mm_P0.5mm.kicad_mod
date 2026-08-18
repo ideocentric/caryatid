@@ -2,7 +2,7 @@
 	(version 20241229)
 	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
-	(descr "TI BQ24074RGT, VQFN-16 (RGT) 3x3mm, 0.5mm pitch, 1.68mm exposed pad (TI nominal; 1.70 lands exactly on the 0.2mm clearance boundary). Thermal vias 0.3mm drill on 0.70mm pads at +/-0.45mm (0.20mm annular ring, JLC floor is 0.18): JLC will not do 0.2mm holes, and TI\'s +/-0.6 position leaves only 0.176mm to the signal pads at that pad size. Land pattern per SLUS810N RGT0016C drawing 4222419/E. EP paste segmented 2x2 at 72% coverage; the 4 thermal vias sit under the apertures and MUST be tented/mask-plugged.")
+	(descr "TI BQ24074RGT, VQFN-16 (RGT) 3x3mm, 0.5mm pitch, 1.68mm exposed pad (TI nominal; 1.70 lands exactly on the 0.2mm clearance boundary). TWO thermal vias, 0.3mm drill on 0.70mm pads (0.20mm annular ring, JLC floor is 0.18), at (0,+/-0.45) on the EP centreline, MASK-TENTED on both faces. Four vias were tried and abandoned: tenting all four leaves 10% of the EP solderable. The EP mask opening is therefore NOT the full pad -- it is two 0.36x1.68 strips at x=+/-0.66 that clear the tents, 42.9% of the EP, with paste inset 0.04 to 74% of the opening. No paste lands on a barrel. Land pattern per SLUS810N RGT0016C drawing 4222419/E.")
 	(tags "QFN NoLead BQ24074 charger TI RGT")
 	(property "Reference" "REF**"
 		(at 0 -2.83 0)
@@ -315,31 +315,7 @@
 			)
 		)
 	)
-	(pad "" smd roundrect
-		(at -0.425 -0.425)
-		(size 0.69 0.69)
-		(layers "F.Paste")
-		(roundrect_rratio 0.25)
-	)
-	(pad "" smd roundrect
-		(at -0.425 0.425)
-		(size 0.69 0.69)
-		(layers "F.Paste")
-		(roundrect_rratio 0.25)
-	)
-	(pad "" smd roundrect
-		(at 0.425 -0.425)
-		(size 0.69 0.69)
-		(layers "F.Paste")
-		(roundrect_rratio 0.25)
-	)
-	(pad "" smd roundrect
-		(at 0.425 0.425)
-		(size 0.69 0.69)
-		(layers "F.Paste")
-		(roundrect_rratio 0.25)
-	)
-	(pad "1" smd roundrect
+					(pad "1" smd roundrect
 		(at -1.4625 -0.75)
 		(size 0.825 0.25)
 		(layers "F.Cu" "F.Mask" "F.Paste")
@@ -435,51 +411,11 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 	)
-	(pad "17" thru_hole circle
-		(at -0.45 -0.45)
-		(size 0.7 0.7)
-		(drill 0.3)
-		(property pad_prop_heatsink)
-		(layers "*.Cu")
-		(remove_unused_layers no)
-	)
-	(pad "17" thru_hole circle
-		(at -0.45 0.45)
-		(size 0.7 0.7)
-		(drill 0.3)
-		(property pad_prop_heatsink)
-		(layers "*.Cu")
-		(remove_unused_layers no)
-	)
-	(pad "17" smd rect
-		(at -0.425 -0.425)
-		(size 0.72 0.72)
-		(property pad_prop_heatsink)
-		(layers "F.Paste")
-	)
-	(pad "17" smd rect
-		(at -0.425 0.425)
-		(size 0.72 0.72)
-		(property pad_prop_heatsink)
-		(layers "F.Paste")
-	)
-	(pad "17" smd rect
-		(at 0.425 -0.425)
-		(size 0.72 0.72)
-		(property pad_prop_heatsink)
-		(layers "F.Paste")
-	)
-	(pad "17" smd rect
-		(at 0.425 0.425)
-		(size 0.72 0.72)
-		(property pad_prop_heatsink)
-		(layers "F.Paste")
-	)
-	(pad "17" smd rect
+							(pad "17" smd rect
 		(at 0 0)
 		(size 1.68 1.68)
 		(property pad_prop_heatsink)
-		(layers "F.Cu" "F.Mask")
+		(layers "F.Cu")
 		(zone_connect 2)
 	)
 	(pad "17" smd rect
@@ -490,7 +426,7 @@
 		(zone_connect 2)
 	)
 	(pad "17" thru_hole circle
-		(at 0.45 -0.45)
+		(at 0 -0.45)
 		(size 0.7 0.7)
 		(drill 0.3)
 		(property pad_prop_heatsink)
@@ -498,14 +434,30 @@
 		(remove_unused_layers no)
 	)
 	(pad "17" thru_hole circle
-		(at 0.45 0.45)
+		(at 0 0.45)
 		(size 0.7 0.7)
 		(drill 0.3)
 		(property pad_prop_heatsink)
 		(layers "*.Cu")
 		(remove_unused_layers no)
 	)
-	(embedded_fonts no)
+	(pad "17" smd rect
+		(at -0.66 0)
+		(size 0.36 1.68)
+		(property pad_prop_heatsink)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_paste_margin -0.04)
+		(zone_connect 2)
+	)
+	(pad "17" smd rect
+		(at 0.66 0)
+		(size 0.36 1.68)
+		(property pad_prop_heatsink)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_paste_margin -0.04)
+		(zone_connect 2)
+	)
+			(embedded_fonts no)
 	(model "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm.step"
 		(offset
 			(xyz 0 0 0)

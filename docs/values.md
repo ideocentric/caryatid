@@ -233,6 +233,15 @@ not parts a machine keeps loaded — which means a per-unique-part setup fee,
 around $3 each. It resolves itself the moment a BOM is uploaded, since JLC
 prices the fee there. **Not worth blocking on**, but it belongs in the estimate.
 
-**The charger has an exposed pad.** QFN-16-EP needs a thermal via array under it
-and a segmented paste aperture, not one big opening. It is also the part
+**The charger has an exposed pad.** QFN-16-EP needs thermal vias under it and a
+segmented paste aperture, not one big opening.
+
+**Two mask-tented thermal vias, not four.** Four Ø0.70 pads at (±0.45,±0.45)
+consume 2.545 mm² of a 2.822 mm² exposed pad once each is tented, leaving 10%
+solderable — the array was incompatible with an EP this size unless the vias
+were resin-filled, which is a fab option and a cost. Two vias on the centreline
+at (0,±0.45) leave 42.9% of the EP open in two 0.36 × 1.68 mm strips clear of
+the tents, with paste inset to 74% of that opening. No paste lands on a barrel.
+See `tools/fix_ep_thermal.py`.
+ It is also the part
 carrying charge current, so the pad is doing thermal work, not just mechanical.

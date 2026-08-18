@@ -290,7 +290,8 @@ Frozen with the board, from the platform spec:
 3. Boost switching loop `VIN`/`L`/`SW`/`COUT` as small as possible.
 4. No switcher traces under or parallel to audio nets or the analogue bus.
 5. Enclosure bonds to ground at **one point**, at or near the audio jacks.
-6. **QFN-16-EP exposed pad** — thermal via array, segmented paste apertures, not
+6. **QFN-16-EP exposed pad** — thermal vias (**two**, mask-tented on both faces;
+   four would leave 10% of the EP solderable), segmented paste apertures, not
    one large opening. That pad carries charge current.
 7. Route the RGB lines away from the analogue bus; status changes are edges too.
 8. **Place `A1` and `A2` exactly 15.24 mm apart.** The Seed outline, pin names
