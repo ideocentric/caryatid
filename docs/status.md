@@ -76,18 +76,27 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    **Seven connector references moved** to make room: J6, J7, J8, J9, J10, J13B
    and J15 sat directly above their connectors, in the only band the labels
    could use. They are now rotated 90° in the gap beside each connector.
-4. **Logo and font from absonus**, placed on silkscreen. **Located, and there is
-   no artwork to import.** The source is
-   `synths/daisy/ribbon-synth/archive/hardware/pcb-v0.1/absonus-v0.1.kicad_pcb`,
-   and it contains **zero image objects** — the branding is plain KiCad stroke
-   text in the built-in font. No font file, no bitmap, nothing to convert:
+4. ~~**Logo and font from absonus**~~ **Done.** `caryatid` + `v0.1` on
+   F.SilkS at the bottom right, by `tools/branding.py`. absonus's exact style —
+   3.556 × 2.54 mm, thickness 0.20, bold — but **not** its 90° rotation, which
+   was a placement decision for a tall board. There was no artwork to import:
+   absonus's branding is plain KiCad stroke text and that board holds zero
+   image objects.
 
-   | text | size | thickness | |
-   | --- | --- | --- | --- |
-   | `absonus` | 3.556 × 2.54 mm | 0.20 | bold |
-   | `v0.2` | 1 × 1 mm | 0.15 | |
+   **`v0.1` is an inference.** The repo has no version tag, no title block and
+   no version in the docs; it is the obvious label for a first spin, recorded
+   in the tool so nobody later reads it as sourced.
 
-   Both `(layer "F.SilkS")`, rotated 90°, `(justify left bottom)`.
+   **No licence line, deliberately.** [ADR 0006](decisions/0006-licensing-is-open.md)
+   still reads *"licence still open"* and there is no LICENSE file. Silkscreen
+   is permanent; a notice would settle by accident a decision not yet taken.
+
+   The block sits 2 mm left of the clear area's centre. Centred, `v0.1` landed
+   where the M3 screw head goes at (195,115) — a Ø6 head or any washer would
+   hide the revision marking. **Nothing in DRC models a screw head**; it was
+   caught by rendering the silkscreen and looking at it.
+
+
 5. **Manufacturing readiness**, then anything still unticked.
 
 ## Known open, beyond that list
