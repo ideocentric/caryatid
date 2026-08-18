@@ -130,14 +130,20 @@ reason, and exits nonzero on anything unrecognised. It cannot bless a new
 violation — that is the point. Seven known-good warnings are worse than none,
 because the eighth arrives looking exactly like the noise.
 
-It also writes KiCad's own exclusions, and **only 3 of the 7 take**. The key
-format in `.kicad_pro` is undocumented and was reverse-engineered
-(`type|x_nm|y_nm|uuid_a|uuid_b`); three match, four do not, with identical
-structure and verified uuids and coordinates. The tool re-runs DRC after
-writing and reports how many actually took rather than assuming. To finish the
-other four, exclude them once in KiCad's DRC panel (right-click → **Exclude
-this violation**), save, and the strings KiCad writes can be read out of the
-`.kicad_pro`.
+**Excluding is done in KiCad, not by the tool.** Right-click a violation in the
+DRC panel → **Exclude this violation**, save, then run the tool: it attaches the
+documented reason to what KiCad wrote and prunes entries that no longer match a
+violation. It never invents a key.
+
+That division exists because the other way was tried and half-failed. KiCad
+stores `["<type>|<x_nm>|<y_nm>|<uuid_a>|<uuid_b>", "<comment>"]`, and a version
+of this tool synthesised the key from the DRC report. **Three of seven took.**
+Type and uuids were right every time; the *coordinate* was not — it is the
+footprint anchor for C4/C6/L1, but for A1/A2 it is neither the anchor nor the
+bounding-box centre (both carry an identical x of 118.6825 mm matching no
+obvious feature), and for `silk_overlap` it is neither item's reported
+position. Not reconstructible, so not synthesised. Matching uses
+(type, uuid_a, uuid_b), which is stable; the coordinate is carried verbatim.
 
 **Lock anything you place or adjust by hand — copper and silkscreen both.** `cycle.py` strips everything unlocked and
 re-routes; `export_dsn.py` hands locked copper to Freerouting as `(type protect)`

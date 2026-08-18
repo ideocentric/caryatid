@@ -33,27 +33,28 @@ TWO MECHANISMS, AND WHY
    and the tool exits nonzero. This is the part that makes a run meaningful,
    and it does not depend on KiCad's file format at all.
 
-2. KiCad-native exclusions, which only partly work. KiCad stores them in the
-   .kicad_pro as a pipe-joined string:
+2. KiCad-native exclusions. THIS TOOL NEVER INVENTS ONE. Excluding is done in
+   KiCad's DRC panel (right-click -> Exclude this violation); the tool reads
+   what KiCad wrote, attaches the documented reason to it, and prunes entries
+   that no longer match a reported violation.
 
-       <type>|<x_nm>|<y_nm>|<uuid_a>|<uuid_b>
+   That division of labour is not fastidiousness, it is the result of trying
+   the other way. KiCad stores each entry as a two-element array:
 
-   with uuid_b all-zeroes for a single-item violation. That is not documented
-   and there was no example on disk, so it was established empirically. THREE
-   OF THE SEVEN TAKE; the other four do not, with byte-identical structure and
-   verified-correct uuids and coordinates. Brute-forcing the variants for one
-   of them -- no comment, no trailing uuid, uuid duplicated, zeroed position,
-   placed first in the list -- moved nothing. The API stores comments in a
-   separate map (m_DrcExclusionComments), so the key almost certainly carries
-   something not reproducible from the JSON report.
+       ["<type>|<x_nm>|<y_nm>|<uuid_a>|<uuid_b>", "<comment>"]
 
-   So --apply writes them, then RE-RUNS DRC and reports how many actually took.
-   It does not claim success it has not measured. That check is the whole
-   lesson from the first attempt, which wrote seven and assumed seven.
+   An earlier version of this tool synthesised that key from the JSON DRC
+   report. THREE OF SEVEN TOOK. The uuids and the type were right every time;
+   the COORDINATE was not. For C4, C6 and L1 the key position is the footprint
+   anchor and the guess happened to be correct. For A1 and A2 it is neither the
+   anchor nor the bounding-box centre -- both carry an identical x of
+   118.6825 mm that corresponds to no obvious feature -- and for silk_overlap
+   it is neither item's reported position. It is not reconstructible from
+   anything the report exposes, so it is not synthesised.
 
-   To finish the other four: exclude them once in KiCad's DRC panel
-   (right-click -> Exclude this violation), save, and the strings KiCad writes
-   can be read straight out of the .kicad_pro.
+   Matching an exclusion to its violation uses (type, uuid_a, uuid_b), which
+   IS reconstructible and is stable across moves. The coordinate is carried
+   through verbatim and never recomputed.
 
 An exclusion stops matching if the item moves or is replaced, which is the
 behaviour you want -- MOVE A PART AND ITS EXCLUSION LAPSES. Re-run after any
@@ -123,12 +124,24 @@ def key(v):
     return (v["type"], tuple(i["description"] for i in v["items"]))
 
 
-def serialise(v, reason):
+def uuid_key(v):
+    """(type, uuid_a, uuid_b) -- the part of an exclusion that is stable and
+    reconstructible. The coordinate is not, so it is never recomputed."""
     it = v["items"]
-    a = it[0]["uuid"]
-    b = it[1]["uuid"] if len(it) > 1 else NULL
-    p = it[0]["pos"]
-    return f'{v["type"]}|{round(p["x"]*1e6)}|{round(p["y"]*1e6)}|{a}|{b}|{reason}'
+    return (v["type"], it[0]["uuid"], it[1]["uuid"] if len(it) > 1 else NULL)
+
+
+def parse_entry(e):
+    """KiCad writes ["<key>", "<comment>"]. Older files, and an earlier version
+    of this tool, hold a bare string."""
+    if isinstance(e, list):
+        return e[0], (e[1] if len(e) > 1 else "")
+    return e, ""
+
+
+def entry_uuid_key(keystr):
+    f = keystr.split("|")
+    return (f[0], f[3], f[4]) if len(f) >= 5 else None
 
 
 def main():
@@ -160,22 +173,35 @@ def main():
         print("  pass --apply to also write KiCad exclusions")
         return 0
 
-    lines = [serialise(v, ACCEPTED[key(v)]) for v in matched]
     pro = json.load(open(PRO))
-    pro.setdefault("board", {}).setdefault("design_settings", {})["drc_exclusions"] = lines
+    ds = pro.setdefault("board", {}).setdefault("design_settings", {})
+    existing = [parse_entry(e) for e in ds.get("drc_exclusions", [])]
+    live = {uuid_key(v): v for v in viols}
+
+    out, annotated, pruned = [], 0, []
+    for keystr, comment in existing:
+        uk = entry_uuid_key(keystr)
+        if uk not in live:
+            pruned.append(keystr.split("|")[0]); continue
+        reason = ACCEPTED.get(key(live[uk]), comment)
+        annotated += reason != comment
+        out.append([keystr, reason])
+    ds["drc_exclusions"] = out
     json.dump(pro, open(PRO, "w"), indent=2)
 
-    # Measure, do not assume. The first version of this wrote seven and
-    # reported seven; three took.
-    after = [v for v in run_drc_plain()]
-    took = len(matched) - len(after)
-    print(f"  wrote {len(lines)} exclusions; {took} of {len(lines)} took effect")
-    if after:
-        print(f"  {len(after)} still report in a plain DRC run -- KiCad did not "
-              f"accept those keys:")
-        for v in after:
-            print(f"    {v['type']:<24} {', '.join(i['description'] for i in v['items'])}")
-        print("  Exclude these once in KiCad's DRC panel and re-read the format.")
+    print(f"  {len(out)} exclusions kept, {annotated} given their documented reason"
+          + (f", {len(pruned)} pruned as stale ({', '.join(pruned)})" if pruned else ""))
+
+    # Measure, do not assume.
+    after = run_drc_plain()
+    print(f"  plain DRC now reports {len(after)} violation(s)")
+    missing = [v for v in matched if uuid_key(v) not in
+               {entry_uuid_key(k) for k, _ in [parse_entry(e) for e in out]}]
+    for v in missing:
+        print(f"  NOT EXCLUDED  {v['type']:<22} "
+              f"{', '.join(i['description'] for i in v['items'])}")
+    if missing:
+        print("  -> exclude these in KiCad's DRC panel; this tool will not invent a key.")
     return 0
 
 
