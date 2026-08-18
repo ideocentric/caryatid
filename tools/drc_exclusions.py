@@ -72,6 +72,11 @@ NULL = "00000000-0000-0000-0000-000000000000"
 
 # (type, item descriptions) -> why it is accepted. Nothing outside this table
 # can be excluded. Keep the reasons short enough to read in KiCad's DRC panel.
+#
+# Entries come OUT when the item is fixed rather than accepted -- J11's
+# silk_overlap was here and is gone, nudged clear instead. The tool reports a
+# table entry that no longer matches anything as "stale", so this list cannot
+# quietly accumulate permissions for things that stopped happening.
 ACCEPTED = {
     ("lib_footprint_mismatch", ("Footprint C4",)):
         "pad angle differs from library by exactly 180 deg; a rectangle is "
@@ -87,9 +92,6 @@ ACCEPTED = {
         "metadata only -- pads and graphics are byte-identical to the library.",
     ("lib_footprint_mismatch", ("Footprint A2",)):
         "metadata only -- pads and graphics are byte-identical to the library.",
-    ("silk_overlap", ("Reference field of J11", "Segment of J11 on F.Silkscreen")):
-        "0.2098 mm silk-to-silk. Our rule is 0.25, a legibility preference; "
-        "JLC's floor is 0.15. Not over copper.",
     ("silk_overlap", ("Segment of BT1 on F.Silkscreen", "Footprint text of BT1 (+)")):
         "0.2121 mm silk-to-silk between BT1's outline and its + marker. Our "
         "rule is 0.25; JLC's floor is 0.15. Not over copper. Worth an eye on "
