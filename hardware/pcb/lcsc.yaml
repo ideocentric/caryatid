@@ -42,6 +42,48 @@ by_value_footprint:
     {lcsc: C374544, note: "AR03BTDX1002A010, 0.1%. Already in stock -- 176 of them."}
   "10k|R_0603_1608Metric":
     {lcsc: C15401,  note: "10k 1% 0603. power-sheet.md maps R1 to it; sourcing.md calls it the general 10k."}
+  "1k|R_0603_1608Metric":
+    {lcsc: C21190, note: "Basic, $0.0057 ea -- R9,R10,R13,R18-R26,R47,R49"}
+  "100R|R_0603_1608Metric":
+    {lcsc: C22775, note: "Basic, $0.0221 ea -- R27-R33"}
+  "100k|R_0603_1608Metric":
+    {lcsc: C25803, note: "Basic, $0.0047 ea -- R6,R11,R12"}
+  "300|R_0603_1608Metric":
+    {lcsc: C23025, note: "Basic, $0.0104 ea -- R41,R42"}
+  "1k2|R_0603_1608Metric":
+    {lcsc: C22765, note: "Basic, $0.0074 ea -- R2"}
+  "887R 1%|R_0603_1608Metric":
+    {lcsc: C93619, note: "Extended, $0.0026 ea -- R3"}
+  "46k4|R_0603_1608Metric":
+    {lcsc: C23059, note: "Extended, $0.0030 ea -- R4"}
+  "0R|R_0603_1608Metric":
+    {lcsc: C21189, note: "Basic, $0.0039 ea -- R5"}
+  "348k 1%|R_0603_1608Metric":
+    {lcsc: C23006, note: "Extended, $0.0055 ea -- R7"}
+  "47k5 1%|R_0603_1608Metric":
+    {lcsc: C23061, note: "Extended, $0.0025 ea -- R8"}
+  "510|R_0603_1608Metric":
+    {lcsc: C23193, note: "Basic, $0.0102 ea -- R40"}
+  "100n|C_0603_1608Metric":
+    {lcsc: C108079, note: "Extended, $0.0221 ea -- C10-C18"}
+  "10n|C_0603_1608Metric":
+    {lcsc: C519406, note: "Extended, $0.0149 ea -- C8,C9"}
+  "220n|C_0603_1608Metric":
+    {lcsc: C106249, note: "Extended, $0.0191 ea -- C19,C20"}
+  "1u|C_0603_1608Metric":
+    {lcsc: C106248, note: "Extended, $0.0282 ea -- C21"}
+  "10u|C_0805_2012Metric":
+    {lcsc: C326595, note: "Extended, $0.2560 ea -- C2-C5"}
+  "10u/25V|C_0805_2012Metric":
+    {lcsc: C91186, note: "Extended, $0.0504 ea -- C1"}
+  "22u|C_0805_2012Metric":
+    {lcsc: C107128, note: "Extended, $0.0945 ea -- C6"}
+  "100u|CP_Elec_6.3x5.4":
+    {lcsc: C2887276, note: "Extended, $0.0310 ea -- C7"}
+  "FB >=1A|L_0805_2012Metric":
+    {lcsc: C357008, note: "Extended, $0.0172 ea -- FB1"}
+  "Expansion / SPI1|PinHeader_2x04_P2.54mm_Vertical":
+    {lcsc: C2829882, note: "Extended, $0.0294 ea -- J16"}
 
 # Deliberately NOT mapped, with the reason:
 #

@@ -557,7 +557,29 @@ Both are already mapped, so 5 of caryatid's placed parts need no purchase.
 `C4211` (3 kΩ 0603) is also in the absonus order and matches R45 here — but R45
 is **DNP**, so it is not needed for assembly.
 
-## The 56 parts still without a part number — five decisions, not fifty-six
+## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
+
+`tools/fab_package.py` now reports **92 of 92 covered** and exits zero. Codes are
+in [hardware/pcb/lcsc.yaml](../hardware/pcb/lcsc.yaml). The specifications below
+are kept because they are what the codes were chosen *against*, and because a
+future substitution has to satisfy the same constraints.
+
+**Two costs worth revisiting before ordering:**
+
+- **C2–C5, 10 µF 0805 — `C326595`, Extended, $0.256 each.** That is **$1.02 of a
+  $1.85 passive BOM, 55% of it, for four commodity capacitors.** A 10 µF 0805
+  X5R/X7R at 16–25 V is normally a Basic-library part costing a few cents. Worth
+  a second search before committing.
+- **C10–C18, 100 nF 0603 — `C108079`, Extended, $0.0221 each.** 100 nF 0603 X7R
+  is the most commonly stocked Basic part in existence, typically an order of
+  magnitude cheaper.
+
+**14 of 21 lines are Extended.** At the ~$3 per-unique-part setup fee noted
+above, that is roughly **$42 in fees against $1.85 of parts** — the fees dominate
+the passive cost entirely, so every line moved from Extended to Basic is worth
+far more than its unit price suggests.
+
+## The specifications the codes were chosen against
 
 `tools/fab_package.py` exits nonzero while any placed part lacks an LCSC code.
 34 of 92 are covered from what this document and [power-sheet.md](power-sheet.md)
