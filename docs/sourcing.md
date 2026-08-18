@@ -529,7 +529,35 @@ gain stage on a line-level input, the wrong sensor pulldown — is a fault.
   proven to fabricate, which is not the same as proven correct for this board —
   check the IDC pin-1 orientation and the JST polarity against this schematic
   rather than assuming they carry over.
-## The 58 parts still without a part number — seven decisions, not fifty-eight
+## Checked against the JLCPCB inventory and the absonus order
+
+`local/reference/` holds `Parts Inventory on JLCPCB.xlsx` and `bom.xls`, the
+absonus BOM **as actually ordered**. Both are gitignored, so what they establish
+is recorded here.
+
+**Already in stock**, quantities from the inventory:
+
+| part | | qty |
+| --- | --- | --- |
+| `C374544` | AR03BTDX1002A010, 10 kΩ 0.1% 0603 | **176** |
+| `C4749194` | DS254P-2X5-L0, IDC 2×5 | **176** |
+
+Both are already mapped, so 5 of caryatid's placed parts need no purchase.
+
+**Two things the ordered BOM settled that the prose could not:**
+
+- **`C3337` is a 220 µF part in `CP_Elec_5x5.4`** — it was ordered as such. That
+  makes this document right and [power-sheet.md](power-sheet.md) wrong to have
+  mapped C7 to it; power-sheet.md is corrected. C7 is 100 µF in
+  `CP_Elec_6.3x5.4` and remains unsourced.
+- **`C2897383` is the Seed socket**, ordered and fabricated. Decision G is
+  closed in its favour over `C41361038`, which the inventory shows at quantity
+  zero under Global Sourcing.
+
+`C4211` (3 kΩ 0603) is also in the absonus order and matches R45 here — but R45
+is **DNP**, so it is not needed for assembly.
+
+## The 56 parts still without a part number — five decisions, not fifty-six
 
 `tools/fab_package.py` exits nonzero while any placed part lacks an LCSC code.
 34 of 92 are covered from what this document and [power-sheet.md](power-sheet.md)
@@ -572,13 +600,12 @@ negotiable** — it sits on the raw barrel input, which reaches 9 V, and
 [power-sheet.md](power-sheet.md) states it. The other five are on the cell and
 5 V rails.
 
-### D — C7, 100 µF electrolytic: **blocked on a documented conflict**
+### D — C7, 100 µF electrolytic
 
-[power-sheet.md](power-sheet.md) line 54 maps C7 straight to **C3337**. This
-document, line 24, describes C3337 as a **220 µF part in `CP_Elec_5x5.4`**. C7 is
-100 µF in `CP_Elec_6.3x5.4` — different value *and* different body. One of the
-two entries is wrong. **Resolve the document before ordering**; `lcsc.yaml`
-deliberately refuses to guess which.
+~~Blocked on a documented conflict.~~ **Conflict resolved, part still needed.**
+The absonus order shows `C3337` really is 220 µF in `CP_Elec_5x5.4`, so
+power-sheet.md was wrong to map C7 to it and has been corrected. C7 is 100 µF in
+`CP_Elec_6.3x5.4`, ≥ 10 V, and has no candidate yet.
 
 ### E — FB1 ferrite bead, 0805
 
@@ -591,12 +618,8 @@ against the boost's 1 MHz switching, not arbitrarily.
 
 One commodity part. No constraint beyond the footprint.
 
-### G — A1/A2, the Seed sockets: choose between two named parts
+### G — A1/A2, the Seed sockets: ~~choose between two~~ **settled**
 
-[seed-sheet.md](seed-sheet.md) names both and does not settle it:
-
-- **C2897383** — the part absonus actually used, so proven in a fabricated board
-- **C41361038** — DS1023-1x20S21, the equivalent in JLC's own inventory
-
-Two numbers for one decision. Proven-in-hand against in-stock-at-the-assembler
-is the trade.
+**`C2897383`.** It is what the absonus BOM actually ordered, so it is proven in
+a fabricated board. `C41361038` sits at quantity zero under Global Sourcing in
+the inventory. Two per caryatid, one per 1×20 strip.

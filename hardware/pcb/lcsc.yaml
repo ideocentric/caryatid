@@ -20,6 +20,8 @@ by_ref:
   D1:   {lcsc: C8678,     note: "MDD SS34, SMA. JLC Basic, no setup fee."}
   L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
   BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. Extended -- setup fee applies."}
+  A1:   {lcsc: C2897383,  note: "1x20 female socket. Ordered and fabricated on absonus -- local/reference/bom.xls."}
+  A2:   {lcsc: C2897383,  note: "1x20 female socket, the second strip. Same part as A1."}
 
 by_footprint:
   IDC-Header_2x05_P2.54mm_Vertical:
@@ -43,16 +45,11 @@ by_value_footprint:
 
 # Deliberately NOT mapped, with the reason:
 #
-#   Seed sockets (A1, A2) -- sourcing.md names TWO candidates and does not
-#     settle between them: C41361038 (DS1023-1x20S21, Global Sourcing) and
-#     C2897383, described as "the part actually used" on absonus. Two numbers
-#     for one decision is not a mapping.
-#
-#   C7 100u electrolytic -- THE DOCS CONFLICT. power-sheet.md line 54 maps C7
-#     directly to C3337. sourcing.md line 24 describes C3337 as a 220 uF part in
-#     CP_Elec_5x5.4. C7 is 100 uF in CP_Elec_6.3x5.4 -- different value AND
-#     different body. One of the two is wrong and this file will not guess
-#     which. Resolve it in the docs first.
+
+#   C7 100u electrolytic -- RESOLVED as a conflict, still unsourced. The absonus
+#     BOM as ordered (local/reference/bom.xls) shows C3337 is 220 uF in
+#     CP_Elec_5x5.4, so power-sheet.md was wrong to map C7 to it and has been
+#     corrected. C7 is 100 uF in CP_Elec_6.3x5.4 and still needs a part.
 #
 #   Generic passives -- every 0603 resistor and 0805 capacitor except the 0.1%
 #     group. sourcing.md names C15401 for "10 kOhm 1% general" but the board

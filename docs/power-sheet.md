@@ -51,10 +51,17 @@ never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.
 | C3 | VOUT | 10 µF 0805 | — |
 | C4, C5 | Boost input | 10 µF 0805 | — |
 | C6 | Boost output | 22 µF 0805 | — |
-| C7 | After the ferrite | 100 µF | C3337 |
+| C7 | After the ferrite | 100 µF, `CP_Elec_6.3x5.4` | **not sourced** — see below |
 
 C1 needs a **25 V** rating: it sits on the raw barrel input, which can be 9 V and
 is only protected from 28 V by the OVP.
+
+> **C7 was listed here as `C3337`. That was wrong and is corrected.** The
+> absonus BOM as actually ordered (`local/reference/bom.xls`) shows C3337 is a
+> **220 µF part in `CP_Elec_5x5.4`**, matching [sourcing.md](sourcing.md). C7 is
+> 100 µF in `CP_Elec_6.3x5.4` — a different value in a different body, so the
+> part does not fit and would not be the right capacitance if it did. C7 has no
+> part number yet; it is decision D in sourcing.md.
 
 ## Nets
 
