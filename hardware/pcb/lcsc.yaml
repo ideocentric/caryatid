@@ -81,7 +81,7 @@ by_value_footprint:
   "100u|CP_Elec_6.3x5.4":
     {lcsc: C2887276, note: "Extended, $0.0310 ea -- C7"}
   "FB >=1A|L_0805_2012Metric":
-    {lcsc: C81034, note: "TDK MPZ2012S601ATD25 600R@100MHz, 100 mohm, 2 A. Replaced C357008 at 200 mohm."}
+    {lcsc: C3716677, note: "Murata BLM21SP601SN1D 600R@100MHz, 60 mohm, 2.3 A, 0805. Replaced C357008 (200 mohm). 60 mohm is the lowest DCR available at 600R in 0805."}
   "Expansion / SPI1|PinHeader_2x04_P2.54mm_Vertical":
     {lcsc: C2829882, note: "Extended, $0.0294 ea -- J16"}
 

@@ -692,26 +692,38 @@ feature, not a part to be improved away.
 
 ### E — FB1, ferrite bead, 0805
 
-**Specification: ≥ 1 A rated, DCR ≤ 100 mΩ, 120–600 Ω @ 100 MHz.**
+**Specification: ≥ 1 A rated, DCR ≤ 60 mΩ, 600 Ω @ 100 MHz. Chosen:
+`C3716677`, Murata BLM21SP601SN1D — 60 mΩ, 2.3 A, 0805.**
 
-> The DCR figure was 50 mΩ, chosen as a target rather than derived from a
-> requirement. Nothing at JLC meets it in 0805 with useful stock: the best is
-> 60 mΩ (Murata `BLM21SP601SN1D`, `C3716677`) at 3 976 in stock and $0.197.
-> **Relaxed to 100 mΩ**, which `C81034` meets at 248 000 in stock and $0.026 —
-> 35 mV of drop at the 350 mA typical load and 60 mV at 600 mA, off a 5.0 V
-> rail. Note the tempting Basic part, Sunlord `GZ2012D601TF` `C1017`, is rated
-> **500 mA** and fails the current requirement outright.
+> **A correction worth keeping.** This document previously said 50 mΩ was
+> unmeetable at JLC. That was wrong, and wrong for a specific reason: the search
+> had fixed the impedance at 600 Ω and then blamed the DCR. **Impedance and DCR
+> trade against each other** — `C12389` is 40 mΩ at 80 Ω @ 100 MHz, and
+> `C2661423` is 50 mΩ at 600 Ω but in **1206**.
 
-- **≥ 1 A** is from [power-sheet.md](power-sheet.md) and is the only figure that
-  was written down.
-- **DCR matters because FB1 carries the entire 5 V rail.** At 50 mΩ that is
-  17.5 mV at the 350 mA typical load and 30 mV at the 600 mA worst case; at
-  200 mΩ it becomes 120 mV, which is real headroom lost off a 5.0 V rail.
-- **Impedance sets a trade.** A higher-impedance bead attenuates more at high
-  frequency but has more inductance, dropping the LC corner deeper into the
-  audio band: 120 Ω → 36 kHz, 600 Ω → 16 kHz, 1 kΩ → 13 kHz. With C7 damping
-  it properly this is not a peak, but it is why the bead and the capacitor
-  cannot be chosen independently of one another.
+The bead's job is attenuating the boost's 1 MHz ripple into C7. Below
+self-resonance a bead is inductive, so `L ≈ Z₁₀₀ / (2π × 100 MHz)`, and against
+C7's ESR of roughly 0.5 Ω:
+
+| part | pkg | Z@100 MHz | Z@1 MHz | attenuation | DCR | drop @600 mA |
+| --- | --- | --- | --- | --- | --- | --- |
+| **`C3716677`** | **0805** | 600 Ω | 6.0 Ω | **22 dB** | **60 mΩ** | 36 mV |
+| `C2661423` | 1206 | 600 Ω | 6.0 Ω | 22 dB | 50 mΩ | 30 mV |
+| `C12389` | 0805 | 80 Ω | 0.8 Ω | 8 dB | 40 mΩ | 24 mV |
+| `C357008` *(was)* | 0805 | 600 Ω | 6.0 Ω | 22 dB | 200 mΩ | 120 mV |
+
+**Low impedance is the wrong way to buy low DCR here.** `C12389` trades 14 dB of
+ripple rejection for 12 mV, and the 5 V rail feeds R52/R54 — the mic bias — through
+220 Ω **straight into the audio path**. That is the one load on this rail where
+ripple is audible.
+
+**`C2661423` was rejected on cost of change, not on merit.** It is the best part
+on paper and a quarter the price, but it is 1206 against FB1's 0805 land. Fitting
+it needs FB1 moved 0.48 mm, R5 up 0.50 mm, C7 right 0.75 mm, six track endpoints
+re-attached, and — the deciding one — **FB1 pin 1 is pour-connected on a
+hand-drawn `+5V_RAW` polygon, and the new pad would retain only 0.47 mm of
+overlap with it.** Disturbing the boost cluster, which was laid out to TI's
+guidance, to gain **6 mV** inverts the risk against the reward.
 
 ### F — J16, 2×4 pin header 2.54 mm
 
