@@ -564,23 +564,39 @@ in [hardware/pcb/lcsc.yaml](../hardware/pcb/lcsc.yaml). The specifications below
 are kept because they are what the codes were chosen *against*, and because a
 future substitution has to satisfy the same constraints.
 
-**Two costs worth revisiting before ordering:**
+**Basic wherever the specification allows.** Six lines moved to the Basic
+library on 2026-08-18, none of them a downgrade:
 
-- **C2–C5, 10 µF 0805 — `C326595`, Extended, $0.256 each.** That is **$1.02 of a
-  $1.85 passive BOM, 55% of it, for four commodity capacitors.** `C440198`,
-  now used for C1, is 10 µF **50 V** X5R, **Basic**, 2.1 M in stock at $0.186 —
-  the same value at a higher rating, in the Basic library. **C2–C5 should
-  probably move to it too**, which would also delete a BOM line.
-- **C10–C18, 100 nF 0603 — `C108079`, Extended, $0.0221 each.** 100 nF 0603 X7R
-  is the most commonly stocked Basic part in existence, typically an order of
-  magnitude cheaper.
+| refs | was | now | change |
+| --- | --- | --- | --- |
+| C2–C5 | `C326595` 10 µF 16 V X7R, $0.256 | **`C440198`** 10 µF **50 V** X5R | far more headroom under DC bias |
+| C10–C18 | `C108079` 100 nF 16 V X7R | **`C14663`** 100 nF **50 V** X7R | same dielectric, higher rating |
+| C8, C9 | `C519406` 10 nF 16 V X7R | **`C57112`** 10 nF **50 V** X7R | same dielectric, higher rating |
+| C19, C20 | `C106249` 220 nF 16 V X7R | **`C21120`** 220 nF **25 V** X7R | same dielectric, higher rating |
+| C21 | `C106248` 1 µF 16 V X7R | **`C15849`** 1 µF **50 V** X5R | **dielectric changed — see below** |
+| R1, R34–R39 | `C15401` 10 kΩ **±5%** | **`C25804`** 10 kΩ **±1%** | tolerance improved *and* Basic |
 
-**14 of 21 lines are Extended.** At the ~$3 per-unique-part setup fee noted
-above, that is roughly **$42 in fees against $1.85 of parts** — the fees dominate
-the passive cost entirely, so every line moved from Extended to Basic is worth
-far more than its unit price suggests.
+> **C21 is the only one that gives anything up.** There is no Basic 1 µF 0603 in
+> X7R; the Basic part is X5R. C21 is the Schmitt debounce capacitor on `SW3_F`,
+> a 3.3 V node. X5R and X7R hold the same ±15% over their range — they differ in
+> upper limit, 85 °C against 125 °C, which this instrument never approaches. At
+> 50 V against a 16 V X7R the new part is also markedly more stable at the 3.3 V
+> operating point. Net improvement in practice, but it *is* a departure from the
+> family-B specification above, so it is recorded rather than buried.
 
-## The specifications the codes were chosen against
+**19 unique Extended parts remain, and none can move without a real compromise.**
+The fee is per unique part, not per BOM line — 31 Extended lines are 19 parts,
+so roughly **$57**, not $93.
+
+| what | why it stays Extended |
+| --- | --- |
+| 5 JST/IDC/header families | connectors are not in JLC's Basic library, and changing series changes the mating housing |
+| R3 887 Ω, R4 46k4, R7 348 kΩ, R8 47k5 | **E96 values.** Basic carries E24. Substituting changes charge current and the boost output voltage |
+| R14–R17 0.1% | precision part, and **176 already in stock** — no purchase at all |
+| C7 electrolytic, L1, FB1, U1, U2 | specific parts chosen on their own merits |
+| BT1, A1/A2 | **pre-order, accepted 2026-08-18** |
+
+## The specifications the codes were chosen against## The specifications the codes were chosen against
 
 `tools/fab_package.py` exits nonzero while any placed part lacks an LCSC code.
 34 of 92 are covered from what this document and [power-sheet.md](power-sheet.md)

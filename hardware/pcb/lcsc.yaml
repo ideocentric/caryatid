@@ -19,8 +19,8 @@ by_ref:
   U4:   {lcsc: C116706,   note: "Microchip MCP6002-I/SN, SOIC-8. DNP."}
   D1:   {lcsc: C8678,     note: "MDD SS34, SMA. JLC Basic, no setup fee."}
   L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
-  BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. Extended -- setup fee applies."}
-  A1:   {lcsc: C2897383,  note: "1x20 female socket. Ordered and fabricated on absonus -- local/reference/bom.xls."}
+  BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. STOCK 0 -- PRE-ORDER, confirmed acceptable 2026-08-18."}
+  A1:   {lcsc: C2897383,  note: "1x20 female socket, absonus-proven. PRE-ORDER, confirmed acceptable 2026-08-18."}
   A2:   {lcsc: C2897383,  note: "1x20 female socket, the second strip. Same part as A1."}
 
 by_footprint:
@@ -41,7 +41,7 @@ by_value_footprint:
   "10k 0.1%|R_0603_1608Metric":
     {lcsc: C374544, note: "AR03BTDX1002A010, 0.1%. Already in stock -- 176 of them."}
   "10k|R_0603_1608Metric":
-    {lcsc: C15401,  note: "10k 1% 0603. power-sheet.md maps R1 to it; sourcing.md calls it the general 10k."}
+    {lcsc: C25804, note: "10k 1% 0603, Basic. Was C15401, which was 5% AND Extended."}
   "1k|R_0603_1608Metric":
     {lcsc: C21190, note: "Basic, $0.0057 ea -- R9,R10,R13,R18-R26,R47,R49"}
   "100R|R_0603_1608Metric":
@@ -65,15 +65,15 @@ by_value_footprint:
   "510|R_0603_1608Metric":
     {lcsc: C23193, note: "Basic, $0.0102 ea -- R40"}
   "100n|C_0603_1608Metric":
-    {lcsc: C108079, note: "Extended, $0.0221 ea -- C10-C18"}
+    {lcsc: C14663, note: "YAGEO CC0603KRX7R9BB104 100nF 50V X7R 0603, Basic. Was C108079, Extended."}
   "10n|C_0603_1608Metric":
-    {lcsc: C519406, note: "Extended, $0.0149 ea -- C8,C9"}
+    {lcsc: C57112, note: "10nF 50V X7R 0603, Basic. Was C519406, 16V Extended."}
   "220n|C_0603_1608Metric":
-    {lcsc: C106249, note: "Extended, $0.0191 ea -- C19,C20"}
+    {lcsc: C21120, note: "220nF 25V X7R 0603, Basic. Was C106249, 16V Extended."}
   "1u|C_0603_1608Metric":
-    {lcsc: C106248, note: "Extended, $0.0282 ea -- C21"}
+    {lcsc: C15849, note: "1uF 50V X5R 0603, Basic. Was C106248, 1uF 16V X7R Extended. DIELECTRIC CHANGED -- see sourcing.md."}
   "10u|C_0805_2012Metric":
-    {lcsc: C326595, note: "Extended, $0.2560 ea -- C2-C5"}
+    {lcsc: C440198, note: "10uF 50V X5R 0805, Basic. Was C326595, 10uF 16V X7R Extended at $0.256."}
   "10u/25V|C_0805_2012Metric":
     {lcsc: C440198, note: "Murata GRM21BR61H106KE43L 10uF 50V X5R 0805. BASIC. Replaced C91186, which was 1uF."}
   "22u|C_0805_2012Metric":
