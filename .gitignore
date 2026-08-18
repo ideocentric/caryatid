@@ -171,3 +171,10 @@ compile_commands.json
 *.dsn
 *.ses
 *.rules
+
+# DRC / ERC reports exported from the KiCad GUI. Snapshots of a moment,
+# superseded the next time anything moves; the durable record is
+# tools/drc_exclusions.py and the status doc.
+DRC.rpt
+ERC.rpt
+*.rpt
