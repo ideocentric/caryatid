@@ -166,6 +166,8 @@ python3 tools/reset_placement.py    # back up and strip to placement only
 python3 tools/round_corners.py      # corner radius on the Edge.Cuts rectangle
 python3 tools/pin_labels.py         # silkscreen every connector pin's function
 python3 tools/drc_exclusions.py     # gate: is any DRC violation NOT accepted?
+python3 tools/fab_package.py        # gerbers, drill, BOM, CPL; refuses if unsourced
+.venv/bin/python tools/search_list.py --apply   # JLC worklist for what is left
 ```
 
 **`drc_exclusions.py` is the gate to run before a fab upload.** It matches every

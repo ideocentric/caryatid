@@ -640,19 +640,47 @@ Inductor derating was handled — [values.md](values.md) derates L1 by 30% per t
 datasheet — but the same datasheet's warning about capacitors was not carried
 across.
 
-### D — C7, 100 µF electrolytic
+### D — C7, 100 µF: **it must be an electrolytic, and that is a requirement**
 
-~~Blocked on a documented conflict.~~ **Conflict resolved, part still needed.**
-The absonus order shows `C3337` really is 220 µF in `CP_Elec_5x5.4`, so
-power-sheet.md was wrong to map C7 to it and has been corrected. C7 is 100 µF in
-`CP_Elec_6.3x5.4`, ≥ 10 V, and has no candidate yet.
+~~Blocked on a documented conflict.~~ Conflict resolved — the absonus order shows
+`C3337` really is 220 µF in `CP_Elec_5x5.4`, so power-sheet.md was wrong to map
+C7 to it and has been corrected.
 
-### E — FB1 ferrite bead, 0805
+**Specification: 100 µF aluminium electrolytic, ≥ 10 V (16 V preferred),
+`CP_Elec_6.3x5.4`, 105 °C.** Height 5.4 mm, which clears the CU-477's 34.14 mm
+ceiling with the 4 mm standoff easily.
 
-Rated **≥ 1 A** per power-sheet.md, which is the only constraint written down.
-The impedance-at-frequency is not specified anywhere and needs choosing — it is
-sitting between the boost output and everything downstream, so it is picked
-against the boost's 1 MHz switching, not arbitrarily.
+**Do not substitute a ceramic.** FB1 and C7 form an LC filter on the 5 V rail,
+and **C7's ESR is the only thing damping it**. Taking a 600 Ω @ 100 MHz bead as
+about 0.95 µH:
+
+| C7 | ESR | Q | peaking |
+| --- | --- | --- | --- |
+| aluminium electrolytic, typical | 800 mΩ | 0.12 | none |
+| aluminium electrolytic, low ESR | 300 mΩ | 0.33 | none |
+| low-ESR polymer | 100 mΩ | 0.98 | none |
+| **ceramic 100 µF** | **5 mΩ** | **19.5** | **≈ 26 dB** |
+
+The resonance sits near **16 kHz — inside the audio band**. With an electrolytic
+the Q is well under 1 and there is no peak at all, so the frequency does not
+matter. Swap in a ceramic "upgrade" and it becomes a 26 dB resonance on the rail
+that feeds the codec. The relatively high ESR is doing work here; it is a
+feature, not a part to be improved away.
+
+### E — FB1, ferrite bead, 0805
+
+**Specification: ≥ 1 A rated, DCR ≤ 50 mΩ, 120–600 Ω @ 100 MHz.**
+
+- **≥ 1 A** is from [power-sheet.md](power-sheet.md) and is the only figure that
+  was written down.
+- **DCR matters because FB1 carries the entire 5 V rail.** At 50 mΩ that is
+  17.5 mV at the 350 mA typical load and 30 mV at the 600 mA worst case; at
+  200 mΩ it becomes 120 mV, which is real headroom lost off a 5.0 V rail.
+- **Impedance sets a trade.** A higher-impedance bead attenuates more at high
+  frequency but has more inductance, dropping the LC corner deeper into the
+  audio band: 120 Ω → 36 kHz, 600 Ω → 16 kHz, 1 kΩ → 13 kHz. With C7 damping
+  it properly this is not a peak, but it is why the bead and the capacitor
+  cannot be chosen independently of one another.
 
 ### F — J16, 2×4 pin header 2.54 mm
 
