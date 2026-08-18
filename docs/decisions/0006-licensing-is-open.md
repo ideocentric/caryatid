@@ -1,6 +1,6 @@
 # 0006 — Licensing is open, and must be settled before publication
 
-- **Status**: **Partly settled.** Derivation answered; licence still open.
+- **Status**: **Settled 2026-08-18.** CERN-OHL-S v2 for the hardware, GPL-3.0-or-later for the tools. Derivation was answered 2026-08-08.
 - **Date**: 2026-08-08
 - **Amended**: 2026-08-08 — the derivation question below is now decided.
 
@@ -129,3 +129,32 @@ done. It defines Complete Source as the editable design files, which is why the
 SVG is committed rather than left in gitignored `local/`. And it wants a notice
 on the product — `tools/branding.py` deliberately prints no licence line, and
 adding one is a board change, so it must happen *before* a fab run, not after.
+
+
+## Settled 2026-08-18 — CERN-OHL-S v2 and GPL-3.0-or-later
+
+**Hardware: CERN-OHL-S v2. Tools: GPL-3.0-or-later.** Both strongly reciprocal,
+which is the direction this ADR recorded from the start. Texts are in
+`LICENSES/`; the split and what counts as Complete Source are in
+[LICENSE.md](../../LICENSE.md).
+
+This closes the two items the amendment above left open:
+
+1. **Which licence** — answered.
+2. **The tools already asserted one.** Every file in `tools/` carried
+   `SPDX-License-Identifier: GPL-3.0-or-later` while this ADR still said the
+   licence was open. Those headers are now **ratified rather than corrected** —
+   they turned out to state the right answer, but they stated it before it was
+   taken, which is the wrong order and worth not repeating.
+
+**Consequences now live:**
+
+- **`hardware/art/enso-oro.svg` had to be committed**, and was. CERN-OHL-S
+  defines Complete Source as the editable design files; a repository whose logo
+  existed only as 153 flattened polygons would not have met it.
+- **The board carries a notice.** `CERN-OHL-S v2` is on the front silkscreen
+  beside the mark, at 1 mm.
+- **No source URL on the board**, because the repository is private. A notice
+  pointing at something that does not resolve is worse than none. **Publishing
+  means adding the URL, and that is a board change** — before a fab run, not
+  after.

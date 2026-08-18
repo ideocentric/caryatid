@@ -44,9 +44,26 @@ import check_board as C
 
 NS = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
 
-# (text, size, thickness, bold) -- absonus's exact style for the name
-NAME = ("caryatid", 3.556, 2.54, 0.20, True)
-REV  = ("v0.1",     1.0,   1.0,  0.15, False)
+# (text, w, h, thickness, bold). absonus's wordmark is 3.556 x 2.54 bold,
+# aspect 1.400. Here it is 3.2 x 2.286 -- the SAME aspect, 10% smaller -- and
+# that reduction is forced, not stylistic: at 3.556 the ink is 20.32 mm wide and
+# the only clear area able to hold the whole mark is 19 mm across. There is no
+# 31 x 9 mm space anywhere on this board for a single-row icon-plus-name block,
+# even with margins cut to 0.28 mm and the board-edge keepout to 0.6 mm.
+NAME = ("caryatid",      3.2, 2.286, 0.20, True)
+REV  = ("v0.1",          1.0, 1.0,   0.15, False)
+LIC  = ("CERN-OHL-S v2", 1.0, 1.0,   0.15, False)
+
+# Measured ink, pcbnew GetEffectiveShape. The name's vertical extent about its
+# anchor is NOT symmetric: -1.481 above, +2.024 below, because of the descender
+# on the y. Treating it as +/-1.753 put the licence line 0.27 mm lower than
+# intended relative to the ink and DRC reported 0.178 mm against a 0.25 rule.
+W_NAME, H_NAME = 18.29, 3.51
+NAME_UP, NAME_DN = 1.481, 2.024
+W_REV,  W_LIC  = 2.96, 12.53
+H_SMALL        = 1.15
+SMALL_UP, SMALL_DN = 0.620, 0.530
+LOGO_MM        = 9.0            # half the 18 mm it was; the icon's own size
 
 # The largest clear silk area is 26 x 6 mm centred on (180,116), but the block
 # is NOT centred in it. Centred, v0.1 lands at x 189.28..192.24 -- and the M3
@@ -55,9 +72,8 @@ REV  = ("v0.1",     1.0,   1.0,  0.15, False)
 # completely. Nothing in DRC models a screw head; this was caught by rendering
 # the silkscreen and looking at it. Shifted 2 mm left, which leaves 1.26 mm
 # even against a 7 mm head with a washer.
-CENTRE = (178.0, 116.0)
-GAP    = 1.20             # between the name and the revision
-W_NAME, W_REV = 20.32, 2.96    # measured ink widths, pcbnew GetEffectiveShape
+CENTRE = (175.0, 55.5)          # the one clear 19 x 18 mm area on the board
+GAP    = 1.50             # between the version and the licence, on their line
 
 
 def emit(text, cx, cy, w, h, th, bold, tag):
@@ -73,7 +89,7 @@ def emit(text, cx, cy, w, h, th, bold, tag):
             f'\t\t\t)\n\t\t)\n\t)')
 
 
-KNOWN = {str(uuid.uuid5(NS, f"caryatid-branding-{t}")) for t in ("name", "rev")}
+KNOWN = {str(uuid.uuid5(NS, f"caryatid-branding-{t}")) for t in ("name","rev","lic")}
 
 
 def strip(t):
@@ -93,10 +109,26 @@ def strip(t):
 
 
 def layout():
-    total = W_NAME + GAP + W_REV
-    left = CENTRE[0] - total / 2
-    return ((left + W_NAME / 2, CENTRE[1]),
-            (left + W_NAME + GAP + W_REV / 2, CENTRE[1]))
+    """Stacked: icon, then the name, then version and licence sharing a line.
+    Returns the logo centre and the three text centres."""
+    cx, cy = CENTRE
+    top = cy - 9.0                       # top of the 18 mm tall area
+    logo_cy = top + 0.5 + LOGO_MM / 2
+    name_cy = logo_cy + LOGO_MM / 2 + 0.80 + NAME_UP
+    # 1.375, SOLVED against KiCad's own glyph geometry, not derived from boxes.
+    # Bounding boxes are useless for this pair: the licence string runs the full
+    # width of the name and the binding distance is to the descender of the y,
+    # between real outlines. Raising the vertical gap from 0.65 to 0.80 made DRC
+    # WORSE (0.2145 -> 0.1960), which is the point at which modelling was
+    # abandoned. Measured by binary-searching SHAPE.Collide against the placed
+    # text -- true gap 0.052 at y 61.575, 0.196 at 61.725 (DRC agreed exactly),
+    # 0.467 at 62.000, 0.766 at 62.300. This lands on 62.3.
+    line_cy = name_cy + NAME_DN + 1.375 + SMALL_UP
+    run = W_REV + GAP + W_LIC
+    left = cx - run / 2
+    return ((cx, logo_cy), (cx, name_cy),
+            (left + W_REV / 2, line_cy),
+            (left + W_REV + GAP + W_LIC / 2, line_cy))
 
 
 def main():
@@ -110,48 +142,61 @@ def main():
         else: print("  dry run -- pass --apply to write")
         return 0
 
-    (nx, ny), (vx, vy) = layout()
-    total = W_NAME + GAP + W_REV
-    print(f"  '{NAME[0]}'  {NAME[1]}x{NAME[2]} th {NAME[3]}"
-          f"{' bold' if NAME[4] else ''}   at ({nx:.2f},{ny:.2f})")
-    print(f"  '{REV[0]}'      {REV[1]}x{REV[2]} th {REV[3]}"
-          f"          at ({vx:.2f},{vy:.2f})")
-    print(f"  block {total:.2f} mm wide in a 26.0 mm clear area, centred on "
-          f"({CENTRE[0]:g},{CENTRE[1]:g})")
+    (lgx, lgy), (nx, ny), (vx, vy), (cx_, cy_) = layout()
+    print(f"  ens\u014d      {LOGO_MM:g} mm            centred ({lgx:.2f},{lgy:.2f})")
+    print(f"  '{NAME[0]}'  {NAME[1]}x{NAME[2]} th {NAME[3]} bold  at ({nx:.2f},{ny:.2f})")
+    print(f"  '{REV[0]}'      {REV[1]}x{REV[2]} th {REV[3]}       at ({vx:.2f},{vy:.2f})")
+    print(f"  '{LIC[0]}' {LIC[1]}x{LIC[2]} th {LIC[3]}  at ({cx_:.2f},{cy_:.2f})")
 
     # Clearance against everything, including the locked pin labels -- but
     # measured on the STRIPPED text, not the file. Reading the file here means
-    # colliding with the branding this run is about to replace, which is what
-    # happened the first time and produced "CLASH with locked 'caryatid'".
+    # colliding with the branding this run is about to replace.
     import pin_labels as P
     B = C.Board.__new__(C.Board); C.Board.__init__(B, C.PCB)
     obst = P.Obstacles(B)
     for box, nm in P.surviving_labels(t): obst.add_label(box, nm)
     ok = True
-    for (cx, cy), w, h, lbl in (((nx, ny), W_NAME, 3.89, NAME[0]),
-                                ((vx, vy), W_REV, 1.15, REV[0])):
-        box = (cx - w/2, cy - h/2, cx + w/2, cy + h/2)
+    items = (((nx, ny), W_NAME, (NAME_UP, NAME_DN), NAME[0]),
+             ((vx, vy), W_REV,  (SMALL_UP, SMALL_DN), REV[0]),
+             ((cx_, cy_), W_LIC, (SMALL_UP, SMALL_DN), LIC[0]),
+             ((lgx, lgy), LOGO_MM, (LOGO_MM/2, LOGO_MM/2), "ens\u014d"))
+    for (px, py), w, (u_, d_), lbl in items:
+        box = (px - w/2, py - u_, px + w/2, py + d_)
         hit = obst.clash(box, 0.25)
         x0, y0, x1, y1 = B.outline
         edge = min(box[0]-x0, x1-box[2], box[1]-y0, y1-box[3])
-        print(f"    {lbl:<9} clearance {'CLASH with ' + hit if hit else 'clear'}"
-              f", {edge:.2f} mm to the board edge")
+        print(f"    {lbl:<14} {'CLASH with ' + hit if hit else 'clear':<28}"
+              f" {edge:6.2f} mm to the board edge")
         ok &= hit is None and edge >= 0.30
+    # and against each other
+    for i in range(len(items)):
+        for j in range(i+1, len(items)):
+            (ax, ay), aw, (au, ad), al = items[i]
+            (bx, by), bw, (bu, bd), bl = items[j]
+            g = P.rect_rect((ax-aw/2, ay-au, ax+aw/2, ay+ad),
+                            (bx-bw/2, by-bu, bx+bw/2, by+bd))
+            if g < 0.25:
+                print(f"    {al} vs {bl}: only {g:.3f} mm apart"); ok = False
     if not ok:
         print("\n  REFUSING: placement is not clear")
         return 1
     if not apply_:
         print("\n  dry run -- pass --apply to write")
+        print(f"  then: .venv/bin/python tools/svg_to_silk.py "
+              f"--size {LOGO_MM:g} --at {lgx:.2f},{lgy:.2f} --apply")
         return 0
 
     at = t.rindex("\n)")
     t = (t[:at]
          + emit(NAME[0], nx, ny, NAME[1], NAME[2], NAME[3], NAME[4], "name")
          + emit(REV[0],  vx, vy, REV[1],  REV[2],  REV[3],  REV[4],  "rev")
+         + emit(LIC[0],  cx_, cy_, LIC[1], LIC[2], LIC[3], LIC[4], "lic")
          + t[at:])
     open(C.PCB, "w").write(t)
     d = sum(1 if c == "(" else -1 if c == ")" else 0 for c in t)
-    print(f"\n  wrote 2 texts, paren balance {d}")
+    print(f"\n  wrote 3 texts, paren balance {d}")
+    print(f"  now: .venv/bin/python tools/svg_to_silk.py "
+          f"--size {LOGO_MM:g} --at {lgx:.2f},{lgy:.2f} --apply")
     return 0 if d == 0 else 1
 
 
