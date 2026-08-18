@@ -567,9 +567,10 @@ future substitution has to satisfy the same constraints.
 **Two costs worth revisiting before ordering:**
 
 - **C2–C5, 10 µF 0805 — `C326595`, Extended, $0.256 each.** That is **$1.02 of a
-  $1.85 passive BOM, 55% of it, for four commodity capacitors.** A 10 µF 0805
-  X5R/X7R at 16–25 V is normally a Basic-library part costing a few cents. Worth
-  a second search before committing.
+  $1.85 passive BOM, 55% of it, for four commodity capacitors.** `C440198`,
+  now used for C1, is 10 µF **50 V** X5R, **Basic**, 2.1 M in stock at $0.186 —
+  the same value at a higher rating, in the Basic library. **C2–C5 should
+  probably move to it too**, which would also delete a BOM line.
 - **C10–C18, 100 nF 0603 — `C108079`, Extended, $0.0221 each.** 100 nF 0603 X7R
   is the most commonly stocked Basic part in existence, typically an order of
   magnitude cheaper.
@@ -691,7 +692,15 @@ feature, not a part to be improved away.
 
 ### E — FB1, ferrite bead, 0805
 
-**Specification: ≥ 1 A rated, DCR ≤ 50 mΩ, 120–600 Ω @ 100 MHz.**
+**Specification: ≥ 1 A rated, DCR ≤ 100 mΩ, 120–600 Ω @ 100 MHz.**
+
+> The DCR figure was 50 mΩ, chosen as a target rather than derived from a
+> requirement. Nothing at JLC meets it in 0805 with useful stock: the best is
+> 60 mΩ (Murata `BLM21SP601SN1D`, `C3716677`) at 3 976 in stock and $0.197.
+> **Relaxed to 100 mΩ**, which `C81034` meets at 248 000 in stock and $0.026 —
+> 35 mV of drop at the 350 mA typical load and 60 mV at 600 mA, off a 5.0 V
+> rail. Note the tempting Basic part, Sunlord `GZ2012D601TF` `C1017`, is rated
+> **500 mA** and fails the current requirement outright.
 
 - **≥ 1 A** is from [power-sheet.md](power-sheet.md) and is the only figure that
   was written down.

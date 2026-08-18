@@ -75,13 +75,13 @@ by_value_footprint:
   "10u|C_0805_2012Metric":
     {lcsc: C326595, note: "Extended, $0.2560 ea -- C2-C5"}
   "10u/25V|C_0805_2012Metric":
-    {lcsc: C91186, note: "Extended, $0.0504 ea -- C1"}
+    {lcsc: C440198, note: "Murata GRM21BR61H106KE43L 10uF 50V X5R 0805. BASIC. Replaced C91186, which was 1uF."}
   "22u|C_0805_2012Metric":
-    {lcsc: C107128, note: "Extended, $0.0945 ea -- C6"}
+    {lcsc: C45783, note: "Samsung CL21A226MAQNNNE 22uF 25V X5R 0805. BASIC. Replaced C107128, which was 2.2uF."}
   "100u|CP_Elec_6.3x5.4":
     {lcsc: C2887276, note: "Extended, $0.0310 ea -- C7"}
   "FB >=1A|L_0805_2012Metric":
-    {lcsc: C357008, note: "Extended, $0.0172 ea -- FB1"}
+    {lcsc: C81034, note: "TDK MPZ2012S601ATD25 600R@100MHz, 100 mohm, 2 A. Replaced C357008 at 200 mohm."}
   "Expansion / SPI1|PinHeader_2x04_P2.54mm_Vertical":
     {lcsc: C2829882, note: "Extended, $0.0294 ea -- J16"}
 
