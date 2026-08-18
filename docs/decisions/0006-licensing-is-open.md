@@ -90,3 +90,42 @@ un-derived after the fact.
 The repository stays private. No schematic capture that copies from an Adafruit
 source file should begin until item 1 is answered, because that answer stops
 being available the moment it does.
+## Amended 2026-08-18 — the inputs are audited, and nothing blocks copyleft
+
+Prompted by putting the ensō on the silkscreen: *does anything we have borrowed
+prevent a copyleft licence?* Every input to the design was enumerated. **None
+blocks it.**
+
+| Input | Terms | Blocks? |
+| --- | --- | --- |
+| `hardware/art/enso-oro.svg` | **first party** — drawn in Illustrator by the author, the house mark across the instrument projects | no |
+| ~120 stock KiCad footprints | CC-BY-SA 4.0 **with the library exception** for use in designs | no |
+| KiCad Newstroke font — every silk label and the wordmark | permissive / public-domain lineage | no |
+| 3 custom footprints (BQ24074RGT, both Seed sockets) | ours, drawn from TI land pattern 4222419/E | no |
+| Values and topology | drawn from datasheets — the decision above | no |
+| Daisy Seed documentation | MIT | no |
+| `svgelements`, Freerouting, `kicad-cli` | tools; their output is not a derivative of them | no |
+
+**The artwork was the only item in real doubt, and only because the file cannot
+answer for itself** — the Illustrator export carries no metadata, no author, no
+licence and no download record. Had it come from a stock library, most such
+licences forbid redistributing the asset in editable form, and a `.kicad_pcb`
+holding 12 255 points of its outline is exactly that. It is first party, so the
+question closes. Provenance is now recorded in
+[hardware/art/README.md](../../hardware/art/README.md) so nobody has to ask again.
+
+**Two items remain to settle, both narrower than the original question:**
+
+1. **Which licence.** Unchanged, and the direction of travel is unchanged:
+   CERN-OHL-S for the hardware, GPL for the tools.
+2. **The tools already assert one.** Every file in `tools/` carries
+   `SPDX-License-Identifier: GPL-3.0-or-later`, which matches that intent but
+   asserts a decision this ADR still records as open, and there is no LICENSE
+   file in the repository. **Either ratify the split or correct the headers** —
+   they should not be the only place the licence is stated.
+
+**If CERN-OHL-S is adopted**, note two consequences that touch work already
+done. It defines Complete Source as the editable design files, which is why the
+SVG is committed rather than left in gitignored `local/`. And it wants a notice
+on the product — `tools/branding.py` deliberately prints no licence line, and
+adding one is a board change, so it must happen *before* a fab run, not after.

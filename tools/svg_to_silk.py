@@ -9,6 +9,11 @@
 Needs the project venv for svgelements:  python3 -m venv .venv
                                          .venv/bin/pip install svgelements
 
+The artwork is first-party -- drawn in Illustrator by the author, the house mark
+across the instrument projects -- and lives in hardware/art/, in the repository
+rather than in gitignored local/. It is a SOURCE: the board's 153 polygons are
+generated from it and are an output. See hardware/art/README.md.
+
 SIZE COMES FROM absonus, NOT FROM A GUESS
 -----------------------------------------
 The ensō is plotted at 18.50 x 18.71 mm on the fabricated absonus v0.3 board,
@@ -112,7 +117,7 @@ def keyhole(outer, hole):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--svg", default="local/enso-oro.svg")
+    ap.add_argument("--svg", default="hardware/art/enso-oro.svg")
     ap.add_argument("--size", type=float, default=18.0)
     ap.add_argument("--at", default="174,55.5")
     ap.add_argument("--layer", default="F.SilkS")
