@@ -529,3 +529,74 @@ gain stage on a line-level input, the wrong sensor pulldown — is a fault.
   proven to fabricate, which is not the same as proven correct for this board —
   check the IDC pin-1 orientation and the JST polarity against this schematic
   rather than assuming they carry over.
+## The 58 parts still without a part number — seven decisions, not fifty-eight
+
+`tools/fab_package.py` exits nonzero while any placed part lacks an LCSC code.
+34 of 92 are covered from what this document and [power-sheet.md](power-sheet.md)
+already state. The remaining 58 collapse into **seven decisions**, because a
+family choice settles every value inside it.
+
+### A — one 0603 resistor family: 11 values, 33 parts
+
+| value | qty | | value | qty |
+| --- | --- | --- | --- | --- |
+| 1 kΩ | 14 | | 46k4 | 1 |
+| 100 Ω | 7 | | 0 Ω | 1 |
+| 100 kΩ | 3 | | 348 kΩ **1%** | 1 |
+| 300 Ω | 2 | | 47k5 **1%** | 1 |
+| 1k2 | 1 | | 510 Ω | 1 |
+| 887 Ω **1%** | 1 | | | |
+
+Pick one Basic 1% 0603 series and every value follows. **Three constraints are
+already fixed and must not be relaxed:**
+
+- **R3 887 Ω must be 1%** — a datasheet requirement, not a preference. The
+  bq24074 short-tests `RISET` at maximum charge setting.
+- **R7 348 kΩ and R8 47k5 set the boost output voltage.** Tolerance here is
+  output accuracy, and [values.md](values.md) leaves only 109 mV to the OVP
+  minimum.
+- **R4 46k4 and the three above are E96 values**, which are frequently
+  *Extended* rather than Basic at JLC. That is the one thing to check before
+  assuming a single family covers the set — it is where a per-part setup fee
+  would appear.
+
+### B — one 0603 MLCC choice: 4 values, 14 parts
+
+100 nF ×9, 10 nF ×2, 220 nF ×2, 1 µF ×1. All sit on rails at 5 V or below, so
+16 V X7R is ample and cheap. One dielectric-and-voltage decision covers all four.
+
+### C — one 0805 MLCC choice: 3 values, 6 parts
+
+10 µF ×4, 10 µF ×1 **at 25 V**, 22 µF ×1. **C1's 25 V rating is not
+negotiable** — it sits on the raw barrel input, which reaches 9 V, and
+[power-sheet.md](power-sheet.md) states it. The other five are on the cell and
+5 V rails.
+
+### D — C7, 100 µF electrolytic: **blocked on a documented conflict**
+
+[power-sheet.md](power-sheet.md) line 54 maps C7 straight to **C3337**. This
+document, line 24, describes C3337 as a **220 µF part in `CP_Elec_5x5.4`**. C7 is
+100 µF in `CP_Elec_6.3x5.4` — different value *and* different body. One of the
+two entries is wrong. **Resolve the document before ordering**; `lcsc.yaml`
+deliberately refuses to guess which.
+
+### E — FB1 ferrite bead, 0805
+
+Rated **≥ 1 A** per power-sheet.md, which is the only constraint written down.
+The impedance-at-frequency is not specified anywhere and needs choosing — it is
+sitting between the boost output and everything downstream, so it is picked
+against the boost's 1 MHz switching, not arbitrarily.
+
+### F — J16, 2×4 pin header 2.54 mm
+
+One commodity part. No constraint beyond the footprint.
+
+### G — A1/A2, the Seed sockets: choose between two named parts
+
+[seed-sheet.md](seed-sheet.md) names both and does not settle it:
+
+- **C2897383** — the part absonus actually used, so proven in a fabricated board
+- **C41361038** — DS1023-1x20S21, the equivalent in JLC's own inventory
+
+Two numbers for one decision. Proven-in-hand against in-stock-at-the-assembler
+is the trade.

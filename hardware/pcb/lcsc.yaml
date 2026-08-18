@@ -38,6 +38,8 @@ by_footprint:
 by_value_footprint:
   "10k 0.1%|R_0603_1608Metric":
     {lcsc: C374544, note: "AR03BTDX1002A010, 0.1%. Already in stock -- 176 of them."}
+  "10k|R_0603_1608Metric":
+    {lcsc: C15401,  note: "10k 1% 0603. power-sheet.md maps R1 to it; sourcing.md calls it the general 10k."}
 
 # Deliberately NOT mapped, with the reason:
 #
@@ -46,9 +48,11 @@ by_value_footprint:
 #     C2897383, described as "the part actually used" on absonus. Two numbers
 #     for one decision is not a mapping.
 #
-#   C7 100u electrolytic -- sourcing.md mentions C3337 as "the absonus
-#     electrolytic" for the 220 uF part, not for this 100 uF one. Close enough
-#     to be tempting and not the same component.
+#   C7 100u electrolytic -- THE DOCS CONFLICT. power-sheet.md line 54 maps C7
+#     directly to C3337. sourcing.md line 24 describes C3337 as a 220 uF part in
+#     CP_Elec_5x5.4. C7 is 100 uF in CP_Elec_6.3x5.4 -- different value AND
+#     different body. One of the two is wrong and this file will not guess
+#     which. Resolve it in the docs first.
 #
 #   Generic passives -- every 0603 resistor and 0805 capacitor except the 0.1%
 #     group. sourcing.md names C15401 for "10 kOhm 1% general" but the board
