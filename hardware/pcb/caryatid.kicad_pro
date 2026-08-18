@@ -52,7 +52,15 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "lib_footprint_mismatch|95000000|75000000|df290bb0-5811-5e3f-98ec-13f26703e9ec|00000000-0000-0000-0000-000000000000|metadata only -- pads and graphics are byte-identical to the library.",
+        "lib_footprint_mismatch|95000000|90000000|ee52abc4-584e-57cd-8d24-d78651dfc2ee|00000000-0000-0000-0000-000000000000|metadata only -- pads and graphics are byte-identical to the library.",
+        "silk_overlap|58420000|109605000|2d677eb4-9699-4d2f-986d-024837b1bb67|f2b31f02-c279-4e02-9177-8acce6ae4e11|0.2098 mm silk-to-silk. Our rule is 0.25, a legibility preference; JLC's floor is 0.15. Not over copper.",
+        "silk_overlap|85490000|55060000|721b8920-548c-4617-9d3a-0778e087334a|88901747-300c-4e25-93d7-58b3c2d4ce78|0.2121 mm silk-to-silk between BT1's outline and its + marker. Our rule is 0.25; JLC's floor is 0.15. Not over copper. Worth an eye on the fab preview since it is a polarity marker.",
+        "lib_footprint_mismatch|67600000|82600000|044897fe-31ed-5933-a9cc-7117dac55d14|00000000-0000-0000-0000-000000000000|pad angle differs from library by exactly 180 deg; a rectangle is symmetric under it. C4 and C5 have identical pad geometry in pcbnew and only C4 is flagged. Gerbers come from the board, not the library.",
+        "lib_footprint_mismatch|76050000|80350000|152d9ac2-4f04-5b90-a27d-3c2f3d1d4497|00000000-0000-0000-0000-000000000000|pad angle 180 deg from library; same rectangle. Resolves to 1.450 x 1.000 mm for its -90 deg placement, which is correct.",
+        "lib_footprint_mismatch|71900000|83850000|4b2de233-58a2-5fe0-8f54-bc58c3a60bfa|00000000-0000-0000-0000-000000000000|pad angle 180 deg from library; same rectangle. Resolves to 1.150 x 3.600 mm, which is correct."
+      ],
       "meta": {
         "version": 2
       },

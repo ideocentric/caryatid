@@ -20,7 +20,8 @@ sides, 146 GND vias. Power nets around U1 and U2 are poured from hand-drawn
 outlines rather than routed; see [ADR 0008](decisions/0008-board-outline-and-layer-count.md)
 and the commit history for why.
 
-Two kinds of DRC item remain **deliberately**:
+Two kinds of DRC item remain **deliberately**, all seven recorded with reasons
+in `tools/drc_exclusions.py` and gated by it:
 
 - **2 `silk_overlap`** at 0.21 mm — J11's reference against its own outline, and
   BT1's outline against its `+` marker. These are the only two left after the
@@ -120,7 +121,23 @@ python3 tools/pour_from_drawing.py  # convert hand-drawn F.Cu polygons into pour
 python3 tools/reset_placement.py    # back up and strip to placement only
 python3 tools/round_corners.py      # corner radius on the Edge.Cuts rectangle
 python3 tools/pin_labels.py         # silkscreen every connector pin's function
+python3 tools/drc_exclusions.py     # gate: is any DRC violation NOT accepted?
 ```
+
+**`drc_exclusions.py` is the gate to run before a fab upload.** It matches every
+DRC violation against an explicit table of accepted ones, each with a written
+reason, and exits nonzero on anything unrecognised. It cannot bless a new
+violation — that is the point. Seven known-good warnings are worse than none,
+because the eighth arrives looking exactly like the noise.
+
+It also writes KiCad's own exclusions, and **only 3 of the 7 take**. The key
+format in `.kicad_pro` is undocumented and was reverse-engineered
+(`type|x_nm|y_nm|uuid_a|uuid_b`); three match, four do not, with identical
+structure and verified uuids and coordinates. The tool re-runs DRC after
+writing and reports how many actually took rather than assuming. To finish the
+other four, exclude them once in KiCad's DRC panel (right-click → **Exclude
+this violation**), save, and the strings KiCad writes can be read out of the
+`.kicad_pro`.
 
 **Lock anything you place or adjust by hand — copper and silkscreen both.** `cycle.py` strips everything unlocked and
 re-routes; `export_dsn.py` hands locked copper to Freerouting as `(type protect)`
