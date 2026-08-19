@@ -54,6 +54,16 @@ NAME = ("caryatid",      3.2, 2.286, 0.20, True)
 REV  = ("v0.1",          1.0, 1.0,   0.15, False)
 LIC  = ("CERN-OHL-S v2", 1.0, 1.0,   0.15, False)
 
+# CERN-OHL-S wants the Source reachable from the Product. The repository is
+# public as of 2026-08-18, so the notice can carry a URL that resolves -- until
+# then branding.py deliberately printed none, because a notice pointing at a
+# 404 is worse than no notice. It does not fit beside the mark: at 1 mm the URL
+# inks 24.34 mm against the mark block's 19 mm, so it goes along the bottom
+# edge where 26 mm is clear.
+URL     = ("github.com/ideocentric/caryatid", 1.0, 1.0, 0.15, False)
+URL_AT  = (178.0, 116.0)
+W_URL   = 24.34
+
 # Measured ink, pcbnew GetEffectiveShape. The name's vertical extent about its
 # anchor is NOT symmetric: -1.481 above, +2.024 below, because of the descender
 # on the y. Treating it as +/-1.753 put the licence line 0.27 mm lower than
@@ -89,7 +99,7 @@ def emit(text, cx, cy, w, h, th, bold, tag):
             f'\t\t\t)\n\t\t)\n\t)')
 
 
-KNOWN = {str(uuid.uuid5(NS, f"caryatid-branding-{t}")) for t in ("name","rev","lic")}
+KNOWN = {str(uuid.uuid5(NS, f"caryatid-branding-{t}")) for t in ("name","rev","lic","url")}
 
 
 def strip(t):
@@ -147,6 +157,7 @@ def main():
     print(f"  '{NAME[0]}'  {NAME[1]}x{NAME[2]} th {NAME[3]} bold  at ({nx:.2f},{ny:.2f})")
     print(f"  '{REV[0]}'      {REV[1]}x{REV[2]} th {REV[3]}       at ({vx:.2f},{vy:.2f})")
     print(f"  '{LIC[0]}' {LIC[1]}x{LIC[2]} th {LIC[3]}  at ({cx_:.2f},{cy_:.2f})")
+    print(f"  '{URL[0]}' {URL[1]}x{URL[2]}  at ({URL_AT[0]:.2f},{URL_AT[1]:.2f})")
 
     # Clearance against everything, including the locked pin labels -- but
     # measured on the STRIPPED text, not the file. Reading the file here means
@@ -159,7 +170,8 @@ def main():
     items = (((nx, ny), W_NAME, (NAME_UP, NAME_DN), NAME[0]),
              ((vx, vy), W_REV,  (SMALL_UP, SMALL_DN), REV[0]),
              ((cx_, cy_), W_LIC, (SMALL_UP, SMALL_DN), LIC[0]),
-             ((lgx, lgy), LOGO_MM, (LOGO_MM/2, LOGO_MM/2), "ens\u014d"))
+             ((lgx, lgy), LOGO_MM, (LOGO_MM/2, LOGO_MM/2), "ens\u014d"),
+             (URL_AT, W_URL, (SMALL_UP, SMALL_DN), URL[0]))
     for (px, py), w, (u_, d_), lbl in items:
         box = (px - w/2, py - u_, px + w/2, py + d_)
         hit = obst.clash(box, 0.25)
@@ -191,10 +203,11 @@ def main():
          + emit(NAME[0], nx, ny, NAME[1], NAME[2], NAME[3], NAME[4], "name")
          + emit(REV[0],  vx, vy, REV[1],  REV[2],  REV[3],  REV[4],  "rev")
          + emit(LIC[0],  cx_, cy_, LIC[1], LIC[2], LIC[3], LIC[4], "lic")
+         + emit(URL[0], URL_AT[0], URL_AT[1], URL[1], URL[2], URL[3], URL[4], "url")
          + t[at:])
     open(C.PCB, "w").write(t)
     d = sum(1 if c == "(" else -1 if c == ")" else 0 for c in t)
-    print(f"\n  wrote 3 texts, paren balance {d}")
+    print(f"\n  wrote 4 texts, paren balance {d}")
     print(f"  now: .venv/bin/python tools/svg_to_silk.py "
           f"--size {LOGO_MM:g} --at {lgx:.2f},{lgy:.2f} --apply")
     return 0 if d == 0 else 1

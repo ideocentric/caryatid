@@ -35642,18 +35642,6 @@
 			)
 		)
 	)
-	(gr_text "caryatid"
-		(at 175 58.281 0)
-		(layer "F.SilkS")
-		(uuid "90f48cbe-e216-53fe-97fe-9af9f3f6a82e")
-		(effects
-			(font
-				(size 3.2 2.286)
-				(thickness 0.2)
-				(bold yes)
-			)
-		)
-	)
 	(gr_text "D30"
 		(locked yes)
 		(at 124.841 97.173 0)
@@ -35873,17 +35861,6 @@
 			)
 		)
 	)
-	(gr_text "CERN-OHL-S v2"
-		(at 177.23 62.3 0)
-		(layer "F.SilkS")
-		(uuid "ca82e96f-2be8-559c-8efb-a7489ae7736a")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
 	(gr_text "D11"
 		(locked yes)
 		(at 172 42.57 0)
@@ -35907,17 +35884,6 @@
 				(thickness 0.15)
 			)
 			(justify right)
-		)
-	)
-	(gr_text "v0.1"
-		(at 167.985 62.3 0)
-		(layer "F.SilkS")
-		(uuid "cfdb1a85-4832-55e8-ae5f-b3e4e6ebec78")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
 		)
 	)
 	(gr_text "A3"
@@ -49850,4 +49816,49 @@
 		)
 	)
 	(embedded_fonts no)
+	(gr_text "caryatid"
+		(at 175.0000 58.2810)
+		(layer "F.SilkS")
+		(uuid "90f48cbe-e216-53fe-97fe-9af9f3f6a82e")
+		(effects
+			(font
+				(size 3.2 2.286)
+				(thickness 0.2)
+				(bold yes)
+			)
+		)
+	)
+	(gr_text "v0.1"
+		(at 167.9850 62.3000)
+		(layer "F.SilkS")
+		(uuid "cfdb1a85-4832-55e8-ae5f-b3e4e6ebec78")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "CERN-OHL-S v2"
+		(at 177.2300 62.3000)
+		(layer "F.SilkS")
+		(uuid "ca82e96f-2be8-559c-8efb-a7489ae7736a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "github.com/ideocentric/caryatid"
+		(at 178.0000 116.0000)
+		(layer "F.SilkS")
+		(uuid "3f8f269c-c1ea-50b4-a8a8-c35eaf8e4017")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
 )
