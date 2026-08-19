@@ -136,12 +136,35 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    **BOM** 48 lines, 92 placed — 32 DNP excluded by design, the audio network
    being fitted per instrument.
 
-   **Cost** $5.24/board in components, plus roughly **$60 of one-off setup fees**
-   — 36 unique parts, 16 Basic and 20 Extended. The fee is per unique part, not
-   per BOM line. The 20 that stay Extended cannot move without a real
-   compromise: connectors are absent from the Basic library, R3/R4/R7/R8 are E96
-   values that set charge current and boost output voltage, and C1 is 25 V X7R,
-   which is a demanding part in 0805.
+   **Cost** — re-derived 2026-08-18 from live price ladders by
+   `tools/cost_estimate.py`, which selects the correct price band for the actual
+   order quantity and respects MOQ:
+
+   | | 5 boards | 10 boards |
+   | --- | --- | --- |
+   | parts (exact) | **$62.42** | **$119.90** |
+   | per board | $12.48 | $11.99 |
+   | estimated total | **~$169** | **~$249** |
+   | per board | **$33.77** | **$24.88** |
+
+   **$68 is fixed regardless of quantity** — an $8 setup fee plus 20 Extended
+   parts at ~$3 each. That is 40% of a 5-board order, which is why the second
+   five cost $15.99/board against $33.77 for the first five.
+
+   > **A superseded figure lived here: "$5.24/board in components."** Do not
+   > reinstate it. Beware `leastNumberPrice` in the JLC API — it reads $0.101 for
+   > the Seed socket and $0.7533 for BT1, against real ladder prices of $0.338
+   > and $4.86. It is not the price you pay.
+
+   The fee is per unique part, **not per BOM line**. The 20 that stay Extended
+   cannot move without a real compromise: connectors are absent from the Basic
+   library, R3/R4/R7/R8 are E96 values that set charge current and boost output
+   voltage, and C1 is 25 V X7R, which is a demanding part in 0805.
+
+   **Assembly splits in two.** `assemblyModeBatch` separates the SMT line from
+   hand soldering: **100 SMT joints and 111 through-hole joints per board**, the
+   through-hole being both Seed sockets, BT1 and all 17 JST/IDC connectors —
+   8 codes, 19 parts. Full turnkey is the chosen route, so JLC solders both.
 
    **Two parts are pre-order**, both confirmed acceptable:
 
@@ -157,6 +180,50 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    > BT1 and misses the sockets entirely. `verify_parts.py` therefore reads the
    > flag back out of `lcsc.yaml`, where it is written down from JLC's own parts
    > library.
+   >
+   > **Confirmed again 2026-08-18, the hard way.** BT1 reports stock 0 *and*
+   > `canPresaleNumber` 0 on the public endpoint, and is nonetheless orderable
+   > through the logged-in parts library at **$4.8616** — below the $5.0468 the
+   > public ladder quotes. The public API cannot see the pre-order route at all.
+   > That is twice an automated test has overruled the human record and lost.
+
+## Waiting on: the quote
+
+**Decided — 5 boards, full turnkey.** 10 was costed and rejected for now: it
+would mean changing the battery-holder pre-order quantity, and the holder is the
+only long-lead item. Everything else can be re-quoted at any quantity right up
+to order time, so nothing else has to be decided early.
+
+**Blocked on** the pre-ordered holders appearing in the JLC parts library. The
+quote cannot be raised until they do.
+
+| pre-order | code | qty for 5 | unit |
+| --- | --- | --- | --- |
+| BT1 holder | `C5339083` | 5 | $4.8616 |
+| A1, A2 sockets | `C2897383` | 10 | $0.338 |
+
+Stock for the other 35 codes was checked at qty 5 and clears; BT1 was the only
+short line, which is what the pre-order resolves.
+
+**When the quote lands, reconcile rather than eyeball it:**
+
+```sh
+.venv/bin/python tools/cost_estimate.py 5 --quote <total>
+```
+
+It prints what the real number implies for each line it had to guess, since
+parts is the one line that cannot be the source of the error. Correct `RATES`
+and `PCB_FAB` in the tool from the answer and every future quantity improves.
+
+**Two lines are worth checking specifically**, because they are where the
+estimate is most likely wrong:
+
+1. **PCB fab.** 150 × 90 mm is past JLC's 100 × 100 cheap tier, so it is
+   area-priced and the tool does not model their area formula. `PCB_FAB` is a
+   flat placeholder.
+2. **Whether the Extended fee is per unique part or per BOM line.** 20 unique
+   Extended parts at $3 is $60; counted per line it looks like about half that.
+   Getting this backwards understated a figure once already here.
 
 ## Known open, beyond that list
 
