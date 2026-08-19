@@ -48,17 +48,28 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    what did *not* constrain the radius are in
    [ADR 0008](decisions/0008-board-outline-and-layer-count.md); change it with
    `python3 tools/round_corners.py --radius N --apply`.
-2. **Component silkscreen.** **D1 and U1 are done** — D1's reference moved from
-   below the body to above it, `-2.5` to `+2.5`, the exact mirror; U1's went
-   `0` to `0.2875` on X. Both clear the 0.25 mm rule outright.
+2. ~~**Component silkscreen.**~~ **Done** — D1's reference moved from below the
+   body to above it, `-2.5` to `+2.5`, the exact mirror; U1's went `0` to
+   `0.2875` on X. Both clear the 0.25 mm rule outright.
 
-   Still open: **106 of 128 references are hidden** — residue of "hide the back
-   references" from when every SMD part was on the back face, which no longer
-   describes the board. U1, U3, U4, C7 and D1 are visible; U2, L1 and FB1 stay
-   hidden deliberately, because their labels collide with their own outlines and
-   get clipped by solder mask, which puts ink on bare copper. The rest is a
-   decision nobody has made rather than one that was made — worth taking as its
-   own sweep, not part by part.
+   The other 106 hidden references were residue of "hide the back references",
+   from when every SMD part was on the back face — a rule that no longer
+   describes the board. `tools/ref_silk.py` swept them: **71 are now shown**
+   (65 at 1.0 mm, 2 at 0.9, 4 at 0.8), taking the board from 25 visible
+   designators to 96.
+
+   **25 stay hidden because nothing fits** — C11–C14, C16, C17 and eighteen
+   resistors in the audio network, where 0603 parts sit on a 1.5 mm pitch and a
+   two-character label is wider than the gap. They are left hidden rather than
+   forced: a designator overlapping a pad prints ink on a solderable surface,
+   which is worse than no designator. Identify those parts from `cpl.csv` in
+   the fab package, or from the F.Fab layer in KiCad — every reference is still
+   on F.Fab whether or not it prints.
+
+   H1–H4 and FID1–3 are skipped by design — mounting holes identify no part,
+   and fiducials are machine-read. U2, L1 and FB1 stay hidden deliberately,
+   because their labels collide with their own outlines and get clipped by
+   solder mask.
 3. ~~**Human-readable silkscreen at the connectors.**~~ **Done** — all **77
    connector pins** are labelled, by `tools/pin_labels.py`. 61 at the full
    1 × 1 mm absonus size, 5 at 0.9, 4 at 0.85, 7 at 0.8; zero DRC issues.
