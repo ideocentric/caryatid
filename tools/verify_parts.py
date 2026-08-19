@@ -84,7 +84,18 @@ def preorder():
     needs pre-ordering. componentSource, warehouseCode and assemblyComponentFlag
     are uniform across every part here, and canPresaleNumber does not separate
     them either. JLC's own parts library is the authority; this reads the fact
-    back out of lcsc.yaml rather than trying to infer it."""
+    back out of lcsc.yaml rather than trying to infer it.
+
+    2026-08-18, and this is the second time: C5339083 reports stock 0 AND
+    canPresaleNumber 0 on this endpoint and is nonetheless orderable through the
+    logged-in parts library, at $4.8616 rather than the $5.0468 the public price
+    ladder gives. The public API cannot see the pre-order route at all. Do not
+    let any field here overrule a human record of what JLC will actually sell --
+    that inference has now been wrong both times it has been made.
+
+    assemblyModeBatch IS worth reading, unlike the rest: it separates manualWeld
+    (through-hole, hand-soldered, charged per joint) from the SMT line. On this
+    board 8 codes / 19 parts / 111 joints per board are manualWeld."""
     out = set()
     for line in open(MAP):
         if "PRE-ORDER" in line.upper():

@@ -19,7 +19,15 @@ by_ref:
   U4:   {lcsc: C116706,   note: "Microchip MCP6002-I/SN, SOIC-8. DNP."}
   D1:   {lcsc: C8678,     note: "MDD SS34, SMA. JLC Basic, no setup fee."}
   L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
-  BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. STOCK 0 -- PRE-ORDER, confirmed acceptable 2026-08-18."}
+  # PRE-ORDER FROM JLC. Confirmed orderable 2026-08-18 at $4.8616 -- above the
+  # $5.0468 ladder price the public cart API quotes, and orderable despite that
+  # API reporting stock 0 AND canPresaleNumber 0. THE LOGGED-IN PARTS LIBRARY IS
+  # THE AUTHORITY; the public endpoint does not see the pre-order route. This is
+  # the second time an automated stock test has contradicted the human record
+  # here and been wrong -- see the same warning in tools/verify_parts.py.
+  # Fallback if the pre-order ever falls through: Digi-Key 3029216, identical
+  # MPD part, 948 in stock at $3.47/1 -- cheaper, but you fit it yourself.
+  BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. PRE-ORDER at $4.8616, confirmed orderable 2026-08-18. Fallback: Digi-Key 3029216 @ $3.47."}
   A1:   {lcsc: C2897383,  note: "1x20 female socket, absonus-proven. PRE-ORDER, confirmed acceptable 2026-08-18."}
   A2:   {lcsc: C2897383,  note: "1x20 female socket, the second strip. Same part as A1. PRE-ORDER."}
 
