@@ -426,25 +426,48 @@ replaceable, and it needs mechanical protection from puncture, so it is the
 choice only when thickness actually binds. It does not here: a telephone is
 chunky, and absonus already lives with 18 mm.
 
-### The BUD CU-477, measured from its STEP model
+### The BUD CU-477
 
-BUD supplied `CU-477.STEP`. It lives at `local/reference/CU-477.STEP` in the
-**loa** repo, which is gitignored — so the numbers below are the record, not the
-file.
+**The box has now been measured in hand** (2026-08-18), which supersedes
+everything derived from the STEP. Facts and provenance live in
+[`discovery/findings/bud-cu477-interior.yaml`](../discovery/findings/bud-cu477-interior.yaml)
+— this section is derived from that record, not the other way round.
 
-| | mm | inch |
+| measured | mm |
+| --- | --- |
+| **Bottom plate interior** | **178 × 110** |
+| **Interior height** | **34.0** (33.0 cavity + 1.0 lid inset) |
+| Screw columns, inset | 5.0 |
+| Bottom plate thickness | 2.16 ±0.1 |
+| Lip top / body shoulder, from outer bottom | 6.0 / 4.0 |
+
+BUD also supplied `CU-477.STEP`, at `local/reference/CU-477.STEP` in the **loa**
+repo, which is gitignored — so these are the record, not the file:
+
+| STEP-derived | mm | inch |
 | --- | --- | --- |
 | Outer envelope | 119.5 × 187.7 × 38.1 | 4.70 × 7.39 × 1.50 |
 | Bottom panel, outer | 118.3 × 186.5 | 4.66 × 7.34 |
 | Interior clear, 6–25 mm above the floor | ~110 × 170 | approximate |
+| Interior height | 34.14 | — |
 
-The interior figure is read off a sparse point cloud and should be treated as
-indicative. The working rectangle stays **95.2 × 165.1 mm** (3.75″ × 6.5″), which
-is the deliberately conservative number allowing for the sloped sides.
+**The STEP came out well.** Its short axis matches the measurement exactly and
+its height lands 0.14 mm off, so the sparse point cloud was sound. The
+pessimistic part was never the model but the **95.2 × 165.1 mm** (3.75″ × 6.5″)
+working rectangle derived from it by taking 0.5″ off each axis for the sloped
+sides — that under-reads the real box by 12.9 mm on the long axis and 14.8 mm on
+the short. **It is retired.**
 
-**The 150 × 90 board clears all three.** Against the conservative rectangle it
-has +5.2 mm on the short axis and +15.1 mm on the long; against the STEP
-interior, +20 mm on both. The enclosure is not a constraint on this outline.
+**The 150 × 90 board clears comfortably**: 28 mm of long-axis slack, 20 mm of
+short. The enclosure is not a constraint on this outline.
+
+**But the slack is not split, and the lid is not the height constraint.** The
+board sits 5 mm from the left wall, hard against the screw columns, reserving
+all 28 mm at the right — the latching power button needs it, and the device is
+held in the left hand, so the board's mass belongs over the supporting hand.
+That switch descends **23 mm** into a 34 mm interior, leaving 11 mm against a
+26.91 mm stack, so nothing passes beneath it and it must land in the reserved
+strip. See [ADR 0008](decisions/0008-board-outline-and-layer-count.md).
 
 **The floor is blank.** The model carries 108 M3-sized holes, and every one of
 them is in a wall or a flange, at six distinct heights — none in the bottom. So

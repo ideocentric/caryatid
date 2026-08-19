@@ -1,0 +1,210 @@
+id: BUD-CU-477-interior
+kind: enclosure
+source_claim: >-
+  Working rectangle 95.2 x 165.1 mm (3.75" x 6.5"), a deliberately conservative
+  figure allowing for the sloped sides; STEP model read ~110 x 170 mm and was
+  marked indicative. Both were DERIVED -- one from catalogue nominal minus 0.5"
+  per axis, one from a sparse point cloud. Neither was measured.
+source_ref: >-
+  docs/sourcing.md "The BUD CU-477, measured from its STEP model";
+  docs/decisions/0008-board-outline-and-layer-count.md enclosure table
+resource: BUD Industries CU-477 aluminium instrument case, bottom plate
+status: confirmed
+
+measured:
+  bottom_plate_interior_mm: [178.0, 110.0]
+  screw_columns_mm: 5.0
+  interior_height_mm: 34.0        # 33.0 case cavity + 1.0 lid inset
+  case_cavity_depth_mm: 33.0
+  lid_inset_mm: 1.0
+  bottom_plate_thickness_mm: 2.16
+  top_plate_thickness_mm: null    # assumed similar, NOT measurable in hand
+  tolerance_mm: 0.1               # applies to the bottom-plate figures below
+  measured_by: Matt
+  instrument: not recorded
+
+# The bottom plate is not a flat panel. It carries a perimeter lip that locates
+# inside the enclosure body, with a shoulder part way up that the body sits on.
+bottom_plate_profile:
+  # All heights from the OUTER bottom face.
+  plate_thickness_mm: 2.16        # outer face to interior floor
+  shoulder_height_mm: 4.0         # the enclosure body seats here
+  lip_top_height_mm: 6.0          # lip stands 6 mm from the bottom
+  lip_above_shoulder_mm: 2.0      # 6 - 4, this is what holds the top in place
+  # Restated from the interior floor, which is what the board sees.
+  lip_above_interior_floor_mm: 3.84   # 6.00 - 2.16
+
+# Panel hardware that intrudes into the interior.
+intrusions:
+  power_switch:
+    part: 12 mm LED latching switch
+    descends_mm: 23.0
+    plus_clearance_for: wires and shrink-wrap sleeves, amount not quantified
+    clear_height_beneath_mm: 11.0   # 34.0 - 23.0, BEFORE the wire allowance
+
+# What this is measured against. The board does not change with this record.
+board_outline_mm: [150.0, 90.0]
+mounting_holes_mm:
+  pattern_about_centre: {x: [-70.0, 70.0], y: [-40.0, 40.0]}
+  inset_from_every_board_edge: 5.0
+
+# HOW THE BOARD SITS. It is NOT centred on the long axis.
+mounting:
+  long_axis: offset
+  gap_to_column_wall_mm: 5.0    # board edge flush to the screw-column face
+  gap_to_button_wall_mm: 23.0   # 178 - 150 - 5, reserved for the power button
+  short_axis: centred
+  gap_short_axis_per_side_mm: 10.0
+  datum_end: left, defined as the supporting hand when the device is held
+  rationale: >-
+    TWO reasons, and they point the same way.
+
+    (1) CLEARANCE. The latching power button is long and its body projects
+    inward from the right end panel, so the whole 28 mm of long-axis slack is
+    pushed to that end rather than split. That puts the board hard against the
+    5 mm screw columns on the left. 5 mm is therefore the COLUMN FACE, not an
+    arbitrary gap -- the board datums off the columns.
+
+    (2) BALANCE. The device is held in the LEFT hand, and the board is the
+    heaviest thing in the box. Sitting it over the supporting hand keeps the
+    centre of gravity there instead of cantilevering it out to the right, where
+    the same mass on a longer moment arm reads as a heavier instrument. This is
+    a felt-weight decision, not a structural one: nothing is at risk of tipping,
+    it simply fatigues the hand less.
+  convention_scope: >-
+    absonus and every other board in a BUD Industries case, not caryatid alone.
+
+derived:
+  # Mounting holes to the interior wall, with the board offset as above.
+  hole_to_column_wall_mm: 10.0          # 5 gap + 5 inset
+  hole_to_button_wall_mm: 28.0          # 23 gap + 5 inset
+  hole_to_long_wall_mm: 15.0            # 10 gap + 5 inset, both sides
+  # The pattern SPACING is unchanged at 140 x 80. Its POSITION is not centred:
+  # the pattern centre sits 9 mm toward the column end of the floor centre.
+  pattern_offset_from_floor_centre_mm: 9.0
+  # Clearance to the 5 mm columns.
+  column_clearance_long_axis_mm: 0.0    # flush by design -- this IS the datum
+  column_clearance_short_axis_mm: 5.0
+  # Height. Stack is 26.91 mm (ADR 0008).
+  headroom_mm: 7.09                     # 34.00 - 26.91
+  headroom_previously_stated_mm: 7.23   # against the derived 34.14
+  # Under the switch specifically, which is the binding case, not the average.
+  headroom_beneath_switch_mm: -15.91    # 11.00 - 26.91 -- NEGATIVE, see notes
+
+evidence:
+  - >-
+    2026-08-18: Matt measured the CU-477 bottom plate interior directly and
+    reported 178 x 110 mm with 5 mm inset screw columns. Supersedes both derived
+    figures. No evidence file -- this is a physical measurement of a part in
+    hand, reported in conversation, not a command whose output can be saved.
+  - >-
+    2026-08-18: board geometry read back from hardware/pcb/caryatid.kicad_pcb
+    via tools/check_board.py -- outline 150.0 x 90.0 mm, H1-H4 at +/-70 x +/-40
+    about the centre, 5.0 mm inset from every edge. Confirms the 140 x 80 drill
+    pattern already recorded in ADR 0008.
+  - >-
+    2026-08-18: Matt stated the mounting convention -- board 5 mm from the
+    column side, all remaining slack reserved at the opposite end because the
+    latching power button is long. Applies to absonus and other BUD-cased
+    boards, not caryatid alone. This SUPERSEDES the centred assumption in the
+    first derivation of this record, which was mine and was never stated by
+    anyone; the measurement itself is unchanged.
+  - >-
+    2026-08-18: Matt measured interior height 34.0 mm (33.0 case cavity + 1.0 mm
+    lid inset) and bottom plate thickness 2.45 mm. Top plate not measurable in
+    hand and assumed similar. Reported as believed consistent with the BUD STEP
+    allowing for die-cast tolerance. CONFIRMS the 34.14 mm height ADR 0008
+    derived, to within 0.14 mm; CONTRADICTS the 1.98 mm wall that derivation
+    used to get there. See notes.
+  - >-
+    2026-08-18: Matt stated the 12 mm LED latching switch descends 23 mm into
+    the interior and additionally needs clearance for its wires and shrink-wrap
+    sleeves, which is not quantified.
+  - >-
+    2026-08-18: Matt corrected the bottom plate thickness to 2.16 mm, +/-0.1,
+    superseding the 2.45 mm in the entry above, and gave the plate profile -- a
+    perimeter lip standing 6 mm from the bottom, with the shoulder the enclosure
+    body seats on at 4 mm, leaving 2 mm of lip locating the top. This brings the
+    measurement into agreement with the 1.98 mm STEP wall rather than into
+    conflict with it.
+  - >-
+    2026-08-18: Matt gave the second reason for the left-hand offset -- the
+    device is held in the left hand and the board's mass is placed over the
+    supporting hand, rather than cantilevered right where the same weight reads
+    as heavier. Fixes "left" to the grip, not to a viewpoint.
+
+last_verified: 2026-08-18
+
+notes: >-
+  THE MEASUREMENT IS MORE GENEROUS THAN BOTH DERIVED FIGURES. Against the
+  conservative working rectangle it is +12.9 mm on the long axis and +14.8 mm on
+  the short. Against the STEP the short axis agrees EXACTLY (110) and the long
+  axis is +8 mm, which says the point cloud was sound and the 0.5"-per-axis
+  derate was the pessimistic part.
+
+  THE 5 mm IS A DATUM, NOT A CLEARANCE. My first derivation of this record
+  assumed the board was centred and treated "5 mm columns" as an ambiguous shape
+  to be bounded pessimistically. It is neither. The board is pushed hard against
+  the column face on one end so that the entire 28 mm of long-axis slack lands
+  at the other, where the latching power button needs it. 5 mm is where the
+  columns are; the board edge sits on that line.
+
+  "LEFT" IS LOAD-BEARING HERE, WHICH IS NOT WHAT I FIRST ASSUMED. An earlier
+  revision of this record declined to write down which end was left, on the
+  grounds that left depends on how you are holding the box. That is true of a
+  box on a bench and false of this one: the device is held in the left hand, so
+  left is fixed by the grip, and the balance reason above only works in that one
+  orientation. Mirroring the layout would still clear the switch and would still
+  bolt down, and would put the mass on the wrong side of the hand.
+
+  Both anchors are worth keeping, because they fail independently. The 23 mm end
+  is the one carrying the latching power button -- true regardless of grip. The
+  5 mm end is the supporting hand -- true only for the intended grip. If a
+  left-handed variant is ever built, the second reverses and the first does not,
+  and whoever does it needs to know they are trading one against the other.
+
+  HEIGHT IS NOW MEASURED, AND THE STEP-DERIVED FIGURE HOLDS UP. ADR 0008 got
+  34.14 mm from 38.10 mm external less a 1.98 mm wall top and bottom. Measured
+  interior is 34.0 mm and measured bottom plate is 2.16 +/-0.1 mm. Both agree
+  with the derivation inside die-cast tolerance -- 0.14 mm on the height, 0.18 mm
+  on the wall -- which is the expected order of variation for a die casting and
+  is why Matt reports the box as conforming to BUD's STEP with allowance. The
+  wall figure is UPDATED to 2.16 mm measured; it is not overturned. Headroom
+  moves 7.23 -> 7.09 mm, which changes nothing.
+
+  (An earlier revision of this record recorded 2.45 mm and argued the
+  decomposition had failed. That thickness was wrong and so was the argument.)
+
+  THE SWITCH IS THE REAL HEIGHT CONSTRAINT, NOT THE LID. A 12 mm LED latching
+  switch descending 23 mm leaves 11.0 mm beneath it before any allowance for its
+  wires and shrink-wrap sleeves, against a 26.91 mm stack. The board cannot pass
+  under that switch -- not by a small margin, by roughly 16 mm. This is not a
+  clearance to be trimmed; it is a keep-out.
+
+  THIS IS ALMOST CERTAINLY WHY THE BOARD IS OFFSET, BUT THAT IS INFERENCE AND IS
+  FLAGGED AS SUCH. The mounting convention reserves 23 mm of floor at one end,
+  and the switch needs an area with no board under it. The two facts fit
+  together and were given in that order. What has NOT been stated, and what this
+  record does not assert, is that the switch's plan position actually falls
+  inside that reserved 23 mm strip. If it sits anywhere over the board's
+  footprint instead, the collision above is real. CONFIRM THE SWITCH'S PLAN
+  POSITION AGAINST THE RESERVED STRIP BEFORE THE ENCLOSURE IS DRILLED.
+
+  THE LIP DOES NOT FOUL THE BOARD, AND THE NEAR-MISS IS A COINCIDENCE WORTH
+  KNOWING. The lip rises 3.84 mm above the interior floor and the standoff is
+  4 mm as built, so the board underside passes the lip top by 0.16 mm. That
+  margin is never actually tested, because 150 x 90 sits 5-14 mm inside a
+  178 x 110 rectangle and so never overlaps the lip in plan. It is recorded only
+  so that nobody later shortens the standoff toward the 2 mm electrical minimum
+  and assumes the perimeter is clear -- at 2 mm the board would be 1.84 mm BELOW
+  the lip top, which is fine here but would not survive the board growing.
+
+  178 x 110 IS TAKEN TO BE THE RECTANGLE INSIDE THE LIP, since it was measured
+  as "inside the bottom plate". Above 3.84 mm the bounding surface is the
+  enclosure body rather than the lip, and a die casting has draft, so the clear
+  rectangle at board height may differ slightly. Not chased: the smallest margin
+  anywhere is 5 mm per side and draft over ~4 mm of height is far below that.
+
+  TOP PLATE THICKNESS IS ASSUMED, NOT MEASURED, and is the one input here with
+  no independent check. It does not affect the interior height, which was
+  measured directly rather than computed from it.

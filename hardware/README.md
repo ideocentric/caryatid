@@ -48,9 +48,19 @@ None of this was specified before and all of it is needed before layout.
 **Board outline: 150 × 90 mm.** absonus is 47.8 × 98.6; this is bigger because
 caryatid carries roughly four times the part count and an on-board cell.
 
-The BUD's internal is 107.9 × 177.8 mm, and the sides slope, so the usable
-rectangle is **95.2 × 165.1 mm**. 90 × 100 sits inside that with room on both
-axes, and there is a further 65 mm of length spare if layout ever needs it.
+The BUD's internal is **178 × 110 mm, measured** (2026-08-18) — against a
+catalogue internal of 107.9 × 177.8, which was near enough exact. The
+**95.2 × 165.1 mm** "usable rectangle", derived by taking 0.5″ off each axis for
+the sloped sides, under-read the real box by 12.9 and 14.8 mm and **is
+retired**. 150 × 90 sits inside the measured floor with 28 mm of length and
+20 mm of width to spare.
+
+That slack is **not** centred. The board mounts 5 mm from the left wall, hard
+against the 5 mm screw columns, reserving all 28 mm at the right — the latching
+power button is long and needs it, and the device is held in the left hand, so
+the board's mass belongs over the supporting hand rather than cantilevered out
+to the right. Facts and provenance:
+[`discovery/findings/bud-cu477-interior.yaml`](../discovery/findings/bud-cu477-interior.yaml).
 
 **The 100 mm rule is retired.** It claimed JLCPCB's cheapest tier is 100 × 100 and
 that crossing it costs money for nothing. The tier is real, but the cost of

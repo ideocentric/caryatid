@@ -95,9 +95,24 @@ changed or removed with one flag rather than re-typed as coordinates.
 
   | enclosure | usable floor | margin at 150 × 90 |
   | --- | --- | --- |
+  | **BUD CU-477, measured 2026-08-18** | **178 × 110** | **+28 long / +20 short** |
   | BUD CU-477, conservative | 95.2 × 165.1 | +5.2 short / +15.1 long |
   | BUD CU-477, STEP interior | ~110 × 170 | +20 / +20 |
   | telephone shell | 152.4 × 101.6 (6″ × 4″) | 5.8 mm per side / 1.2 mm per end |
+
+  **The measurement supersedes both derived BUD rows** and is more generous than
+  either. The short axis matches the STEP exactly, which says the point cloud was
+  sound and the 0.5″-per-axis derate was the pessimistic part. Provenance is in
+  [`discovery/findings/bud-cu477-interior.yaml`](../../discovery/findings/bud-cu477-interior.yaml);
+  this table is derived from that record, not the other way round.
+
+  **The 28 mm of long-axis slack is not split.** The board sits 5 mm from the
+  left wall, hard against the 5 mm screw columns, putting all 28 mm at the right
+  end. Two reasons agree: the latching power button is long and needs that
+  space, and the device is held in the **left hand**, so the board's mass sits
+  over the supporting hand rather than cantilevered right, where the same weight
+  reads as heavier. The drill pattern is therefore **not centred on the floor** —
+  10 mm from the left wall, 28 mm from the right, 15 mm from each long wall.
 
   The phone's 6 × 4 figure **already reserves ≥ 6.35 mm on every side**, so the
   true clearance there is ~12.1 mm per side and ~7.5 mm per end. The 1.2 mm is
@@ -108,12 +123,32 @@ changed or removed with one flag rather than re-typed as coordinates.
   | | interior height | headroom at 26.91 mm stack |
   | --- | --- | --- |
   | telephone shell | > 40 mm | > 13 mm |
-  | **BUD CU-477** | **34.14 mm** | **7.23 mm** |
+  | **BUD CU-477, measured 2026-08-18** | **34.0 mm** | **7.09 mm** |
+  | BUD CU-477, STEP-derived | 34.14 mm | 7.23 mm |
 
-  The BUD figure is **derived from the STEP, not measured**: 38.10 mm external
-  (1.500″) with a 1.98 mm wall given independently by the base and the cover,
-  reconciling exactly. A plane 1.60 mm proud of the floor would reduce headroom to
-  5.63 mm if the standoffs seat on it. Confirm with calipers.
+  **Measured, and the derivation held.** 34.0 mm is 33.0 mm of case cavity plus
+  a 1 mm inset in the lid. The STEP-derived 34.14 mm — 38.10 mm external less a
+  1.98 mm wall top and bottom — lands 0.14 mm away, and the measured bottom
+  plate is 2.16 ±0.1 mm against that 1.98 mm. Both sit inside die-cast
+  tolerance. Use 34.0 mm; the derivation is corroborated, not overturned.
+
+  A plane 1.60 mm proud of the floor would reduce headroom to 5.49 mm if the
+  standoffs seat on it.
+
+  **The switch, not the lid, is the binding height constraint.** The 12 mm LED
+  latching switch descends **23 mm**, leaving **11 mm** beneath it before any
+  allowance for its wires and shrink-wrap sleeves — against a 26.91 mm stack.
+  Nothing passes under it. It has to land in the reserved 28 mm strip where
+  there is no board. That the offset and the switch fit together this neatly is
+  **inference, not a stated fact**: confirm the switch's plan position before
+  the enclosure is drilled.
+
+  **The bottom plate is not a flat panel.** A perimeter lip stands 6 mm from the
+  outer bottom, with the shoulder the enclosure body seats on at 4 mm, leaving
+  2 mm of lip to locate the top. From the interior floor the lip rises 3.84 mm,
+  which the 4 mm standoff clears by 0.16 mm — untested, because 150 × 90 never
+  overlaps the lip in plan, but it constrains any future shortening of the
+  standoff toward the 2 mm electrical minimum.
 
 - **The standoff is 4 mm as built, not 2 mm.** 2 mm is the *electrical* minimum
   that follows from the front-side flip — the back face is bare, so the standoff

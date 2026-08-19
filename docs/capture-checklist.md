@@ -221,10 +221,25 @@ arrive rather than before the gerbers go out.
       the corner radius** — they sit 5 mm in from both edges and keep their full
       5 mm to the straight edge, so the ±40 / ±70 CU-477 drill pattern below
       still stands.
-- [ ] **Drill the CU-477 floor** to the **140 × 80 mm** pattern — X ±40, Z ±70
-      from the floor centre. The bottom ships blank; all 108 M3 holes in BUD's
-      STEP are in the walls and flanges. See [sourcing.md](sourcing.md). absonus's
-      1.6″ × 3.6″ pattern is deliberately **not** inherited.
+- [ ] **Drill the CU-477 floor** to the **140 × 80 mm** pattern — but **not
+      centred on the floor.** Set it out from the walls, not from the middle:
+      **10 mm from the left (screw-column) end**, **28 mm from the right
+      (power-button) end**, **15 mm from each long wall.** The board is
+      deliberately offset **left**, for two reasons that agree: the latching
+      power button is long and needs the right-hand space, and the device is
+      held in the **left hand**, so the board's mass sits over the supporting
+      hand instead of cantilevered right where the same weight reads as heavier.
+      See [the enclosure record](../discovery/findings/bud-cu477-interior.yaml).
+      Centring the pattern puts the board 9 mm into the button's space **and**
+      throws the balance right.
+      The bottom ships blank; all 108 M3 holes in BUD's STEP are in the walls
+      and flanges. See [sourcing.md](sourcing.md). absonus's 1.6″ × 3.6″ pattern
+      is deliberately **not** inherited.
+- [ ] **Confirm the power switch's plan position** before drilling anything. The
+      12 mm LED latching switch descends **23 mm** into a 34 mm interior, leaving
+      11 mm beneath it against a 26.91 mm stack. It must land in the reserved
+      28 mm strip with no board under it. This is inference from the mounting
+      convention, not a stated fact — **check it.**
 - [x] ~~On-board 18650 holder, and keep J2.~~ **J2 is removed.** The cell reaches
       the board only through BT1, so there is no "one or the other" to silkscreen
       and no way to present a reversed cell to the charger.
@@ -234,11 +249,13 @@ arrive rather than before the gerbers go out.
       for protected cells. Economic assembly, same tier as the charger.
 - [ ] **Bolt BT1 down**, don't rely on the two solder tabs. Ø3.2 mm holes at
       55.61 mm — put the mounting holes in the board outline.
-- [x] ~~Confirm the outline clears the BUD CU-477.~~ **150 × 90 fits every
-      reading of the enclosure**, including the most conservative: +5.2 mm on the
-      short axis and +15.1 mm on the long against the 95.2 × 165.1 working
-      rectangle, and +20 mm on both against the ~110 × 170 the STEP model reads.
-      See [sourcing.md](sourcing.md).
+- [x] ~~Confirm the outline clears the BUD CU-477.~~ **Measured in hand
+      2026-08-18: 178 × 110 mm floor, 34.0 mm interior height.** 150 × 90 has
+      28 mm of long-axis slack and 20 mm of short; headroom is 7.09 mm at the
+      26.91 mm stack. The 95.2 × 165.1 working rectangle is retired — it
+      under-read the real box by 12.9 and 14.8 mm. See
+      [the record](../discovery/findings/bud-cu477-interior.yaml) and
+      [sourcing.md](sourcing.md).
 - [x] ~~Record the telephone shell's measured internal floor.~~ **6″ × 4″ usable
       — 152.4 × 101.6 mm — and that figure already holds ≥ 0.25″ (6.35 mm)
       clearance on every side.** 150 × 90 lands inside it with 1.2 mm per end and
