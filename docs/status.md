@@ -99,38 +99,40 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
 
    `.venv` is required for this tool (`svgelements`), and is gitignored.
 
-5. **Manufacturing readiness** — *bare boards ready; assembly ready but for
-   one part.*
+5. **Manufacturing readiness** — **ready.**
 
    `python3 tools/fab_package.py --apply` writes `local/fab/` and exits nonzero
-   while anything is missing.
+   while anything is missing. It exits zero.
 
    | gate | |
    | --- | --- |
    | ERC | **0** |
-   | DRC, plain | **0** |
-   | DRC, all severities + `--schematic-parity` | **0 parity, 5 excluded** |
+   | DRC, plain | **0** violations, 0 unconnected, 0 footprint errors |
+   | DRC, all severities + `--schematic-parity` | **0 parity**, 5 excluded |
    | `check_board.py` | **10/10** over 131 footprints |
-   | `drc_exclusions.py` | **0 new, 5 accepted** |
+   | `drc_exclusions.py` | **0 new**, 5 accepted with reasons |
    | `verify_parts.py` | **0 of 37 flagged** against JLC's live data |
    | LCSC coverage | **92 of 92** |
 
-   Package is 14 files, 279 kB: 9 Gerber layers, drill, drill map, job file,
-   BOM and CPL. **Run DRC with `--schematic-parity`** — plain `kicad-cli pcb
-   drc` does not check it and once hid 7 issues.
+   **Package** — `local/fab/caryatid-fab.zip`, 14 files, 279 kB: 9 Gerber
+   layers, drill, drill map, job file, `bom.csv`, `cpl.csv`. Deliberately *not*
+   courtyard, fab, adhesive or Eco layers, which an unrestricted export emits.
 
-   **The one blocker is BT1.** `C5339083`, the MPD BH-18650-PC, is at **stock 0
-   and presale 0** — it cannot be assembled or pre-ordered. Either fit it by
-   hand (it is a through-hole holder, and the drawing already asks for it to be
-   bolted down) or move to the second source, MPD `BK-18650-PC2`, which
-   [sourcing.md](sourcing.md) records as pin-identical.
+   **Always run DRC with `--schematic-parity`.** Plain `kicad-cli pcb drc` does
+   not check it and once hid 7 issues.
 
-   **Cost is dominated by setup fees, not parts.** $5.17 of components per
-   board, but **36 Extended lines against 11 Basic** — roughly $108 in one-off
-   fees at the ~$3 each this repo cites. Every line moved to Basic is worth far
-   more than its unit price. Two obvious candidates: C2–C5 at $0.256 each
-   (`C440198`, already used for C1, is the same value at 50 V and **Basic**),
-   and C10–C18 100 nF, the most commonly stocked passive there is.
+   **Board** 150 × 90 mm, 2 layers, 131 footprints, 926 tracks, 192 vias.
+   **BOM** 48 lines, 92 placed — 32 DNP excluded by design, the audio network
+   being fitted per instrument.
+
+   **Cost** $5.24/board in components, plus roughly **$60 of one-off setup fees**
+   — 36 unique parts, 16 Basic and 20 Extended. The fee is per unique part, not
+   per BOM line. The 20 that stay Extended cannot move without a real
+   compromise: connectors are absent from the Basic library, R3/R4/R7/R8 are E96
+   values that set charge current and boost output voltage, and C1 is 25 V X7R,
+   which is a demanding part in 0805.
+
+   **One part is pre-order**: BT1 `C5339083` at stock 0. Confirmed acceptable.
 
 ## Known open, beyond that list
 
