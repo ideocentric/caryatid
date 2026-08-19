@@ -38,9 +38,13 @@ bottom_plate_profile:
 intrusions:
   power_switch:
     part: 12 mm LED latching switch
+    mounted_in: top panel, upper right
     descends_mm: 23.0
     plus_clearance_for: wires and shrink-wrap sleeves, amount not quantified
     clear_height_beneath_mm: 11.0   # 34.0 - 23.0, BEFORE the wire allowance
+    over_board: false               # CONFIRMED 2026-08-18 -- sits in the
+                                    # reserved 28 mm strip, no board beneath
+    strip_available_mm: 28.0        # board right edge to the right wall
 
 # What this is measured against. The board does not change with this record.
 board_outline_mm: [150.0, 90.0]
@@ -132,6 +136,11 @@ evidence:
     device is held in the left hand and the board's mass is placed over the
     supporting hand, rather than cantilevered right where the same weight reads
     as heavier. Fixes "left" to the grip, not to a viewpoint.
+  - >-
+    2026-08-18: Matt confirmed the switch's plan position -- upper right of the
+    top panel, inside the reserved 28 mm strip, with no board beneath it.
+    Resolves the open question raised by the entry above; the offset and the
+    switch keep-out are the same decision, as inferred.
 
 last_verified: 2026-08-18
 
@@ -181,14 +190,20 @@ notes: >-
   under that switch -- not by a small margin, by roughly 16 mm. This is not a
   clearance to be trimmed; it is a keep-out.
 
-  THIS IS ALMOST CERTAINLY WHY THE BOARD IS OFFSET, BUT THAT IS INFERENCE AND IS
-  FLAGGED AS SUCH. The mounting convention reserves 23 mm of floor at one end,
-  and the switch needs an area with no board under it. The two facts fit
-  together and were given in that order. What has NOT been stated, and what this
-  record does not assert, is that the switch's plan position actually falls
-  inside that reserved 23 mm strip. If it sits anywhere over the board's
-  footprint instead, the collision above is real. CONFIRM THE SWITCH'S PLAN
-  POSITION AGAINST THE RESERVED STRIP BEFORE THE ENCLOSURE IS DRILLED.
+  CONFIRMED 2026-08-18: THE SWITCH SITS IN THE RESERVED STRIP. It is mounted in
+  the upper right of the top panel, over the 28 mm of floor the board offset
+  leaves clear, so there is no board beneath it and the 16 mm figure above is
+  never met. An earlier revision of this record flagged the fit between the
+  offset and the switch as inference and asked for it to be checked before
+  drilling; it has been, and it holds.
+
+  THE 28 mm STRIP IS THE SWITCH'S BUDGET, AND IT IS NOT LARGE. A 12 mm switch
+  needs more than 12 mm of plan room once the shrink-wrapped wires on its
+  terminals are counted, and that envelope has to fit between the board edge and
+  the right wall while also clearing the 5 mm corner column that "upper right"
+  puts it near. Nobody has measured the envelope. It is very likely fine -- 28 mm
+  against a 12 mm body -- but it is the dimension to check if the switch position
+  is ever nudged toward the corner or the board ever grows to the right.
 
   THE LIP DOES NOT FOUL THE BOARD, AND THE NEAR-MISS IS A COINCIDENCE WORTH
   KNOWING. The lip rises 3.84 mm above the interior floor and the standoff is

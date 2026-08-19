@@ -138,10 +138,13 @@ changed or removed with one flag rather than re-typed as coordinates.
   **The switch, not the lid, is the binding height constraint.** The 12 mm LED
   latching switch descends **23 mm**, leaving **11 mm** beneath it before any
   allowance for its wires and shrink-wrap sleeves — against a 26.91 mm stack.
-  Nothing passes under it. It has to land in the reserved 28 mm strip where
-  there is no board. That the offset and the switch fit together this neatly is
-  **inference, not a stated fact**: confirm the switch's plan position before
-  the enclosure is drilled.
+  Nothing passes under it.
+
+  **Confirmed 2026-08-18: it sits in the upper right of the top panel, inside
+  the reserved 28 mm strip, with no board beneath it.** So the long-axis offset
+  and the switch keep-out are not two constraints that happen to agree — they
+  are one decision. Anything that moves the board right, or grows it, breaks
+  both at once.
 
   **The bottom plate is not a flat panel.** A perimeter lip stands 6 mm from the
   outer bottom, with the shoulder the enclosure body seats on at 4 mm, leaving

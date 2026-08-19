@@ -235,11 +235,14 @@ arrive rather than before the gerbers go out.
       The bottom ships blank; all 108 M3 holes in BUD's STEP are in the walls
       and flanges. See [sourcing.md](sourcing.md). absonus's 1.6″ × 3.6″ pattern
       is deliberately **not** inherited.
-- [ ] **Confirm the power switch's plan position** before drilling anything. The
-      12 mm LED latching switch descends **23 mm** into a 34 mm interior, leaving
-      11 mm beneath it against a 26.91 mm stack. It must land in the reserved
-      28 mm strip with no board under it. This is inference from the mounting
-      convention, not a stated fact — **check it.**
+- [x] ~~Confirm the power switch's plan position.~~ **Confirmed 2026-08-18 —
+      upper right of the top panel, inside the reserved 28 mm strip, no board
+      beneath it.** The 12 mm LED latching switch descends **23 mm** into a
+      34 mm interior, leaving 11 mm against a 26.91 mm stack, so the keep-out is
+      not optional. The board offset and the switch clearance are the same
+      decision. If the switch is ever nudged toward the corner, re-check its
+      wire-and-sleeve envelope against the 28 mm strip and the 5 mm corner
+      column — that envelope has never been measured.
 - [x] ~~On-board 18650 holder, and keep J2.~~ **J2 is removed.** The cell reaches
       the board only through BT1, so there is no "one or the other" to silkscreen
       and no way to present a reversed cell to the charger.
