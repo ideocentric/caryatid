@@ -21,7 +21,7 @@ by_ref:
   L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
   BT1:  {lcsc: C5339083,  note: "MPD BH-18650-PC. STOCK 0 -- PRE-ORDER, confirmed acceptable 2026-08-18."}
   A1:   {lcsc: C2897383,  note: "1x20 female socket, absonus-proven. PRE-ORDER, confirmed acceptable 2026-08-18."}
-  A2:   {lcsc: C2897383,  note: "1x20 female socket, the second strip. Same part as A1."}
+  A2:   {lcsc: C2897383,  note: "1x20 female socket, the second strip. Same part as A1. PRE-ORDER."}
 
 by_footprint:
   IDC-Header_2x05_P2.54mm_Vertical:

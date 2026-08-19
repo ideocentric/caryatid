@@ -78,6 +78,21 @@ def fetch(code):
     return json.loads(r.stdout).get("data") or {}
 
 
+def preorder():
+    """Which parts must be pre-ordered. NOT derivable from the API -- stock 0
+    catches C5339083 and misses C2897383, which shows 1403 in stock and still
+    needs pre-ordering. componentSource, warehouseCode and assemblyComponentFlag
+    are uniform across every part here, and canPresaleNumber does not separate
+    them either. JLC's own parts library is the authority; this reads the fact
+    back out of lcsc.yaml rather than trying to infer it."""
+    out = set()
+    for line in open(MAP):
+        if "PRE-ORDER" in line.upper():
+            m = re.search(r"lcsc:\s*(C\d+)", line)
+            if m: out.add(m.group(1))
+    return out
+
+
 def codes():
     """Keys and codes may sit on one line or two -- by_value_footprint entries
     wrap. Reading only single-line entries found 8 of 29."""
@@ -98,7 +113,9 @@ def codes():
 
 def main():
     want = codes()
-    print(f"  {len(want)} distinct LCSC codes in lcsc.yaml\n")
+    pre = preorder()
+    print(f"  {len(want)} distinct LCSC codes in lcsc.yaml"
+          + (f", {len(pre)} flagged PRE-ORDER" if pre else "") + "\n")
     results, bad = {}, []
     for i, (code, keys) in enumerate(sorted(want.items())):
         try:
@@ -130,10 +147,13 @@ def main():
             elif v < need["vmin"]: probs.append(f"voltage {v:g}V < {need['vmin']}V required")
         flag = "  <-- " + "; ".join(probs) if probs else ""
         if probs: bad.append((code, keys, desc, probs))
-        print(f"  {code:<11} {lib or '?':<9} stock {stock:>7}  {desc[:64]}{flag}")
+        tag = "  PRE-ORDER" if code in pre else ""
+        print(f"  {code:<11} {lib or '?':<9} stock {stock:>7}{tag}  {desc[:56]}{flag}")
         print(f"              {', '.join(k[:44] for k in keys)}")
         time.sleep(0.35)
     print(f"\n  {len(bad)} of {len(results)} flagged")
+    if pre:
+        print(f"  pre-order ({len(pre)}): " + ", ".join(sorted(pre)))
     print("\n  constraints no catalogue field can express:")
     for k, v in REMINDER.items():
         print(f"    {k:<5} {v}")

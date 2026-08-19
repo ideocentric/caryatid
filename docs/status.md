@@ -132,7 +132,20 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    values that set charge current and boost output voltage, and C1 is 25 V X7R,
    which is a demanding part in 0805.
 
-   **One part is pre-order**: BT1 `C5339083` at stock 0. Confirmed acceptable.
+   **Two parts are pre-order**, both confirmed acceptable:
+
+   | | | |
+   | --- | --- | --- |
+   | BT1 | `C5339083` | stock **0** |
+   | A1, A2 | `C2897383` | stock 1403 — **pre-order regardless of stock** |
+
+   > **Pre-order status is a recorded fact, not a derived one.** The JLC API
+   > cannot tell you: `componentSource`, `warehouseCode` and
+   > `assemblyComponentFlag` are uniform across all 36 parts here, and
+   > `canPresaleNumber` does not separate them either. A stock-0 test catches
+   > BT1 and misses the sockets entirely. `verify_parts.py` therefore reads the
+   > flag back out of `lcsc.yaml`, where it is written down from JLC's own parts
+   > library.
 
 ## Known open, beyond that list
 
