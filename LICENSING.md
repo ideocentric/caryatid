@@ -12,6 +12,30 @@ Both are strongly reciprocal, which was the stated direction of travel:
 CERN-OHL-S is written for hardware and defines *Complete Source* as the editable
 design files, so shipping Gerbers alone does not discharge the obligation.
 
+## Why the files are laid out like this
+
+**`LICENSE`** in the root is the verbatim, unmodified CERN-OHL-S v2 text and
+nothing else. That is not housekeeping: GitHub detects a licence by matching a
+root file's *content* against a reference text at high similarity, so any
+preamble, table or explanation wrapped around it defeats the match. This
+document used to *be* `LICENSE.md` and carried the table above — which is why
+GitHub reported the repository as `NOASSERTION`, no licence at all, for the
+first day it was public.
+
+**This file** carries everything a human needs and a matcher must not see.
+
+**`LICENSES/`** holds the full text of both licences, so the GPL text ships with
+the repository instead of being referenced into the void.
+
+**Per-file `SPDX-License-Identifier` headers** are authoritative for anything
+that is not hardware. All 22 tools in `tools/` declare `GPL-3.0-or-later`. A
+root `LICENSE` naming one licence does **not** relicense them: where a file
+states its own licence, that statement governs.
+
+The root file is the *hardware* licence because the hardware is the point of
+this repository — the tools exist to produce it. GitHub will show a single
+licence and it should be that one.
+
 ## What "Complete Source" means here
 
 The editable design files, not fabrication output:

@@ -9,7 +9,7 @@ down it; do not skip ahead to the fun part.
       **Held, and the licence is settled** — CERN-OHL-S v2 for the hardware,
       GPL-3.0-or-later for the tools, 2026-08-18.
       [ADR 0006](decisions/0006-licensing-is-open.md),
-      [LICENSE.md](../LICENSE.md). Nothing derives from an Adafruit schematic;
+      [LICENSING.md](../LICENSING.md). Nothing derives from an Adafruit schematic;
       every input was audited before the licence was chosen. The rule that
       produced this outcome still applies to any future capture work: once a
       schematic derives from someone else's source file it cannot be un-derived.

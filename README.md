@@ -76,8 +76,8 @@ cost.
 Populated on every build:
 
 - Barrel jack → SS34 → **bq24074** charger with power path, ISET 890 Ω (1 A)
-- **On-board 18650 holder (BT1)**, the only path to `VBAT` — a soldered holder cannot be wired backwards. Protected cell or protection PCB **required**
-  other, never both. Protected cell or protection PCB **required**
+- **On-board 18650 holder (BT1)**, the only path to `VBAT` — a soldered holder
+  cannot be wired backwards. Protected cell or protection PCB **required**
 - **TPS61023** boost → **5.0 V** → ferrite + 100 µF → Seed VIN
 - Illuminated latching power switch (3–9 V lamp, so `R_LED` is a 0 Ω link)
 - `/CHG` + `/PGOOD` panel LEDs — the indication that works with the Seed off
@@ -107,7 +107,7 @@ an LED, which would have left SPI1 as two pins with nothing to clock them. See
 | **Hardware** — schematics, PCB, footprints, artwork | **CERN-OHL-S v2** |
 | **Tools** — everything in `tools/` | **GPL-3.0-or-later** |
 
-Terms and what counts as *Complete Source* are in [LICENSE.md](LICENSE.md); how
+Terms and what counts as *Complete Source* are in [LICENSING.md](LICENSING.md); how
 it was reached, and the audit of every design input, are in
 [ADR 0006](docs/decisions/0006-licensing-is-open.md).
 
@@ -125,7 +125,7 @@ the datasheets. That is what kept the reciprocal option available.
 Each instrument takes it as a submodule:
 
 ```sh
-git submodule add <url> hardware/platform
+git submodule add https://github.com/ideocentric/caryatid.git hardware/platform
 ```
 
-No remote exists yet.
+loa consumes it this way at `hardware/platform`.

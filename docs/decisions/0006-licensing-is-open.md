@@ -136,7 +136,7 @@ adding one is a board change, so it must happen *before* a fab run, not after.
 **Hardware: CERN-OHL-S v2. Tools: GPL-3.0-or-later.** Both strongly reciprocal,
 which is the direction this ADR recorded from the start. Texts are in
 `LICENSES/`; the split and what counts as Complete Source are in
-[LICENSE.md](../../LICENSE.md).
+[LICENSING.md](../../LICENSING.md).
 
 This closes the two items the amendment above left open:
 
