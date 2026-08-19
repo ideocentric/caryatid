@@ -1,0 +1,1578 @@
+{
+ "fetched": "2026-08-19",
+ "source": "cart.jlcpcb.com getComponentDetail (public, unauthenticated)",
+ "note": "Public endpoint cannot see pre-order availability or pre-order pricing. BT1 C5339083 shows stock 0 / canPresaleNumber 0 here and is orderable at $4.8616 via the logged-in parts library. leastNumberPrice is NOT the transacted price.",
+ "parts": {
+  "C2897383": {
+   "model": "PM254-1-20-Z-8.5",
+   "lib": "expand",
+   "stock": 1233,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 2,
+   "refs": [
+    "A1",
+    "A2"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.338
+    },
+    {
+     "from": 50,
+     "to": 119,
+     "unit": 0.2712
+    },
+    {
+     "from": 120,
+     "to": 479,
+     "unit": 0.2339
+    },
+    {
+     "from": 480,
+     "to": 2519,
+     "unit": 0.1981
+    },
+    {
+     "from": 2520,
+     "to": 5039,
+     "unit": 0.1821
+    },
+    {
+     "from": 5040,
+     "to": -1,
+     "unit": 0.1725
+    }
+   ]
+  },
+  "C5339083": {
+   "model": "BH-18650-PC",
+   "lib": "expand",
+   "stock": 0,
+   "moq": 1,
+   "assemblyMode": "manualWeld",
+   "per_board": 1,
+   "refs": [
+    "BT1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 9,
+     "unit": 5.0468
+    },
+    {
+     "from": 10,
+     "to": 29,
+     "unit": 5.0468
+    },
+    {
+     "from": 30,
+     "to": 199,
+     "unit": 5.0468
+    },
+    {
+     "from": 200,
+     "to": 499,
+     "unit": 2.0145
+    },
+    {
+     "from": 500,
+     "to": 999,
+     "unit": 1.9466
+    },
+    {
+     "from": 1000,
+     "to": -1,
+     "unit": 1.9142
+    }
+   ]
+  },
+  "C3039694": {
+   "model": "CL21B106KAYQNNE",
+   "lib": "expand",
+   "stock": 373721,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "C1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.2782
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.2555
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.2439
+    },
+    {
+     "from": 500,
+     "to": 1999,
+     "unit": 0.2343
+    },
+    {
+     "from": 2000,
+     "to": 3999,
+     "unit": 0.2293
+    },
+    {
+     "from": 4000,
+     "to": -1,
+     "unit": 0.2271
+    }
+   ]
+  },
+  "C440198": {
+   "model": "GRM21BR61H106KE43L",
+   "lib": "base",
+   "stock": 2046374,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 4,
+   "refs": [
+    "C2-C5"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.2483
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.2141
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.1975
+    },
+    {
+     "from": 500,
+     "to": 2999,
+     "unit": 0.1826
+    },
+    {
+     "from": 3000,
+     "to": 5999,
+     "unit": 0.1746
+    },
+    {
+     "from": 6000,
+     "to": -1,
+     "unit": 0.1721
+    }
+   ]
+  },
+  "C45783": {
+   "model": "CL21A226MAQNNNE",
+   "lib": "base",
+   "stock": 4374931,
+   "moq": 2,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "C6"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 199,
+     "unit": 0.3766
+    },
+    {
+     "from": 200,
+     "to": 599,
+     "unit": 0.3157
+    },
+    {
+     "from": 600,
+     "to": 1999,
+     "unit": 0.2861
+    },
+    {
+     "from": 2000,
+     "to": 9999,
+     "unit": 0.2596
+    },
+    {
+     "from": 10000,
+     "to": 19999,
+     "unit": 0.2523
+    },
+    {
+     "from": 20000,
+     "to": -1,
+     "unit": 0.2479
+    }
+   ]
+  },
+  "C2887276": {
+   "model": "RVT100UF16V67RV0016",
+   "lib": "expand",
+   "stock": 401006,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "C7"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 199,
+     "unit": 0.031
+    },
+    {
+     "from": 200,
+     "to": 999,
+     "unit": 0.0246
+    },
+    {
+     "from": 1000,
+     "to": 1999,
+     "unit": 0.0193
+    },
+    {
+     "from": 2000,
+     "to": 9999,
+     "unit": 0.017
+    },
+    {
+     "from": 10000,
+     "to": 19999,
+     "unit": 0.0162
+    },
+    {
+     "from": 20000,
+     "to": -1,
+     "unit": 0.0157
+    }
+   ]
+  },
+  "C57112": {
+   "model": "0603B103K500NT",
+   "lib": "base",
+   "stock": 10875874,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 2,
+   "refs": [
+    "C8",
+    "C9"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 499,
+     "unit": 0.0114
+    },
+    {
+     "from": 500,
+     "to": 1499,
+     "unit": 0.0091
+    },
+    {
+     "from": 1500,
+     "to": 3999,
+     "unit": 0.0081
+    },
+    {
+     "from": 4000,
+     "to": 23999,
+     "unit": 0.0072
+    },
+    {
+     "from": 24000,
+     "to": 47999,
+     "unit": 0.0069
+    },
+    {
+     "from": 48000,
+     "to": -1,
+     "unit": 0.0067
+    }
+   ]
+  },
+  "C14663": {
+   "model": "CC0603KRX7R9BB104",
+   "lib": "base",
+   "stock": 69234395,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 9,
+   "refs": [
+    "C10-C18"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 499,
+     "unit": 0.0174
+    },
+    {
+     "from": 500,
+     "to": 1499,
+     "unit": 0.014
+    },
+    {
+     "from": 1500,
+     "to": 3999,
+     "unit": 0.0125
+    },
+    {
+     "from": 4000,
+     "to": 23999,
+     "unit": 0.0111
+    },
+    {
+     "from": 24000,
+     "to": 47999,
+     "unit": 0.0106
+    },
+    {
+     "from": 48000,
+     "to": -1,
+     "unit": 0.0103
+    }
+   ]
+  },
+  "C21120": {
+   "model": "CL10B224KA8NNNC",
+   "lib": "base",
+   "stock": 1208544,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 2,
+   "refs": [
+    "C19",
+    "C20"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 499,
+     "unit": 0.0167
+    },
+    {
+     "from": 500,
+     "to": 1499,
+     "unit": 0.0137
+    },
+    {
+     "from": 1500,
+     "to": 3999,
+     "unit": 0.0124
+    },
+    {
+     "from": 4000,
+     "to": 23999,
+     "unit": 0.0103
+    },
+    {
+     "from": 24000,
+     "to": 47999,
+     "unit": 0.0099
+    },
+    {
+     "from": 48000,
+     "to": -1,
+     "unit": 0.0096
+    }
+   ]
+  },
+  "C15849": {
+   "model": "CL10A105KB8NNNC",
+   "lib": "base",
+   "stock": 10921485,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "C21"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 499,
+     "unit": 0.0272
+    },
+    {
+     "from": 500,
+     "to": 1499,
+     "unit": 0.0214
+    },
+    {
+     "from": 1500,
+     "to": 3999,
+     "unit": 0.0187
+    },
+    {
+     "from": 4000,
+     "to": 23999,
+     "unit": 0.0167
+    },
+    {
+     "from": 24000,
+     "to": 47999,
+     "unit": 0.016
+    },
+    {
+     "from": 48000,
+     "to": -1,
+     "unit": 0.0154
+    }
+   ]
+  },
+  "C8678": {
+   "model": "SS34",
+   "lib": "base",
+   "stock": 3076484,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "D1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 199,
+     "unit": 0.035
+    },
+    {
+     "from": 200,
+     "to": 599,
+     "unit": 0.0282
+    },
+    {
+     "from": 600,
+     "to": 4999,
+     "unit": 0.0251
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.017
+    },
+    {
+     "from": 10000,
+     "to": 19999,
+     "unit": 0.0161
+    },
+    {
+     "from": 20000,
+     "to": -1,
+     "unit": 0.0155
+    }
+   ]
+  },
+  "C3716677": {
+   "model": "BLM21SP601SN1D",
+   "lib": "expand",
+   "stock": 3958,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "FB1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.2627
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.2235
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.2068
+    },
+    {
+     "from": 500,
+     "to": 2499,
+     "unit": 0.1858
+    },
+    {
+     "from": 2500,
+     "to": 3999,
+     "unit": 0.1765
+    },
+    {
+     "from": 4000,
+     "to": -1,
+     "unit": 0.1709
+    }
+   ]
+  },
+  "C158012": {
+   "model": "B2B-XH-A(LF)(SN)",
+   "lib": "expand",
+   "stock": 97249,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 6,
+   "refs": [
+    "J1",
+    "J10",
+    "J14",
+    "J6",
+    "J7",
+    "J8"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 199,
+     "unit": 0.0403
+    },
+    {
+     "from": 200,
+     "to": 999,
+     "unit": 0.0318
+    },
+    {
+     "from": 1000,
+     "to": 1999,
+     "unit": 0.0279
+    },
+    {
+     "from": 2000,
+     "to": 9999,
+     "unit": 0.0251
+    },
+    {
+     "from": 10000,
+     "to": 19999,
+     "unit": 0.024
+    },
+    {
+     "from": 20000,
+     "to": -1,
+     "unit": 0.0232
+    }
+   ]
+  },
+  "C144395": {
+   "model": "B4B-XH-A(LF)(SN)",
+   "lib": "expand",
+   "stock": 31476,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 3,
+   "refs": [
+    "J12",
+    "J3",
+    "J4"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.0803
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.0659
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.0586
+    },
+    {
+     "from": 500,
+     "to": 2499,
+     "unit": 0.0525
+    },
+    {
+     "from": 2500,
+     "to": 4999,
+     "unit": 0.0504
+    },
+    {
+     "from": 5000,
+     "to": -1,
+     "unit": 0.0489
+    }
+   ]
+  },
+  "C4749194": {
+   "model": "DS254P-2X5-L0",
+   "lib": "expand",
+   "stock": 1314,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 2,
+   "refs": [
+    "J11",
+    "J5"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.1064
+    },
+    {
+     "from": 50,
+     "to": 259,
+     "unit": 0.0842
+    },
+    {
+     "from": 260,
+     "to": 519,
+     "unit": 0.0714
+    },
+    {
+     "from": 520,
+     "to": 2599,
+     "unit": 0.063
+    },
+    {
+     "from": 2600,
+     "to": 4939,
+     "unit": 0.0564
+    },
+    {
+     "from": 4940,
+     "to": -1,
+     "unit": 0.053
+    }
+   ]
+  },
+  "C144394": {
+   "model": "B3B-XH-A(LF)(SN)",
+   "lib": "expand",
+   "stock": 144224,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 3,
+   "refs": [
+    "J17",
+    "J18",
+    "J9"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 99,
+     "unit": 0.0541
+    },
+    {
+     "from": 100,
+     "to": 299,
+     "unit": 0.0444
+    },
+    {
+     "from": 300,
+     "to": 999,
+     "unit": 0.0395
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.035
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0337
+    },
+    {
+     "from": 10000,
+     "to": -1,
+     "unit": 0.0327
+    }
+   ]
+  },
+  "C160404": {
+   "model": "SM04B-SRSS-TB(LF)(SN)",
+   "lib": "expand",
+   "stock": 84758,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "J13A?"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.4256
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.3447
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.3042
+    },
+    {
+     "from": 500,
+     "to": 2999,
+     "unit": 0.2686
+    },
+    {
+     "from": 3000,
+     "to": 5999,
+     "unit": 0.2525
+    },
+    {
+     "from": 6000,
+     "to": -1,
+     "unit": 0.246
+    }
+   ]
+  },
+  "C144397": {
+   "model": "B6B-XH-A(LF)(SN)",
+   "lib": "expand",
+   "stock": 21184,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 2,
+   "refs": [
+    "J13B?",
+    "J15"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.0908
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.0742
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.0657
+    },
+    {
+     "from": 500,
+     "to": 2499,
+     "unit": 0.0594
+    },
+    {
+     "from": 2500,
+     "to": 4999,
+     "unit": 0.0544
+    },
+    {
+     "from": 5000,
+     "to": -1,
+     "unit": 0.052
+    }
+   ]
+  },
+  "C2829882": {
+   "model": "PH-00179",
+   "lib": "expand",
+   "stock": 257,
+   "moq": 2,
+   "assemblyMode": "manualWeld",
+   "per_board": 1,
+   "refs": [
+    "J16"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 99,
+     "unit": 0.0433
+    },
+    {
+     "from": 100,
+     "to": 299,
+     "unit": 0.034
+    },
+    {
+     "from": 300,
+     "to": 1999,
+     "unit": 0.0295
+    },
+    {
+     "from": 2000,
+     "to": 3999,
+     "unit": 0.0256
+    },
+    {
+     "from": 4000,
+     "to": 9999,
+     "unit": 0.0229
+    },
+    {
+     "from": 10000,
+     "to": -1,
+     "unit": 0.0216
+    }
+   ]
+  },
+  "C354578": {
+   "model": "CKCS4018-1uH/N",
+   "lib": "expand",
+   "stock": 708,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "L1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 99,
+     "unit": 0.0411
+    },
+    {
+     "from": 100,
+     "to": 299,
+     "unit": 0.0326
+    },
+    {
+     "from": 300,
+     "to": 2999,
+     "unit": 0.0282
+    },
+    {
+     "from": 3000,
+     "to": 5999,
+     "unit": 0.025
+    },
+    {
+     "from": 6000,
+     "to": 8999,
+     "unit": 0.0224
+    },
+    {
+     "from": 9000,
+     "to": -1,
+     "unit": 0.0211
+    }
+   ]
+  },
+  "C25804": {
+   "model": "0603WAF1002T5E",
+   "lib": "base",
+   "stock": 6791855,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 7,
+   "refs": [
+    "R1",
+    "R34-R39"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0084
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0075
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.007
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0067
+    },
+    {
+     "from": 50000,
+     "to": 99999,
+     "unit": 0.0066
+    },
+    {
+     "from": 100000,
+     "to": -1,
+     "unit": 0.0065
+    }
+   ]
+  },
+  "C22765": {
+   "model": "0603WAF1201T5E",
+   "lib": "base",
+   "stock": 2078854,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R2"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0074
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0065
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.006
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0052
+    },
+    {
+     "from": 50000,
+     "to": 99999,
+     "unit": 0.0049
+    },
+    {
+     "from": 100000,
+     "to": -1,
+     "unit": 0.0048
+    }
+   ]
+  },
+  "C93619": {
+   "model": "0603WAF8870T5E",
+   "lib": "expand",
+   "stock": 76310,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R3"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0026
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0021
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0018
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0016
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0014
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0014
+    }
+   ]
+  },
+  "C23059": {
+   "model": "0603WAF4642T5E",
+   "lib": "expand",
+   "stock": 21281,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R4"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.003
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0023
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.002
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0019
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0017
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0017
+    }
+   ]
+  },
+  "C21189": {
+   "model": "0603WAF0000T5E",
+   "lib": "base",
+   "stock": 24349056,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R5"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0039
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0034
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0031
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0028
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0027
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0027
+    }
+   ]
+  },
+  "C25803": {
+   "model": "0603WAF1003T5E",
+   "lib": "base",
+   "stock": 21658807,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 3,
+   "refs": [
+    "R11",
+    "R12",
+    "R6"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0041
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0032
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0028
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0023
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0021
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0021
+    }
+   ]
+  },
+  "C23006": {
+   "model": "0603WAF3483T5E",
+   "lib": "expand",
+   "stock": 21494,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R7"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0055
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0046
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0042
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.004
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0037
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0037
+    }
+   ]
+  },
+  "C23061": {
+   "model": "0603WAF4752T5E",
+   "lib": "expand",
+   "stock": 64210,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R8"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0036
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0031
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0029
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0028
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0026
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0026
+    }
+   ]
+  },
+  "C21190": {
+   "model": "0603WAF1001T5E",
+   "lib": "base",
+   "stock": 31546486,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 14,
+   "refs": [
+    "R10",
+    "R13",
+    "R18-R26",
+    "R47",
+    "R49",
+    "R9"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0057
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0052
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0049
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0045
+    },
+    {
+     "from": 50000,
+     "to": 50199,
+     "unit": 0.0044
+    },
+    {
+     "from": 50200,
+     "to": -1,
+     "unit": 0.0044
+    }
+   ]
+  },
+  "C374544": {
+   "model": "AR03BTDX1002A010",
+   "lib": "expand",
+   "stock": 852,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 4,
+   "refs": [
+    "R14-R17"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 99,
+     "unit": 0.0462
+    },
+    {
+     "from": 100,
+     "to": 299,
+     "unit": 0.0369
+    },
+    {
+     "from": 300,
+     "to": 999,
+     "unit": 0.0322
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0287
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0259
+    },
+    {
+     "from": 10000,
+     "to": -1,
+     "unit": 0.0245
+    }
+   ]
+  },
+  "C22775": {
+   "model": "0603WAF1000T5E",
+   "lib": "base",
+   "stock": 7055586,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 7,
+   "refs": [
+    "R27-R33"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0134
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0124
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.012
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0113
+    },
+    {
+     "from": 50000,
+     "to": 99999,
+     "unit": 0.0111
+    },
+    {
+     "from": 100000,
+     "to": -1,
+     "unit": 0.0111
+    }
+   ]
+  },
+  "C23193": {
+   "model": "0603WAF5100T5E",
+   "lib": "base",
+   "stock": 3824727,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "R40"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0067
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0058
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0052
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0048
+    },
+    {
+     "from": 50000,
+     "to": 99999,
+     "unit": 0.0046
+    },
+    {
+     "from": 100000,
+     "to": -1,
+     "unit": 0.0044
+    }
+   ]
+  },
+  "C23025": {
+   "model": "0603WAF3000T5E",
+   "lib": "base",
+   "stock": 831302,
+   "moq": 20,
+   "assemblyMode": "smtWeld",
+   "per_board": 2,
+   "refs": [
+    "R41",
+    "R42"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 999,
+     "unit": 0.0104
+    },
+    {
+     "from": 1000,
+     "to": 4999,
+     "unit": 0.0094
+    },
+    {
+     "from": 5000,
+     "to": 9999,
+     "unit": 0.0089
+    },
+    {
+     "from": 10000,
+     "to": 49999,
+     "unit": 0.0083
+    },
+    {
+     "from": 50000,
+     "to": 99999,
+     "unit": 0.008
+    },
+    {
+     "from": 100000,
+     "to": -1,
+     "unit": 0.0079
+    }
+   ]
+  },
+  "C54313": {
+   "model": "BQ24074RGTR",
+   "lib": "expand",
+   "stock": 1754,
+   "moq": 1,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "U1"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 9,
+     "unit": 2.0566
+    },
+    {
+     "from": 10,
+     "to": 29,
+     "unit": 1.7621
+    },
+    {
+     "from": 30,
+     "to": 99,
+     "unit": 1.5776
+    },
+    {
+     "from": 100,
+     "to": 499,
+     "unit": 1.3883
+    },
+    {
+     "from": 500,
+     "to": 999,
+     "unit": 1.1634
+    },
+    {
+     "from": 1000,
+     "to": -1,
+     "unit": 1.1262
+    }
+   ]
+  },
+  "C919459": {
+   "model": "TPS61023DRLR",
+   "lib": "expand",
+   "stock": 9256,
+   "moq": 5,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "U2"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.2646
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.2144
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.1898
+    },
+    {
+     "from": 500,
+     "to": 2499,
+     "unit": 0.1679
+    },
+    {
+     "from": 2500,
+     "to": 3999,
+     "unit": 0.1497
+    },
+    {
+     "from": 4000,
+     "to": -1,
+     "unit": 0.1462
+    }
+   ]
+  },
+  "C5605": {
+   "model": "74HC14D,653",
+   "lib": "base",
+   "stock": 275079,
+   "moq": 1,
+   "assemblyMode": "smtWeld",
+   "per_board": 1,
+   "refs": [
+    "U3"
+   ],
+   "prices": [
+    {
+     "from": 1,
+     "to": 49,
+     "unit": 0.1193
+    },
+    {
+     "from": 50,
+     "to": 149,
+     "unit": 0.0947
+    },
+    {
+     "from": 150,
+     "to": 499,
+     "unit": 0.0822
+    },
+    {
+     "from": 500,
+     "to": 2499,
+     "unit": 0.0717
+    },
+    {
+     "from": 2500,
+     "to": 4999,
+     "unit": 0.0682
+    },
+    {
+     "from": 5000,
+     "to": -1,
+     "unit": 0.0657
+    }
+   ]
+  }
+ }
+}

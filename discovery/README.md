@@ -35,3 +35,4 @@ unverified, and should say so.
 | record | covers |
 | --- | --- |
 | [`bud-cu477-interior.yaml`](findings/bud-cu477-interior.yaml) | BUD CU-477 floor, height, plate profile, board mounting datum and the power switch intrusion |
+| [`jlc-bom-sourcing.yaml`](findings/jlc-bom-sourcing.yaml) | The 36 LCSC codes: cost, library split, assembly mode, pre-orders, and the build-quantity decision |

@@ -1,0 +1,94 @@
+id: JLC-BOM-sourcing
+kind: sourcing
+source_claim: >-
+  docs/status.md stated "$5.24/board in components" with no record behind it.
+  That figure is close to what the API's leastNumberPrice field gives and is not
+  what the parts cost.
+source_ref: docs/status.md, "Manufacturing readiness" section, before 2026-08-19
+resource: >-
+  The 36 distinct LCSC codes in local/fab/bom.csv, covering all 92 placed parts
+  per board (32 DNP excluded by design).
+status: confirmed
+
+measured:
+  distinct_codes: 36
+  parts_per_board: 92
+  library_split: {basic: 16, extended: 20}
+  joints_per_board: {smt: 100, through_hole: 111}
+  manualweld_codes: 8      # both Seed sockets, BT1, all 17 JST/IDC connectors
+  lcsc_coverage: "92 of 92"
+
+# Exact, from live price ladders with the correct band per order quantity and
+# MOQ respected. BT1 uses its pre-order price, not the public ladder.
+parts_cost_usd:
+  qty_5:  {total: 62.42, per_board: 12.48}
+  qty_10: {total: 119.90, per_board: 11.99}
+
+pre_order:
+  C5339083: {ref: BT1, per_board: 1, unit: 4.8616, note: "orderable despite API stock 0 / presale 0"}
+  C2897383: {refs: [A1, A2], per_board: 2, unit: 0.338, stock: 1353}
+
+# NOT measured. Published rates applied to the measured counts above; the PCB
+# fab line is a flat placeholder and 150 x 90 mm is area-priced past the
+# 100 x 100 tier. tools/cost_estimate.py isolates these in RATES / PCB_FAB.
+estimated_total_usd:
+  qty_5:  {total: 168.87, per_board: 33.77}
+  qty_10: {total: 248.81, per_board: 24.88}
+  fixed_regardless_of_quantity: 68.00    # $8 setup + 20 Extended x $3
+
+decision:
+  build_quantity: 5
+  assembly: full turnkey
+  rationale: >-
+    10 was costed and rejected for now. It would require changing the battery
+    holder pre-order quantity, and the holder is the only long-lead item --
+    everything else can be re-quoted at any quantity up to order time. The
+    second five would cost $15.99/board against $33.77 for the first five,
+    because $68 is fixed, so the option stays cheap if taken later.
+
+evidence:
+  - >-
+    2026-08-18: all 36 codes fetched from JLC's cart API; stock checked against
+    qty 5 -- 35 of 36 clear, BT1 the only short line, which the pre-order
+    resolves. Price ladders read per code and the correct band selected per
+    order quantity.
+  - >-
+    2026-08-18: Matt confirmed BT1 C5339083 orderable via pre-order at $4.8616.
+    The public endpoint reports stock 0 AND canPresaleNumber 0 for it and is
+    blind to the pre-order route. Second time an automated stock test has
+    contradicted the human record and been wrong.
+  - >-
+    2026-08-19: full snapshot of all 36 codes saved --
+    discovery/evidence/2026-08-19-jlc-parts-snapshot.json -- model, library
+    type, stock, MOQ, assemblyModeBatch and the complete price ladder for each.
+  - >-
+    2026-08-19: joint counts re-derived from hardware/pcb/caryatid.kicad_pcb by
+    tools/cost_estimate.py -- 100 SMT and 111 through-hole per board, split by
+    assemblyModeBatch rather than assumed from footprint names.
+
+last_verified: 2026-08-19
+
+notes: >-
+  THE API HAS TWO FIELDS THAT LOOK AUTHORITATIVE AND ARE NOT. leastNumberPrice
+  reads $0.101 for the Seed socket and $0.7533 for BT1, against real ladder
+  prices of $0.338 and $4.8616 -- it is not the transacted price, and the
+  retired "$5.24/board" figure is roughly what you get by trusting it.
+  assemblyComponentFlag is False on every part here including a Basic 0603
+  resistor with 6.8M in stock, so it carries no information at all.
+
+  assemblyModeBatch IS reliable and is the one field worth reading: it separates
+  the SMT line from hand soldering. That distinction drives more than half the
+  joints on this board and was invisible until it was checked.
+
+  THE COST FIGURES ARE HALF EXACT AND HALF ESTIMATE, and the split matters more
+  than the totals. Parts is exact and reproducible. Everything else is published
+  rates applied to measured counts, with the PCB fab line the least trustworthy
+  -- 150 x 90 mm is past JLC's 100 x 100 tier so it is area-priced, and nothing
+  here models that formula. Do not quote the totals as though they were
+  measured; run tools/cost_estimate.py --quote against the real number instead.
+
+  WHAT IS STILL PENDING: the quote itself, blocked on the pre-ordered holders
+  appearing in the JLC parts library. Two lines are most likely to be wrong --
+  the PCB fab estimate, and whether the Extended loading fee is charged per
+  unique part or per BOM line. That second one has been got backwards here
+  before, and it moves the total by about $30.
