@@ -75,7 +75,7 @@ by_value_footprint:
   "10u|C_0805_2012Metric":
     {lcsc: C440198, note: "10uF 50V X5R 0805, Basic. Was C326595, 10uF 16V X7R Extended at $0.256."}
   "10u/25V|C_0805_2012Metric":
-    {lcsc: C440198, note: "Murata GRM21BR61H106KE43L 10uF 50V X5R 0805. BASIC. Replaced C91186, which was 1uF."}
+    {lcsc: C3039694, note: "Samsung CL21B106KAYQNNE 10uF 25V X7R 0805. X7R as specified for C1; Extended, accepted 2026-08-18. Replaced C91186 (1uF) then C440198 (X5R)."}
   "22u|C_0805_2012Metric":
     {lcsc: C45783, note: "Samsung CL21A226MAQNNNE 22uF 25V X5R 0805. BASIC. Replaced C107128, which was 2.2uF."}
   "100u|CP_Elec_6.3x5.4":

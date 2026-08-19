@@ -569,14 +569,21 @@ library on 2026-08-18, none of them a downgrade:
 
 | refs | was | now | change |
 | --- | --- | --- | --- |
-| C2–C5 | `C326595` 10 µF 16 V X7R, $0.256 | **`C440198`** 10 µF **50 V** X5R | far more headroom under DC bias |
+| C2–C5 | `C326595` 10 µF 16 V X7R, $0.256 | **`C440198`** 10 µF **50 V** X5R, Basic | far more headroom under DC bias |
 | C10–C18 | `C108079` 100 nF 16 V X7R | **`C14663`** 100 nF **50 V** X7R | same dielectric, higher rating |
 | C8, C9 | `C519406` 10 nF 16 V X7R | **`C57112`** 10 nF **50 V** X7R | same dielectric, higher rating |
 | C19, C20 | `C106249` 220 nF 16 V X7R | **`C21120`** 220 nF **25 V** X7R | same dielectric, higher rating |
 | C21 | `C106248` 1 µF 16 V X7R | **`C15849`** 1 µF **50 V** X5R | **dielectric changed — see below** |
 | R1, R34–R39 | `C15401` 10 kΩ **±5%** | **`C25804`** 10 kΩ **±1%** | tolerance improved *and* Basic |
 
-> **C21 is the only one that gives anything up.** There is no Basic 1 µF 0603 in
+> **C1 stays X7R, deliberately Extended.** It is the one 0805 bulk capacitor
+> not moved to Basic. The Basic option is `C440198`, X5R at 50 V — better under
+> DC bias but a dielectric change, and C1 sits on the raw barrel input where the
+> temperature range matters more than elsewhere. `C3039694`, Samsung
+> CL21B106KAYQNNE, is 10 µF **25 V X7R** in 0805, which is demanding for X7R at
+> that size and is why it is Extended at $0.208. Accepted 2026-08-18.
+>
+> > **C21 is the only one that gives anything up.** There is no Basic 1 µF 0603 in
 > X7R; the Basic part is X5R. C21 is the Schmitt debounce capacitor on `SW3_F`,
 > a 3.3 V node. X5R and X7R hold the same ±15% over their range — they differ in
 > upper limit, 85 °C against 125 °C, which this instrument never approaches. At
@@ -653,7 +660,7 @@ decoupling, for temperature stability across an instrument that goes outdoors.
 
 | ref | value | net | working V | rating |
 | --- | --- | --- | --- | --- |
-| C1 | 10 µF | `VIN_DC` | up to 9 V | **25 V**, documented |
+| C1 | 10 µF | `VIN_DC` | up to 9 V | **25 V X7R** — `C3039694` |
 | C2 | 10 µF | `VBAT` | ≤ 4.2 V | 16 V |
 | C3, C4, C5 | 10 µF | `VOUT` | ≤ ~4.5 V | 16 V |
 | **C6** | **22 µF** | **`+5V_RAW`** | **5.0 V** | **≥ 16 V — see below** |
