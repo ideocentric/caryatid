@@ -5,10 +5,14 @@ down it; do not skip ahead to the fun part.
 
 ## Before opening KiCad
 
-- [ ] **Confirm the licence answer is still "draw from the datasheets."**
-      [ADR 0006](decisions/0006-licensing-is-open.md). Once a schematic derives
-      from someone else's source file it cannot be un-derived. Nobody opens an
-      Adafruit schematic during this work.
+- [x] ~~Confirm the licence answer is still "draw from the datasheets."~~
+      **Held, and the licence is settled** — CERN-OHL-S v2 for the hardware,
+      GPL-3.0-or-later for the tools, 2026-08-18.
+      [ADR 0006](decisions/0006-licensing-is-open.md),
+      [LICENSE.md](../LICENSE.md). Nothing derives from an Adafruit schematic;
+      every input was audited before the licence was chosen. The rule that
+      produced this outcome still applies to any future capture work: once a
+      schematic derives from someone else's source file it cannot be un-derived.
 - [ ] **Measure the handset capsule** — DC resistance across it decides whether
       the input network gets a preamp or a pad. [audio.md](audio.md). **It also
       sets the largest unresolved term in the 5 V budget**: R52/R54 bias at

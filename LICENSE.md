@@ -36,8 +36,11 @@ rather than derived from anyone's schematic.
 
 ## On the board
 
-`CERN-OHL-S v2` is printed on the front silkscreen beside the mark. It is **not
-accompanied by a URL**, because the repository is private as of this writing —
-a notice pointing at something that does not resolve is worse than none. **If
-this design is published, add the source URL to the silkscreen**, which is a
-board change and therefore has to happen before a fabrication run, not after.
+Both `CERN-OHL-S v2` and `github.com/ideocentric/caryatid` are printed on the
+front silkscreen beside the mark.
+
+The URL was added once the repository was made public (2026-08-18). Until then
+the notice deliberately carried no URL, on the grounds that a pointer to
+something which does not resolve is worse than none — and adding one is a board
+change, so it had to happen before a fabrication run rather than after. It did:
+no boards have been fabricated, and the URL is in the current design.

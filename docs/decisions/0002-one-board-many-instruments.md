@@ -43,3 +43,9 @@ Not inside loa, and not in a monorepo with the instruments.
 
 - The instruments keep their own licences. This board's licence is not settled
   by loa's ADR 0006 and must not be assumed from it.
+
+  **Settled since, and independently: 2026-08-18** — CERN-OHL-S v2 for the
+  hardware, GPL-3.0-or-later for the tools, by *this* repository's
+  [ADR 0006](0006-licensing-is-open.md). The independence noted above is exactly
+  why it needed its own decision, and it still holds in both directions: an
+  instrument consuming this board as a submodule inherits nothing automatically.

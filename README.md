@@ -100,12 +100,25 @@ an LED, which would have left SPI1 as two pins with nothing to clock them. See
 
 ## Licence
 
-**None yet — default copyright, all rights reserved.** This is deliberate and
-temporary; see [ADR 0006](docs/decisions/0006-licensing-is-open.md). It turns on
-whether the schematic derives from Adafruit's reference designs (CC BY-SA, and
-irreversible) or is drawn independently from the TI datasheets (every licence
-stays open). **Answer that before schematic capture begins**, because the answer
-stops being available once it does.
+**Settled 2026-08-18.** Both halves are strongly reciprocal:
+
+| What | Licence |
+| --- | --- |
+| **Hardware** — schematics, PCB, footprints, artwork | **CERN-OHL-S v2** |
+| **Tools** — everything in `tools/` | **GPL-3.0-or-later** |
+
+Terms and what counts as *Complete Source* are in [LICENSE.md](LICENSE.md); how
+it was reached, and the audit of every design input, are in
+[ADR 0006](docs/decisions/0006-licensing-is-open.md).
+
+CERN-OHL-S defines Complete Source as the **editable design files**, so shipping
+Gerbers alone does not discharge the obligation. `CERN-OHL-S v2` and
+`github.com/ideocentric/caryatid` are both printed on the front silkscreen.
+
+The question this turned on — whether the schematic derived from Adafruit's
+reference designs (CC BY-SA, and irreversible) or was drawn independently from
+the TI datasheets — was answered **2026-08-08, before capture began**: drawn from
+the datasheets. That is what kept the reciprocal option available.
 
 ## Consuming this board
 
