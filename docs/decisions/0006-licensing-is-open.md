@@ -154,7 +154,10 @@ This closes the two items the amendment above left open:
   existed only as 153 flattened polygons would not have met it.
 - **The board carries a notice.** `CERN-OHL-S v2` is on the front silkscreen
   beside the mark, at 1 mm.
-- **No source URL on the board**, because the repository is private. A notice
-  pointing at something that does not resolve is worse than none. **Publishing
-  means adding the URL, and that is a board change** — before a fab run, not
-  after.
+- ~~No source URL on the board, because the repository is private.~~
+  **Done 2026-08-18.** The repository is **public** at
+  <https://github.com/ideocentric/caryatid>, and the board carries
+  `github.com/ideocentric/caryatid` on the front silkscreen at (178, 116). The
+  bare domain form, because `https://` inks 30.63 mm and does not fit anywhere
+  useful; the URL was verified to resolve by anonymous clone before this was
+  written.
