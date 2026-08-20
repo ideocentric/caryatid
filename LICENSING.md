@@ -7,10 +7,30 @@ how it was reached and for the audit of every input.
 | --- | --- | --- |
 | **The hardware** — schematics, PCB, footprints, artwork | **CERN-OHL-S v2** | [LICENSES/CERN-OHL-S-2.0.txt](LICENSES/CERN-OHL-S-2.0.txt) |
 | **The tools** — everything in `tools/` | **GPL-3.0-or-later** | [LICENSES/GPL-3.0-or-later.txt](LICENSES/GPL-3.0-or-later.txt) |
+| **The board support** — everything in `firmware/` | **MIT** | [LICENSES/MIT.txt](LICENSES/MIT.txt) |
 
-Both are strongly reciprocal, which was the stated direction of travel:
+The first two are strongly reciprocal, which was the stated direction of travel:
 CERN-OHL-S is written for hardware and defines *Complete Source* as the editable
 design files, so shipping Gerbers alone does not discharge the obligation.
+
+## Why `firmware/` is permissive and the rest is not
+
+`firmware/` is a board-support layer that instrument firmware **links**. Under
+GPL that is viral: every instrument built on caryatid would be forced to
+copyleft, which is a decision belonging to each instrument and not to the
+carrier board underneath it. loa's firmware happens to be GPL already; absonus
+and baby borg should not have that settled for them by a header file.
+
+MIT also matches what it sits on — libDaisy and DaisySP are both MIT.
+
+This is not a weakening of the hardware terms. The board stays CERN-OHL-S, and
+a permissive stub layer does not let anyone ship a derivative board without its
+design files.
+
+**Generated output may take a different licence from its generator.**
+`tools/gen_firmware.py` is GPL and emits `firmware/include/caryatid_pins.h`
+under MIT. That is deliberate and ordinary: the header is not a derivative work
+of the script that printed it.
 
 ## Why the files are laid out like this
 

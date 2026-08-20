@@ -30,6 +30,8 @@ violations, no copper under the width rule, no floating ground. See
 | **Power sheet, every connection** | [docs/power-sheet.md](docs/power-sheet.md) |
 | **Seed sheet, every connection** | [docs/seed-sheet.md](docs/seed-sheet.md) |
 | **Panel I/O sheet, every connection** | [docs/panel-io-sheet.md](docs/panel-io-sheet.md) |
+| **How to build an instrument on this board** | [docs/integration.md](docs/integration.md) |
+| Board-support firmware (MIT) | [firmware/](firmware/) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Datasheets, links and document numbers | [docs/datasheets.md](docs/datasheets.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
@@ -100,12 +102,14 @@ an LED, which would have left SPI1 as two pins with nothing to clock them. See
 
 ## Licence
 
-**Settled 2026-08-18.** Both halves are strongly reciprocal:
+**Settled 2026-08-18.** The hardware and the tools are strongly reciprocal; the
+board-support layer deliberately is not:
 
 | What | Licence |
 | --- | --- |
 | **Hardware** — schematics, PCB, footprints, artwork | **CERN-OHL-S v2** |
 | **Tools** — everything in `tools/` | **GPL-3.0-or-later** |
+| **Board support** — everything in `firmware/` | **MIT** |
 
 Terms and what counts as *Complete Source* are in [LICENSING.md](LICENSING.md); how
 it was reached, and the audit of every design input, are in
@@ -120,6 +124,11 @@ reference designs (CC BY-SA, and irreversible) or was drawn independently from
 the TI datasheets — was answered **2026-08-08, before capture began**: drawn from
 the datasheets. That is what kept the reciprocal option available.
 
+**`firmware/` is MIT on purpose.** A copyleft board-support layer is viral into
+anything that links it, which would settle every instrument's firmware licence
+from underneath — a decision belonging to each instrument, not to the carrier
+board. libDaisy and DaisySP are MIT already.
+
 ## Consuming this board
 
 Each instrument takes it as a submodule:
@@ -128,4 +137,15 @@ Each instrument takes it as a submodule:
 git submodule add https://github.com/ideocentric/caryatid.git hardware/platform
 ```
 
-loa consumes it this way at `hardware/platform`.
+loa consumes it this way at `hardware/platform`. Then add the board support to
+your build:
+
+```make
+C_INCLUDES  += -Ihardware/platform/firmware/include
+CPP_SOURCES += hardware/platform/firmware/src/caryatid.cpp
+```
+
+**Read [docs/integration.md](docs/integration.md) first** — it covers what the
+board provides, what the instrument must provide, the electrical and mechanical
+requirements, and the four things about this board that are not guessable from
+a pin number.

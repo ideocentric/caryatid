@@ -66,7 +66,7 @@ to the right. Facts and provenance:
 that crossing it costs money for nothing. The tier is real, but the cost of
 crossing it was never checked and turns out to be small — so the rule was
 protecting against a number nobody had measured. See
-[ADR 0008](docs/decisions/0008-board-outline-and-layer-count.md).
+[ADR 0008](../docs/decisions/0008-board-outline-and-layer-count.md).
 
 **Two layers.** Density says four would be easier, but width is cheaper than
 layers and the enclosure has the room. At 90 × 100 the component area is about
