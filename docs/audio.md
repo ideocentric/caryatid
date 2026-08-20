@@ -132,10 +132,25 @@ directly:
 
 **A dynamic capsule wants 60 dB, and one stage cannot give it** without
 collapsing the bandwidth below the voiceband. The resolution costs nothing: the
-WM8731's line input has its own PGA with gain as well as attenuation — roughly
-+12 dB at the top — so **×250 in the op-amp plus the codec's own gain covers the
-dynamic case**. Confirm the exact PGA range from the codec datasheet before
-relying on it.
+WM8731's line input has its own PGA with gain as well as attenuation, so
+**×250 in the op-amp plus the codec's own gain covers the dynamic case**.
+
+**Confirmed 2026-08-21** against WM8731 `PD Rev 4.0` (Feb 2005), Table 3 —
+`LINVOL[4:0]` at R0 (00h) and `RINVOL[4:0]` at R1 (02h):
+
+> `11111` = **+12dB** . . 1.5dB steps down to `00000` = −34.5dB. Default
+> `10111` = 0dB.
+
+So the arithmetic holds: ×250 is 47.96 dB, plus 12 dB is **60 dB**, and at ×250
+the MCP6002's 1 MHz gain-bandwidth product puts −3 dB at **4 kHz** — above the
+3.4 kHz voiceband edge. The dynamic case is covered with margin to spare.
+
+**There is a much larger reserve that caryatid probably cannot reach.** The same
+datasheet gives the codec's *microphone* path 14 dB nominal and **34 dB** with
+`MICBOOST` set — far more than the line PGA. But the Seed's audio inputs are
+documented as line level, so `MICIN` is very likely not brought out. **Do not
+plan around 34 dB** until the Seed schematic is read; it is recorded in
+[datasheets.md](datasheets.md) so the question is not re-derived from scratch.
 
 Carbon and electret are the likely outcomes anyway; a dynamic capsule in a
 handset is the rarest of the three.

@@ -73,11 +73,38 @@ from its documentation, so the documentation is load-bearing.
 | — pinout drawing | Daisy_Seed_pinout-25 | — | `Daisy_Seed_pinout-25.pdf` |
 | — pinout table, 40 pins | Seed_pinout.csv | — | `Seed_pinout.csv` |
 | ST **STM32H750IBK6** | `DS12556` | **Rev 8**, Jan 2026 | `stm32h750ib.pdf` |
+| Wolfson/Cirrus **WM8731** codec | `WM8731/WM8731L` | **PD Rev 4.0**, Feb 2005 | `WM8731_PD_rev4.0.pdf` |
 
 - Daisy Seed — <https://docs.daisy.audio/hardware/Seed/> links all four; the files
   themselves are under
   `https://daisy.nyc3.cdn.digitaloceanspaces.com/products/seed/`
 - STM32H750 — <https://www.st.com/resource/en/datasheet/stm32h750ib.pdf>
+- WM8731 — Cirrus no longer hosts it prominently; a copy is at
+  <https://cdn.sparkfun.com/datasheets/Dev/Arduino/Shields/WolfsonWM8731.pdf>
+
+**The codec was missing from this file until 2026-08-21**, which was a real gap:
+every audio-input decision in [audio.md](audio.md) depends on its input gain,
+and there was nothing here to check it against.
+
+### WM8731 input gain — confirmed 2026-08-21
+
+Read from Table 3 and the Electrical Characteristics, PD Rev 4.0:
+
+| Path | Register | Range |
+| --- | --- | --- |
+| **Line input PGA** | `LINVOL[4:0]` R0 (00h), `RINVOL[4:0]` R1 (02h) | `11111` = **+12 dB**, 1.5 dB steps, `00000` = −34.5 dB. Default `10111` = 0 dB |
+| Mic path, nominal | `MICBOOST = 0` | **14 dB** |
+| Mic path, boosted | `MICBOOST = 1`, R4 (08h) bit 0 | **34 dB** |
+
+The **+12 dB line figure is what [audio.md](audio.md) relies on** for the
+dynamic-capsule case, and it holds: ×250 in the MCP6002 is 47.96 dB, plus 12 dB
+is 60 dB, and at ×250 the MCP6002's 1 MHz GBW puts −3 dB at 4 kHz — above the
+3.4 kHz voiceband edge.
+
+**The mic path is a much larger reserve — 34 dB — but caryatid cannot reach it**
+unless the Seed brings `MICIN` out, and the Seed's audio pins are documented as
+line level. Treat 34 dB as unavailable until the Seed schematic says otherwise;
+it is recorded here so the question is not re-derived.
 
 **The Daisy documents are MIT licensed.** The datasheet carries the MIT text in
 its colophon, covering "the Software and associated documentation files". Unlike
