@@ -121,7 +121,9 @@ def main():
         if ref in syms and '(path "' in blk:
             want = syms[ref][0]
             cur = re.search(r'\(path "([^"]*)"\)', blk)
-            if cur and cur.group(1) == want:
+            cs = re.search(r'\(sheetname "([^"]*)"\)', blk)
+            want_sn = f"/{syms[ref][1]}/" if syms[ref][1] else "/"
+            if cur and cur.group(1) == want and cs and cs.group(1) == want_sn:
                 linked += 1
                 continue
             # wrong path -- strip the stale block so it is rebuilt below
@@ -142,8 +144,14 @@ def main():
         if not am:
             unmatched.append(ref)
             continue
+        # KiCad writes the sheet PATH here, slash-delimited -- "/audio/", not
+        # "audio", and "/" for the root. Writing the bare name is not wrong
+        # enough to break matching, but KiCad rewrites it on every update and
+        # this tool would then flip it back: a churn loop across two tools that
+        # each think they are correcting the other.
+        disp = f"/{sname}/" if sname else "/"
         ins = (f'\n\t\t(path "{path}")'
-               f'\n\t\t(sheetname "{sname}")'
+               f'\n\t\t(sheetname "{disp}")'
                f'\n\t\t(sheetfile "{sfile}")')
         new = blk[:am.start()] + ins + blk[am.start():]
         t = t[:start] + new + t[start + len(blk):]
