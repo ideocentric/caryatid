@@ -76,6 +76,44 @@ def load_map():
     return by_ref, by_fp, by_vf
 
 
+def load_self_fit():
+    """Refs the owner buys and solders, not the assembler. See lcsc.yaml.
+
+    NOT the same thing as DNP. A DNP position has no component; these have one,
+    fitted by hand. Keeping the distinction matters because DNP is exported to
+    the assembler as an instruction and would be a lie here."""
+    if not os.path.exists(MAP): return {}
+    out, section = {}, None
+    for raw in open(MAP):
+        line = raw.rstrip("\n")
+        if not line.strip() or line.lstrip().startswith("#"): continue
+        if not line.startswith((" ", "\t")):
+            section = line.split(":")[0].strip(); continue
+        if section != "self_fit": continue
+        m = re.match(r'\s+"?([^":]+)"?:\s*\{(.*)\}\s*$', line)
+        if not m: continue
+        body = m.group(2)
+        src = re.search(r'source:\s*"([^"]*)"', body)
+        note = re.search(r'note:\s*"([^"]*)"', body)
+        out[m.group(1).strip()] = {"source": src.group(1) if src else "",
+                                   "note": note.group(1) if note else ""}
+    return out
+
+
+def split_refs(field):
+    """BOM reference fields group refs and may use ranges. Expand both, so a
+    self-fit ref inside a grouped row is actually found rather than missed."""
+    refs = []
+    for tok in field.split(","):
+        tok = tok.strip()
+        m = re.match(r"^([A-Za-z]+)(\d+)\s*-\s*([A-Za-z]*)(\d+)$", tok)
+        if m and (not m.group(3) or m.group(3) == m.group(1)):
+            refs += [f"{m.group(1)}{i}" for i in range(int(m.group(2)), int(m.group(4)) + 1)]
+        elif tok:
+            refs.append(tok)
+    return refs
+
+
 def run(cmd):
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
     if r.returncode != 0:
@@ -105,13 +143,28 @@ def main():
     for g in gerbers: print(f"      {g}")
 
     by_ref, by_fp, by_vf = load_map()
+    self_fit = load_self_fit()
     rows = list(csv.DictReader(open(tmp + "/bom.csv")))
-    out, missing, covered = [], [], 0
+    out, missing, covered, pulled = [], [], 0, []
     for r in rows:
-        refs = [x.strip() for x in r["Reference"].replace("-", ",").split(",")]
+        refs = split_refs(r["Reference"])
         fp = r["Footprint"].split(":")[-1]
         hit = (by_ref.get(refs[0]) or by_vf.get(f'{r["Value"]}|{fp}') or by_fp.get(fp))
         code = hit["lcsc"] if hit else ""
+
+        # Hand-fitted refs leave the assembly BOM. A grouped row keeps the rest
+        # of its refs and loses only the count it actually lost.
+        mine = [x for x in refs if x in self_fit]
+        if mine:
+            keep = [x for x in refs if x not in self_fit]
+            for x in mine:
+                pulled.append({"Reference": x, "Value": r["Value"], "Footprint": fp,
+                               "LCSC": code, "Source": self_fit[x]["source"],
+                               "Note": self_fit[x]["note"]})
+            if not keep:
+                continue
+            r = {**r, "Reference": ",".join(keep), "QUANTITY": str(len(keep))}
+
         if code: covered += int(r["QUANTITY"])
         else: missing.append((r["Reference"], r["Value"], fp, int(r["QUANTITY"])))
         out.append({**r, "LCSC": code})
@@ -119,22 +172,61 @@ def main():
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) + ["LCSC"])
         w.writeheader(); w.writerows(out)
 
-    total = sum(int(r["QUANTITY"]) for r in rows)
+    # Every self-fit ref must have matched something. A typo here would
+    # silently leave the part in the assembly order -- the exact failure this
+    # is meant to prevent -- so it is an error, not a warning.
+    unmatched = set(self_fit) - {p["Reference"] for p in pulled}
+    if unmatched:
+        print(f"\n  ERROR: self_fit names refs not in the BOM: {', '.join(sorted(unmatched))}")
+        print(f"  Check hardware/pcb/lcsc.yaml. They may be DNP already, or misspelled.")
+        return 1
+
+    if pulled:
+        # Same refs out of the position file, or the assembler places a part
+        # that is not on the BOM.
+        cpl_rows = list(csv.DictReader(open(tmp + "/cpl.csv")))
+        ref_key = cpl_rows[0] and list(cpl_rows[0].keys())[0]
+        kept = [c for c in cpl_rows if c[ref_key].strip('"') not in self_fit]
+        with open(tmp + "/cpl.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(cpl_rows[0].keys()))
+            w.writeheader(); w.writerows(kept)
+        with open(tmp + "/self-fit.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(pulled[0].keys()))
+            w.writeheader(); w.writerows(pulled)
+
+    total = sum(int(r["QUANTITY"]) for r in out)
     ncpl = len(open(tmp + "/cpl.csv").readlines()) - 1
-    print(f"\n  BOM {len(rows)} lines / {total} parts to place (DNP excluded)")
+    print(f"\n  BOM {len(out)} lines / {total} parts to place (DNP excluded)")
     print(f"  CPL {ncpl} placements")
     print(f"  LCSC: {covered} of {total} parts covered, "
           f"{total - covered} without a part number\n")
     for ref, val, fp, q in missing:
         print(f"    no LCSC  {ref[:30]:<31} {val[:16]:<17} x{q}")
 
+    if pulled:
+        print(f"  {len(pulled)} part(s) pulled from the assembly order -- "
+              f"YOU buy and solder these:")
+        for p in pulled:
+            print(f"    {p['Reference']:<6} {p['Value'][:22]:<23} {p['Source']}")
+        print(f"  -> self-fit.csv. They are NOT DNP: the board is not complete "
+              f"until they are fitted.")
+
     if apply_:
         os.makedirs(OUT, exist_ok=True)
         z = os.path.join(OUT, "caryatid-fab.zip")
+        # self-fit.csv is the OWNER's shopping list, not a fab deliverable.
+        # Shipping it would hand the assembler a list of parts they are
+        # explicitly not fitting, which invites exactly the confusion this
+        # whole mechanism exists to avoid.
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
-            for f in sorted(os.listdir(tmp)): zf.write(os.path.join(tmp, f), f)
-        for f in ("bom.csv", "cpl.csv"): shutil.copy(os.path.join(tmp, f), OUT)
-        print(f"\n  wrote {z} ({os.path.getsize(z)//1024} kB) and bom/cpl beside it")
+            for f in sorted(os.listdir(tmp)):
+                if f == "self-fit.csv": continue
+                zf.write(os.path.join(tmp, f), f)
+        for f in ("bom.csv", "cpl.csv", "self-fit.csv"):
+            src = os.path.join(tmp, f)
+            if os.path.exists(src): shutil.copy(src, OUT)
+        extra = " + self-fit.csv (yours, not the fab's)" if pulled else ""
+        print(f"\n  wrote {z} ({os.path.getsize(z)//1024} kB) and bom/cpl{extra} beside it")
 
     if missing:
         print(f"\n  NOT READY FOR ASSEMBLY: {total - covered} parts have no LCSC "

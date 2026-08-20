@@ -123,18 +123,21 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    | `check_board.py` | **10/10** over 131 footprints |
    | `drc_exclusions.py` | **0 new**, 5 accepted with reasons |
    | `verify_parts.py` | **0 of 37 flagged** against JLC's live data |
-   | LCSC coverage | **92 of 92** |
+   | LCSC coverage | **91 of 91** assembled (BT1 self-fit, see below) |
 
    **Package** — `local/fab/caryatid-fab.zip`, 14 files, 279 kB: 9 Gerber
    layers, drill, drill map, job file, `bom.csv`, `cpl.csv`. Deliberately *not*
-   courtyard, fab, adhesive or Eco layers, which an unrestricted export emits.
+   courtyard, fab, adhesive or Eco layers, which an unrestricted export emits —
+   and *not* `self-fit.csv`, which is the owner's shopping list and would only
+   confuse the assembler.
 
    **Always run DRC with `--schematic-parity`.** Plain `kicad-cli pcb drc` does
    not check it and once hid 7 issues.
 
    **Board** 150 × 90 mm, 2 layers, 131 footprints, 926 tracks, 192 vias.
-   **BOM** 48 lines, 92 placed — 32 DNP excluded by design, the audio network
-   being fitted per instrument.
+   **BOM** 47 lines, **91 placed by JLC** — 32 DNP excluded by design (the
+   audio network is fitted per instrument), and BT1 excluded as self-fit. 92
+   parts are populated per board; the assembler fits 91 of them.
 
    **Cost** — re-derived 2026-08-18 from live price ladders by
    `tools/cost_estimate.py`, which selects the correct price band for the actual
@@ -150,6 +153,13 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    **$68 is fixed regardless of quantity** — an $8 setup fee plus 20 Extended
    parts at ~$3 each. That is 40% of a 5-board order, which is why the second
    five cost $15.99/board against $33.77 for the first five.
+
+   **Superseded 2026-08-20 by pulling BT1 out of the assembly.** JLC's share
+   drops to **$141.36 for 5** ($28.27/board): 19 Extended rather than 20, so
+   $65 fixed, and $38.25 of parts. Add $17.35 of Digi-Key holders and the real
+   total is **~$159**, about $10 below the all-JLC route *and* three weeks
+   earlier. Re-derive with `tools/cost_estimate.py`, which reads the BOM and
+   picks the change up on its own.
 
    > **A superseded figure lived here: "$5.24/board in components."** Do not
    > reinstate it. Beware `leastNumberPrice` in the JLC API — it reads $0.101 for
@@ -194,16 +204,32 @@ would mean changing the battery-holder pre-order quantity, and the holder is the
 only long-lead item. Everything else can be re-quoted at any quantity right up
 to order time, so nothing else has to be decided early.
 
-**Blocked on** the pre-ordered holders appearing in the JLC parts library. The
-quote cannot be raised until they do.
+**Unblocked 2026-08-20 by dropping BT1 from the assembly.** JLC quoted a
+**21-day** turnaround on the BT1 pre-order. Rather than wait, it is now
+**self-fit**: bought from Digi-Key and hand-soldered.
 
-| pre-order | code | qty for 5 | unit |
-| --- | --- | --- | --- |
-| BT1 holder | `C5339083` | 5 | $4.8616 |
-| A1, A2 sockets | `C2897383` | 10 | $0.338 |
+| | code | qty for 5 | unit | |
+| --- | --- | --- | --- | --- |
+| A1, A2 sockets | `C2897383` | 10 | $0.338 | pre-order, 1353 in stock |
+| BT1 holder | Digi-Key 3029216 | 5 | **$3.47** | **not via JLC** |
 
-Stock for the other 35 codes was checked at qty 5 and clears; BT1 was the only
-short line, which is what the pre-order resolves.
+**Nothing is lost off the SMT line.** BT1 is `manualWeld` — the assembler would
+have hand-soldered it anyway. It is two through-hole joints (`VBAT`, `GND`,
+72.9 mm apart) plus two M3 bolt holes at 55.61 mm, which the footprint already
+carries. Digi-Key is *cheaper* than the pre-order as well as immediate: $3.47
+against $4.8616.
+
+**Substituting a different holder was considered and rejected.** BT1's footprint
+is dimensionally specific, so swapping the part is a board change — self-fitting
+the known-good part is strictly safer than fitting an available unknown.
+
+> **BT1 is NOT DNP.** It is populated on every board; it is simply bought and
+> soldered by the owner. `self_fit` in `lcsc.yaml` records this and
+> `fab_package.py` strips it from `bom.csv` and `cpl.csv`, writing
+> `self-fit.csv` as the shopping list. Marking it DNP instead would tell the
+> assembler no part is fitted, which is false and would propagate.
+
+Stock for the other 34 JLC codes was checked at qty 5 and clears.
 
 **When the quote lands, reconcile rather than eyeball it:**
 

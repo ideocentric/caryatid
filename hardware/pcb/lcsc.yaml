@@ -93,6 +93,21 @@ by_value_footprint:
   "Expansion / SPI1|PinHeader_2x04_P2.54mm_Vertical":
     {lcsc: C2829882, note: "Extended, $0.0294 ea -- J16"}
 
+# FITTED BY HAND, NOT BY THE ASSEMBLER.
+#
+# These parts ARE populated on every board -- they are NOT DNP. DNP means no
+# component is fitted, which would be false here and would corrupt what the
+# netlist says. They are simply bought and soldered by the owner rather than
+# ordered through JLC assembly.
+#
+# tools/fab_package.py strips them from bom.csv and cpl.csv, and writes
+# self-fit.csv as the shopping list. The design files are untouched.
+#
+# Only put a part here if it is `manualWeld` -- something the assembler would
+# hand-solder anyway, so nothing is lost off the SMT line by pulling it.
+self_fit:
+  BT1: {source: "Digi-Key 3029216", note: "MPD BH-18650-PC, $3.47/1, 948 in stock 2026-08-19. JLC pre-order quoted 21 days on 2026-08-20 at $4.8616 -- Digi-Key is cheaper AND immediate. 2 through-hole joints (VBAT, GND) plus two M3 bolt holes at 55.61mm. Fit LAST: tallest part, spans 72.9mm. Substituting a different holder was rejected -- the footprint is dimensionally specific and swapping it is a board change."}
+
 # Deliberately NOT mapped, with the reason:
 #
 
