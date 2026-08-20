@@ -76,6 +76,50 @@ def load_map():
     return by_ref, by_fp, by_vf
 
 
+def write_jlc_cpl(src, dst, drop=()):
+    """Rewrite KiCad's position export into JLC's CPL format.
+
+    JLC rejected the raw KiCad file. Their template
+    (local/reference/JLCSMT_Sample_CPL1.xlsx in the loa repo) is:
+
+        Designator | Mid X      | Mid Y      | Layer | Rotation
+        C1         | 95.0518mm  | 22.6822mm  | Top   | 270
+
+    Every column name differs from KiCad's, the coordinates carry a `mm`
+    suffix, Layer is capitalised, and Rotation is a plain number. KiCad emits
+    `Ref,Val,Package,PosX,PosY,Rot,Side` with bare decimals, lowercase `top`
+    and rotations that can be negative.
+
+    COORDINATES ARE NOT TOUCHED. They stay in the same absolute frame as the
+    Gerbers, which is what JLC aligns them against -- KiCad's Y is negative
+    here because both the Gerbers and this file use a Y-up flip of KiCad's
+    internal origin, and they agree. Making Y positive to look like the sample
+    would move every part relative to the board.
+
+    Only the five columns in the template are emitted. Val and Package are
+    dropped: they are not in JLC's format, and a parser that failed on the
+    header names is not the place to bet on extra columns being ignored.
+    """
+    rows = list(csv.DictReader(open(src)))
+    out = []
+    for r in rows:
+        ref = r["Ref"].strip('"')
+        if ref in drop: continue
+        rot = float(r["Rot"]) % 360.0          # -90 -> 270
+        out.append({
+            "Designator": ref,
+            "Mid X": f'{float(r["PosX"]):.4f}mm',
+            "Mid Y": f'{float(r["PosY"]):.4f}mm',
+            "Layer": "Top" if r["Side"].strip('"').lower() == "top" else "Bottom",
+            "Rotation": f"{rot:g}",
+        })
+    with open(dst, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["Designator", "Mid X", "Mid Y",
+                                          "Layer", "Rotation"])
+        w.writeheader(); w.writerows(out)
+    return out
+
+
 def load_self_fit():
     """Refs the owner buys and solders, not the assembler. See lcsc.yaml.
 
@@ -181,15 +225,15 @@ def main():
         print(f"  Check hardware/pcb/lcsc.yaml. They may be DNP already, or misspelled.")
         return 1
 
+    # Always convert to JLC's CPL format -- their parser rejects KiCad's column
+    # names outright. Self-fit refs drop out here too, or the assembler is told
+    # to place a part that is not on the BOM.
+    cpl = write_jlc_cpl(tmp + "/cpl.csv", tmp + "/cpl.csv", drop=set(self_fit))
+    if len(cpl) != sum(int(r["QUANTITY"]) for r in out):
+        print(f"\n  ERROR: CPL has {len(cpl)} placements but the BOM totals "
+              f"{sum(int(r['QUANTITY']) for r in out)}. They must agree.")
+        return 1
     if pulled:
-        # Same refs out of the position file, or the assembler places a part
-        # that is not on the BOM.
-        cpl_rows = list(csv.DictReader(open(tmp + "/cpl.csv")))
-        ref_key = cpl_rows[0] and list(cpl_rows[0].keys())[0]
-        kept = [c for c in cpl_rows if c[ref_key].strip('"') not in self_fit]
-        with open(tmp + "/cpl.csv", "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=list(cpl_rows[0].keys()))
-            w.writeheader(); w.writerows(kept)
         with open(tmp + "/self-fit.csv", "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(pulled[0].keys()))
             w.writeheader(); w.writerows(pulled)
