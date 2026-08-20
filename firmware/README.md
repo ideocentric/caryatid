@@ -112,6 +112,55 @@ connector moves — and a firmware header is a far worse place to discover that
 than a markdown table, because the board is already built and the symptom is a
 sensor quietly reading the wrong wire.
 
+## Licensing
+
+**This directory is MIT.** The rest of the repository is not — the hardware is
+CERN-OHL-S-2.0 and `tools/` is GPL-3.0-or-later. See
+[../LICENSING.md](../LICENSING.md) for all three.
+
+### Your instrument can still be copyleft
+
+MIT is permissive, so it imposes no condition that a copyleft licence cannot
+satisfy. **You may absorb this code into a GPL instrument**: the combined binary
+is distributed under the GPL, and the MIT notice is preserved for these files.
+The FSF classes MIT as GPL-compatible for exactly this.
+
+This is not theoretical — loa already does it. Its firmware is
+GPL-3.0-or-later and links MIT libDaisy and DaisySP today, and its licensing
+ADR records the same conclusion. (That repository is private as of this
+writing, so there is no link to give.)
+
+| instrument | may be licensed | because |
+| --- | --- | --- |
+| loa | **GPL-3.0-or-later** (and is) | MIT absorbs into GPL cleanly |
+| absonus | GPL, MIT, BSD — anything | MIT imposes no reciprocity |
+| baby borg | same | same |
+
+### Why it is not GPL
+
+**The reverse does not work, and that is the whole reason.** A copyleft
+board-support layer is viral into everything that links it, so GPL here would
+force every instrument built on caryatid to be GPL — settling absonus's and baby
+borg's licence from a header file in the carrier board underneath them. That
+decision belongs to each instrument.
+
+Permissive at the bottom, copyleft optional at the top. It is the only
+arrangement that keeps all three choices open.
+
+### What you owe
+
+1. **Ship the MIT notice** with these files when you distribute instrument
+   firmware. Consuming caryatid as a submodule satisfies this already —
+   `../LICENSES/MIT.txt` travels with it, and every source file carries an
+   `SPDX-License-Identifier`.
+2. **It cuts both ways.** Anyone may take this directory alone and use it in a
+   closed product. That is the price of not constraining the instruments.
+
+The reciprocity that matters is on the **board**, not here: CERN-OHL-S defines
+*Complete Source* as the editable design files, so nobody ships derivative
+hardware without publishing the KiCad project. A permissive stub layer does not
+weaken that.
+
 ## Reference
 
 | | |
