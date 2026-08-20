@@ -101,10 +101,16 @@ dynamic-capsule case, and it holds: ×250 in the MCP6002 is 47.96 dB, plus 12 dB
 is 60 dB, and at ×250 the MCP6002's 1 MHz GBW puts −3 dB at 4 kHz — above the
 3.4 kHz voiceband edge.
 
-**The mic path is a much larger reserve — 34 dB — but caryatid cannot reach it**
-unless the Seed brings `MICIN` out, and the Seed's audio pins are documented as
-line level. Treat 34 dB as unavailable until the Seed schematic says otherwise;
-it is recorded here so the question is not re-derived.
+**The mic path is a much larger reserve — 34 dB — and caryatid cannot reach
+it.** Confirmed 2026-08-21: the Seed does not expose `MICIN`. `Seed_pinout.csv`
+lists pins 16–19 as `AUDIO IN L`, `AUDIO IN R`, `AUDIO OUT L`, `AUDIO OUT R`,
+all marked `NC` for STM32 pin because they go to the codec rather than the MCU;
+`ES_Daisy_Seed_Rev7.pdf` shows the same four nets at the header and no mic net
+anywhere. **+12 dB on the line input is the only codec-side gain available.**
+
+(The codec section of the Seed schematic is redacted, so how `MICIN` is
+terminated on the module is not visible. It does not matter: what reaches the
+40-pin header is what caryatid can use, and that is settled by the pinout.)
 
 **The Daisy documents are MIT licensed.** The datasheet carries the MIT text in
 its colophon, covering "the Software and associated documentation files". Unlike

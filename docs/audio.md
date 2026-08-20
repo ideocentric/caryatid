@@ -145,12 +145,19 @@ So the arithmetic holds: ×250 is 47.96 dB, plus 12 dB is **60 dB**, and at ×25
 the MCP6002's 1 MHz gain-bandwidth product puts −3 dB at **4 kHz** — above the
 3.4 kHz voiceband edge. The dynamic case is covered with margin to spare.
 
-**There is a much larger reserve that caryatid probably cannot reach.** The same
-datasheet gives the codec's *microphone* path 14 dB nominal and **34 dB** with
-`MICBOOST` set — far more than the line PGA. But the Seed's audio inputs are
-documented as line level, so `MICIN` is very likely not brought out. **Do not
-plan around 34 dB** until the Seed schematic is read; it is recorded in
-[datasheets.md](datasheets.md) so the question is not re-derived from scratch.
+**The codec's larger reserve is confirmed unreachable, so do not plan around
+it.** The same datasheet gives the WM8731's *microphone* path 14 dB nominal and
+**34 dB** with `MICBOOST` set. **The Seed does not bring `MICIN` out**, checked
+2026-08-21 against both `Seed_pinout.csv` and `ES_Daisy_Seed_Rev7.pdf`: pins
+16–19 are `AUDIO_IN_L`, `AUDIO_IN_R`, `AUDIO_OUT_L`, `AUDIO_OUT_R` and there is
+no mic pin on the 40-pin header at all. The line PGA's **+12 dB is the only
+codec-side gain available.**
+
+Nothing in the design changes — ×250 plus 12 dB already covered the dynamic
+case with the bandwidth to spare. What changes is that there is **no hidden
+headroom to fall back on**: if a capsule ever needs more than 60 dB, it has to
+come from the op-amp stage or from a module ahead of the board, not from the
+codec.
 
 Carbon and electret are the likely outcomes anyway; a dynamic capsule in a
 handset is the rarest of the three.
