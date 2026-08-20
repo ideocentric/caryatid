@@ -2108,7 +2108,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "6fdbcecb-8d2d-5e6a-9346-d7c0cf2ae7b7")
 		(property "Reference" "R51"
 			(at 116.49 117.53999999999999 0)
@@ -2226,7 +2226,7 @@
 		)
 		(uuid "60a747f2-ca78-5f0f-9164-92e67720f595")
 	)
-	(label "MIC_L"
+	(label "BIAS_E_L"
 		(at 110.49 138.43 270)
 		(effects
 			(font
@@ -2243,7 +2243,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "9bb913ab-82f3-5c80-ba34-ecb0f18cd307")
 		(property "Reference" "R52"
 			(at 145.7 117.53999999999999 0)
@@ -2361,7 +2361,7 @@
 		)
 		(uuid "899753d6-e44d-5f30-b59c-2e2f6abed62a")
 	)
-	(label "MIC_L"
+	(label "BIAS_C_L"
 		(at 139.7 138.43 270)
 		(effects
 			(font
@@ -2378,7 +2378,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "418cf057-4cf2-59bf-9acd-9f66baa1583a")
 		(property "Reference" "R55"
 			(at 186.34 127.69999999999999 0)
@@ -2513,7 +2513,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "5426deaa-443f-5966-b55c-c527e66e2090")
 		(property "Reference" "R56"
 			(at 186.34 168.34 0)
@@ -2648,7 +2648,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "99934f2f-900a-5842-bc04-f09acc02f2eb")
 		(property "Reference" "C22"
 			(at 215.55 168.34 0)
@@ -2783,7 +2783,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "218bd340-d6eb-5c61-ad45-4050b7da71b3")
 		(property "Reference" "C23"
 			(at 155.86 142.94 0)
@@ -2890,7 +2890,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "de2b99e6-c2d8-56d6-8c8a-d2282740ee00")
 		(property "Reference" "R57"
 			(at 256.19 122.62 0)
@@ -2997,7 +2997,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "95d62bac-6d1e-5b70-9e25-dda737d34051")
 		(property "Reference" "R58"
 			(at 225.71 202.63 0)
@@ -3087,7 +3087,7 @@
 		)
 		(uuid "fb713285-aa68-55e1-a60c-770f05547bd0")
 	)
-	(label "GAINLEG_L"
+	(label "LEG_101_L"
 		(at 219.71 223.52 270)
 		(effects
 			(font
@@ -3104,7 +3104,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "fe9875f2-73df-53cb-b2ae-b5e5aa6aa1b8")
 		(property "Reference" "C24"
 			(at 225.71 233.11 0)
@@ -3239,7 +3239,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "da05d375-76ca-5f3f-8f59-6b74752bcbea")
 		(property "Reference" "U4"
 			(at 285.4 158.18 0)
@@ -3369,7 +3369,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "10165fcb-0263-5c64-8189-ad2784ab291a")
 		(property "Reference" "C25"
 			(at 331.12 158.18 0)
@@ -3459,7 +3459,7 @@
 		)
 		(uuid "f8969b26-1a62-5fdf-b8fb-1aa86df9005c")
 	)
-	(global_label "AUDIO_IN_L"
+	(global_label "AMP_OUT_L"
 		(shape bidirectional)
 		(at 325.12 179.07 270)
 		(effects
@@ -3477,7 +3477,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "af3337d7-5ea2-5c8c-ad19-12b6acf6997b")
 		(property "Reference" "R63"
 			(at 406.05 197.55 0)
@@ -3567,7 +3567,7 @@
 		)
 		(uuid "e383709a-0c58-5ad1-a68c-6e7457406364")
 	)
-	(global_label "AUDIO_IN_L"
+	(global_label "BYPASS_L"
 		(shape bidirectional)
 		(at 400.05 218.44 270)
 		(effects
@@ -3655,7 +3655,7 @@
 		)
 		(uuid "010056f6-d143-504c-9903-45b4b06ecacc")
 	)
-	(global_label "AUDIO_IN_L"
+	(global_label "BYPASS_L"
 		(shape bidirectional)
 		(at 439.42 200.66 90)
 		(effects
@@ -3991,7 +3991,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "4115e886-a36b-58d3-8245-cd2788b7e598")
 		(property "Reference" "R59"
 			(at 186.34 277.56 0)
@@ -4126,7 +4126,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "ad2a889f-d69f-554b-bc3a-d732610d1f37")
 		(property "Reference" "R60"
 			(at 186.34 318.2 0)
@@ -4503,7 +4503,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "760f9501-dc76-5a5d-ba0a-1134fbf4b741")
 		(property "Reference" "R61"
 			(at 256.19 272.48 0)
@@ -4852,7 +4852,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "926cecb9-9185-516e-a5f4-22496c4657d0")
 		(property "Reference" "U4"
 			(at 285.4 308.04 0)
@@ -5334,7 +5334,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "5ad5ba0e-6eb5-5082-9e33-69c350fcb759")
 		(property "Reference" "U4"
 			(at 106.33 328.36 0)
@@ -5659,4 +5659,504 @@
 		)
 	)
 	(embedded_fonts no)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 480.06 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ccf83e1a-8ea4-5ce5-86d0-ab7e8278b5aa")
+		(property "Reference" "JP1"
+			(at 486.06 127.69999999999999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Mic bias select"
+			(at 486.06 130.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
+			(at 480.06 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 480.06 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 480.06 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5a74c668-b18d-512d-8525-744e92bdd3e9")
+		)
+		(pin "2"
+			(uuid "60385702-6876-51bb-a592-84d16121dec2")
+		)
+		(pin "3"
+			(uuid "c4e76e8b-56fe-5e2d-883d-7b787027b518")
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990/bda31c7d-e5ef-4a38-8900-64d829b923ab"
+					(reference "JP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 474.98 137.16) (xy 469.9 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "da6ad8ba-386a-5c77-ae28-87503de17490")
+	)
+	(label "BIAS_E_L"
+		(at 469.9 137.16 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8e313e18-e23e-5159-b0c6-63b767fef517")
+	)
+	(wire
+		(pts
+			(xy 474.98 139.7) (xy 469.9 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "85bc76c8-8653-5261-9bff-361ad8d953db")
+	)
+	(label "MIC_L"
+		(at 469.9 139.7 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7e0bcc3e-a791-50fa-a25f-35bdeac685a8")
+	)
+	(wire
+		(pts
+			(xy 474.98 142.24) (xy 469.9 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df69ff07-c593-52c3-a5eb-9d905aac13d0")
+	)
+	(label "BIAS_C_L"
+		(at 469.9 142.24 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e95f20b3-0a0e-5a85-8b77-e6d7e5bbeec5")
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 480.06 190.5 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a122ec60-90e0-5592-a333-ebfeb9a4d7db")
+		(property "Reference" "JP2"
+			(at 486.06 178.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Mic path select"
+			(at 486.06 181.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
+			(at 480.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 480.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 480.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d1e068d6-6ec7-5e00-a8a1-4ee8d5e924be")
+		)
+		(pin "2"
+			(uuid "efc92f0e-01a4-5f03-8c3f-f6bc21386cdf")
+		)
+		(pin "3"
+			(uuid "a8dd85f1-58c1-594b-8c5f-ee8bc4aa1456")
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990/bda31c7d-e5ef-4a38-8900-64d829b923ab"
+					(reference "JP2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 474.98 187.96) (xy 469.9 187.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f8efbf48-47d3-5abb-b6db-37069a776930")
+	)
+	(global_label "AMP_OUT_L"
+		(shape bidirectional)
+		(at 469.9 187.96 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8ef86a1a-269d-5cf1-9c0f-656001d74bb5")
+	)
+	(wire
+		(pts
+			(xy 474.98 190.5) (xy 469.9 190.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "98b2f59a-ebbc-57fa-b358-6e1492dcd126")
+	)
+	(global_label "AUDIO_IN_L"
+		(shape bidirectional)
+		(at 469.9 190.5 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4dc6393f-8985-50d8-afa6-6e7b4059005a")
+	)
+	(wire
+		(pts
+			(xy 474.98 193.04000000000002) (xy 469.9 193.04000000000002)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f88e788-a7f8-5173-a8e6-b36ba418ef10")
+	)
+	(global_label "BYPASS_L"
+		(shape bidirectional)
+		(at 469.9 193.04000000000002 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b8598905-8a91-5837-9cef-3ac2cfb92c14")
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 480.06 241.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d1e658bc-7a5e-531e-890f-18ebc6123f88")
+		(property "Reference" "JP3"
+			(at 486.06 229.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Mic gain select"
+			(at 486.06 232.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
+			(at 480.06 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 480.06 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 480.06 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7fb711b2-9d6f-59fb-a4c8-43bab7360a2e")
+		)
+		(pin "2"
+			(uuid "03d32f04-08fe-537c-9e0b-f2402c93496c")
+		)
+		(pin "3"
+			(uuid "8e6f5079-4752-52b6-8ae2-aeac37f6884e")
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990/bda31c7d-e5ef-4a38-8900-64d829b923ab"
+					(reference "JP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 474.98 238.76000000000002) (xy 469.9 238.76000000000002)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d01802db-4a88-55a2-b07f-ee277e00deab")
+	)
+	(label "LEG_101_L"
+		(at 469.9 238.76000000000002 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1d448846-ff58-50fa-b188-8c85a2896b18")
+	)
+	(wire
+		(pts
+			(xy 474.98 241.3) (xy 469.9 241.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a8c4f21c-6923-5a04-b1a1-8b4d29b3f050")
+	)
+	(label "GAINLEG_L"
+		(at 469.9 241.3 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "822008e3-17cd-51c0-a045-ff68dd872683")
+	)
+	(wire
+		(pts
+			(xy 474.98 243.84000000000003) (xy 469.9 243.84000000000003)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6017e48-643e-500f-8af9-19daadb26469")
+	)
+	(label "LEG_256_L"
+		(at 469.9 243.84000000000003 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "227440e6-6bc7-5df3-8ee5-2821c589e489")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 530.86 214.63 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ad06fe06-69c5-519b-8f3b-4aae7d9f59b5")
+		(property "Reference" "R67"
+			(at 536.86 202.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "392R"
+			(at 536.86 205.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 530.86 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 530.86 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 530.86 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2cf5191b-aefa-596d-900d-5c3654755b30")
+		)
+		(pin "2"
+			(uuid "4010a7c4-20ec-59ef-b59a-5b0c3da0ca7f")
+		)
+		(instances
+			(project "caryatid"
+				(path "/49c08c53-8a29-4df2-81cf-05d7b7c47990/bda31c7d-e5ef-4a38-8900-64d829b923ab"
+					(reference "R67")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 530.86 210.82) (xy 530.86 205.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "efe13928-4484-55f4-9d0d-00ebae1415f8")
+	)
+	(label "OPA_L_N"
+		(at 530.86 205.74 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d74e69c1-dfee-51ab-96e9-f688ab086225")
+	)
+	(wire
+		(pts
+			(xy 530.86 218.44) (xy 530.86 223.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "329321a8-4eea-59b9-a8a8-a48cf8091815")
+	)
+	(label "LEG_256_L"
+		(at 530.86 223.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "98d8deb8-263e-535f-b15e-1189013af1c8")
+	)
 )
