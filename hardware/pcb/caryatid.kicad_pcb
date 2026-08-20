@@ -17586,7 +17586,7 @@
 		(at 170.5 37)
 		(descr "JST SH series connector, SM04B-SRSS-TB (http://www.jst-mfg.com/product/pdf/eng/eSH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST SH horizontal")
-		(property "Reference" "J13A"
+		(property "Reference" "J13"
 			(at 0.0000 -4.2502 0)
 			(layer "F.SilkS")
 			(uuid "0ebafc22-9d03-4f26-8354-a59a18d2ddd1")
@@ -29356,7 +29356,7 @@
 		(at 97.5 115)
 		(descr "JST XH series connector, B6B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
-		(property "Reference" "J13B"
+		(property "Reference" "J19"
 			(at 16.035 0.38 90)
 			(layer "F.SilkS")
 			(uuid "9c9ea968-83f6-407c-b23f-8084b12d4534")

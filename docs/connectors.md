@@ -21,9 +21,9 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J10 | JST 2/3 | FSR: 3V3A, A4 |
 | J11 | IDC 2×5 | **Digital bus** — D0–D6 + 3V3D + DGND + spare. 100Ω series each. |
 | J12 | JST 4 | RGB status. **Common anode**: pin 1 `+5V`, then D26/D27/D29 cathodes sinking through **510Ω red, 300Ω green, 300Ω blue**. Not GND, not 3V3 — see [panel-io-sheet.md](panel-io-sheet.md). |
-| J13a | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
+| J13 | JST-SH 4 | **Comms port A** as I2C — Qwiic / STEMMA-QT pinout |
 | J14 | JST-XH 2 | Mic bias return → the hook switch's second pole |
-| J13b | JST-XH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, GND |
+| J19 | JST-XH 6 | **Comms port A** as a module port — 5V, 3V3, GND, D11, D12, GND |
 | J15 | JST-XH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, GND |
 | J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
 | J17 | JST-XH 3 | Audio out — L, R, GND, to panel jacks |
@@ -34,11 +34,11 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 > this file, not on the board, and the next person to read it should know it has
 > been reconciled rather than merely written:
 >
-> - **J13b and J15 pin 6 were listed as `AUX`. Both are `GND`.** There is no
+> - **J19 and J15 pin 6 were listed as `AUX`. Both are `GND`.** There is no
 >   `AUX` net anywhere in the schematic or the board — the name existed only
 >   here. Each port carries **two grounds**, which is what a six-way cable to a
 >   module wants anyway.
-> - **J13b and J15 were listed as JST-PH. Both are JST-XH**, `B6B-XH-A` at
+> - **J19 and J15 were listed as JST-PH. Both are JST-XH**, `B6B-XH-A` at
 >   2.50 mm, per the schematic's own Footprint property. Ordering PH housings
 >   against this table would have produced parts that do not mate.
 > - **J18 pin 3 was listed as `GND`. It is `MIC_RTN`** — the mic bias return,

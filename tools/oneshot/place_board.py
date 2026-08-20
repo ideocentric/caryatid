@@ -97,7 +97,7 @@ zone("anabus","J5",*[f"R{n}" for n in range(19,27)],*[f"C{n}" for n in range(10,
 zone("digbus","J11",*[f"R{n}" for n in range(27,34)])
 zone("switch","U3","J6","J7","J8",*[f"R{n}" for n in range(34,40)],"C18","C19","C20","C21")
 zone("audio","J17","J18","J14","U4",*[f"R{n}" for n in range(47,67)],*[f"C{n}" for n in range(22,31)])
-zone("conn","J12","R40","R41","R42","J13A","R43","R44","J13B","J15","J16","J9","R45","J10","R46")
+zone("conn","J12","R40","R41","R42","J13","R43","R44","J19","J15","J16","J9","R45","J10","R46")
 
 # --- the front: BT1, the Seed, and a deliberate connector ring --------------
 # Cables leave a vertical JST upward, so "facing outward" matters less than
@@ -136,7 +136,7 @@ ANCHOR={"BT1":(38.55,14.0,0), "A1":(67.50,29.0,0), "A2":(82.74,29.0,0),
 ANCHOR.update(stack(["J1","J3","J4"], "y", 6.5, 29.0, 2.0, 0))               # left: power
 # 139.0 not 142: these courtyards sit +3.7 mm of their origin
 ANCHOR.update(stack(["J12","J9","J10","J17"], "y", 139.0, 26.0, 2.0, 0))      # right: RGB, sensors, audio out
-ANCHOR.update(stack(["J6","J7","J8","J13B","J15"], "x", 85.0, 12.0, 2.5, 0)) # bottom: switches, module ports
+ANCHOR.update(stack(["J6","J7","J8","J19","J15"], "x", 85.0, 12.0, 2.5, 0)) # bottom: switches, module ports
 
 # --- the back: hand-placed clusters, the rest shelf-packed -------------------
 # A back-side pad sits at (X + px, Y - py): the body is stored Y-negated. So on

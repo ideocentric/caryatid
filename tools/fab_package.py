@@ -198,6 +198,11 @@ def main():
     # comes out as "J13A?". The schematic is fine and DRC parity is clean; only
     # the exporter is confused. Reconciling against the board fixes it without
     # blindly stripping a "?" that might have meant something.
+    #
+    # FIXED AT SOURCE 2026-08-21: J13A/J13B are now J13/J19. The old names also
+    # made KiCad demand annotation on every "Update PCB from Schematic", and
+    # accepting it renamed them again and broke every footprint path. This
+    # reconciliation stays because it costs nothing and would catch a recurrence.
     board_refs = set()
     for m in re.finditer(r'\(property "Reference" "([^"]+)"', open(PCB).read()):
         board_refs.add(m.group(1))

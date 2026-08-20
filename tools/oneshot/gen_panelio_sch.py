@@ -72,11 +72,11 @@ add("J12",CG,"Conn_01x04","RGB status",XH[4],355,60,
     {1:(P,"+5V"),2:(L,"RGB_R"),3:(L,"RGB_G"),4:(L,"RGB_B")})
 
 # ---- comms port A: Qwiic and module footprints share D11/D12 -------------
-add("J13A",CG,"Conn_01x04","Comms A - Qwiic",SH4,355,150,
+add("J13",CG,"Conn_01x04","Comms A - Qwiic",SH4,355,150,
     {1:(P,"GND"),2:(P,"+3V3"),3:(G,"D12"),4:(G,"D11")})
 add("R43",D,"R","4k7",R0603,410,140,{"1":(P,"+3V3"),"2":(G,"D12")},dnp=True)
 add("R44",D,"R","4k7",R0603,440,140,{"1":(P,"+3V3"),"2":(G,"D11")},dnp=True)
-add("J13B",CG,"Conn_01x06","Comms A - module",XH[6],355,215,
+add("J19",CG,"Conn_01x06","Comms A - module",XH[6],355,215,
     {1:(P,"+5V"),2:(P,"+3V3"),3:(P,"GND"),4:(G,"D11"),5:(G,"D12"),6:(P,"GND")})
 add("J15",CG,"Conn_01x06","Comms B - module",XH[6],355,285,
     {1:(P,"+5V"),2:(P,"+3V3"),3:(P,"GND"),4:(G,"D13"),5:(G,"D14"),6:(P,"GND")})

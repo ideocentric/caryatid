@@ -63,7 +63,7 @@ because KiCad 7+ stores start/mid/end and all three mirror together.
 
 **Two things to confirm before ordering.**
 
-`J13A` is the SMD Qwiic socket, so it classified as SMD and went to the back.
+`J13` is the SMD Qwiic socket, so it classified as SMD and went to the back.
 Electrically fine; whether you want a Qwiic cable leaving from the underside is
 a mechanical question, not one the classifier can answer.
 
@@ -84,7 +84,7 @@ hand — hand arithmetic on offsets produced touching parts three times running.
 | Left, inboard | `J11` digital bus IDC, beside A1 (the digital row) |
 | Right | `J12` RGB, `J9` soft pot, `J10` FSR, `J17` audio out |
 | Right, inboard | `J5` analogue bus IDC beside A2; `J16` expansion; `J18` audio in and `J14` mic return together |
-| Bottom | `J6` `J7` `J8` switches, then `J13B` and `J15` module ports |
+| Bottom | `J6` `J7` `J8` switches, then `J19` and `J15` module ports |
 
 Power enters on the left where the charger and boost sit underneath; the
 analogue bus, both sensors and the audio pair are on the right, furthest from

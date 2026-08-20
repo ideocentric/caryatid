@@ -103,8 +103,8 @@ digital:
 alternates:
   - pins: [D11, D12]
     options:
-      - {name: I2C sensor,  connector: "J13a, 4-pin JST-SH, Qwiic/STEMMA-QT pinout"}
-      - {name: MIDI or UART bridge, connector: "J13b, 6-pin JST-PH module port"}
+      - {name: I2C sensor,  connector: "J13, 4-pin JST-SH, Qwiic/STEMMA-QT pinout"}
+      - {name: MIDI or UART bridge, connector: "J19, 6-pin JST-PH module port"}
   - pins: [D13, D14]
     options:
       - {name: comms port B, connector: "J15, 6-pin JST-PH module port"}

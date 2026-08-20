@@ -140,7 +140,7 @@ equal brightness. See [sourcing.md](sourcing.md).
 
 Two footprints on the same two pins; populate one.
 
-**J13a — JST-SH 4, Qwiic/STEMMA-QT pinout:**
+**J13 — JST-SH 4, Qwiic/STEMMA-QT pinout:**
 
 | Pin | Net |
 | --- | --- |
@@ -152,7 +152,7 @@ Two footprints on the same two pins; populate one.
 Plus **4.7 kΩ pull-ups to `+3V3` on both, DNP** — populated only when the port
 is used as I2C. A UART on the same pins does not want them.
 
-**J13b — JST-XH 6, module port:**
+**J19 — JST-XH 6, module port:**
 
 | Pin | Net |
 | --- | --- |
@@ -168,7 +168,7 @@ to give it, and a return beside the signals is worth more than a floating pad.
 
 ## Comms port B — J15, D13 / D14
 
-Same 6-pin pinout as J13b, with `D13` and `D14` on pins 4 and 5.
+Same 6-pin pinout as J19, with `D13` and `D14` on pins 4 and 5.
 
 **J15 and J6/J7 are mutually exclusive.** Populating port B means giving up SW1
 and SW2, which is why the hook switch is on SW3.
@@ -220,8 +220,8 @@ board is stuffed for its instrument.
 | J6/J7/J8 switches | SW1, SW2 | **SW3 = hook** | TBD |
 | J9 / J10 sensors | both | — | TBD |
 | J12 RGB | ✓ | ✓ | ✓ |
-| J13a Qwiic | — | — | ✓ distance sensor |
-| J13b / J15 module | — | MIDI, if wanted | — |
+| J13 Qwiic | — | — | ✓ distance sensor |
+| J19 / J15 module | — | MIDI, if wanted | — |
 | J16 expansion | — | — | — |
 
 **The connectors above are fitted on every board regardless** — see

@@ -121,7 +121,7 @@ pins that are not connected, and it fails silently.
 
 | Pins | Option A | Option B |
 | --- | --- | --- |
-| `D11`/`D12` | **I2C sensor** — J13a, 4-pin JST-SH, Qwiic/STEMMA-QT | **MIDI or UART bridge** — J13b, 6-pin JST-PH |
+| `D11`/`D12` | **I2C sensor** — J13, 4-pin JST-SH, Qwiic/STEMMA-QT | **MIDI or UART bridge** — J19, 6-pin JST-PH |
 | `D13`/`D14` | **Comms port B** — J15, USART1 | **SW1 + SW2** via the 74HC14 — J6, J7 |
 
 **Comms ports carry signals, not protocols.** `D11`/`D12` are simultaneously

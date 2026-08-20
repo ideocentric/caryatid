@@ -18,7 +18,7 @@ fabricated once, and reusing them turns capture into transcription.
 | C2897383 | 1×20 female socket | — | on absonus | **Seed sockets, the part actually used** |
 | C158012 | JST **B2B-XH-A(LF)(SN)**, 2-pin | `JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical` | on absonus | J6, J7, J8, J10 |
 | C144394 | JST **B3B-XH-A(LF)(SN)**, 3-pin | `JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical` | on absonus | J9 |
-| C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13a, Qwiic** |
+| C160404 | JST-SH 4-pin horizontal | `JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal` | on absonus | **J13, Qwiic** |
 | ~~C5289485~~ | ~~LS18-P~~ | — | on absonus | **superseded** by the 74HC14, [ADR 0007](decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md) |
 | — | *Daisy Seed footprint* | `Electrosmith_Daisy_Seed` | — | outline only; the module is not a BOM line |
 | C3337 | 220 µF electrolytic | `CP_Elec_5x5.4` | on absonus | bulk |
@@ -39,7 +39,7 @@ not two different lists.)*
 
 absonus uses **JST-XH, 2.5 mm** throughout, and Qwiic SH only where the Qwiic
 standard requires it. caryatid's spec said JST-PH for the battery and left the
-rest generic. **Follow absonus: XH everywhere except J13a.**
+rest generic. **Follow absonus: XH everywhere except J13.**
 
 One crimp tool, one housing family, one set of pre-crimped leads, and two of the
 sizes are already stocked. It also happens to be the better electrical choice for
@@ -52,8 +52,8 @@ PH would have been working close to its rating for no reason.
 | J6/J7/J8 switches, J10 FSR | XH 2 | ✅ C158012 |
 | J9 soft pot | XH 3 | ✅ C144394 |
 | J3 latch, J4 charge LEDs, J12 RGB | XH 4 | ✅ **C144395** |
-| J13b, J15 module ports | XH 6 | ✅ **C144397** |
-| J13a Qwiic | SH 4 horizontal | ✅ C160404 |
+| J19, J15 module ports | XH 6 | ✅ **C144397** |
+| J13 Qwiic | SH 4 horizontal | ✅ C160404 |
 
 **Sourced.** Both are the same JST XH family as the two already in use, so the
 housings, crimps and crimp tool carry straight over:

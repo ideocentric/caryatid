@@ -120,7 +120,7 @@ FB1 pin 2 is the source, the ferrite's output side.
 | **Mic bias L** | R52 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
 | **Mic bias R** | R54 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
 | **Switch lamp** | R5 | 0 Ω link; lamp limits internally, **unmeasured** | **unknown** |
-| Comms A module | J13B-1 | external, no allowance stated | unknown |
+| Comms A module | J19-1 | external, no allowance stated | unknown |
 | Comms B module | J15-1 | external, no allowance stated | unknown |
 | Expansion | J16-1 | external, no allowance stated | unknown |
 | Bulk decoupling | C7-1 | 100 µF, no DC path | 0 |

@@ -59,7 +59,7 @@ int main() {
 
     caryatid::Config cfg;
     cfg.fsr     = true;
-    cfg.comms_a = caryatid::CommsA::I2C;       // J13a, Qwiic
+    cfg.comms_a = caryatid::CommsA::I2C;       // J13, Qwiic
     cfg.comms_b = caryatid::CommsB::Switches;  // J6/J7 as SW1/SW2
     hw.Init(seed, cfg);
 

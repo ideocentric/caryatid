@@ -84,7 +84,7 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    1 mm text fits **two characters** — not enough for `3V3`. Staggering
    alternate pins into two rows doubles the effective pitch and buys five.
 
-   **Seven connector references moved** to make room: J6, J7, J8, J9, J10, J13B
+   **Seven connector references moved** to make room: J6, J7, J8, J9, J10, J19
    and J15 sat directly above their connectors, in the only band the labels
    could use. They are now rotated 90° in the gap beside each connector.
 4. ~~**Logo and font from absonus**~~ **Done, including the mark.** The ensō is

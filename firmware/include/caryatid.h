@@ -36,8 +36,8 @@ namespace caryatid {
 // build fits one. Choosing here must match what is actually soldered.
 enum class CommsA {
     Unused,
-    I2C,   // J13a, 4-pin JST-SH, Qwiic/STEMMA-QT pinout
-    Uart,  // J13b, 6-pin JST-PH module port -- MIDI, ESP32 bridge, whatever
+    I2C,   // J13, 4-pin JST-SH, Qwiic/STEMMA-QT pinout
+    Uart,  // J19, 6-pin JST-PH module port -- MIDI, ESP32 bridge, whatever
 };
 
 // D13/D14. Also mutually exclusive by population, and note the crossing:

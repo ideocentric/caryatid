@@ -26,7 +26,7 @@ So labels stagger into as many rows as the pitch demands:
 
     rows = ceil((label width + clearance) / pitch)
 
-Most connectors need 2. J13A is JST-SH at 1.00 mm pitch and needs 3.
+Most connectors need 2. J13 is JST-SH at 1.00 mm pitch and needs 3.
 
 Connectors whose pins run in a LINE ACROSS the label direction do not stagger
 at all -- a 1 mm line of text is 1.06 mm tall against a 2.50 mm pitch, so the
@@ -35,7 +35,7 @@ of J11.
 
 MEASURE SILK, NOT COURTYARDS
 ----------------------------
-Courtyard-to-courtyard says J1, J3, J4 and J13A have 0.94-1.51 mm and cannot be
+Courtyard-to-courtyard says J1, J3, J4 and J13 have 0.94-1.51 mm and cannot be
 labelled. That is the wrong measurement: a courtyard is a placement keepout, it
 does not reserve silkscreen. Measured silk-to-silk, every connector on the
 board has room -- those four on their OUTWARD side, toward the board edge,
@@ -361,7 +361,7 @@ def plan(B, p, obst, outline):
         for size in (SIZE, 0.9, 0.85, 0.8):
             for rot in ((False, True) if kind == "col" else (False,)):
                 for dr in dirs:
-                    # Fine steps near the bottom: J13A needs a standoff
+                    # Fine steps near the bottom: J13 needs a standoff
                     # between 0.31 and 0.32 mm -- above its own outline's ink,
                     # below where the third row runs off the board edge. A
                     # 0.30 -> 0.60 jump steps straight over the only answer.

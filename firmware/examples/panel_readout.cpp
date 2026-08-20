@@ -28,7 +28,7 @@ int main(void) {
     // Pick ONE per port, and it must match what is soldered. See
     // docs/connectors.md -- the board lays out both options and a build fits
     // one, so choosing the wrong one here reads a pin that is not connected.
-    cfg.comms_a = caryatid::CommsA::I2C;        // J13a, Qwiic sensor
+    cfg.comms_a = caryatid::CommsA::I2C;        // J13, Qwiic sensor
     cfg.comms_b = caryatid::CommsB::Switches;   // J6/J7 as SW1/SW2
 
     hw.Init(seed, cfg);
