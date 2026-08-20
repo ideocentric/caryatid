@@ -28,7 +28,7 @@ docs/sourcing.md actually states; everything else is reported as a gap and the
 tool exits nonzero. It does not fill blanks by guessing -- an invented LCSC
 code does not fail loudly, it arrives as the wrong component.
 """
-import sys, os, re, csv, json, subprocess, zipfile, shutil
+import sys, os, re, csv, json, subprocess, zipfile, shutil, collections
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -220,10 +220,18 @@ def main():
                            "Note": self_fit[ref]["note"]})
             continue
 
-        g = groups.setdefault((r["Value"], fp, code),
-                              {"Comment": r["Value"], "Footprint": fp,
-                               "JLCPCB Part #": code, "refs": []})
+        # GROUP BY PART NUMBER, not by value. Six connectors on this board
+        # share an LCSC code while carrying different roles as their value --
+        # "DC in", "SW1 switch", "FSR" -- and grouping on value split one
+        # orderable part across six lines. JLC then flags "Multiple lines in
+        # the BOM", matches only the first, and assigns it QUANTITY ZERO, so
+        # those parts are silently not assembled. One line per part number.
+        key = code or (r["Value"], fp)
+        g = groups.setdefault(key, {"values": [], "footprints": [],
+                                    "JLCPCB Part #": code, "refs": []})
         g["refs"].append(ref)
+        if r["Value"] not in g["values"]: g["values"].append(r["Value"])
+        if fp not in g["footprints"]: g["footprints"].append(fp)
 
     if unknown:
         print(f"\n  ERROR: {len(unknown)} BOM reference(s) not found on the board: "
@@ -237,15 +245,22 @@ def main():
         return (m.group(1), int(m.group(2) or 0), m.group(3))
 
     out = []
-    for (val, fp, code), g in groups.items():
+    for key, g in groups.items():
         g["refs"].sort(key=sortkey)
         n = len(g["refs"])
+        code = g["JLCPCB Part #"]
+        # One part, several roles -> keep them all, they are the only human
+        # clue to what the line is for. Capped so a long join cannot upset
+        # the parser.
+        comment = " / ".join(g["values"])
+        if len(comment) > 60: comment = comment[:57] + "..."
+        fp = g["footprints"][0]
         if code: covered += n
-        else: missing.append((",".join(g["refs"]), val, fp, n))
-        out.append({"Comment": g["Comment"],
+        else: missing.append((",".join(g["refs"]), comment, fp, n))
+        out.append({"Comment": comment,
                     "Designator": ",".join(g["refs"]),   # every one, no ranges
-                    "Footprint": g["Footprint"],
-                    "JLCPCB Part #": g["JLCPCB Part #"],
+                    "Footprint": fp,
+                    "JLCPCB Part #": code,
                     "QUANTITY": str(n)})
     out.sort(key=lambda r: sortkey(r["Designator"].split(",")[0]))
 
@@ -288,6 +303,20 @@ def main():
     if bad:
         print(f"\n  ERROR: designators still carry a range or '?': "
               f"{', '.join(bad[:12])}")
+        return 1
+
+    # ONE LINE PER PART NUMBER. JLC responds to a repeated part number with
+    # "Multiple lines in the BOM", matches only the first occurrence and gives
+    # it quantity ZERO -- so the part is quietly left unassembled rather than
+    # rejected. That is far worse than an error, and it is invisible unless
+    # you read their returned spreadsheet. Six connectors failed this way.
+    seen = collections.Counter(r["JLCPCB Part #"] for r in out if r["JLCPCB Part #"])
+    repeated = [c for c, k in seen.items() if k > 1]
+    if repeated:
+        print(f"\n  ERROR: {len(repeated)} part number(s) on more than one BOM "
+              f"line: {', '.join(repeated[:8])}")
+        print(f"  JLC will assign quantity 0 and not fit them. Group by part "
+              f"number, not by value.")
         return 1
     if pulled:
         with open(tmp + "/self-fit.csv", "w", newline="") as f:
