@@ -89,7 +89,19 @@ def symbols():
             if not (su and inst): continue
             ref = inst.group(2)
             if ref.startswith("#"): continue          # power symbols, not parts
-            out[ref] = (f"{inst.group(1)}/{su.group(1)}", name, fname)
+            # THE ROOT SHEET UUID IS NOT PART OF THE FOOTPRINT PATH. A
+            # symbol's `instances` path starts at the root -- "/root/audio" --
+            # but the footprint carries only "/audio/<symbol uuid>". Verified
+            # against KiCad's own stm32f100-discovery-shield template, a flat
+            # design whose symbol instance path is "/<root>" while the matching
+            # footprint path is just "/<symbol uuid>".
+            #
+            # Getting this wrong is silent: the file looks right, DRC parity
+            # still passes because it matches on reference designator, and the
+            # only symptom is Update PCB from Schematic offering to add every
+            # component -- exactly the failure this tool exists to fix.
+            parts = [x for x in inst.group(1).split("/") if x][1:]   # drop root
+            out[ref] = ("/" + "/".join(parts + [su.group(1)]), name, fname)
     return out
 
 
@@ -97,7 +109,7 @@ def main():
     apply_ = "--apply" in sys.argv
     syms = symbols()
     t = open(PCB).read()
-    linked, added, skipped, unmatched = 0, [], [], []
+    linked, added, skipped, unmatched, corrected = 0, [], [], [], []
 
     spans = []
     for m in re.finditer(r'^\t\(footprint "', t, re.M):
@@ -106,7 +118,20 @@ def main():
         if r: spans.append((m.start() + 1, blk, r.group(1)))
 
     for start, blk, ref in sorted(spans, key=lambda q: -q[0]):
-        if '(path "' in blk:
+        if ref in syms and '(path "' in blk:
+            want = syms[ref][0]
+            cur = re.search(r'\(path "([^"]*)"\)', blk)
+            if cur and cur.group(1) == want:
+                linked += 1
+                continue
+            # wrong path -- strip the stale block so it is rebuilt below
+            blk_new = re.sub(r'\n\t\t\(path "[^"]*"\)'
+                             r'(\n\t\t\(sheetname "[^"]*"\))?'
+                             r'(\n\t\t\(sheetfile "[^"]*"\))?', "", blk, count=1)
+            t = t[:start] + blk_new + t[start + len(blk):]
+            blk = blk_new
+            corrected.append(ref)
+        elif '(path "' in blk:
             linked += 1
             continue
         if ref not in syms:
@@ -124,8 +149,9 @@ def main():
         t = t[:start] + new + t[start + len(blk):]
         added.append(ref)
 
-    print(f"  {len(spans)} footprints: {linked} already linked, "
-          f"{len(added)} relinked, {len(skipped)} skipped (no symbol)")
+    print(f"  {len(spans)} footprints: {linked} already correct, "
+          f"{len(added)} relinked, {len(corrected)} had a WRONG path corrected, "
+          f"{len(skipped)} skipped (no symbol)")
     if skipped: print(f"    skipped: {' '.join(sorted(skipped))}")
     if unmatched:
         print(f"\n  ERROR: no (attr ...) to anchor against: {' '.join(unmatched)}")
