@@ -178,9 +178,12 @@ def main():
          "--generate-map", "--map-format", "gerberx2", "-o", tmp + "/", PCB])
     run([CLI, "pcb", "export", "pos", "--format", "csv", "--units", "mm",
          "--side", "both", "--exclude-dnp", "-o", tmp + "/cpl.csv", PCB])
+    # Flat: ONE ROW PER PART, no --group-by. KiCad's grouping compresses
+    # references into ranges -- "C2-C5", "R27-R33" -- and JLC rejects those:
+    # it wants every designator listed. Grouping is done below instead, where
+    # the designator list is under our control.
     run([CLI, "sch", "export", "bom", "--exclude-dnp",
-         "--fields", "Reference,Value,Footprint,${QUANTITY}",
-         "--group-by", "Value,Footprint", "-o", tmp + "/bom.csv", SCH])
+         "--fields", "Reference,Value,Footprint", "-o", tmp + "/bom.csv", SCH])
 
     gerbers = sorted(f for f in os.listdir(tmp) if f.endswith((".gbr", ".drl")))
     print(f"  {len(gerbers)} fab files")
@@ -188,32 +191,69 @@ def main():
 
     by_ref, by_fp, by_vf = load_map()
     self_fit = load_self_fit()
+
+    # The BOARD is the authority on reference names. pcbnew stores them
+    # literally; the schematic BOM exporter does not. It parses a reference as
+    # prefix+number, so "J13A" -- ending in a letter -- reads as UNANNOTATED and
+    # comes out as "J13A?". The schematic is fine and DRC parity is clean; only
+    # the exporter is confused. Reconciling against the board fixes it without
+    # blindly stripping a "?" that might have meant something.
+    board_refs = set()
+    for m in re.finditer(r'\(property "Reference" "([^"]+)"', open(PCB).read()):
+        board_refs.add(m.group(1))
+
     rows = list(csv.DictReader(open(tmp + "/bom.csv")))
-    out, missing, covered, pulled = [], [], 0, []
+    groups, missing, covered, pulled, unknown = {}, [], 0, [], []
     for r in rows:
-        refs = split_refs(r["Reference"])
+        raw = r["Reference"].strip()
+        ref = raw[:-1] if raw.endswith("?") and raw[:-1] in board_refs else raw
+        if ref not in board_refs:
+            unknown.append(raw)
+            continue
         fp = r["Footprint"].split(":")[-1]
-        hit = (by_ref.get(refs[0]) or by_vf.get(f'{r["Value"]}|{fp}') or by_fp.get(fp))
+        hit = (by_ref.get(ref) or by_vf.get(f'{r["Value"]}|{fp}') or by_fp.get(fp))
         code = hit["lcsc"] if hit else ""
 
-        # Hand-fitted refs leave the assembly BOM. A grouped row keeps the rest
-        # of its refs and loses only the count it actually lost.
-        mine = [x for x in refs if x in self_fit]
-        if mine:
-            keep = [x for x in refs if x not in self_fit]
-            for x in mine:
-                pulled.append({"Reference": x, "Value": r["Value"], "Footprint": fp,
-                               "LCSC": code, "Source": self_fit[x]["source"],
-                               "Note": self_fit[x]["note"]})
-            if not keep:
-                continue
-            r = {**r, "Reference": ",".join(keep), "QUANTITY": str(len(keep))}
+        if ref in self_fit:
+            pulled.append({"Reference": ref, "Value": r["Value"], "Footprint": fp,
+                           "LCSC": code, "Source": self_fit[ref]["source"],
+                           "Note": self_fit[ref]["note"]})
+            continue
 
-        if code: covered += int(r["QUANTITY"])
-        else: missing.append((r["Reference"], r["Value"], fp, int(r["QUANTITY"])))
-        out.append({**r, "LCSC": code})
+        g = groups.setdefault((r["Value"], fp, code),
+                              {"Comment": r["Value"], "Footprint": fp,
+                               "JLCPCB Part #": code, "refs": []})
+        g["refs"].append(ref)
+
+    if unknown:
+        print(f"\n  ERROR: {len(unknown)} BOM reference(s) not found on the board: "
+              f"{', '.join(unknown[:8])}")
+        print(f"  The schematic and the board disagree. Run DRC with "
+              f"--schematic-parity before shipping this.")
+        return 1
+
+    def sortkey(ref):
+        m = re.match(r"^([A-Za-z]+)(\d*)(.*)$", ref)
+        return (m.group(1), int(m.group(2) or 0), m.group(3))
+
+    out = []
+    for (val, fp, code), g in groups.items():
+        g["refs"].sort(key=sortkey)
+        n = len(g["refs"])
+        if code: covered += n
+        else: missing.append((",".join(g["refs"]), val, fp, n))
+        out.append({"Comment": g["Comment"],
+                    "Designator": ",".join(g["refs"]),   # every one, no ranges
+                    "Footprint": g["Footprint"],
+                    "JLCPCB Part #": g["JLCPCB Part #"],
+                    "QUANTITY": str(n)})
+    out.sort(key=lambda r: sortkey(r["Designator"].split(",")[0]))
+
+    # JLC's template is exactly four columns -- Sample-BOM_JLCSMT.xlsx. QUANTITY
+    # is carried in memory for the reports and dropped on the way out.
     with open(tmp + "/bom.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) + ["LCSC"])
+        w = csv.DictWriter(f, fieldnames=["Comment", "Designator", "Footprint",
+                                          "JLCPCB Part #"], extrasaction="ignore")
         w.writeheader(); w.writerows(out)
 
     # Every self-fit ref must have matched something. A typo here would
@@ -229,9 +269,25 @@ def main():
     # names outright. Self-fit refs drop out here too, or the assembler is told
     # to place a part that is not on the BOM.
     cpl = write_jlc_cpl(tmp + "/cpl.csv", tmp + "/cpl.csv", drop=set(self_fit))
-    if len(cpl) != sum(int(r["QUANTITY"]) for r in out):
-        print(f"\n  ERROR: CPL has {len(cpl)} placements but the BOM totals "
-              f"{sum(int(r['QUANTITY']) for r in out)}. They must agree.")
+
+    # THE CHECK JLC ACTUALLY RUNS, and the one that rejected this package:
+    # "designators don't exist in the BOM file" / "...in the CPL file". Every
+    # designator must appear in both, exactly once. Counting alone would miss a
+    # swap, so compare the sets in both directions.
+    b_refs = [x.strip() for r in out for x in r["Designator"].split(",")]
+    c_refs = [r["Designator"] for r in cpl]
+    B, C = set(b_refs), set(c_refs)
+    dupes = sorted({x for x in b_refs if b_refs.count(x) > 1})
+    if B - C or C - B or dupes or len(b_refs) != len(c_refs):
+        print(f"\n  ERROR: BOM and CPL disagree -- JLC will reject this.")
+        if B - C: print(f"    in BOM, not CPL: {', '.join(sorted(B - C)[:12])}")
+        if C - B: print(f"    in CPL, not BOM: {', '.join(sorted(C - B)[:12])}")
+        if dupes: print(f"    duplicated in BOM: {', '.join(dupes[:12])}")
+        return 1
+    bad = [x for x in b_refs if "-" in x or "?" in x]
+    if bad:
+        print(f"\n  ERROR: designators still carry a range or '?': "
+              f"{', '.join(bad[:12])}")
         return 1
     if pulled:
         with open(tmp + "/self-fit.csv", "w", newline="") as f:
