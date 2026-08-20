@@ -273,6 +273,28 @@ From [capture-checklist.md](capture-checklist.md) and [sourcing.md](sourcing.md)
 
 ## Working with the board
 
+> ### Opening this board in KiCad damages `caryatid.kicad_pro`
+>
+> **It has happened twice.** Saving from the GUI silently:
+>
+> - **deletes netclass patterns** — `/power/DC_IN` (HighCurrent) and `+5V_RAW`
+>   (Power) both went. That is how a rail ends up on a 0.25 mm track.
+> - **empties `track_widths`** to `[]`
+> - **wipes every DRC exclusion comment** to `""`, losing the recorded reason
+> - **re-adds stale exclusions** — two `silk_overlap` entries came back
+>   referencing violations that were *fixed* in `fd90beb`, not accepted
+>
+> **After any KiCad session, before committing:**
+>
+> ```sh
+> git diff hardware/pcb/caryatid.kicad_pro     # expect NOTHING unless you changed a setting
+> python3 tools/check_board.py                 # check 9 catches the netclass loss
+> python3 tools/drc_exclusions.py              # catches stale or uncommented exclusions
+> ```
+>
+> If the diff shows only the damage above, `git checkout hardware/pcb/caryatid.kicad_pro`.
+> Nothing is lost — the project file holds settings, not design data.
+
 ```
 python3 tools/check_board.py        # ten checks KiCad's DRC does not do
 python3 tools/cycle.py              # placement -> fully routed, ~10 min
