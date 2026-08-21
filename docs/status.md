@@ -4,80 +4,63 @@ Where the board is, and what happens next. Read this first.
 
 ## ▶ RESUME HERE — 2026-08-21
 
-**The board now matches the schematic. What is left is placement and routing.**
-[ADR 0010](decisions/0010-nothing-is-dnp.md) took the DNP count to zero: the
-right mic channel is jumper-selected like the left (JP4/JP5/JP6 plus R68), the
-four `open` divider legs (R48, R50, R64, R66) are deleted, and the four
-panel-io options (R43–R46) are assembled.
+**The board is unrouted, on purpose.** Placement, schematic, symbol links and
+BOM all carry forward; the copper does not. `907fa83` removed 949 tracks
+(4324 mm), 203 vias and every zone fill, keeping the 10 zone outlines.
 
-**Done, and verified:**
+**The routed board is not gone** — it is tag **`snapshot/routed-2026-08-21`**:
+
+```sh
+git checkout snapshot/routed-2026-08-21 -- hardware/pcb/caryatid.kicad_pcb
+git show snapshot/routed-2026-08-21:hardware/pcb/caryatid.kicad_pcb   # just read it
+```
+
+**Why it was stripped, and it was not dissatisfaction with the route.** The
+routed board had no room where it needed it. ADR 0010's right-channel jumpers
+could not be placed within **41.6 mm** of the circuitry they select — measured
+against every courtyard, pad, via and F.Cu track — while the upper board sat
+largely empty. Defending that layout means long analogue runs to a trio of
+jumpers parked across the board. Re-placing into the free space and routing
+again is the cheaper move.
+
+**State now:**
 
 | | |
 | --- | --- |
-| ERC, all severities | **0 violations** after each of the three schematic edits |
-| netlist diff | 99 of 107 nets byte-identical; 6 new, 8 changed, **all intended** |
-| `dnp` symbols, all five sheets | **0** |
-| **schematic parity** | **0**, down from 28 — the board carries the change |
+| schematic parity | **0** — the board matches the schematic |
+| unconnected | **263**, the full ratsnest. The same number this board had before it was ever routed |
 | `check_board.py` | **12/12** |
-| `stale_tracks.py` | **0** |
-| evidence | `discovery/evidence/2026-08-21-audio-netlist-diff.txt` |
+| tracks / vias / fills | **0 / 0 / 0** |
+| footprints | **135**, positions and orientations unchanged |
 
-**The board update was done by script, not by the GUI.** `kicad-cli` has no
-update-from-schematic and `BOARD_NETLIST_UPDATER` is not in the Python
-bindings, so `tools/oneshot/update_pcb_from_schematic.py` applies KiCad's own
-28-item parity list through the `pcbnew` BOARD API. Parity going to 0 is the
-acceptance test, and it is KiCad's number rather than the tool's.
+### The plan, in the intended order
 
-### Next, and it does need the GUI
+1. **Re-place, rebalancing into the upper board.** That is where the free space
+   is, and the reason for the exercise. JP4/JP5/JP6 and R68 are still at the
+   parking coordinates and want a home beside the right channel — which means
+   making room there.
+2. **Draw and fill the pours first**, then route into them.
 
-1. **Place JP4, JP5, JP6 and R68 — they are parked, not placed.**
+   > **Eight of the ten zone outlines go stale the moment U1 or U2 moves.**
+   > Only GND on F.Cu and B.Cu is plane; the other eight are hand-drawn power
+   > pours that [ADR 0008](decisions/0008-board-outline-and-layer-count.md) uses
+   > *as routing* for VBAT, VOUT, +5V_RAW, VIN_DC and SW, shaped around those
+   > two parts. They were kept because deleting one is a click and redrawing it
+   > is not — not because they stay correct.
 
-   > **There is no room beside the right channel, and that is measured.** A
-   > free-space scan over every courtyard, pad, via and F.Cu track finds **no
-   > clear site for three 1x03 headers in a row within 41.6 mm** of the right
-   > block. The first attempt at (186, 100) put JP4 on top of a 19.18 mm
-   > `MIC_L` run and a JP6 pad 0.098 mm from a GND via — that area reads empty
-   > on a courtyard-only check and is full of copper. Individually they fit at
-   > ~18 mm, but splitting the trio costs what ADR 0009 leans on: three
-   > positions read as one selector.
-
-   So they sit together at the nearest clear 3-up site, on the left channel's
-   4.59 mm pitch, to be dragged where they belong. Expect to rip up copper to
-   make room. R68 is at (186.00, 92.25), 9.7 mm from its partner R62.
-
-2. **Route the right channel.** 12 unconnected items, and **every one names a
-   new or changed net** — the six new ones plus `MIC_R`, `GAINLEG_R`,
-   `AUDIO_IN_R`, `OPA_R_N`. Nothing outside that set, which is the check that
-   no existing route was cut when the pads moved.
-
-   Three `track_dangling` remnants of the old right-channel routing are left in
-   deliberately rather than blind-deleted — that routing is being replaced, and
-   this repo has been bitten before by deleting what fed something else.
-
-3. **Re-run `tools/stale_tracks.py` after any further net change.** It is 0 now.
-4. **Refill both pours** — or let the script do it; skipping it produced 87
-   violations, almost all of them the plane touching the new pads.
-5. **`python3 tools/jumper_legend.py --apply`** for the six per-position
-   labels. It refuses to run until all six headers are on the board.
-6. **Re-run DRC with `--schematic-parity`**, then `check_board.py` and
+3. **Re-run the silkscreen tools once placement settles** — `ref_silk.py`,
+   `pin_labels.py`, `jumper_legend.py --apply`. 23 silk items are outstanding
+   from the parked jumpers and move with them.
+4. **Then** `stale_tracks.py`, DRC with `--schematic-parity`, `check_board.py`,
    `fab_package.py`.
 
-**20 `silk_overlap` and 3 `silk_over_copper` are parking artifacts** — the
-parked footprints are sitting on existing silkscreen, because the free-space
-scan modelled copper and not silk. They go away when the parts are placed. The
-board had none of either before, and should have none again.
+**The counts in "Manufacturing readiness" are stale**, and are marked as such
+rather than guessed at.
 
-**The counts in "Manufacturing readiness" are stale until step 6**, and are
-marked as such rather than guessed at.
+## The board *was* routed, at `snapshot/routed-2026-08-21`
 
-## The board is routed
-
-As of `64c25e6`. Every electrical check is at zero:
-
-> **Read this with the resume block above.** The figures here are true of the
-> copper that exists; they do not yet include the right-channel jumpers, so DRC
-> reports 28 schematic parity issues until the board is updated. Nothing below
-> is wrong — it is incomplete, and the completion is a KiCad session.
+Kept here because it is worth knowing the electrical result was reachable on
+this outline. At that tag every check was at zero:
 
 | | |
 | --- | --- |
@@ -86,33 +69,14 @@ As of `64c25e6`. Every electrical check is at zero:
 | shorts, clearance, hole clearance | **0** |
 | tracks under the 0.20 mm rule | **0** |
 | floating ground copper | **0** |
-| `tools/check_board.py` | **10/10 pass** |
+| `tools/check_board.py` | **pass** |
 
-150 × 90 mm, two layers, 128 footprints, all on the front. Ground pour both
-sides, 146 GND vias. Power nets around U1 and U2 are poured from hand-drawn
-outlines rather than routed; see [ADR 0008](decisions/0008-board-outline-and-layer-count.md)
-and the commit history for why.
+150 × 90 mm, two layers, 135 footprints, all on the front. Ground pour both
+sides, power nets around U1 and U2 poured from hand-drawn outlines rather than
+routed — see [ADR 0008](decisions/0008-board-outline-and-layer-count.md).
 
-**A plain `kicad-cli pcb drc` run now reports zero.** One kind of item remains,
-excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
-
-- ~~2 `silk_overlap`~~ **Both fixed rather than accepted.** J11's reference
-  nudged clear; BT1's `+` marker moved from local x −4.5 to −5.5, giving
-  0.448 mm. There is no `silk_overlap` anywhere on the board.
-- ~~5 `via_dangling`~~ **Removed.** They were called "junctions where two or
-  three tracks meet, not loose ends" here, which was true and beside the point.
-  Two or three tracks did meet at each — **on F.Cu, with nothing whatever on
-  B.Cu**. B.Cu carries only the ground pour, so a `+5V` or `RGB_B` via reaching
-  it had nothing to land on, and since the pour must clear around each one they
-  were punching holes in the ground plane for no purpose. The F.Cu tracks meet
-  at a coincident point and stay connected without them.
-
-  This was **not** the earlier cascade, where deleting a via orphaned the track
-  feeding it. Only the vias went; no track was touched. Verified on a copy
-  before applying — real unconnected stayed 0 and no `track_dangling` appeared.
-- **5 `lib_footprint_mismatch`**. Metadata only — `Datasheet` and `Description`
-  fields KiCad adds on placement, plus reference visibility. No geometry
-  differs, so nothing about the fabricated board changes.
+**None of that copper is on the board now.** The outline, the layer count, the
+pour strategy and the footprint set carry forward. The route does not.
 
 ## Next, in order
 
@@ -437,5 +401,9 @@ Tags, all pushed:
 
 - `snapshot/pours-u2-routing`
 - `snapshot/before-via-removal`
+- **`snapshot/routed-2026-08-21`** — the last board with copper on it: 949
+  tracks, 203 vias, 10 filled zones, parity 0. Stripped by `907fa83` so the
+  route could be redone from a rebalanced placement. Its tag message carries
+  the restore command.
 
 Plus timestamped copies in `local/backups/`, which is gitignored.
