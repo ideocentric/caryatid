@@ -16,6 +16,34 @@ check is at zero — no unconnected nets, no shorts, no clearance or hole
 violations, no copper under the width rule, no floating ground. See
 [docs/status.md](docs/status.md) for what is left and what happens next.
 
+## ⚠ Which checkout is this?
+
+**caryatid is developed as a standalone clone. It is also consumed as a git
+submodule by the instrument repositories, and those copies are read-only.**
+
+If the path to this file runs through another project's submodule directory —
+for loa that is `hardware/platform/` — **you are in a consumer copy. Do not edit
+it and do not commit to it.** Find the standalone clone and work there.
+
+The sequence, in order, every time:
+
+1. Change, review and commit in the **standalone clone**.
+2. Push.
+3. *Then* update the consuming repository's submodule pointer — a
+   `Bump caryatid: …` commit on that side.
+
+**Why this matters more than it looks.** A submodule checkout sits on a detached
+HEAD, so commits made there belong to no branch and the standalone clone knows
+nothing about them. The two diverge silently, and the symptoms all point
+somewhere other than the cause: KiCad in one directory keeps showing a schematic
+that another directory has already changed.
+
+That is not hypothetical. A whole session's work — ADR 0010, the schematic
+edits, two tools, thirteen documents — was written into loa's submodule on
+2026-08-21. It pushed to the same remote so nothing was lost, but an hour went
+into diagnosing "update from schematic shows nothing new", which was only ever
+the wrong directory.
+
 ## Start here
 
 | | |

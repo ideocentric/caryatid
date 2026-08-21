@@ -1,5 +1,10 @@
 # Findings ledger
 
+> **Before writing anything here, check which checkout you are in.** caryatid is
+> developed in its standalone clone; a copy reached through another project's
+> submodule directory (`hardware/platform/` in loa) is read-only. See the top of
+> the [root README](../README.md).
+
 Measured facts about physical things that the repo cannot check for itself.
 
 One file per finding in `findings/`, keyed by a stable identifier. Each record
