@@ -56,3 +56,83 @@ library, raise the quote for **5 boards, full turnkey**, then run
 `.venv/bin/python tools/cost_estimate.py 5 --quote <total>` in the caryatid repo
 and correct `RATES` / `PCB_FAB` from what it reports. Pre-orders are
 `C5339083` ×5 @ $4.8616 and `C2897383` ×10 @ $0.338.
+
+## 2026-08-20/21 — ADR 0009, the left mic channel behind jumpers
+
+**Not logged at the time.** Twenty-three commits, `5bc99d2..ad6a54d`, spanning
+the JLC BOM/CPL format work, BT1's move to self-fit, and all of ADR 0009. The
+commit messages carry the detail; this entry exists so the gap in the worklog is
+visible rather than silent. The durable outcomes are in
+[ADR 0009](../docs/decisions/0009-mic-input-is-jumper-selected.md),
+[audio.md](../docs/audio.md) and
+[mic-configurations.md](../docs/mic-configurations.md).
+
+## 2026-08-21 — ADR 0010: the right mic channel is jumpered, and nothing is DNP
+
+**Completed:**
+
+- **[ADR 0010](../docs/decisions/0010-nothing-is-dnp.md) written and accepted.**
+  Zero `dnp` on any sheet. BT1 is not an exception — it is `self_fit`, which is
+  an assembly routing decision, not a population one.
+- **The right mic channel is a full mirror of the left.** JP4 bias / JP5 path /
+  JP6 gain, plus **R68 392R**, the one part that is not a translation: the left
+  has two gain legs (R58 1k, R67 392R) and the right had only R62, so without
+  R68 there was nothing for JP6 to select.
+
+  **This was not simply "clear the DNP".** The right channel is laid out as an
+  exact mirror of the *pre-jumper* left, +149.86 mm in Y, so it inherited both
+  mutually exclusive pairs — 2k2-to-3V3A against 220R-to-5V on `MIC_R`, op-amp
+  output against raw bypass on `AUDIO_IN_R`. Populating it without jumpers would
+  have shipped the exact defect ADR 0009 exists to prevent.
+- **R48, R50, R64, R66 deleted.** Their value is `open`; no supplier ships one,
+  so they could not be populated to satisfy the rule. What they provided is
+  covered: R47/R49 1k *is* the earpiece attenuator, and the WM8731 line PGA
+  reaches −34.5 dB, which is more pad than a resistor was going to give and is
+  adjustable at run time. **R66 was on the wrong node** — it tapped `AUDIO_IN_R`,
+  downstream of where JP5 lands, so it would have padded the op-amp output too.
+  A latent defect removed alongside a DNP.
+- **R43–R46 assembled.** Both exclusions failed on the numbers: a UART line
+  idles high so a 4k7 pull-up holds it where it belongs, and A4/A5 reach only
+  J9/J10 (J5 carries A0–A3, A6–A9), checked against the netlist.
+- **`check_board.py` check 12** — no `dnp` on any sheet. The one schematic check
+  in that tool, because nothing else has an opinion: ERC ignores `dnp`, DRC
+  never sees it, and the only symptom of one reappearing is a BOM line that
+  quietly stops being fitted. Verified by injecting one.
+- **`tools/stale_tracks.py`** — finds tracks left sitting on a pad whose net
+  moved. **Calibrated against the known-answer case**, the board immediately
+  before `0491e70` where DRC found exactly four: 0.001 mm margin finds 2,
+  0.10–0.15 finds 4, 0.20 finds 6 including legitimate routing. 0.15 is
+  `min_clearance` from the project file, not a tuned number.
+- **Thirteen documents corrected**, including two statements that had gone
+  false: `audio.md`'s "the right stays DNP", and `sourcing.md`'s R52/R54
+  dissipation note, which said "they are not populated now" when both now are.
+
+**Verified:** ERC 0 violations at `--severity-all` after each of the three
+schematic edits; netlist diff shows 99 of 107 nets byte-identical with 6 new and
+8 changed, all intended (`discovery/evidence/2026-08-21-audio-netlist-diff.txt`);
+0 `dnp` across all five sheets; `check_board.py` 12/12.
+
+**In flight:** **the schematic is ahead of the board, deliberately.** DRC reports
+**28 schematic parity issues** and that is exactly this. `kicad-cli` has no
+update-from-schematic, so the next steps need the GUI and are listed in the
+RESUME HERE block at the top of [status.md](../docs/status.md).
+
+**Open questions:**
+
+- **R52/R54 dissipation, now live rather than hypothetical.** 92 mW on a 100 mW
+  0603 if a carbon capsule sits at 0.5 V, and both are populated. The carbon
+  jumper position and the `MIC_RTN` hook-switch gate keep it from being urgent.
+  Measure a capsule, then decide whether those two want an 0805.
+- **`MIC_RTN` is shared by both channels** — one gated return, two capsules. A
+  stereo carbon pair puts both bias currents through one switch contact. Correct
+  arrangement (the gate belongs to the handset), worth knowing before sizing it.
+- The manufacturing counts in `status.md` are stale by design until the board is
+  updated. Re-run `fab_package.py`; do not hand-edit them.
+- Everything still open from 2026-08-19: the Extended fee basis, the PCB fab
+  area price, and the three bench measurements.
+
+**Next step:** open KiCad, **Update PCB from Schematic**, place JP4–JP6 and R68,
+delete the four removed footprints, then **run `tools/stale_tracks.py` before
+routing anything** — five pads change net and KiCad leaves the old tracks
+behind. Re-route, refill, DRC with `--schematic-parity`, `check_board.py`,
+`jumper_legend.py --apply`, `fab_package.py`.
