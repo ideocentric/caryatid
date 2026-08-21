@@ -67,6 +67,17 @@ LINES = [
     "UNSTABLE = CARB",
 ]
 
+# Per-position labels at each header, so the POSITION carries the answer and
+# nobody has to cross-reference the table while holding a pair of tweezers.
+# Above = the top pair (pins 1-2), below = the bottom pair (2-3), because the
+# jumpers stand vertically with pin 1 uppermost. Three characters each: the
+# headers are 4.59 mm apart, and anything longer collides with its neighbour.
+POSN = {
+    "JP1": ("ELE", "CAR"),    # 2k2 to 3V3A  /  220R to 5 V
+    "JP2": ("AMP", "BYP"),    # op-amp       /  bypass
+    "JP3": ("101", "256"),    # 1k, x101     /  392R, x256
+}
+
 
 def uid(s):
     return str(uuid.uuid5(NS, s))
@@ -90,7 +101,9 @@ def main():
     for m in reversed(list(re.finditer(r'^\t\(gr_text "', t, re.M))):
         blk = C.sexp(t, m.start() + 1)
         u = re.search(r'\(uuid "([^"]+)"\)', blk)
-        if u and u.group(1) in {uid(f"line{i}") for i in range(len(LINES))}:
+        _mine = {uid(f"line{i}") for i in range(len(LINES))} | {
+            uid(f"posn{r}{s}") for r, pair in POSN.items() for s in pair}
+        if u and u.group(1) in _mine:
             t = t[:m.start()] + t[m.start() + 1 + len(blk):]
             n_old += 1
     if n_old: print(f"  removed {n_old} lines from a previous run")
@@ -160,8 +173,47 @@ def main():
         head = t.index("\n", s) + 1
         t = t[:head] + "\t\t(locked yes)\n" + t[head:]
 
+    # --- per-position labels -------------------------------------------------
+    # Placed against the same obstacle model, searching outward from the header
+    # so a label never lands on the courtyard or on its neighbour.
+    for box, nm in [(block_box(cx, cy, size)[0], "legend")]:
+        obst.add_label(box, nm)
+    posn, missed = [], []
+    for ref, (top, bot) in POSN.items():
+        px, py = jp[ref]
+        pins_top, pins_bot = py, py + 5.08      # pin 1 and pin 3 centres
+        for text, y0_, step in ((top, pins_top, -1), (bot, pins_bot, +1)):
+            up, dn = P.th_split(size)
+            w = P.tw(text, size)
+            placed = False
+            # The reference designators sit at 2.38 mm above pin 1, so a top label
+            # has to clear them and land ABOVE the reference -- around 4 mm out.
+            # Stopping the search at 3.5 found nothing and silently placed only
+            # the bottom three.
+            for gap in (1.6, 1.9, 2.2, 2.6, 3.0, 3.5, 4.0, 4.4, 4.8, 5.4, 6.0):
+                ly = y0_ + step * gap
+                box = (px - w/2, ly - up, px + w/2, ly + dn)
+                if obst.clash(box, CLEAR): continue
+                posn.append({"label": text, "cx": px, "cy": ly, "rot": 0,
+                             "just": "", "size": size,
+                             "uuid": uid(f"posn{ref}{text}")})
+                obst.add_label(box, f"{ref}:{text}")
+                placed = True
+                break
+            if not placed: missed.append(f"{ref} {text}")
+    if missed:
+        print(f"  no room for: {', '.join(missed)}")
+    print(f"  {len(posn)} of 6 per-position labels placed")
+    t = P.emit(t, posn)
+    for u in [L["uuid"] for L in posn]:
+        i = t.find(f'(uuid "{u}")')
+        s2 = t.rfind("\t(gr_text", 0, i)
+        h2 = t.index("\n", s2) + 1
+        t = t[:h2] + "\t\t(locked yes)\n" + t[h2:]
+
     d = sum(1 if c == "(" else -1 if c == ")" else 0 for c in t)
-    print(f"  {len(labels)} lines, paren balance {d}")
+    print(f"  {len(labels)} table lines + {len(posn)} position labels, "
+          f"paren balance {d}")
     if d != 0:
         print("  UNBALANCED -- not writing"); return 1
     if not apply_:

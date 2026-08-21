@@ -37095,6 +37095,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 	(gr_text "MIC CAPSULE"
 		(locked yes)
 		(at 127.5465 94.6768)
@@ -37223,6 +37233,78 @@
 				(thickness 0.15)
 			)
 			(justify left)
+		)
+	)
+	(gr_text "ELE"
+		(locked yes)
+		(at 142.5450 95.1700)
+		(layer "F.SilkS")
+		(uuid "5eea18c9-2567-50d8-af75-940239cf83cd")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "CAR"
+		(locked yes)
+		(at 142.5450 106.8500)
+		(layer "F.SilkS")
+		(uuid "046e7ce2-ec26-55c4-b1a0-e991636e24d9")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "AMP"
+		(locked yes)
+		(at 147.1350 95.1700)
+		(layer "F.SilkS")
+		(uuid "ca92c12b-b2c9-5693-8e4f-0cd187cbe0f0")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "BYP"
+		(locked yes)
+		(at 147.1350 106.8500)
+		(layer "F.SilkS")
+		(uuid "9c48d3ac-bb45-569d-8d98-9715c4ccf03a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "101"
+		(locked yes)
+		(at 151.7250 95.1700)
+		(layer "F.SilkS")
+		(uuid "f13a5944-3aa7-52f2-bece-a9e6df6711c3")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "256"
+		(locked yes)
+		(at 151.7250 106.8500)
+		(layer "F.SilkS")
+		(uuid "c39ff4d1-978c-569c-b675-260dfd37ba88")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
 		)
 	)
 	(gr_line
