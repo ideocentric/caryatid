@@ -1,0 +1,153 @@
+# Mic capsule configurations
+
+**Set three jumpers to match the capsule.** This is the long form of the table
+silkscreened beside JP1/JP2/JP3 — same information, with the signal path drawn
+so you can see what each setting actually does.
+
+Decision and reasoning: [ADR 0009](decisions/0009-mic-input-is-jumper-selected.md).
+Component values and gain arithmetic: [audio.md](audio.md).
+
+---
+
+## First, identify the capsule
+
+**Measure DC resistance across it.** One minute with a multimeter, and it is the
+only reliable test — the three types are indistinguishable at the connector,
+which is why the board cannot detect them for you.
+
+```mermaid
+flowchart TB
+    M["Measure DC ohms<br/>across the capsule"]
+    M -->|open circuit| E["ELECTRET"]
+    M -->|"150–600 Ω, steady"| D["DYNAMIC"]
+    M -->|"50–300 Ω, jumps when tapped"| C["CARBON"]
+
+    classDef cap fill:#e8f0fe,stroke:#3367d6,stroke-width:2px
+    class E,D,C cap
+```
+
+**"Jumps when tapped" is the carbon tell.** The granules resettle, and that
+variability *is* how the element works. A steady reading in the same range is a
+dynamic capsule.
+
+---
+
+## Jumper settings
+
+Pin 1 is uppermost on all three headers. A shunt bridges **one adjacent pair**.
+
+![Mic capsule jumper settings](img/mic-configurations.svg)
+
+> **Drawn as SVG, not Mermaid, and that was a measured decision.** Three stacked
+> pin circles per jumper nested in subgraphs is the obvious Mermaid expression of
+> this — and it renders at **1400 × 10993 px**, an aspect ratio of nearly 8:1,
+> because nested `direction` is ignored and everything stacks into an unreadable
+> column. A diagram whose entire point is spatial arrangement should not be handed
+> to a layout engine that will rearrange it. `tools/gen_mic_svg.py` draws the pins
+> where the pins are, from the same `CONFIG` table this page is written against.
+
+| Capsule | JP1 bias | JP2 path | JP3 gain |
+| --- | --- | --- | --- |
+| **Electret** | `1-2` — 2k2 to 3V3A | `1-2` — op-amp | `1-2` — ×101 |
+| **Dynamic** | **none** | `1-2` — op-amp | `2-3` — ×256 |
+| **Carbon** | `2-3` — 220R to 5 V | `2-3` — bypass | **none** |
+
+On the silkscreen the top pair reads `ELE` / `AMP` / `101` and the bottom pair
+`CAR` / `BYP` / `256`, so the label beside the position is the setting.
+
+---
+
+## What each setting does
+
+### Electret — bias, then amplify
+
+```mermaid
+flowchart LR
+    V["3V3A"] --> R51["R51 2k2"]
+    R51 -->|JP1 1-2| MIC(["MIC_L"])
+    CAP["Electret capsule<br/>J18"] --> MIC
+    MIC --> C23["C23<br/>AC couple"] --> OPA["U4<br/>×101, 40.1 dB"]
+    OPA --> C25["C25"] -->|JP2 1-2| AIN(["AUDIO_IN_L"])
+    AIN --> COD["WM8731<br/>line in, PGA trims"]
+    R58["R58 1k"] -.->|JP3 1-2| OPA
+
+    classDef sel fill:#fff4e5,stroke:#e8710a,stroke-width:2px
+    class R51,R58 sel
+```
+
+The capsule needs a few volts through a resistor to work at all. 2k2 from 3V3A
+draws about **1.5 mA**. ×101 keeps the −3 dB corner at **9.9 kHz**, which is why
+the gain jumper exists — the wider bandwidth is worth having when the source is
+not a telephone.
+
+### Dynamic — no bias, maximum gain
+
+```mermaid
+flowchart LR
+    CAP["Dynamic capsule<br/>J18"] --> MIC(["MIC_L"])
+    NOB["JP1 open<br/>no bias"] -.-> MIC
+    MIC --> C23["C23<br/>AC couple"] --> OPA["U4<br/>×256, 48.2 dB"]
+    OPA --> C25["C25"] -->|JP2 1-2| AIN(["AUDIO_IN_L"])
+    AIN --> COD["WM8731<br/>line in, +12 dB"]
+    R67["R67 392R"] -.->|JP3 2-3| OPA
+
+    classDef sel fill:#fff4e5,stroke:#e8710a,stroke-width:2px
+    class R67,NOB sel
+```
+
+A dynamic element generates its own signal, so bias would only load it. It wants
+about **60 dB**, and one stage cannot give that without collapsing the
+bandwidth — so the gain is split: **48.2 dB in the op-amp plus 12 dB in the
+codec's own PGA**, confirmed against WM8731 `PD Rev 4.0` Table 3. At ×256 the
+MCP6002's 1 MHz gain-bandwidth product puts −3 dB at **3.9 kHz**, just above the
+3400 Hz voiceband edge.
+
+### Carbon — DC current, and attenuate
+
+```mermaid
+flowchart LR
+    V["5 V rail"] --> R52["R52 220R"]
+    R52 -->|JP1 2-3| MIC(["MIC_L"])
+    CAP["Carbon capsule<br/>J18"] --> MIC
+    MIC --> R63["R63"] --> BYP(["BYPASS_L"])
+    R64["R64<br/>pad, DNP"] -.-> BYP
+    BYP -->|JP2 2-3| AIN(["AUDIO_IN_L"])
+    AIN --> COD["WM8731<br/>line in, PGA attenuates"]
+    RTN(["MIC_RTN → J14<br/>hook switch"]) --> CAP
+
+    classDef sel fill:#fff4e5,stroke:#e8710a,stroke-width:2px
+    class R52,R63 sel
+```
+
+A carbon element is effectively an amplifier: it **modulates a DC current**
+rather than generating a signal, so the current has to exist. 220 Ω from 5 V
+gives it tens of milliamps — and that is loud, often **above** line level, which
+is why the path bypasses the op-amp entirely and offers a pad instead.
+
+**The op-amp is not in circuit here**, so JP3 does nothing. Leave it off or
+leave it wherever it was; it changes nothing.
+
+> **The return is switched, and that matters.** `MIC_RTN` leaves on J18 pin 3
+> and pairs with J14 to the hook switch's second pole, so the bias current only
+> flows off-hook. Tens of milliamps continuously would be a real fraction of a
+> battery instrument's budget, and pure waste on-hook. Electret and dynamic
+> builds tie `MIC_RTN` to ground in the loom.
+
+---
+
+## Getting it wrong
+
+Neither of these damages the board.
+
+| Mistake | Symptom |
+| --- | --- |
+| JP1 on `2-3` with an electret | 220 Ω to 5 V into a part expecting 2k2 to 3V3 — it may survive, it will not sound right |
+| JP1 open with an electret | **Silence.** No bias, no signal |
+| JP2 on `2-3` with electret or dynamic | Very quiet — the raw capsule straight into a line input, no gain |
+| JP2 on `1-2` with carbon | Loud and clipped — a hot source through a ×101 stage |
+| JP3 wrong on an amplified path | Works, wrong level. Trim at the codec PGA and move on |
+
+**The fallback also lands on the bypass.** If the vintage element is dead, a
+modern electret or a MAX9814 AGC module hidden in the housing outputs near line
+level and uses the carbon settings — JP1 open, JP2 on `2-3`. The board does not
+change for it.

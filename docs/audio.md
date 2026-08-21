@@ -54,6 +54,9 @@ before it is built.
 | **Dynamic** | — | `1-2` | `2-3` |
 | **Carbon** | `2-3` | `2-3` | — |
 
+**[mic-configurations.md](mic-configurations.md) draws all three**, with the
+signal path for each and a diagram of the shunt positions.
+
 **The table is on the silkscreen beside the jumpers**, with the DC-resistance
 test printed next to it, so the board carries its own procedure. `12` and `23`
 are pin pairs rather than positions, because "top" depends on which way the

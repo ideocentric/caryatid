@@ -24,6 +24,7 @@ violations, no copper under the width rule, no floating ground. See
 | **The frozen pin map** | [docs/pinmap.md](docs/pinmap.md) — generated from [docs/pins.yaml](docs/pins.yaml) |
 | Connectors and what plugs into them | [docs/connectors.md](docs/connectors.md) |
 | Audio in and out, and the handset problem | [docs/audio.md](docs/audio.md) |
+| **Setting the mic capsule jumpers** | [docs/mic-configurations.md](docs/mic-configurations.md) |
 | The three indicators, and why three | [docs/indicators.md](docs/indicators.md) |
 | **Component values, with derivations** | [docs/values.md](docs/values.md) |
 | Part numbers, footprints, what is in stock | [docs/sourcing.md](docs/sourcing.md) |
