@@ -28,12 +28,17 @@ that modelled one thing and silently ignored another. Each is a class here.
   9 a series part (diode, ferrite, inductor, fuse) carries ONE current, so the
     nets either side of it must be in the same netclass. /power/DC_IN was in
     Default at 0.25 mm while VIN_DC, across D1 from it, was HighCurrent at 1.20
+ 11 orphaned ground pour -- a filled island with no via or through-hole pad
+    inside it is copper at floating potential, coupling instead of shielding
+ 12 no `dnp` on any sheet (ADR 0010). The one schematic check here, because
+    nothing else has an opinion: ERC ignores dnp, DRC never sees it, and the
+    only symptom of one reappearing is a BOM line that stops being fitted
 
 Geometry rules established by reading KiCad-written boards, not assumed:
   * rotation is applied at compute time; stored pad coords are PRE-rotation
   * a back-side footprint stores its geometry Y-NEGATED, layers swapped
 """
-import sys, os, re, math, json
+import sys, os, re, math, json, glob
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PCB  = os.environ.get("CARYATID_PCB") or os.path.join(HERE, "..", "hardware", "pcb", "caryatid.kicad_pcb")
@@ -436,11 +441,39 @@ def main():
     except Exception as e:
         fail("orphan-pour", f"could not check for orphaned pour: {e}")
 
+    # --- 12. no DNP on any sheet --------------------------------------------
+    # ADR 0010: every symbol is assembled. BT1 is NOT an exception -- it is
+    # `self_fit` in lcsc.yaml, which is an assembly routing decision, not a
+    # population one, and fab_package.py is what acts on it.
+    #
+    # This reads the SCHEMATIC, not the board, because that is where `dnp`
+    # lives and because neither ERC nor DRC has any opinion about it. A DNP
+    # reintroduced by hand in KiCad is invisible to every other check here: the
+    # footprint stays on the board, the netlist stays correct, and the only
+    # symptom is a BOM line that quietly stops being fitted.
+    try:
+        _sheets = sorted(glob.glob(os.path.join(os.path.dirname(PCB), "*.kicad_sch")))
+        if not _sheets:
+            fail("dnp", "no schematic sheets found beside the board")
+        for _s in _sheets:
+            _t = open(_s).read()
+            for _m in re.finditer(r"\n\t\(symbol\n", _t):
+                _blk = sexp(_t, _m.start() + 1)
+                if "\t\t(dnp yes)\n" not in _blk:
+                    continue
+                _r = re.search(r'\(property "Reference" "([^"]+)"', _blk)
+                _v = re.search(r'\(property "Value" "([^"]*)"', _blk)
+                fail("dnp", f"{os.path.basename(_s)}: "
+                            f"{_r.group(1) if _r else '?'} "
+                            f"({_v.group(1) if _v else '?'}) is DNP -- ADR 0010")
+    except Exception as e:
+        fail("dnp", f"could not check for DNP symbols: {e}")
+
     # --- report -------------------------------------------------------------
     print(f"board {x1-x0:.1f} x {y1-y0:.1f} mm   "
           f"{len(front)} front / {len(back)} back   standoff {STANDOFF_MM} mm\n")
     if not fails:
-        print("  all eleven checks pass")
+        print("  all twelve checks pass")
         return 0
     from collections import Counter
     for cls, n in Counter(c for c, _ in fails).most_common():

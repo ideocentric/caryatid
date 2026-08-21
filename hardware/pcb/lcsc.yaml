@@ -16,7 +16,7 @@ by_ref:
   U1:   {lcsc: C54313,    note: "TI BQ24074RGTR, QFN-16-EP. Economic assembly."}
   U2:   {lcsc: C919459,   note: "TI TPS61023DRLR, SOT-563. Economic assembly."}
   U3:   {lcsc: C5605,     note: "Nexperia 74HC14D, SOIC-14."}
-  U4:   {lcsc: C116706,   note: "Microchip MCP6002-I/SN, SOIC-8. DNP."}
+  U4:   {lcsc: C116706,   note: "Microchip MCP6002-I/SN, SOIC-8. BOTH HALVES LIVE -- ADR 0009 fitted section A, ADR 0010 section B. The note here said DNP long after 0009 stopped it being true."}
   D1:   {lcsc: C8678,     note: "MDD SS34, SMA. JLC Basic, no setup fee."}
   L1:   {lcsc: C354578,   note: "CENKER CKCS4018-1uH/N, 4x4 shielded, 4.2 A Isat."}
   # PRE-ORDER FROM JLC. Confirmed orderable 2026-08-18 at $4.8616 -- above the
@@ -44,7 +44,8 @@ by_footprint:
     {lcsc: C144397,  note: "JST B6B-XH-A(LF)(SN)"}
   JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal:
     {lcsc: C160404,  note: "JST-SH 4-pin horizontal, Qwiic"}
-  # JP1/JP2/JP3, the mic capsule selector -- ADR 0009. Verified against live
+  # JP1-JP6, the mic capsule selectors -- ADR 0009 (left) and ADR 0010
+  # (right). Verified against live
   # JLC data 2026-08-21: HX PH254-01-03-Z-L11.5, 1x3P 2.54mm THT, 3A, gold,
   # 56393 in stock, $0.0249/1, Extended, manualWeld. The L11.5 body/pin split
   # is 2.5mm body with 6mm of mating pin, which is what a standard 2.54mm
@@ -78,14 +79,15 @@ by_value_footprint:
     {lcsc: C23006, note: "Extended, $0.0055 ea -- R7"}
   "47k5 1%|R_0603_1608Metric":
     {lcsc: C23061, note: "Extended, $0.0025 ea -- R8"}
-  # ADR 0009, the mic capsule selector. All three verified against live JLC
-  # data 2026-08-21, same UNI-ROYAL 0603WAF series as every other resistor here.
+  # ADR 0009 and ADR 0010, the mic capsule selectors. All three verified
+  # against live JLC data 2026-08-21, same UNI-ROYAL 0603WAF series as every
+  # other resistor here. Quantities DOUBLED by ADR 0010: both channels fitted.
   "2k2|R_0603_1608Metric":
-    {lcsc: C4190, note: "2.2k 1% 0603, Basic. R51, electret bias to 3V3A -- 1.5 mA, 5 mW."}
+    {lcsc: C4190, note: "2.2k 1% 0603, Basic. R51 and R53, electret bias to 3V3A -- 1.5 mA, 5 mW each."}
   "220R|R_0603_1608Metric":
-    {lcsc: C22962, note: "220R 1% 0603, Basic. R52, carbon bias from 5V. SEE DISSIPATION NOTE in values.md -- up to 92 mW on a 100 mW part at the top of the documented current range."}
+    {lcsc: C22962, note: "220R 1% 0603, Basic. R52 and R54, carbon bias from 5V. SEE DISSIPATION NOTE in values.md -- up to 92 mW on a 100 mW part at the top of the documented current range."}
   "392R|R_0603_1608Metric":
-    {lcsc: C23039, note: "392R 1% 0603, Extended. R67, the x256 gain leg. E96, so it carries a loading fee like the other E96 values."}
+    {lcsc: C23039, note: "392R 1% 0603, Extended. R67 and R68, the x256 gain legs. E96, so it carries a loading fee like the other E96 values."}
   "510|R_0603_1608Metric":
     {lcsc: C23193, note: "Basic, $0.0102 ea -- R40"}
   "100n|C_0603_1608Metric":
