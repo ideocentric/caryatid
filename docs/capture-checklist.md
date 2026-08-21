@@ -169,21 +169,26 @@ none because they are on-board measurements.
 - [ ] J5 wipers **1 kΩ / 100 nF**, not 220 Ω / 10 nF.
 - [ ] J11 **100 Ω series** on each of D0–D6.
 - [ ] RGB **510 Ω red, 300 Ω green and blue**, anode on `+5V`.
-- [ ] I2C pull-ups 4.7 kΩ **DNP** — a UART on the same pins does not want them.
-- [ ] Every unpopulated part marked **DNP in the schematic**.
+- [ ] I2C pull-ups 4.7 kΩ **fitted** — a UART line idles high, so they are
+      harmless on the serial use of the same pins. ADR 0010.
+- [ ] **Nothing carries `dnp`.** `check_board.py` check 12 enforces it.
 
 ## Audio sheet
 
-Every provision is in [audio.md](audio.md). The whole sheet is DNP-heavy by
-design — it exists so the capsule question can be answered after the boards
-arrive rather than before the gerbers go out.
+Every provision is in [audio.md](audio.md). The sheet exists so the capsule
+question can be answered after the boards arrive rather than before the gerbers
+go out — **and it is answered with a shunt, not a soldering iron.** It used to
+be DNP-heavy by design; ADR 0009 and ADR 0010 replaced that with six jumpers.
 
 - [ ] Output coupling, Pod-style, to **J17** — not to a board-mounted jack.
 - [ ] Earpiece attenuator: a series resistor does both jobs, raising the load
       impedance as it drops the level. **No headphone amp on this board.**
-- [ ] Input network on **every** board, DNP where unused.
-- [ ] **U4 MCP6002 gain stage, DNP**, powered from `3V3A`, both channels laid
-      out. Carbon bypasses it, electret takes ~×100, dynamic takes maximum.
+- [ ] Input network on **every** board, **both channels fitted**.
+- [ ] **U4 MCP6002 gain stage fitted, both halves**, powered from `3V3A` and
+      decoupled by C30. Carbon bypasses it, electret takes ~×100, dynamic takes
+      maximum — and JP2/JP5 choose, per channel.
+- [ ] **Six jumpers, three per channel**: JP1–JP3 left, JP4–JP6 right.
+      Bias / path / gain, identical positions on both.
 - [ ] **Mid-rail bias network** — 100 k / 100 k / 10 µF. A single-supply stage
       without it clips half the waveform.
 - [ ] **`C_g` in series with `R_g`.** Without it, DC gain equals AC gain and the

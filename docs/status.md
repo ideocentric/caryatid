@@ -2,9 +2,54 @@
 
 Where the board is, and what happens next. Read this first.
 
+## ▶ RESUME HERE — 2026-08-21
+
+**The schematic is ahead of the board, deliberately, and the gap is one KiCad
+session.** [ADR 0010](decisions/0010-nothing-is-dnp.md) took the DNP count to
+zero: the right mic channel is now jumper-selected like the left (JP4/JP5/JP6
+plus R68), the four `open` divider legs (R48, R50, R64, R66) are deleted, and
+the four panel-io options (R43–R46) are assembled.
+
+**Done, and verified:**
+
+| | |
+| --- | --- |
+| ERC, all severities | **0 violations** after each of the three edits |
+| netlist diff | 99 of 107 nets byte-identical; 6 new, 8 changed, **all intended** |
+| `dnp` symbols, all five sheets | **0** |
+| `check_board.py` | **12/12**, the new check being "no DNP on any sheet" |
+| evidence | `discovery/evidence/2026-08-21-audio-netlist-diff.txt` |
+
+**Not done, and it needs the GUI — `kicad-cli` has no update-from-schematic:**
+
+1. **Update PCB from Schematic.** DRC currently reports **28 schematic parity
+   issues**, which is exactly this and nothing else.
+2. **Place JP4, JP5, JP6 and R68.** The right-channel block sits around
+   X 176–182, Y 91–107; the clear area to its right, roughly X 185–194 /
+   Y 96–113, is the obvious home. JP1–JP3 are at X 142.5/147.1/151.7, Y 99.17
+   on 4.59 mm centres.
+3. **Delete the R48/R50/R64/R66 footprints** and whatever fed them.
+4. **Run `python3 tools/stale_tracks.py` before routing anything.** Five pads
+   change net (R53.2, R54.2, C29.2, R65.2, R62.2) and KiCad leaves the old
+   tracks behind. Four such tracks nearly shipped last time — see `0491e70`.
+   The tool reports 0 on the current board and reproduces all four on the board
+   immediately before that fix.
+5. **Re-route the right channel, refill both pours, re-run DRC** with
+   `--schematic-parity`, then `check_board.py` and `fab_package.py`.
+6. **`python3 tools/jumper_legend.py --apply`** for the six per-position labels.
+   It refuses to run until all six headers are on the board, and says so.
+
+**The counts below in "Manufacturing readiness" are stale until step 5**, and
+are marked as such rather than guessed at.
+
 ## The board is routed
 
 As of `64c25e6`. Every electrical check is at zero:
+
+> **Read this with the resume block above.** The figures here are true of the
+> copper that exists; they do not yet include the right-channel jumpers, so DRC
+> reports 28 schematic parity issues until the board is updated. Nothing below
+> is wrong — it is incomplete, and the completion is a KiCad session.
 
 | | |
 | --- | --- |
@@ -110,10 +155,16 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
 
    `.venv` is required for this tool (`svgelements`), and is gitignored.
 
-5. **Manufacturing readiness** — **ready.**
+5. **Manufacturing readiness** — **was ready; reopened by ADR 0010.**
+
+   > **Everything in this section describes the board as of `ad6a54d`**, before
+   > the right-channel jumpers. It is kept rather than deleted because the
+   > *gates* are unchanged and the cost work still stands — only the counts move.
+   > Re-derive them by re-running the tools after the PCB is updated from the
+   > schematic; do not hand-edit the numbers.
 
    `python3 tools/fab_package.py --apply` writes `local/fab/` and exits nonzero
-   while anything is missing. It exits zero.
+   while anything is missing. It exited zero at `ad6a54d`.
 
    | gate | |
    | --- | --- |
@@ -138,6 +189,13 @@ excluded in KiCad with its reason recorded in `tools/drc_exclusions.py`:
    **BOM** 47 lines, **91 placed by JLC** — 32 DNP excluded by design (the
    audio network is fitted per instrument), and BT1 excluded as self-fit. 92
    parts are populated per board; the assembler fits 91 of them.
+
+   **Those two lines are the ones ADR 0010 invalidates.** The schematic now
+   carries **128 symbols and no DNP at all**, so the "32 DNP excluded" line
+   becomes zero and the placed count rises correspondingly. The board figures
+   (footprints, tracks, vias) move once JP4–JP6 and R68 are placed and the four
+   deleted positions come out. **Re-run `fab_package.py` and paste what it
+   reports.**
 
    **Cost** — re-derived 2026-08-18 from live price ladders by
    `tools/cost_estimate.py`, which selects the correct price band for the actual

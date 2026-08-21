@@ -245,7 +245,7 @@ amber tends to read orange-red.
 | 1 µH inductor | **C354578** | CENKER CKCS4018-1uH/N — 4×4 mm shielded, 25 mΩ, 2 A RMS, **4.2 A Isat** |
 | SS34 Schottky | **C8678** | MDD, SMA (DO-214AC), 40 V / 3 A, 550 mV @ 3 A. **JLC Basic** — no setup fee. |
 | 74HC14 | **C5605** | Nexperia 74HC14D, SOIC-14. Hex Schmitt inverter — switch debounce. Stock KiCad symbol and footprint. |
-| MCP6002 | **C116706** | Microchip MCP6002-I/SN, SOIC-8. Dual rail-to-rail, 1 MHz, 1.8 V min. **Audio-in gain stage, DNP.** ~$0.16 |
+| MCP6002 | **C116706** | Microchip MCP6002-I/SN, SOIC-8. Dual rail-to-rail, 1 MHz, 1.8 V min. **Audio-in gain stage, both halves fitted** (ADR 0009, ADR 0010). ~$0.16 |
 
 The inductor is the only one with real selection content, so here is the working.
 Worst case is a 350 mA load at a 3.0 V cell: 0.65 A of DC current and 1.2 A p-p
@@ -531,18 +531,26 @@ So the platform promise shifts one step outward, and gets stronger for it:
 
 > One PCB, one BOM, one CPL. **Cable** per instrument, not stuff per instrument.
 
-**The distinction that matters:** *connectors* are always fitted; *circuit
-options* stay DNP. A connector nobody plugs into costs four cents and some board
-area. A populated option that should not be there — an I2C pull-up on a UART, a
-gain stage on a line-level input, the wrong sensor pulldown — is a fault.
+**That distinction used to run between connectors and circuit options**:
+connectors always fitted, options DNP, on the reasoning that a populated option
+which should not be there — an I2C pull-up on a UART, a gain stage on a
+line-level input, the wrong sensor pulldown — is a fault.
 
-| Always fitted | Stays DNP |
+**[ADR 0010](decisions/0010-nothing-is-dnp.md) collapsed the distinction:
+everything is fitted.** Each of the exclusions was re-examined against numbers
+rather than against the principle, and none of them held:
+
+| Was DNP | Why it is fitted now |
 | --- | --- |
-| J1–J16, all connectors and headers | I2C pull-ups (4.7 k) |
-| Seed sockets | Audio gain stage and its network |
-| | Sensor pulldowns on A4 / A5 |
-| | Mic bias, carbon / electret / dynamic paths |
-| | Audio-in coupling where a build has no input |
+| I2C pull-ups, 4k7 | a UART line idles high; the pull-up holds it there, and costs 0.7 mA only while a driver pulls it low |
+| Sensor pulldowns, A4 / A5 | A4 and A5 reach only J9/J10 — J5 carries A0–A3, A6–A9 — so they can affect no other input |
+| Audio gain stage and network | U4 is fitted and **jumper-selected**, both channels; the option is now a shunt, not a solder joint |
+| Mic bias, three capsule paths | same — JP1/JP4 select the bias, and exactly one path is connected at a time |
+| Audio-in coupling on a build with no input | a coupling capacitor on an unused input costs a few cents and does nothing |
+
+**The rule that replaced it is simpler and is checked:** nothing carries `dnp`,
+and `check_board.py` check 12 fails if anything does. BT1 is not an exception —
+it is `self_fit`, which is an assembly routing decision.
 
 ## Before ordering
 
@@ -577,8 +585,9 @@ Both are already mapped, so 5 of caryatid's placed parts need no purchase.
   closed in its favour over `C41361038`, which the inventory shows at quantity
   zero under Global Sourcing.
 
-`C4211` (3 kΩ 0603) is also in the absonus order and matches R45 here — but R45
-is **DNP**, so it is not needed for assembly.
+`C4211` (3 kΩ 0603) is also in the absonus order and matches R45 here. **R45 is
+now fitted** (ADR 0010), so unlike when this was written, it *is* needed for
+assembly.
 
 ## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
 
@@ -650,11 +659,20 @@ all eleven.
 **Power is not a constraint.** The worst placed part is R40 at **17.6 mW**
 against the 100 mW 0603 rating — nearly 6× margin. Nothing else exceeds 18 mW.
 
-> **One exception, and it is DNP today.** R52/R54, the 220 Ω mic bias pair,
-> reach **92 mW** if the capsule sits at 0.5 V — essentially at the 0603 limit.
-> They are not populated now, and the capsule type is unmeasured, so the current
-> is unknown within a factor of two. **If the audio section is fitted, check
-> this before ordering 0603 for those two.** See [audio.md](audio.md).
+> **One exception, and it is no longer hypothetical.** R52/R54, the 220 Ω mic
+> bias pair, reach **92 mW** if the capsule sits at 0.5 V — essentially at the
+> 100 mW 0603 limit. This note used to end "they are not populated now". **Both
+> are populated now**, on every board, since ADR 0009 fitted the left channel
+> and ADR 0010 the right.
+>
+> What has *not* changed is that the capsule type is unmeasured, so the current
+> is unknown within a factor of two. Two things keep this from being urgent:
+> the resistor only dissipates when its jumper is on the carbon position
+> (`2-3`), and `MIC_RTN` gates the current at the hook switch. **Neither is a
+> reason to leave it unchecked** — an 0603 at 92% of rating is a thermal
+> question whichever way the shunt is set, and a stereo carbon pair puts both
+> currents through one gated return. Measure the capsule, then decide whether
+> these two want an 0805. See [audio.md](audio.md).
 
 **Tolerance is a constraint, in three places:**
 

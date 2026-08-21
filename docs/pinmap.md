@@ -27,8 +27,8 @@ serves every build; only the population changes.
 
 **Notes**
 
-- **`A4`** — 10k pulldown, DNP option. NOT 3k -- the platform spec had this transposed with A5, inherited from a stale ribbon-synth doc. The fabricated absonus board has 10k on the FSR and 3k on the soft pot.
-- **`A5`** — 3k pulldown, DNP option. Gives the wiper a defined reading when the pot is untouched -- a SoftPot wiper floats.
+- **`A4`** — 10k pulldown, **fitted** (ADR 0010; it was a DNP option). NOT 3k -- the platform spec had this transposed with A5, inherited from a stale ribbon-synth doc. The fabricated absonus board has 10k on the FSR and 3k on the soft pot.
+- **`A5`** — 3k pulldown, **fitted** (ADR 0010; it was a DNP option). Gives the wiper a defined reading when the pot is untouched -- a SoftPot wiper floats.
 - **`A10`** — 100k/100k from BAT + 1k/10nF. ~21 uA continuous drain, always.
 - **`A11`** — /CHG and /PGOOD encoded as four voltage levels. See indicators.md.
 

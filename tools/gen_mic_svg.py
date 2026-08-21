@@ -31,22 +31,29 @@ import sys, os
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(os.path.dirname(HERE), "docs", "img", "mic-configurations.svg")
 
-# capsule -> (identification, [(jumper, shunted pair or None, what it does)])
+# ONE DRAWING SERVES BOTH CHANNELS. ADR 0010 mirrored the jumpers onto the right
+# channel with identical positions and identical meanings, so the settings are a
+# function of the CAPSULE, not of the channel. Drawing it twice would say the
+# same thing twice and invite the two copies to drift.
+CHANNELS = [("JP1", "JP2", "JP3"),      # left
+            ("JP4", "JP5", "JP6")]      # right
+
+# capsule -> (identification, [(what it selects, shunted pair or None, effect)])
 CONFIG = [
     ("ELECTRET", "open at DC", [
-        ("JP1", (1, 2), "2k2 → 3V3A"),
-        ("JP2", (1, 2), "op-amp"),
-        ("JP3", (1, 2), "×101"),
+        ("bias", (1, 2), "2k2 → 3V3A"),
+        ("path", (1, 2), "op-amp"),
+        ("gain", (1, 2), "×101"),
     ]),
     ("DYNAMIC", "150–600 Ω steady", [
-        ("JP1", None, "no bias"),
-        ("JP2", (1, 2), "op-amp"),
-        ("JP3", (2, 3), "×256"),
+        ("bias", None, "no bias"),
+        ("path", (1, 2), "op-amp"),
+        ("gain", (2, 3), "×256"),
     ]),
     ("CARBON", "50–300 Ω unstable", [
-        ("JP1", (2, 3), "220R → 5 V"),
-        ("JP2", (2, 3), "bypass"),
-        ("JP3", None, "not used"),
+        ("bias", (2, 3), "220R → 5 V"),
+        ("path", (2, 3), "bypass"),
+        ("gain", None, "not used"),
     ]),
 ]
 
@@ -94,19 +101,16 @@ def build():
     h = Y0 + ROWH * 3 + 16
     s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
          f'viewBox="0 0 {w} {h}" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">',
-         f'<title>caryatid mic capsule jumper settings</title>']
+         f'<title>caryatid mic capsule jumper settings, both channels</title>']
 
-    # column headers
-    for j, (name, _, _) in enumerate(CONFIG[0][2]):
+    # column headers: both channels' designators over the function they share
+    for j, (what, _, _) in enumerate(CONFIG[0][2]):
         x = X0 + COLW * j + 24
+        left, right = CHANNELS[0][j], CHANNELS[1][j]
         s.append(f'<text x="{x}" y="34" text-anchor="middle" font-size="15" '
-                 f'font-weight="600" fill="{INK}">{name}</text>')
-    s.append(f'<text x="{X0 + COLW*0 + 24}" y="52" text-anchor="middle" '
-             f'font-size="11" fill="{LABEL}">bias</text>')
-    s.append(f'<text x="{X0 + COLW*1 + 24}" y="52" text-anchor="middle" '
-             f'font-size="11" fill="{LABEL}">path</text>')
-    s.append(f'<text x="{X0 + COLW*2 + 24}" y="52" text-anchor="middle" '
-             f'font-size="11" fill="{LABEL}">gain</text>')
+                 f'font-weight="600" fill="{INK}">{left} · {right}</text>')
+        s.append(f'<text x="{x}" y="52" text-anchor="middle" '
+                 f'font-size="11" fill="{LABEL}">{what}</text>')
 
     for r, (cap, ident, jumpers) in enumerate(CONFIG):
         cy = Y0 + ROWH * r

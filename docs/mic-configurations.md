@@ -1,10 +1,23 @@
 # Mic capsule configurations
 
 **Set three jumpers to match the capsule.** This is the long form of the table
-silkscreened beside JP1/JP2/JP3 — same information, with the signal path drawn
+silkscreened beside the headers — same information, with the signal path drawn
 so you can see what each setting actually does.
 
-Decision and reasoning: [ADR 0009](decisions/0009-mic-input-is-jumper-selected.md).
+**There are two identical sets, one per channel**, and this page describes both
+at once because the settings depend on the capsule, not on the channel:
+
+| | bias | path | gain |
+| --- | --- | --- | --- |
+| **left** | JP1 | JP2 | JP3 |
+| **right** | JP4 | JP5 | JP6 |
+
+A handset mic is mono and uses the left channel alone. A stereo pair, or two
+different elements, uses both — and the two can be set differently: an electret
+on the left and a carbon on the right is a legitimate configuration.
+
+Decision and reasoning: [ADR 0009](decisions/0009-mic-input-is-jumper-selected.md)
+for the left channel, [ADR 0010](decisions/0010-nothing-is-dnp.md) for the right.
 Component values and gain arithmetic: [audio.md](audio.md).
 
 ---
@@ -34,7 +47,7 @@ dynamic capsule.
 
 ## Jumper settings
 
-Pin 1 is uppermost on all three headers. A shunt bridges **one adjacent pair**.
+Pin 1 is uppermost on all six headers. A shunt bridges **one adjacent pair**.
 
 ![Mic capsule jumper settings](img/mic-configurations.svg)
 
@@ -46,7 +59,7 @@ Pin 1 is uppermost on all three headers. A shunt bridges **one adjacent pair**.
 > to a layout engine that will rearrange it. `tools/gen_mic_svg.py` draws the pins
 > where the pins are, from the same `CONFIG` table this page is written against.
 
-| Capsule | JP1 bias | JP2 path | JP3 gain |
+| Capsule | bias — JP1 / JP4 | path — JP2 / JP5 | gain — JP3 / JP6 |
 | --- | --- | --- | --- |
 | **Electret** | `1-2` — 2k2 to 3V3A | `1-2` — op-amp | `1-2` — ×101 |
 | **Dynamic** | **none** | `1-2` — op-amp | `2-3` — ×256 |
@@ -58,6 +71,28 @@ On the silkscreen the top pair reads `ELE` / `AMP` / `101` and the bottom pair
 ---
 
 ## What each setting does
+
+**The diagrams below draw the left channel.** The right is the same circuit with
+the same values — swap `_L` for `_R` in every net name, JP1/JP2/JP3 for
+JP4/JP5/JP6, and the part numbers as follows:
+
+| | left | right |
+| --- | --- | --- |
+| electret bias, 2k2 | R51 | R53 |
+| carbon bias, 220R | R52 | R54 |
+| input coupling, 1µ | C23 | C27 |
+| mid-rail divider, 100k | R55 / R56 | R59 / R60 |
+| mid-rail decoupling, 10µ | C22 | C26 |
+| feedback, 100k | R57 | R61 |
+| gain leg ×101, 1k | R58 | R62 |
+| gain leg ×256, 392R | R67 | R68 |
+| gain-leg DC block, 10µ | C24 | C28 |
+| output coupling, 10µ | C25 | C29 |
+| bypass link, 0R | R63 | R65 |
+
+U4 is one dual op-amp: section A is the left channel, section B the right. Both
+share `+3V3A` and its decoupling capacitor C30, and both share `MIC_RTN` — one
+gated return on J18 pin 3 for whatever is in the handset.
 
 ### Electret — bias, then amplify
 
@@ -109,10 +144,9 @@ flowchart LR
     V["5 V rail"] --> R52["R52 220R"]
     R52 -->|JP1 2-3| MIC(["MIC_L"])
     CAP["Carbon capsule<br/>J18"] --> MIC
-    MIC --> R63["R63"] --> BYP(["BYPASS_L"])
-    R64["R64<br/>pad, DNP"] -.-> BYP
+    MIC --> R63["R63 0R"] --> BYP(["BYPASS_L"])
     BYP -->|JP2 2-3| AIN(["AUDIO_IN_L"])
-    AIN --> COD["WM8731<br/>line in, PGA attenuates"]
+    AIN --> COD["WM8731<br/>line in, PGA to −34.5 dB"]
     RTN(["MIC_RTN → J14<br/>hook switch"]) --> CAP
 
     classDef sel fill:#fff4e5,stroke:#e8710a,stroke-width:2px
@@ -122,10 +156,16 @@ flowchart LR
 A carbon element is effectively an amplifier: it **modulates a DC current**
 rather than generating a signal, so the current has to exist. 220 Ω from 5 V
 gives it tens of milliamps — and that is loud, often **above** line level, which
-is why the path bypasses the op-amp entirely and offers a pad instead.
+is why the path bypasses the op-amp entirely.
 
-**The op-amp is not in circuit here**, so JP3 does nothing. Leave it off or
-leave it wherever it was; it changes nothing.
+**Attenuation is the codec's job.** The board carried a resistor pad here until
+[ADR 0010](decisions/0010-nothing-is-dnp.md) removed it: the WM8731's line PGA
+goes down to **−34.5 dB** in 1.5 dB steps, which is more than a pad was going to
+give and is adjustable while you listen rather than fixed by a soldering iron
+before you have heard the capsule.
+
+**The op-amp is not in circuit here**, so the gain jumper does nothing. Leave it
+off or leave it wherever it was; it changes nothing.
 
 > **The return is switched, and that matters.** `MIC_RTN` leaves on J18 pin 3
 > and pairs with J14 to the hook switch's second pole, so the bias current only
@@ -137,17 +177,23 @@ leave it wherever it was; it changes nothing.
 
 ## Getting it wrong
 
-Neither of these damages the board.
+None of these damages the board.
 
 | Mistake | Symptom |
 | --- | --- |
-| JP1 on `2-3` with an electret | 220 Ω to 5 V into a part expecting 2k2 to 3V3 — it may survive, it will not sound right |
-| JP1 open with an electret | **Silence.** No bias, no signal |
-| JP2 on `2-3` with electret or dynamic | Very quiet — the raw capsule straight into a line input, no gain |
-| JP2 on `1-2` with carbon | Loud and clipped — a hot source through a ×101 stage |
-| JP3 wrong on an amplified path | Works, wrong level. Trim at the codec PGA and move on |
+| bias on `2-3` with an electret | 220 Ω to 5 V into a part expecting 2k2 to 3V3 — it may survive, it will not sound right |
+| bias open with an electret | **Silence.** No bias, no signal |
+| path on `2-3` with electret or dynamic | Very quiet — the raw capsule straight into a line input, no gain |
+| path on `1-2` with carbon | Loud and clipped — a hot source through a ×101 stage |
+| gain wrong on an amplified path | Works, wrong level. Trim at the codec PGA and move on |
+| the right channel's trio set for the left channel's capsule | That channel misbehaves as above; the other is unaffected. **The two sets are independent** |
+
+**Setting one channel does not set the other.** With six headers in one area of
+the board it is easy to move a shunt on JP2 while reading a row about JP5. The
+silkscreen prints the designator beside each; the positions read the same on
+both, which is the point, and is also what makes the mix-up possible.
 
 **The fallback also lands on the bypass.** If the vintage element is dead, a
 modern electret or a MAX9814 AGC module hidden in the housing outputs near line
-level and uses the carbon settings — JP1 open, JP2 on `2-3`. The board does not
-change for it.
+level and uses the carbon settings — bias open, path on `2-3`. The board does
+not change for it.

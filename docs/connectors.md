@@ -27,7 +27,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J15 | JST-XH 6 | **Comms port B** — 5V, 3V3, GND, D13, D14, GND |
 | J16 | header 2×4 | **Expansion / SPI1** — 5V, 3V3, GND, GND, D8 SCLK, D9 MISO, D10 MOSI, D30 CS |
 | J17 | JST-XH 3 | Audio out — L, R, GND, to panel jacks |
-| J18 | JST-XH 3 | Audio in — L, R, **`MIC_RTN`**. Network on every board, DNP where unused |
+| J18 | JST-XH 3 | Audio in — L, R, **`MIC_RTN`**. Both channels fitted and jumper-selected on every board |
 
 > **Three entries in that table were wrong until the silkscreen work checked
 > them against the schematic.** They are recorded here because the error was in

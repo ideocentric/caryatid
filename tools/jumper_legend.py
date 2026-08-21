@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Silkscreen the mic capsule selector table beside JP1/JP2/JP3.
+"""Silkscreen the mic capsule selector legend beside the six jumpers.
 
     .venv/bin/python tools/jumper_legend.py            # report a placement
     .venv/bin/python tools/jumper_legend.py --apply
@@ -23,6 +23,12 @@ legend that only named the positions would still require the datasheet.
   DYN   --  12  23      150-600R  = DYN
   CARB  23  23  --      50-300R*  = CARB
                         * UNSTABLE WHEN TAPPED
+
+ADR 0010 ADDED JP4/JP5/JP6, the right channel, with identical positions and
+identical meanings. The per-position labels are therefore emitted six times,
+twice per header, and the ten-line table (stripped by --strip-table in favour of
+the pictogram artwork) still needs only one column set: it describes the
+capsule, not the channel.
 
 "12" and "23" are pin pairs, not positions, because pin 1 is marked on the
 silkscreen and "top"/"bottom" depends on which way the board is held. The
@@ -72,10 +78,18 @@ LINES = [
 # Above = the top pair (pins 1-2), below = the bottom pair (2-3), because the
 # jumpers stand vertically with pin 1 uppermost. Three characters each: the
 # headers are 4.59 mm apart, and anything longer collides with its neighbour.
+#
+# SIX HEADERS, NOT THREE, since ADR 0010 mirrored the selector onto the right
+# channel. The labels are identical per function because the SETTINGS are
+# identical -- what tells the two sets apart is the reference designator, which
+# ref_silk.py already prints beside each header.
 POSN = {
-    "JP1": ("ELE", "CAR"),    # 2k2 to 3V3A  /  220R to 5 V
-    "JP2": ("AMP", "BYP"),    # op-amp       /  bypass
-    "JP3": ("101", "256"),    # 1k, x101     /  392R, x256
+    "JP1": ("ELE", "CAR"),    # left  bias: 2k2 to 3V3A  /  220R to 5 V
+    "JP2": ("AMP", "BYP"),    # left  path: op-amp       /  bypass
+    "JP3": ("101", "256"),    # left  gain: 1k, x101     /  392R, x256
+    "JP4": ("ELE", "CAR"),    # right bias
+    "JP5": ("AMP", "BYP"),    # right path
+    "JP6": ("101", "256"),    # right gain
 }
 
 
@@ -120,10 +134,12 @@ def main():
 
     jp = {}
     for p in B.parts:
-        m = re.search(r'\(property "Reference" "(JP[123])"', p["blk"])
+        m = re.search(r'\(property "Reference" "(JP[1-6])"', p["blk"])
         if m: jp[m.group(1)] = (p["x"], p["y"])
-    if len(jp) != 3:
-        sys.exit(f"  expected JP1-3 on the board, found {sorted(jp)}")
+    if set(jp) != set(POSN):
+        sys.exit(f"  expected {sorted(POSN)} on the board, found {sorted(jp)}.\n"
+                 f"  If JP4-6 are missing, the PCB has not been updated from the\n"
+                 f"  schematic yet -- do that first, then re-run this.")
 
     obst = P.Obstacles(B)
     for box, nm in P.surviving_labels(t):
@@ -131,8 +147,8 @@ def main():
     x0, y0, x1, y1 = B.outline
 
     # try beside the jumpers first, then further out, then below
-    jx = sum(v[0] for v in jp.values()) / 3
-    jy = sum(v[1] for v in jp.values()) / 3
+    jx = sum(v[0] for v in jp.values()) / len(jp)
+    jy = sum(v[1] for v in jp.values()) / len(jp)
     # Search outward from the jumpers on a 1 mm grid. The block is big for a
     # silkscreen object, so a coarse handful of candidates is not enough --
     # the first attempt found nothing at 0.8 mm and silently dropped to 0.7,
@@ -209,7 +225,7 @@ def main():
             if not placed: missed.append(f"{ref} {text}")
     if missed:
         print(f"  no room for: {', '.join(missed)}")
-    print(f"  {len(posn)} of 6 per-position labels placed")
+    print(f"  {len(posn)} of {2 * len(POSN)} per-position labels placed")
     t = P.emit(t, posn)
     for u in [L["uuid"] for L in posn]:
         i = t.find(f'(uuid "{u}")')

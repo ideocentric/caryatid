@@ -126,10 +126,18 @@ both proven.
 
 Two consequences that follow from this and are easy to miss.
 
-**DNP stops being advisory.** When the connectors were hand-fitted, "DNP" meant
-*don't bother*. Now it is an instruction JLC acts on and bills for, so a wrong
-DNP line is either a connector you paid for and did not want or one you needed
-and did not get.
+**DNP stopped being advisory, and then stopped existing.** When the connectors
+were hand-fitted, "DNP" meant *don't bother*. Once JLC fits the through-hole
+parts it is an instruction they act on and bill for, so a wrong DNP line is
+either a connector you paid for and did not want or one you needed and did not
+get — and which one it is only becomes clear when the boards land.
+
+[ADR 0010](../docs/decisions/0010-nothing-is-dnp.md) took the count to **zero**.
+Every symbol is assembled; the options that used to be DNP are now selected by
+jumper after assembly, or were `open` positions that no supplier could ship and
+have been deleted. BT1 is the only part the assembler does not fit, and it is
+**not** DNP — it is self-fit from Digi-Key, which `lcsc.yaml` records and
+`fab_package.py` acts on.
 
 **Through-hole assembly needs the Standard service**, not Economic, and is
 priced per joint so it scales with connector count in a way SMD placement does

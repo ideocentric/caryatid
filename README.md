@@ -51,17 +51,24 @@ first time a connector moves.
 
 **DNP — "do not populate."** The footprint is on the board, the symbol is in the
 schematic, the connections exist in the netlist, but **no component is soldered
-there**. A deliberately empty position.
+there**. A deliberately empty position. Also written DNI (do not install), NF
+(not fitted), or NP.
 
-It is the mechanism this whole board rests on. caryatid lays out every option any
-of its instruments might need and each build populates only its own; without DNP
-that would be three different boards. Also written DNI (do not install), NF (not
-fitted), or NP.
+**caryatid has none, and that is the point of the term appearing here.**
+[ADR 0010](docs/decisions/0010-nothing-is-dnp.md) took the count to zero and
+`check_board.py` check 12 keeps it there.
 
-Since JLCPCB now fits the through-hole parts too, **DNP is an instruction someone
-acts on and bills for**, not a note to self. See
-[sourcing.md](docs/sourcing.md) for the rule about which things may be DNP and
-which never are.
+DNP used to be the mechanism this board rested on: lay out every option any of
+the instruments might need, populate only the subset each build wants. It stopped
+paying its way when JLCPCB began fitting the through-hole parts too — **DNP
+became an instruction someone acts on and bills for**, so every DNP line is
+either a part you paid for and did not want or one you needed and did not get,
+and which it is only becomes clear when the boards arrive.
+
+What replaced it is **selection after assembly**: six jumpers choose the mic
+front-end per channel, and the codec's own PGA does the attenuating a resistor
+pad used to. See [audio.md](docs/audio.md) and
+[sourcing.md](docs/sourcing.md).
 
 ## What "frozen" means
 
@@ -87,7 +94,8 @@ Populated on every build:
 - RGB status LED, battery gauge on A10, charge-status code on A11
 - Daisy Seed on 2×(1×20) female headers, machine-fitted
 - 74HC14 Schmitt debounce, SMT — see [ADR 0007](docs/decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md)
-- Audio out; audio in laid out on every board, DNP where unused
+- Audio out; audio in on every board, **both channels**, capsule selected by
+  jumper — JP1–JP3 left, JP4–JP6 right
 
 ## Two things worth knowing before you read the map
 

@@ -15,9 +15,13 @@ the boost converter, the indicators, the Seed socket, the audio jacks and every
 panel connector. One PCB layout serves absonus, loa and baby borg — each
 populates the subset it needs.
 
-**150 × 90 mm, 2 layers, 110 placed parts** (17 more are laid out DNP — the
-right audio channel and the panel-io spares). BT1 is fitted by hand, not by
-the assembler.
+**150 × 90 mm, 2 layers, and nothing is DNP.** ADR 0010 closed the last of it:
+the right audio channel is fitted and jumper-selected like the left, the
+panel-io options are fitted, and the four `open` divider legs are deleted. BT1
+is fitted by hand, not by the assembler. **The part count is deliberately absent
+here until the board is updated from the schematic** — see
+[status.md](status.md), which is where the counts are re-derived by
+`fab_package.py` rather than written down twice.
 
 | caryatid provides | the instrument provides |
 | --- | --- |

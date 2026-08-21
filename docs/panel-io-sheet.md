@@ -149,8 +149,11 @@ Two footprints on the same two pins; populate one.
 | 3 | `D12` (SDA) |
 | 4 | `D11` (SCL) |
 
-Plus **4.7 kΩ pull-ups to `+3V3` on both, DNP** — populated only when the port
-is used as I2C. A UART on the same pins does not want them.
+Plus **4.7 kΩ pull-ups to `+3V3` on both, fitted** (R43, R44). They were DNP —
+"a UART on the same pins does not want them" — until
+[ADR 0010](decisions/0010-nothing-is-dnp.md) checked that claim: **a UART line
+idles high**, so a pull-up holds it where it already belongs and costs 0.7 mA
+only while a driver pulls it low. A floating RX is the worse of the two states.
 
 **J19 — JST-XH 6, module port:**
 
@@ -193,8 +196,11 @@ stop and read [ADR 0004](decisions/0004-keep-spi1-drop-the-soft-latch.md).
 | 2 | `A5` |
 | 3 | `GND` |
 
-**3 kΩ pulldown from `A5` to `GND`, DNP option.** A SoftPot wiper floats when
+**3 kΩ pulldown from `A5` to `GND`, fitted** (R45; a DNP option until
+[ADR 0010](decisions/0010-nothing-is-dnp.md)). A SoftPot wiper floats when
 untouched; the pulldown gives it a defined reading instead of a drifting one.
+**`A5` reaches only this connector** — the analogue bus J5 carries A0–A3 and
+A6–A9 — so on a board with no SoftPot it simply reads a defined 0.
 
 ## J10 — FSR, JST-XH 2
 
@@ -203,7 +209,8 @@ untouched; the pulldown gives it a defined reading instead of a drifting one.
 | 1 | `+3V3A` |
 | 2 | `A4` |
 
-**10 kΩ pulldown from `A4` to `GND`, DNP option.** This is the transposition
+**10 kΩ pulldown from `A4` to `GND`, fitted** (R46; a DNP option until
+[ADR 0010](decisions/0010-nothing-is-dnp.md)). This is the transposition
 corrected above. It is also worth knowing that the value sets the shape of the
 force response, not just its presence — loa's pad work found the ribbon synth's
 narrow usable range was largely the divider rather than the sensor.
@@ -226,5 +233,9 @@ board is stuffed for its instrument.
 
 **The connectors above are fitted on every board regardless** — see
 [sourcing.md](sourcing.md). The population table describes which ones get a
-*cable*, not which ones get soldered. Only circuit options — the I2C pull-ups,
-the sensor pulldowns — are DNP.
+*cable*, not which ones get soldered.
+
+**And since [ADR 0010](decisions/0010-nothing-is-dnp.md) the circuit options are
+fitted too.** The I2C pull-ups and both sensor pulldowns were the last DNP on
+this sheet; nothing here is unpopulated now. The table above is entirely about
+looms.

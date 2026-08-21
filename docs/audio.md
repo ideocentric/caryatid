@@ -27,8 +27,13 @@ draft of this document said to drive the earpiece from "the headphone output",
 which assumed an amplifier this board does not carry. Correcting it: the Seed's
 `AUDIO OUT` through a series resistor is the whole circuit.
 
-Size the resistor on the bench with the actual capsule, and lay the position out
-as a divider so either arm can become a link.
+**R47 and R49, 1 kΩ, are that resistor, and they are the whole attenuator.**
+The position used to be laid out as a divider — R48/R50 as an open shunt arm, so
+either arm could become a link once a capsule was measured.
+[ADR 0010](decisions/0010-nothing-is-dnp.md) deleted the shunt arm: `open` is
+not a value anyone can ship, and the series arm is what the argument above
+actually calls for. If a measured earpiece wants a different ratio, change R47
+and R49, or use the codec's own output volume.
 
 **Confirm what drives the Seed's `AUDIO OUT`** — the WM8731 has both line and
 headphone outputs and the Seed's documentation calls its pins line level, but
@@ -37,18 +42,23 @@ schematic before relying on the drive capability.
 
 ## Input
 
-**Populated on every board, and selected by three jumpers** — see
-[ADR 0009](decisions/0009-mic-input-is-jumper-selected.md). The complication is
-which capsule is on the other end, and the board no longer needs that answered
-before it is built.
+**Both channels are populated on every board, and each is selected by three
+jumpers** — see [ADR 0009](decisions/0009-mic-input-is-jumper-selected.md) for
+the left and [ADR 0010](decisions/0010-nothing-is-dnp.md) for the right. The
+complication is which capsule is on the other end, and the board no longer needs
+that answered before it is built.
 
-| Jumper | Selects | Positions |
-| --- | --- | --- |
-| **JP1** | capsule bias | `1-2` 2k2 to 3V3A · none · `2-3` 220R to 5 V |
-| **JP2** | signal path | `1-2` op-amp · `2-3` bypass |
-| **JP3** | gain leg | `1-2` 1k (×101) · `2-3` 392R (×256) |
+| Jumper | | Selects | Positions |
+| --- | --- | --- | --- |
+| **JP1** | **JP4** | capsule bias | `1-2` 2k2 to 3V3A · none · `2-3` 220R to 5 V |
+| **JP2** | **JP5** | signal path | `1-2` op-amp · `2-3` bypass |
+| **JP3** | **JP6** | gain leg | `1-2` 1k (×101) · `2-3` 392R (×256) |
 
-| Capsule | JP1 | JP2 | JP3 |
+**JP1–JP3 are the left channel, JP4–JP6 the right**, and the two sets are
+identical — same positions, same meanings, same procedure. A handset mic is
+mono and uses the left; a stereo pair or two different elements uses both.
+
+| Capsule | bias | path | gain |
 | --- | --- | --- | --- |
 | **Electret** | `1-2` | `1-2` | `1-2` |
 | **Dynamic** | — | `1-2` | `2-3` |
@@ -67,6 +77,13 @@ board is held; the jumpers stand vertically with pin 1 uppermost.
 > sets — a soldering iron, after measuring. The requirement that it be
 > selectable *after* assembly was never written down, so the board was built
 > against a different one. ADR 0009 has the full account.
+>
+> **And it replaced it twice.** ADR 0009 fixed the left channel and left the
+> right one DNP, which meant the right still carried the same two exclusive
+> pairs — 2k2-to-3V3A against 220R-to-5V on `MIC_R`, op-amp output against raw
+> bypass on `AUDIO_IN_R`. Populating it without jumpers would have shipped
+> exactly the defect 0009 exists to prevent, so **"populate the right channel"
+> and "the right channel works" were not the same instruction.** ADR 0010.
 
 ### Identify the capsule before choosing components
 
@@ -100,9 +117,13 @@ milliamps from the line. Provisions:
 
 - A **lower-value series resistor** from the 5 V rail rather than 3V3A, on its
   own footprint, sized on the bench. Expect single-digit-to-tens of mA.
-- **An attenuator on the way out.** Carbon capsules are loud — output can be
+- **Attenuation on the way out.** Carbon capsules are loud — output can be
   orders of magnitude above an electret, and will overload an input expecting
-  mic level. Lay the pad out; populate it once measured.
+  mic level. **This is the codec's job, not a resistor's**: the WM8731 line PGA
+  reaches −34.5 dB, adjustable at run time. The board used to carry a resistor
+  pad here (R64/R66) and [ADR 0010](decisions/0010-nothing-is-dnp.md) removed
+  it — a fixed pad chosen with a soldering iron is the thing this design is
+  trying to stop doing.
 - **Gate the current with the hook switch.** See below; this one matters.
 
 **Dynamic** — no bias, and it needs gain the line input will not provide.
@@ -110,13 +131,14 @@ milliamps from the line. Provisions:
 ### The gain stage — one footprint, all three outcomes
 
 **U4 = MCP6002 dual op-amp**, SOIC-8, `C116706`, powered from `3V3A`. **Fitted
-on every board**, with JP2 selecting whether the signal goes through it or
-around it. That is the whole point: the capsule question is answered *after* the
-boards arrive, and answered with a shunt rather than an iron.
+on every board, both halves live**, with JP2/JP5 selecting whether each channel
+goes through its amplifier or around it. That is the whole point: the capsule
+question is answered *after* the boards arrive, and answered with a shunt rather
+than an iron.
 
 | Capsule | Path | Gain needed |
 | --- | --- | --- |
-| Carbon | **bypass**, possibly a pad | ~×3, or attenuation |
+| Carbon | **bypass**, PGA attenuates | ~×3, or attenuation |
 | Electret | stage + bias resistor | ~×100 (40 dB) |
 | Dynamic | stage at maximum, no bias | ~×1000 (60 dB) |
 
@@ -192,28 +214,48 @@ codec.
 Carbon and electret are the likely outcomes anyway; a dynamic capsule in a
 handset is the rarest of the three.
 
-#### Bypass as a divider, not a link
+#### The bypass is a link, and the pad is in the codec
 
-The proposal called for a 0 Ω bypass. **Lay it out as a two-resistor divider
-instead** — 0 Ω plus an open position. A carbon capsule may run *hotter* than
-line level, in which case the requirement is attenuation rather than a straight
-pass. Fit 0 Ω and leave the shunt open for a true bypass; fit both for a pad. One
-extra footprint, and it is the difference between a working input and a clipped
-one.
+The proposal called for a 0 Ω bypass. This document then argued for a
+two-resistor divider instead — 0 Ω plus an open shunt — because a carbon capsule
+may run *hotter* than line level and want attenuation rather than a straight
+pass. R63/R64 and R65/R66 were built that way.
+
+**[ADR 0010](decisions/0010-nothing-is-dnp.md) took the shunt arms out**, and
+the reason is the same one that put the jumpers in. The requirement is real, but
+a resistor pad answers it *once, with a soldering iron, before you have heard
+the capsule*. The WM8731's line PGA answers it at run time and goes further than
+a pad would have been asked to: **−34.5 dB**, in 1.5 dB steps, per channel.
+R63 and R65 remain as the 0 Ω link.
+
+The two costs of that, stated plainly: a source hot enough to clip the codec's
+input *before* the PGA is not helped by the PGA, and the fix is then a resistor
+in the loom rather than on the board. And R66 was on the wrong node anyway —
+it tapped `AUDIO_IN_R`, downstream of where JP5 now lands, so it would have
+padded the op-amp output as well as the bypass.
 
 #### Use the dual, lay out both channels
 
 The Seed has `AUDIO IN L` and `AUDIO IN R`. A handset mic is mono, but caryatid
 serves three instruments and stereo line-in is a plausible future need. A dual
-op-amp is one package instead of two, so both channels are laid out. **The left
-channel is fitted and jumper-selected; the right stays DNP** for a future stereo
-line-in build, where capsule selection is meaningless.
+op-amp is one package instead of two, so both channels are laid out. **Both are
+fitted and jumper-selected**, and they are identical: either channel takes any
+of the three capsule types.
 
-**Section B is not left floating.** Populating U4 for the left channel would
-otherwise strand the second amplifier's inputs, and a floating op-amp input
-oscillates and draws current. R59/R60 bias it to mid-rail and R61 closes the
-feedback loop with R62 left open, making it a unity-gain follower sitting at
-`VBIAS_R`. Three resistors to keep an unused amplifier quiet.
+> **The right channel was DNP until ADR 0010, and this paragraph used to say so.**
+> ADR 0009 argued that capsule selection was meaningless on a line-in channel.
+> That was true of the *use* and irrelevant to the *board*: the right channel is
+> laid out as an exact mirror of the pre-jumper left, so it inherited both
+> mutually exclusive pairs whether or not anyone intended to plug a capsule into
+> it. The asymmetry is gone and the two channels now share one procedure.
+
+**R59/R60/R61 change meaning without changing value.** They were populated by
+ADR 0009 for a defensive reason — U4 is a dual, and populating it for the left
+channel alone would have left section B's inputs floating, which oscillates and
+draws current, so R59/R60 biased it to mid-rail and R61 closed the loop with R62
+open, making it a unity-gain follower at `VBIAS_R`. With R62 and JP6 in circuit
+those same three parts are now the working mid-rail reference and feedback
+resistor of a live channel. **What was a muzzle is now the circuit.**
 
 #### The fallback lands on the bypass path
 
@@ -236,6 +278,12 @@ the firmware hangs. The bias return leaves on **J14**, so it is either a link
 to ground there or a wire out to the switch's second pole. (J14 is the number
 the soft-latch vacated when [ADR 0004](decisions/0004-keep-spi1-drop-the-soft-latch.md)
 dropped it.)
+
+**`MIC_RTN` is shared by both channels** — one return on J18 pin 3, two
+capsules. That is the correct arrangement, because the gate belongs to the
+handset rather than to a capsule: lifting the handset should energise whatever
+is in it. It does mean a stereo *carbon* pair would put both bias currents
+through the one switch contact, which is worth knowing before anyone sizes it.
 
 Firmware still gates the *audio path* from D7. That is a musical decision and
 belongs in software. This is about current, and belongs in copper.

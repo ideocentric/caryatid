@@ -8,7 +8,7 @@ KiCad 9 project. **All four sheets are captured.** 125 components, 101 nets,
 | `power.kicad_sch` | 27 components, 19 nets | netlist diffed node-by-node against [power-sheet.md](../../docs/power-sheet.md); `ITERM` the one deliberate no-connect |
 | `seed.kicad_sch` | 12 components | all **31** physical pins in `pins.yaml` land on a net named after the pin |
 | `panel-io.kicad_sch` | 46 components | all **29** pins declaring a connector reach it, traversing series R and the debouncer |
-| `audio.kicad_sch` | 35 placements, 28 DNP | 17 nets diffed against [audio.md](../../docs/audio.md), including `C_g` in series with `R_g` |
+| `audio.kicad_sch` | 37 placements, **0 DNP** | 17 nets diffed against [audio.md](../../docs/audio.md), including `C_g` in series with `R_g`; six jumpers re-diffed for [ADR 0010](../../docs/decisions/0010-nothing-is-dnp.md) |
 
 **The dangling-global count reached zero.** It ran 33 → 4 → 0 as seed, panel-io
 and audio landed, and each drop was predicted before the sheet was drawn. Five
