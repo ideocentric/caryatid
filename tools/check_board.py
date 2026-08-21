@@ -379,11 +379,68 @@ def main():
     except Exception as e:
         fail("series-netclass", f"could not check series netclasses: {e}")
 
+    # --- 11. orphaned ground pour -------------------------------------------
+    # A filled region of GND with no via and no through-hole pad inside it is
+    # copper at floating potential sitting next to signal traces. It couples
+    # instead of shielding, which is the opposite of a ground plane's job.
+    #
+    # Found the hard way: adding the mic jumpers fenced off a 17.7 mm2 island of
+    # F.Cu pour, directly under the analogue front end. KiCad's DRC caught it
+    # only as a vague "Zone GND on F.Cu / on B.Cu unconnected" reported at the
+    # zone's ORIGIN, tens of millimetres from the actual island -- and every
+    # check here passed. Nothing pointed at where the problem was.
+    try:
+        _gid = {k for k, v in re.findall(r'\(net (\d+) "([^"]*)"\)', B.t)
+                if v == "GND"}
+        _joins = []
+        for _m in re.finditer(r'\(via\b', B.t):
+            _b = sexp(B.t, _m.start())
+            _a = re.search(r'\(at ([-\d.]+) ([-\d.]+)\)', _b)
+            _n = re.search(r'\(net (\d+)\)', _b)
+            if _a and _n and _n.group(1) in _gid:
+                _joins.append((float(_a.group(1)), float(_a.group(2))))
+        for _p in B.parts:
+            for _pd in B.pads(_p):
+                if _pd.get("net") == "GND" and _pd.get("drill"):
+                    _joins.append((_pd["x"], _pd["y"]))
+
+        def _inside(px, py, poly):
+            c, n = False, len(poly)
+            for i in range(n):
+                x1, y1 = poly[i]; x2, y2 = poly[(i + 1) % n]
+                if ((y1 > py) != (y2 > py)) and \
+                   (px < (x2 - x1) * (py - y1) / (y2 - y1 + 1e-12) + x1):
+                    c = not c
+            return c
+
+        for _m in re.finditer(r"\n\t\(zone\b", B.t):
+            _z = sexp(B.t, _m.start() + 1)
+            _nm = re.search(r'\(net_name "([^"]*)"\)', _z)
+            if not _nm or _nm.group(1) != "GND": continue
+            for _f in re.finditer(r'\(filled_polygon\s*\(layer "([^"]+)"\)', _z):
+                _fp = sexp(_z, _f.start())
+                _pts = [(float(a), float(b)) for a, b in
+                        re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", _fp)]
+                if len(_pts) < 3: continue
+                _ar = abs(sum(_pts[i][0] * _pts[(i+1) % len(_pts)][1] -
+                              _pts[(i+1) % len(_pts)][0] * _pts[i][1]
+                              for i in range(len(_pts)))) / 2
+                if _ar < 0.5: continue          # slivers, not islands
+                if not any(_inside(vx, vy, _pts) for vx, vy in _joins):
+                    _xs = [q[0] for q in _pts]; _ys = [q[1] for q in _pts]
+                    fail("orphan-pour",
+                         f"{_ar:.1f} mm2 of GND on {_f.group(1)} has no via or "
+                         f"through-hole pad inside it -- floating copper at "
+                         f"X {min(_xs):.1f}-{max(_xs):.1f} "
+                         f"Y {min(_ys):.1f}-{max(_ys):.1f}")
+    except Exception as e:
+        fail("orphan-pour", f"could not check for orphaned pour: {e}")
+
     # --- report -------------------------------------------------------------
     print(f"board {x1-x0:.1f} x {y1-y0:.1f} mm   "
           f"{len(front)} front / {len(back)} back   standoff {STANDOFF_MM} mm\n")
     if not fails:
-        print("  all ten checks pass")
+        print("  all eleven checks pass")
         return 0
     from collections import Counter
     for cls, n in Counter(c for c, _ in fails).most_common():

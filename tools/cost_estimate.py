@@ -78,10 +78,14 @@ def load():
         sys.exit(f"  no {BOM} -- run tools/fab_package.py --apply first")
     codes = collections.OrderedDict()
     for r in csv.DictReader(open(BOM)):
-        if not r["LCSC"]: continue
-        e = codes.setdefault(r["LCSC"], {"n": 0, "refs": []})
-        e["n"] += int(r["QUANTITY"])
-        e["refs"] += [x.strip() for x in r["Reference"].split(",")]
+        # The BOM follows JLC's template now: "JLCPCB Part #" and "Designator",
+        # with no quantity column -- the count is the number of designators.
+        code = (r.get("JLCPCB Part #") or r.get("LCSC") or "").strip()
+        if not code: continue
+        refs = [x.strip() for x in r["Designator"].split(",") if x.strip()]
+        e = codes.setdefault(code, {"n": 0, "refs": []})
+        e["n"] += len(refs)
+        e["refs"] += refs
     return codes
 
 
