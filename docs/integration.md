@@ -15,7 +15,9 @@ the boost converter, the indicators, the Seed socket, the audio jacks and every
 panel connector. One PCB layout serves absonus, loa and baby borg — each
 populates the subset it needs.
 
-**150 × 90 mm, 2 layers, 92 placed parts** (32 more are laid out DNP).
+**150 × 90 mm, 2 layers, 110 placed parts** (17 more are laid out DNP — the
+right audio channel and the panel-io spares). BT1 is fitted by hand, not by
+the assembler.
 
 | caryatid provides | the instrument provides |
 | --- | --- |
@@ -131,11 +133,21 @@ no third UART on free pins.
 
 Also per-instrument:
 
-- **The audio input network** is laid out on every board, DNP where unused. U4
-  (MCP6002) sits DNP with a bypass so the **capsule question can be answered
-  after the boards arrive** rather than before the Gerbers go out. Measure the
-  capsule's DC resistance to decide between a preamp and a pad — see
-  [audio.md](audio.md).
+- **The mic input is jumper-selected, not a population choice.** The whole front
+  end is fitted, and **JP1/JP2/JP3** choose between electret, dynamic and carbon
+  at run time — see [ADR 0009](decisions/0009-mic-input-is-jumper-selected.md).
+  The selection table and the DC-resistance test that identifies the capsule are
+  **printed on the silkscreen beside the jumpers**, so the board carries its own
+  procedure. Measure across the capsule, read the row, set three shunts.
+
+  | Capsule | JP1 | JP2 | JP3 |
+  | --- | --- | --- | --- |
+  | Electret — open at DC | `1-2` | `1-2` | `1-2` |
+  | Dynamic — 150–600 Ω stable | — | `1-2` | `2-3` |
+  | Carbon — 50–300 Ω unstable | `2-3` | `2-3` | — |
+
+  **Shunts are not supplied and JLC does not fit them** — a jumper cap is an
+  accessory, not a placed component. Buy 2.54 mm shunts separately.
 - **The switch debounce capacitor** is a per-channel population choice: 220 nF
   for a panel switch, 1 µF for a telephone hook lever.
 - **`A4`/`A5` pulldowns** — 10 kΩ on the FSR, 3 kΩ on the soft pot. Do not

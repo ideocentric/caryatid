@@ -37,8 +37,33 @@ schematic before relying on the drive capability.
 
 ## Input
 
-Laid out on every board, DNP where unused. The complication is which capsule is
-on the other end.
+**Populated on every board, and selected by three jumpers** — see
+[ADR 0009](decisions/0009-mic-input-is-jumper-selected.md). The complication is
+which capsule is on the other end, and the board no longer needs that answered
+before it is built.
+
+| Jumper | Selects | Positions |
+| --- | --- | --- |
+| **JP1** | capsule bias | `1-2` 2k2 to 3V3A · none · `2-3` 220R to 5 V |
+| **JP2** | signal path | `1-2` op-amp · `2-3` bypass |
+| **JP3** | gain leg | `1-2` 1k (×101) · `2-3` 392R (×256) |
+
+| Capsule | JP1 | JP2 | JP3 |
+| --- | --- | --- | --- |
+| **Electret** | `1-2` | `1-2` | `1-2` |
+| **Dynamic** | — | `1-2` | `2-3` |
+| **Carbon** | `2-3` | `2-3` | — |
+
+**The table is on the silkscreen beside the jumpers**, with the DC-resistance
+test printed next to it, so the board carries its own procedure. `12` and `23`
+are pin pairs rather than positions, because "top" depends on which way the
+board is held; the jumpers stand vertically with pin 1 uppermost.
+
+> **This replaced a DNP-and-solder design.** The front end used to be laid out
+> DNP with the capsule chosen by populating one of three mutually exclusive
+> sets — a soldering iron, after measuring. The requirement that it be
+> selectable *after* assembly was never written down, so the board was built
+> against a different one. ADR 0009 has the full account.
 
 ### Identify the capsule before choosing components
 
@@ -57,7 +82,9 @@ and that variability *is* how the thing works.
 
 ### Provisions on the board
 
-All three footprints are laid out; one set is populated.
+**All three paths are fitted; the jumpers choose between them.** The parts below
+are on every board — what follows describes what each path does, not what to
+solder.
 
 **Electret** — the common case in anything from the 1980s on. A 2.2 kΩ from
 3V3A to the capsule and an AC coupling capacitor into the codec. Draws well
@@ -79,12 +106,12 @@ milliamps from the line. Provisions:
 
 ### The gain stage — one footprint, all three outcomes
 
-**U4 = MCP6002 dual op-amp**, SOIC-8, `C116706`, powered from `3V3A`. Laid out
-DNP with a bypass, so the capsule question can be answered *after* the boards
-arrive rather than before the gerbers go out. This is the whole point: it
-converts an unknown into a population choice.
+**U4 = MCP6002 dual op-amp**, SOIC-8, `C116706`, powered from `3V3A`. **Fitted
+on every board**, with JP2 selecting whether the signal goes through it or
+around it. That is the whole point: the capsule question is answered *after* the
+boards arrive, and answered with a shunt rather than an iron.
 
-| Capsule | Populate | Gain needed |
+| Capsule | Path | Gain needed |
 | --- | --- | --- |
 | Carbon | **bypass**, possibly a pad | ~×3, or attenuation |
 | Electret | stage + bias resistor | ~×100 (40 dB) |
@@ -175,8 +202,15 @@ one.
 
 The Seed has `AUDIO IN L` and `AUDIO IN R`. A handset mic is mono, but caryatid
 serves three instruments and stereo line-in is a plausible future need. A dual
-op-amp is one package instead of two, so **both channels get the full network,
-DNP**. A mono build populates one.
+op-amp is one package instead of two, so both channels are laid out. **The left
+channel is fitted and jumper-selected; the right stays DNP** for a future stereo
+line-in build, where capsule selection is meaningless.
+
+**Section B is not left floating.** Populating U4 for the left channel would
+otherwise strand the second amplifier's inputs, and a floating op-amp input
+oscillates and draws current. R59/R60 bias it to mid-rail and R61 closes the
+feedback loop with R62 left open, making it a unity-gain follower sitting at
+`VBIAS_R`. Three resistors to keep an unused amplifier quiet.
 
 #### The fallback lands on the bypass path
 

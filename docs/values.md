@@ -117,9 +117,10 @@ FB1 pin 2 is the source, the ferrite's output side.
 | RGB status | J12-1 | R40 510 Ω red, R41/R42 300 Ω green/blue, common anode | 5.9 / 6.7 / 6.3 mA per die |
 | — worst assigned state | | amber (red+green) | **12.6 mA** |
 | — all three | | white, deliberately unassigned | 18.9 mA |
-| **Mic bias L** | R52 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
-| **Mic bias R** | R54 | 220 Ω, capsule voltage **TBD** | **11–21 mA** |
+| **Mic bias L** | R52 | 220 Ω, **only when JP1 is on `2-3` (carbon)** | **11–21 mA** |
+| **Mic bias R** | R54 | 220 Ω, right channel still DNP | 0 unless fitted |
 | **Switch lamp** | R5 | 0 Ω link; lamp limits internally, **unmeasured** | **unknown** |
+| Mic bias, electret | R51 | 2k2 from 3V3A, JP1 on `1-2` | 1.5 mA |
 | Comms A module | J19-1 | external, no allowance stated | unknown |
 | Comms B module | J15-1 | external, no allowance stated | unknown |
 | Expansion | J16-1 | external, no allowance stated | unknown |
