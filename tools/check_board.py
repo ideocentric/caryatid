@@ -62,7 +62,10 @@ ENCLOSURES = {"BUD CU-477": 34.14, "telephone shell": 40.0}
 # Heights are not in the footprint files. Most encode it in the name; the rest
 # are from the datasheets. A part missing here is reported, not assumed safe.
 HEIGHTS = {
-    "Fiducial_1mm_Mask2mm": 0.0,   # bare copper, nothing stands on it
+    "Fiducial_1mm_Mask2mm": 0.0,
+    # 2.5 mm body + 6 mm mating pin, per HX PH254-01-03-Z-L11.5 (C52016391).
+    # A fitted shunt adds nothing above the pin tips.
+    "PinHeader_1x03_P2.54mm_Vertical": 8.5,   # bare copper, nothing stands on it
     "CP_Elec_6.3x5.4": 5.4, "D_SMA": 2.3,
     "L_Vishay_IFSC-1515AH_4x4x1.8mm": 1.8,
     "SOIC-14_3.9x8.7mm_P1.27mm": 1.75, "SOIC-8_3.9x4.9mm_P1.27mm": 1.75,

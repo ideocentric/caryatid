@@ -78,6 +78,14 @@ by_value_footprint:
     {lcsc: C23006, note: "Extended, $0.0055 ea -- R7"}
   "47k5 1%|R_0603_1608Metric":
     {lcsc: C23061, note: "Extended, $0.0025 ea -- R8"}
+  # ADR 0009, the mic capsule selector. All three verified against live JLC
+  # data 2026-08-21, same UNI-ROYAL 0603WAF series as every other resistor here.
+  "2k2|R_0603_1608Metric":
+    {lcsc: C4190, note: "2.2k 1% 0603, Basic. R51, electret bias to 3V3A -- 1.5 mA, 5 mW."}
+  "220R|R_0603_1608Metric":
+    {lcsc: C22962, note: "220R 1% 0603, Basic. R52, carbon bias from 5V. SEE DISSIPATION NOTE in values.md -- up to 92 mW on a 100 mW part at the top of the documented current range."}
+  "392R|R_0603_1608Metric":
+    {lcsc: C23039, note: "392R 1% 0603, Extended. R67, the x256 gain leg. E96, so it carries a loading fee like the other E96 values."}
   "510|R_0603_1608Metric":
     {lcsc: C23193, note: "Basic, $0.0102 ea -- R40"}
   "100n|C_0603_1608Metric":

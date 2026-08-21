@@ -10228,7 +10228,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R67"
-			(at 0 -1.43 90)
+			(at 0 -1.8 90)
 			(layer "F.SilkS")
 			(uuid "3b324a84-3a7c-48c7-b723-1aa5ea1627b5")
 			(effects
@@ -39429,14 +39429,6 @@
 		(uuid "6e79fa2f-8288-4f20-83fb-724c65b310ed")
 	)
 	(segment
-		(start 162.434 94.615)
-		(end 161.7073 94.615)
-		(width 0.25)
-		(layer "F.Cu")
-		(net 5)
-		(uuid "b02d1c6b-c936-4feb-a003-2031df342d7a")
-	)
-	(segment
 		(start 160.528 94.361)
 		(end 161.4533 94.361)
 		(width 0.25)
@@ -39491,14 +39483,6 @@
 		(layer "F.Cu")
 		(net 7)
 		(uuid "0cab2c7e-3978-4e5b-818d-34ad0015aa5d")
-	)
-	(segment
-		(start 165.4242 107.7857)
-		(end 165.0017 107.3632)
-		(width 0.25)
-		(layer "F.Cu")
-		(net 7)
-		(uuid "19828cb5-efce-407e-bc41-d4dd2db8cda1")
 	)
 	(segment
 		(start 165.0017 104.3017)
@@ -39605,14 +39589,6 @@
 		(uuid "d8d7341d-f09a-4f9b-a486-ac3ac3cceb2b")
 	)
 	(segment
-		(start 181.261 107.7857)
-		(end 165.4242 107.7857)
-		(width 0.25)
-		(layer "F.Cu")
-		(net 7)
-		(uuid "e035c0ec-91e4-4eb8-b746-262fd7b76deb")
-	)
-	(segment
 		(start 194.6328 69.7455)
 		(end 194.6328 94.4139)
 		(width 0.25)
@@ -39643,14 +39619,6 @@
 		(layer "F.Cu")
 		(net 7)
 		(uuid "f9e00fe2-738f-4abe-9feb-8346c0508757")
-	)
-	(segment
-		(start 164.312 103.251)
-		(end 162.496 103.251)
-		(width 0.25)
-		(layer "F.Cu")
-		(net 7)
-		(uuid "fcecf02d-b12b-48f5-b335-fc15ea297ac5")
 	)
 	(via
 		(at 163.225 104.525)
