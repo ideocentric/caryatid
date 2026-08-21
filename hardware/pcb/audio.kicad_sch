@@ -5497,7 +5497,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "19cfd7e2-8352-5bb8-bfe2-678ccfe8b833")
 		(property "Reference" "C30"
 			(at 145.7 328.36 0)

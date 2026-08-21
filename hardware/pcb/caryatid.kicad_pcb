@@ -2721,7 +2721,7 @@
 		(path "/bda31c7d-e5ef-4a38-8900-64d829b923ab/19cfd7e2-8352-5bb8-bfe2-678ccfe8b833")
 		(sheetname "/audio/")
 		(sheetfile "audio.kicad_sch")
-		(attr smd dnp)
+		(attr smd)
 		(fp_line
 			(start -0.14058 0.51)
 			(end 0.14058 0.51)

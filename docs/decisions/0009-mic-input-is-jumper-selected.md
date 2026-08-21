@@ -62,6 +62,17 @@ same coupling; only the gain leg changes. Carbon needs no active stage at all.
 **Left channel only.** A handset mic is mono. The right channel keeps its DNP
 network for a future stereo line-in build, where capsule selection is meaningless.
 
+**Populating U4 pulled C30 in with it, and that was nearly missed.** `C30` is
+the only decoupling capacitor on `+3V3A`, and it was DNP — correctly, while
+nothing active sat on that rail. Fitting the op-amp made it mandatory, and it
+was not on the original populate list. Caught by tracing what `+3V3A` actually
+feeds, not by any check: **an undecoupled supply is not a DRC violation, an ERC
+violation, or a parity error.**
+
+*The general rule this is an instance of:* clearing DNP on an active part makes
+its support components mandatory, and they are usually DNP for the same reason
+it was. Trace the supply rails after any such change.
+
 ## Why jumpers rather than three sockets
 
 The original idea was three sockets, one per capsule type, selected by which one
