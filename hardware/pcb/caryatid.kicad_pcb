@@ -37105,136 +37105,16 @@
 
 
 
-	(gr_text "MIC CAPSULE"
-		(locked yes)
-		(at 127.5465 94.6768)
-		(layer "F.SilkS")
-		(uuid "80a1d135-36c2-5ffd-962e-f01d34456919")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "     JP1 JP2 JP3"
-		(locked yes)
-		(at 127.5465 95.8768)
-		(layer "F.SilkS")
-		(uuid "a06c5c74-f5b7-56f3-aecb-c65a7b8d2868")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "ELEC  12  12  12"
-		(locked yes)
-		(at 127.5465 97.0768)
-		(layer "F.SilkS")
-		(uuid "8c12d6d0-8ace-5c52-890a-cf77b99e658b")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "DYN   --  12  23"
-		(locked yes)
-		(at 127.5465 98.2768)
-		(layer "F.SilkS")
-		(uuid "58e01f53-9fbd-50ce-9ed0-f09e8c5f2e60")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "CARB  23  23  --"
-		(locked yes)
-		(at 127.5465 99.4768)
-		(layer "F.SilkS")
-		(uuid "baa38707-ec11-5903-8abb-237bf30a29f4")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "MEASURE DC OHMS"
-		(locked yes)
-		(at 127.5465 100.6768)
-		(layer "F.SilkS")
-		(uuid "25304938-ea0a-5fc8-a55f-bcb719217af6")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "OPEN     = ELEC"
-		(locked yes)
-		(at 127.5465 101.8768)
-		(layer "F.SilkS")
-		(uuid "4197090b-3c62-581a-81a4-1c122f6c753f")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "150-600R = DYN"
-		(locked yes)
-		(at 127.5465 103.0768)
-		(layer "F.SilkS")
-		(uuid "714c3055-04bd-50db-86d8-66b2e6bc702f")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "50-300R  = CARB"
-		(locked yes)
-		(at 127.5465 104.2768)
-		(layer "F.SilkS")
-		(uuid "c479c910-0a8f-5205-a9ae-93df62710995")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
-	(gr_text "UNSTABLE = CARB"
-		(locked yes)
-		(at 127.5465 105.4768)
-		(layer "F.SilkS")
-		(uuid "f1adcc13-4c2b-5b74-a219-fa2d237aaa53")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify left)
-		)
-	)
+
+
+
+
+
+
+
+
+
+
 	(gr_text "ELE"
 		(locked yes)
 		(at 142.5450 95.1700)

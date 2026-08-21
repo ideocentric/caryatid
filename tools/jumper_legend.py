@@ -93,6 +93,11 @@ def block_box(cx, cy, size):
 def main():
     apply_ = "--apply" in sys.argv
     strip_ = "--strip" in sys.argv
+    # --strip-table removes only the 10-line capsule table, leaving the six
+    # per-position labels at the headers. They are not the same thing: the
+    # table is replaceable by artwork elsewhere, the position labels sit ON the
+    # jumpers and nothing else can do their job.
+    strip_table = "--strip-table" in sys.argv
     B = C.Board(C.PCB)
     t = B.t
 
@@ -101,13 +106,14 @@ def main():
     for m in reversed(list(re.finditer(r'^\t\(gr_text "', t, re.M))):
         blk = C.sexp(t, m.start() + 1)
         u = re.search(r'\(uuid "([^"]+)"\)', blk)
-        _mine = {uid(f"line{i}") for i in range(len(LINES))} | {
-            uid(f"posn{r}{s}") for r, pair in POSN.items() for s in pair}
+        _table = {uid(f"line{i}") for i in range(len(LINES))}
+        _posn = {uid(f"posn{r}{s}") for r, pair in POSN.items() for s in pair}
+        _mine = _table if strip_table else (_table | _posn)
         if u and u.group(1) in _mine:
             t = t[:m.start()] + t[m.start() + 1 + len(blk):]
             n_old += 1
     if n_old: print(f"  removed {n_old} lines from a previous run")
-    if strip_:
+    if strip_ or strip_table:
         if apply_: open(C.PCB, "w").write(t)
         print("  stripped" + ("" if apply_ else " (dry run)"))
         return 0
