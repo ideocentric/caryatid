@@ -44,6 +44,14 @@ by_footprint:
     {lcsc: C144397,  note: "JST B6B-XH-A(LF)(SN)"}
   JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal:
     {lcsc: C160404,  note: "JST-SH 4-pin horizontal, Qwiic"}
+  # JP1/JP2/JP3, the mic capsule selector -- ADR 0009. Verified against live
+  # JLC data 2026-08-21: HX PH254-01-03-Z-L11.5, 1x3P 2.54mm THT, 3A, gold,
+  # 56393 in stock, $0.0249/1, Extended, manualWeld. The L11.5 body/pin split
+  # is 2.5mm body with 6mm of mating pin, which is what a standard 2.54mm
+  # shunt needs. THE SHUNTS THEMSELVES ARE NOT A PLACED COMPONENT -- JLC will
+  # not fit them; buy a bag separately.
+  PinHeader_1x03_P2.54mm_Vertical:
+    {lcsc: C52016391, note: "HX PH254-01-03-Z-L11.5, 1x3 2.54mm header. Shunts bought separately."}
 
 by_value_footprint:
   "10k 0.1%|R_0603_1608Metric":
