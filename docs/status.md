@@ -4,43 +4,71 @@ Where the board is, and what happens next. Read this first.
 
 ## ▶ RESUME HERE — 2026-08-21
 
-**The schematic is ahead of the board, deliberately, and the gap is one KiCad
-session.** [ADR 0010](decisions/0010-nothing-is-dnp.md) took the DNP count to
-zero: the right mic channel is now jumper-selected like the left (JP4/JP5/JP6
-plus R68), the four `open` divider legs (R48, R50, R64, R66) are deleted, and
-the four panel-io options (R43–R46) are assembled.
+**The board now matches the schematic. What is left is placement and routing.**
+[ADR 0010](decisions/0010-nothing-is-dnp.md) took the DNP count to zero: the
+right mic channel is jumper-selected like the left (JP4/JP5/JP6 plus R68), the
+four `open` divider legs (R48, R50, R64, R66) are deleted, and the four
+panel-io options (R43–R46) are assembled.
 
 **Done, and verified:**
 
 | | |
 | --- | --- |
-| ERC, all severities | **0 violations** after each of the three edits |
+| ERC, all severities | **0 violations** after each of the three schematic edits |
 | netlist diff | 99 of 107 nets byte-identical; 6 new, 8 changed, **all intended** |
 | `dnp` symbols, all five sheets | **0** |
-| `check_board.py` | **12/12**, the new check being "no DNP on any sheet" |
+| **schematic parity** | **0**, down from 28 — the board carries the change |
+| `check_board.py` | **12/12** |
+| `stale_tracks.py` | **0** |
 | evidence | `discovery/evidence/2026-08-21-audio-netlist-diff.txt` |
 
-**Not done, and it needs the GUI — `kicad-cli` has no update-from-schematic:**
+**The board update was done by script, not by the GUI.** `kicad-cli` has no
+update-from-schematic and `BOARD_NETLIST_UPDATER` is not in the Python
+bindings, so `tools/oneshot/update_pcb_from_schematic.py` applies KiCad's own
+28-item parity list through the `pcbnew` BOARD API. Parity going to 0 is the
+acceptance test, and it is KiCad's number rather than the tool's.
 
-1. **Update PCB from Schematic.** DRC currently reports **28 schematic parity
-   issues**, which is exactly this and nothing else.
-2. **Place JP4, JP5, JP6 and R68.** The right-channel block sits around
-   X 176–182, Y 91–107; the clear area to its right, roughly X 185–194 /
-   Y 96–113, is the obvious home. JP1–JP3 are at X 142.5/147.1/151.7, Y 99.17
-   on 4.59 mm centres.
-3. **Delete the R48/R50/R64/R66 footprints** and whatever fed them.
-4. **Run `python3 tools/stale_tracks.py` before routing anything.** Five pads
-   change net (R53.2, R54.2, C29.2, R65.2, R62.2) and KiCad leaves the old
-   tracks behind. Four such tracks nearly shipped last time — see `0491e70`.
-   The tool reports 0 on the current board and reproduces all four on the board
-   immediately before that fix.
-5. **Re-route the right channel, refill both pours, re-run DRC** with
-   `--schematic-parity`, then `check_board.py` and `fab_package.py`.
-6. **`python3 tools/jumper_legend.py --apply`** for the six per-position labels.
-   It refuses to run until all six headers are on the board, and says so.
+### Next, and it does need the GUI
 
-**The counts below in "Manufacturing readiness" are stale until step 5**, and
-are marked as such rather than guessed at.
+1. **Place JP4, JP5, JP6 and R68 — they are parked, not placed.**
+
+   > **There is no room beside the right channel, and that is measured.** A
+   > free-space scan over every courtyard, pad, via and F.Cu track finds **no
+   > clear site for three 1x03 headers in a row within 41.6 mm** of the right
+   > block. The first attempt at (186, 100) put JP4 on top of a 19.18 mm
+   > `MIC_L` run and a JP6 pad 0.098 mm from a GND via — that area reads empty
+   > on a courtyard-only check and is full of copper. Individually they fit at
+   > ~18 mm, but splitting the trio costs what ADR 0009 leans on: three
+   > positions read as one selector.
+
+   So they sit together at the nearest clear 3-up site, on the left channel's
+   4.59 mm pitch, to be dragged where they belong. Expect to rip up copper to
+   make room. R68 is at (186.00, 92.25), 9.7 mm from its partner R62.
+
+2. **Route the right channel.** 12 unconnected items, and **every one names a
+   new or changed net** — the six new ones plus `MIC_R`, `GAINLEG_R`,
+   `AUDIO_IN_R`, `OPA_R_N`. Nothing outside that set, which is the check that
+   no existing route was cut when the pads moved.
+
+   Three `track_dangling` remnants of the old right-channel routing are left in
+   deliberately rather than blind-deleted — that routing is being replaced, and
+   this repo has been bitten before by deleting what fed something else.
+
+3. **Re-run `tools/stale_tracks.py` after any further net change.** It is 0 now.
+4. **Refill both pours** — or let the script do it; skipping it produced 87
+   violations, almost all of them the plane touching the new pads.
+5. **`python3 tools/jumper_legend.py --apply`** for the six per-position
+   labels. It refuses to run until all six headers are on the board.
+6. **Re-run DRC with `--schematic-parity`**, then `check_board.py` and
+   `fab_package.py`.
+
+**20 `silk_overlap` and 3 `silk_over_copper` are parking artifacts** — the
+parked footprints are sitting on existing silkscreen, because the free-space
+scan modelled copper and not silk. They go away when the parts are placed. The
+board had none of either before, and should have none again.
+
+**The counts in "Manufacturing readiness" are stale until step 6**, and are
+marked as such rather than guessed at.
 
 ## The board is routed
 
