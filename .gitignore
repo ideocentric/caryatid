@@ -8,6 +8,9 @@
 *.kicad_prl
 *.kicad_sch-bak
 *.kicad_pcb-bak
+# tools/cycle.py writes one of these before every run. A transient safety net,
+# same class as the .dsn and .ses below -- the durable history is git.
+*.before-cycle
 fp-info-cache
 ~*.*
 _autosave-*
