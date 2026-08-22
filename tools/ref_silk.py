@@ -18,9 +18,12 @@ Not everything should come back:
   H1-H4    mounting holes -- mechanical, no part to identify
   FID1-3   fiducials -- read by a machine, and FID2's designator was landing
            on H4's mask opening, which is why it was hidden in the first place
-  U2, L1, FB1
+  U2, L1, FB1, R61
            their labels collide with their own outlines and get clipped by
-           solder mask, which puts ink on bare copper
+           solder mask, which puts ink on bare copper. R61 joined them after
+           the audio re-placement: every spot this tool tried for it came back
+           clipped, because the obstacle model checks pads and silk but not
+           mask openings, so it placed a label the fab would print onto copper
 
 Everything else is tried. A reference that cannot be placed clear of silk,
 pads and its neighbours is LEFT HIDDEN rather than forced -- a designator
@@ -40,7 +43,7 @@ sys.path.insert(0, HERE)
 import check_board as C
 import pin_labels as P
 
-KEEP_HIDDEN = {"U2", "L1", "FB1"}
+KEEP_HIDDEN = {"U2", "L1", "FB1", "R61"}
 SKIP_PREFIX = ("H", "FID")
 SIZES = (1.0, 0.9, 0.8)
 THICK = 0.15
