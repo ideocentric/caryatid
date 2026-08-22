@@ -4,6 +4,10 @@
 
     python3 tools/stitch_gnd.py             # propose and verify, write nothing
     python3 tools/stitch_gnd.py --apply     # insert the vias into the board
+    python3 tools/stitch_gnd.py --grid --apply      # + a grid tying the pours
+    python3 tools/stitch_gnd.py --islands --apply   # + one via per ORPHANED
+                                                    #   F.Cu island; --grid
+                                                    #   cannot reach those
 
 WHY THIS EXISTS
 ---------------
@@ -192,6 +196,74 @@ def grid_stitch(S, clr, x0, y0, x1, y1, existing):
     return placed
 
 
+def island_stitch(S, clr, existing):
+    """One via inside every ORPHANED F.Cu ground island.
+
+    THE GRID CANNOT DO THIS, BY CONSTRUCTION. grid_stitch tests every candidate
+    with `poly_contains(fmain, c)` -- fmain being the LARGEST F.Cu island -- so a
+    point inside any other island is rejected before anything else is weighed.
+    An orphan is by definition not the largest island, so the grid skips exactly
+    the copper that needs help. Running --grid and finding islands left over is
+    not a failure of the pitch; it is the wrong tool.
+
+    An orphan is F.Cu ground fill with no via and no through-hole pad inside it:
+    copper at floating potential beside signal traces, coupling instead of
+    shielding. check_board.py check 11 reports them; this is what fixes them.
+
+    The via still has to REACH THE PLANE -- inside the main B.Cu island, clear of
+    both island edges by the annulus plus zone clearance, and clear of every
+    foreign pad, track, via and hole. A via landing in a stranded B.Cu island
+    joins one orphan to another and adds a hole for nothing.
+
+    Placement maximises distance from the island edge so the annulus still has
+    room after the fill reflows around it, and stops early once a candidate
+    clears both edges by 1 mm, which is comfortable for a 0.7 mm via.
+    """
+    if not S.isl:
+        return []
+    bmain = S.isl[0][1]
+    margin = VIA_D / 2 + ZONE_CLEAR
+    anchors = [(v[0], v[1]) for v in S.vias] + [(h[0], h[1]) for h in S.holes]
+    anchors += list(existing)
+    placed = []
+    for area, poly in S.fisl:
+        if any(poly_contains(poly, a) for a in anchors):
+            continue
+        xs = [p[0] for p in poly]
+        ys = [p[1] for p in poly]
+        best = None
+        step = 0.5
+        y = min(ys) + step
+        while y < max(ys) and (best is None or best[0] < 1.0):
+            x = min(xs) + step
+            while x < max(xs):
+                c = (x, y)
+                x += step
+                df = poly_edge_dist(poly, c)
+                if not poly_contains(poly, c) or df < margin:
+                    continue
+                db = poly_edge_dist(bmain, c)
+                if not poly_contains(bmain, c) or db < margin:
+                    continue
+                if not S.via_ok(c, "GND", clr)[0]:
+                    continue
+                d = min(df, db)
+                if best is None or d > best[0]:
+                    best = (d, c)
+                if d >= 1.0:
+                    break
+            y += step
+        if best:
+            c = best[1]
+            S.vias.append((c[0], c[1], VIA_D, VIA_DRILL, S.netid["GND"]))
+            S.holes.append((c[0], c[1], VIA_DRILL))
+            anchors.append(c)
+            placed.append((area, c, best[0]))
+        else:
+            placed.append((area, None, 0.0))
+    return placed
+
+
 def drc_unconnected_gnd():
     """(ref, pad) of every front-side GND pad KiCad reports as unconnected"""
     exe = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
@@ -301,14 +373,29 @@ def main():
         print(f"    {ref}-{pd['num']:<4} no via position: {why}")
     if bad: print()
 
-    if not apply_:
-        print("  dry run -- pass --apply to write them into the board")
-        return 1 if bad else 0
-
     nid = S.netid["GND"]
     grid = grid_stitch(S, clr, x0, y0, x1, y1, [(c[0], c[1]) for _, _, _, c, _ in good]) \
         if "--grid" in sys.argv else []
     if grid: print(f"  plus {len(grid)} grid stitching vias tying the two pours")
+
+    isl = island_stitch(S, clr, [(c[0], c[1]) for _, _, _, c, _ in good] + grid) \
+        if "--islands" in sys.argv else []
+    if isl:
+        done = [p for p in isl if p[1]]
+        miss = [p for p in isl if not p[1]]
+        print(f"  plus {len(done)} via(s) into orphaned F.Cu ground islands:")
+        for area, c, d in done:
+            print(f"      {area:7.1f} mm2 island -> via at ({c[0]:.3f}, {c[1]:.3f}), "
+                  f"{d:.2f} mm from the nearest edge")
+        for area, _, _ in miss:
+            print(f"      {area:7.1f} mm2 island -- NO legal via position found; "
+                  f"it needs space, not a via")
+    grid = grid + [c for _, c, _ in isl if c]
+
+    if not apply_:
+        print("\n  dry run -- pass --apply to write them into the board")
+        return 1 if bad else 0
+
     out = []
     for c in grid:
         out.append(f'\t(via\n\t\t(at {c[0]:.4f} {c[1]:.4f})\n\t\t(size {VIA_D})\n'
