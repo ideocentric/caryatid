@@ -43,6 +43,10 @@ WHAT IT DOES
   5  fix_ses.py              the session is written at 10x its declared
                              resolution; without this the import lands off-board
   6  import via pcbnew       KiCad's own ImportSpecctraSES
+ 6a  dedupe_against_locked   Freerouting ECHOES protected wiring into the
+                             session and the import ADDS it, so every locked
+                             item lands twice, stacked on itself. Drop the echo,
+                             keep the board's copy
  6b  widen_necks.py          the router necks below min_track_width on its own;
                              widen back ONLY where DRC proves it costs nothing
   7  fill zones
@@ -109,6 +113,80 @@ def strip_copper(path=None):
     open(path, "w").write(t)
     strip_copper.kept = kept
     return len(spans)
+
+
+def dedupe_against_locked(tol=0.005):
+    """Drop imported copper that duplicates a track or via already on the board.
+
+    LOCKED COPPER SURVIVES STEP 1 AND IS ALSO EXPORTED AS `(type protect)`, so
+    the router knows to work around it. Freerouting then ECHOES that protected
+    wiring back into the session, and ImportSpecctraSES *adds* it rather than
+    reconciling -- so every locked item lands a second time, stacked exactly on
+    itself.
+
+    With one or two locked tracks nobody notices. Locking 1059 of them to make a
+    cycle surgical took the board from 926 segments / 135 vias to 1861 / 205 and
+    produced 57 holes_co_located, 10 annular_width, 32 clearance and 6 shorts --
+    all of it copper against its own copy.
+
+    THE OBVIOUS FIX IS WRONG. "Strip everything before importing, the session
+    carries it back" does not hold: 1074 protected items went out and 1007 came
+    back, with vias down from 135 to 57. Freerouting simplifies as it echoes, so
+    stripping first LOSES copper. Measured, not assumed.
+
+    So the board's own copy stays authoritative and the echo is dropped. Matched
+    on net, layer and both endpoints within `tol`, either order -- width is
+    deliberately NOT compared, because the router necks some of what it echoes
+    and a necked copy is still a copy.
+    """
+    t = open(PCB).read()
+    nets = {int(i): n for i, n in re.findall(r'\(net (\d+) "([^"]*)"\)', t)}
+    items = []
+    for kind in ("segment", "via"):
+        for m in re.finditer(rf"^\t\({kind}\b", t, re.M):
+            blk = C.sexp(t, m.start() + 1)
+            n = re.search(r"\(net (\d+)\)", blk)
+            ly = re.search(r'\(layer "([^"]+)"\)', blk)
+            if kind == "segment":
+                s = re.search(r"\(start ([-\d.]+) ([-\d.]+)\)", blk)
+                e = re.search(r"\(end ([-\d.]+) ([-\d.]+)\)", blk)
+                if not (s and e):
+                    continue
+                key = (float(s.group(1)), float(s.group(2)),
+                       float(e.group(1)), float(e.group(2)))
+            else:
+                a = re.search(r"\(at ([-\d.]+) ([-\d.]+)\)", blk)
+                if not a:
+                    continue
+                key = (float(a.group(1)), float(a.group(2)), 0.0, 0.0)
+            items.append({"start": m.start(), "len": len(blk) + 1, "kind": kind,
+                          "net": n.group(1) if n else "?",
+                          "layer": ly.group(1) if ly else ("*" if kind == "via" else "?"),
+                          "key": key, "locked": "(locked yes)" in blk})
+
+    def same(a, b):
+        if a["kind"] != b["kind"] or a["net"] != b["net"] or a["layer"] != b["layer"]:
+            return False
+        p, q = a["key"], b["key"]
+        fwd = all(abs(p[i] - q[i]) <= tol for i in range(4))
+        rev = all(abs(p[i] - q[(i + 2) % 4]) <= tol for i in range(4))
+        return fwd or rev
+
+    locked = [i for i in items if i["locked"]]
+    drop = []
+    for it in items:
+        if it["locked"]:
+            continue
+        if any(same(it, lk) for lk in locked):
+            drop.append(it)
+
+    spans = sorted(((d["start"], d["start"] + d["len"]) for d in drop), reverse=True)
+    for s, e in spans:
+        while e < len(t) and t[e] == "\n":
+            e += 1
+        t = t[:s] + t[e:]
+    open(PCB, "w").write(t)
+    return len(drop), len(locked)
 
 
 def pours(t):
@@ -226,6 +304,11 @@ def main():
         f"b=pcbnew.LoadBoard('{PCB}');print('ok',pcbnew.ImportSpecctraSES(b,'{SES}'),len(b.GetTracks()));"
         f"pcbnew.SaveBoard('{PCB}',b)"])
     print("   ", [l for l in r.stdout.splitlines() if l.startswith("ok")] or r.stderr[-200:])
+
+    step("6a", "dropping the router's echo of locked copper")
+    dropped, nlocked = dedupe_against_locked()
+    print(f"    {nlocked} locked item(s) on the board, dropped {dropped} "
+          f"imported duplicate(s)")
 
     step("6b", "widening necked tracks")
     # Freerouting narrows a trace on its own when it cannot otherwise fit, and
