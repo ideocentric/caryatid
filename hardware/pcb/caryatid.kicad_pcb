@@ -54468,4 +54468,208 @@
 			(justify bottom)
 		)
 	)
+	(gr_text "DC IN"
+		(at 57.3170 43.5583 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "c18984e9-ba0a-5eab-a500-d308347f7cba")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "LATCH"
+		(at 57.6580 53.6313 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "f2a3f4c9-8fd6-5ae2-89f7-2ba05cea1893")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "CHG LEDS"
+		(at 57.5310 68.7443 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "a5bba026-d53e-5bc8-b308-aa4a9d9e47ec")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "ANALOG BUS"
+		(at 158.1000 83.2423 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "9994498d-691f-5963-aec5-2b531d5dbecc")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SW1"
+		(at 67.0562 111.6500 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "e203d7e3-9360-59a1-9667-26fda0291b7e")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SW2"
+		(at 82.7000 117.7873 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "eb5b663d-e0d7-5295-9574-4f7adcc02504")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SW3"
+		(at 93.7000 117.7873 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "a51ab2c5-6d95-510a-a2df-f82d19db37cd")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SOFT POT"
+		(at 146.4500 117.5123 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "357b1b90-31f6-5f0f-a513-04ce3d3abf90")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "FSR"
+		(at 158.6020 117.8853 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "cc298e00-3f5c-5abb-9a21-aff4e42e67a7")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "DIGITAL BUS"
+		(at 59.9500 84.5273 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "b0df4fbc-d795-53ee-927f-f93f478cacca")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "RGB"
+		(at 186.7570 41.1193 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "9496937b-5746-5510-a4fb-f5b88b7aa4f3")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "MIC RTN"
+		(at 193.2940 72.5143 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "25b51168-172a-574e-8dcf-5b65de549903")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "COMMS B"
+		(at 125.2000 117.7873 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "2f34a66d-5483-5eb3-a5b6-c60d43707b2b")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SPI1"
+		(at 108.7520 97.5650 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "10b23a13-e81c-5a86-9d61-8616c5d34fda")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "AUDIO OUT"
+		(at 193.1500 44.7413 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "03c0e7e4-0358-537a-a4d0-123d3ea8dbd5")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "AUDIO IN"
+		(at 193.2940 58.4173 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "9be19257-ad12-5364-b941-b78a2f1ef7f9")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "COMMS A"
+		(at 104.2000 117.7873 0)
+		(layer "F.SilkS")
+		(locked yes)
+		(uuid "06b37af8-eddc-5840-acba-57925914171a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 )
