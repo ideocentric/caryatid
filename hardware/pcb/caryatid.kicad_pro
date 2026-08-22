@@ -54,14 +54,6 @@
       "diff_pair_dimensions": [],
       "drc_exclusions": [
         [
-          "lib_footprint_mismatch|118682500|77647500|df290bb0-5811-5e3f-98ec-13f26703e9ec|00000000-0000-0000-0000-000000000000",
-          "metadata only -- pads and graphics are byte-identical to the library."
-        ],
-        [
-          "lib_footprint_mismatch|118682500|87665000|ee52abc4-584e-57cd-8d24-d78651dfc2ee|00000000-0000-0000-0000-000000000000",
-          "metadata only -- pads and graphics are byte-identical to the library."
-        ],
-        [
           "lib_footprint_mismatch|67600000|82600000|044897fe-31ed-5933-a9cc-7117dac55d14|00000000-0000-0000-0000-000000000000",
           "pad angle differs from library by exactly 180 deg; a rectangle is symmetric under it. C4 and C5 have identical pad geometry in pcbnew and only C4 is flagged. Gerbers come from the board, not the library."
         ],
