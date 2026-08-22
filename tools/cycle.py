@@ -35,16 +35,20 @@ WHAT IT DOES
 ------------
   1  strip every segment and via -- footprints, zones, outline stay
   2  fanout.py --apply       escapes recomputed for wherever the parts now are
-  3  export_dsn.py           net classes, protected copper, inset boundary
+  3  export_dsn.py           net classes, protected copper, inset boundary,
+                             and every non-plated hole fenced -- the DSN cannot
+                             say "hole", so an unfenced one gets routed across
   4  freerouting             single-threaded; its multi-threaded optimiser is
                              documented broken and generates clearance errors
   5  fix_ses.py              the session is written at 10x its declared
                              resolution; without this the import lands off-board
   6  import via pcbnew       KiCad's own ImportSpecctraSES
+ 6b  widen_necks.py          the router necks below min_track_width on its own;
+                             widen back ONLY where DRC proves it costs nothing
   7  fill zones
   8  stitch_gnd.py --apply --grid    pad vias, then a grid tying the two pours
   9  fill zones again
- 10  DRC and the ten custom checks
+ 10  DRC and the twelve custom checks
 """
 import sys, os, re, subprocess, shutil, time
 
@@ -222,6 +226,24 @@ def main():
         f"b=pcbnew.LoadBoard('{PCB}');print('ok',pcbnew.ImportSpecctraSES(b,'{SES}'),len(b.GetTracks()));"
         f"pcbnew.SaveBoard('{PCB}',b)"])
     print("   ", [l for l in r.stdout.splitlines() if l.startswith("ok")] or r.stderr[-200:])
+
+    step("6b", "widening necked tracks")
+    # Freerouting narrows a trace on its own when it cannot otherwise fit, and
+    # it does not stop at min_track_width -- the run behind `a68ae67` came back
+    # with 0.1874 and 0.125 mm on ISET, TS, ILIM, FB and SW3_F, neither of which
+    # appears anywhere in the .dsn going out. Below the floor is a fab reject.
+    #
+    # widen_necks.py repairs it ONLY when the repair is provably free: it counts
+    # clearance, short, hole and dangling violations, widens, counts again, and
+    # restores the original board if any of them rose. On this board they do
+    # rise -- widening all eleven adds five clearance violations -- so the tool
+    # reverts and says so. That is the useful answer, not a failure: the necks
+    # are load-bearing and the fix is routing space, which is a placement
+    # question and not something a post-process can invent.
+    r = run(["python3", os.path.join(HERE, "widen_necks.py"), "--apply"])
+    for line in r.stdout.splitlines():
+        if line.strip() and not line.strip().startswith("0."):
+            print("   ", line.strip())
 
     step(7, "removing pour links")
     # export_dsn emits a straight wire between the pads a pour already joins, so

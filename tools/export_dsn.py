@@ -116,6 +116,44 @@ def pad_xy(p):
     return out
 
 
+def npth_holes(b):
+    """Every non-plated hole, in board coordinates: (ref, x, y, drill).
+
+    A mounting hole carries no net, so it is correctly absent from the netlist
+    and from every image -- the pin parser drops `np_thru_hole` with the comment
+    "mechanical only", which is right about what it IS and wrong about what it
+    DOES. It is still a drill, and a drill through a trace cuts the trace.
+
+    Freerouting cannot infer this. The DSN has no way to say "hole", so unless
+    one is fenced explicitly the router sees empty board and routes across it.
+    It did: VBAT crossed BT1's bolt hole at (89.345, 43.550) TWICE, at 0.000 mm
+    against a 0.25 mm rule, on 19.3 mm and 10.5 mm segments. DRC found it after
+    import; nothing could have found it before.
+
+    Six holes are invisible without this -- H1-H4 at the corners, where little
+    routes anyway, and BT1's two bolt holes, which sit mid-board inside the
+    battery's own copper.
+    """
+    out = []
+    for p in b.parts:
+        blk = p.get("blk") or ""
+        for m in re.finditer(r'\(pad "', blk):
+            pb = sexp(blk, m.start())
+            kind = re.match(r'\(pad "[^"]*" (\S+)', pb)
+            if not kind or kind.group(1) != "np_thru_hole":
+                continue
+            am = re.search(r"\(at ([-\d.]+) ([-\d.]+)", pb)
+            dr = re.search(r"\(drill ([-\d.]+)\)", pb)
+            if not (am and dr):
+                continue
+            px, py = float(am.group(1)), float(am.group(2))
+            th = math.radians(p["rot"])
+            cs, sn = math.cos(th), math.sin(th)
+            out.append((p["ref"], p["x"] + px * cs + py * sn,
+                        p["y"] - px * sn + py * cs, float(dr.group(1))))
+    return out
+
+
 def complement_rects(board, windows):
     """the board minus the windows, as axis-aligned rectangles"""
     x0, y0, x1, y1 = board
@@ -338,6 +376,24 @@ def main():
             L.append(f'    (via_keepout "" (rect B.Cu {X(r[0])} {Y(r[3])} {X(r[2])} {Y(r[1])}))')
         print(f"  B.Cu open only under {', '.join(bcu_under)}: "
               f"{len(wins)} window(s), {len(complement_rects((x0,y0,x1,y1), wins))} keepouts")
+
+    # Non-plated holes, fenced on BOTH layers. See npth_holes() for why they are
+    # invisible otherwise. The diameter is the drill plus the board's own
+    # hole-clearance rule on each side, which is exactly what DRC measures --
+    # hole edge to track edge. If Freerouting additionally keeps its own
+    # clearance from a keepout then this is conservative, which is the right
+    # direction to be wrong in for a hole that would cut a trace.
+    holes = npth_holes(b)
+    if holes:
+        hclr = json.load(open(PRO))["board"]["design_settings"]["rules"]["min_hole_clearance"]
+        for ref, hx, hy, drill in holes:
+            dia = drill + 2 * hclr
+            for layer in ("F.Cu", "B.Cu"):
+                L.append(f'    (keepout "" (circle {layer} {X(dia)} {X(hx)} {Y(hy)}))')
+                L.append(f'    (via_keepout "" (circle {layer} {X(dia)} {X(hx)} {Y(hy)}))')
+        print(f"  fenced {len(holes)} non-plated hole(s) at drill + 2 x {hclr} mm: "
+              + ", ".join(sorted({r for r, _, _, _ in holes})))
+
     L.append(f'    (via "Via_{X(default["via_diameter"])}_{X(default["via_drill"])}")')
     L.append('    (rule')
     L.append(f'      (width {X(default["track_width"])})')
