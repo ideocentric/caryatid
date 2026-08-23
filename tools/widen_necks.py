@@ -31,16 +31,40 @@ So this is all-or-nothing and verified against DRC, not asserted:
 
   1  count clearance/short/hole violations before
   2  widen every sub-minimum track to the floor
-  3  count them again
-  4  if ANY of those three went up, restore the original board and report
+  3  REFILL THE ZONES -- see below
+  4  count them again
+  5  if ANY of those three went up, restore the original board and report
 
 That mirrors how `0491e70` deleted its four stale tracks -- all four had to
 match or nothing was written. A partial repair here would be worse than none,
 because the survivors would look deliberate.
 
+STEP 3 IS NOT OPTIONAL, AND LEAVING IT OUT CONDEMNED FOUR INNOCENT TRACKS.
+A pour keeps its clearance from a track by retreating from it, so widening a
+track and then asking DRC about it -- without recomputing the fill -- compares
+new copper against a pour drawn for the old width. The gap it measures is a
+fill artefact, not a constraint.
+
+That is exactly what happened here. Widening all five raised `clearance` by one:
+
+    zone clearance 0.3000 mm; actual 0.2630 mm
+    Track [/power/TMR] on F.Cu  vs  Zone 'GND plane' [GND]
+
+0.263 is 0.300 minus half the 0.075 mm the track grew -- the pour standing
+still. Tested one at a time, four of the five were clean at 0.20 mm and only
+TMR "failed", and it failed against a zone rather than against a pad or another
+track. With ZONE_FILLER run between the widen and the check, all five pass and
+DRC reports zero clearance violations.
+
+The all-or-nothing rule then made it worse rather than safer: one false
+positive reverted four real repairs. All-or-nothing is still right -- a
+half-widened board reads as deliberate -- but only once the thing being
+verified is the board that would actually be fabricated.
+
 WHERE IT BELONGS. Freerouting regenerates these every run, so this is a step in
-the cycle rather than a one-shot: run it after importing a session, before the
-zone fill.
+the cycle rather than a one-shot: run it after importing a session. It now
+fills zones itself, so it no longer matters whether the cycle's own fill comes
+before or after.
 """
 import sys, os, re, json, shutil, subprocess
 
@@ -50,6 +74,10 @@ import check_board as C
 
 PRO = os.path.join(os.path.dirname(C.PCB), "caryatid.kicad_pro")
 CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+KPY = ("/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework"
+       "/Versions/3.9/bin/python3")
+KSP = ("/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework"
+       "/Versions/3.9/lib/python3.9/site-packages")
 WATCH = ("clearance", "shorting_items", "hole_clearance", "track_dangling")
 
 
@@ -72,6 +100,24 @@ def necks(t, floor):
             out.append((m.start() + 1, blk, val, net.group(1) if net else "?",
                         (st.group(1), st.group(2)) if st else ("?", "?")))
     return out
+
+
+def fill_zones(path):
+    """recompute every pour, so DRC judges the board that would be fabricated.
+
+    `import wx; wx.App(False)` first -- pcbnew's Python needs a wxApp to exist
+    before ZONE_FILLER touches anything, the same requirement ImportSpecctraSES
+    has. It still prints a `create wxApp before calling this` assert on stderr
+    and completes correctly; that line is noise, not a failure.
+    """
+    r = subprocess.run(
+        [KPY, "-c",
+         f"import sys;sys.path.insert(0,'{KSP}');import wx;wx.App(False);"
+         f"import pcbnew;b=pcbnew.LoadBoard('{path}');"
+         f"pcbnew.ZONE_FILLER(b).Fill(b.Zones());pcbnew.SaveBoard('{path}',b)"],
+        capture_output=True, text=True)
+    if r.returncode != 0:
+        sys.exit(f"  zone fill failed:\n{r.stderr.strip()[:400]}")
 
 
 def drc_counts(path):
@@ -114,6 +160,8 @@ def main():
         sys.exit(f"  UNBALANCED ({d}) -- not writing")
     open(C.PCB, "w").write(t)
     print(f"  widened {len(found)} track(s) to {floor} mm")
+    fill_zones(C.PCB)
+    print("  zones refilled")
 
     after = drc_counts(C.PCB)
     print(f"  after:  " + ", ".join(f"{k} {v}" for k, v in after.items()))
@@ -129,6 +177,7 @@ def main():
         return 1
     os.remove(backup)
     print("  kept: no clearance, short, hole or dangling violation was added")
+    print("        (verified against a refilled board, not a stale pour)")
     return 0
 
 
