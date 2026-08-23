@@ -591,10 +591,28 @@ assembly.
 
 ## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
 
-`tools/fab_package.py` now reports **92 of 92 covered** and exits zero. Codes are
-in [hardware/pcb/lcsc.yaml](../hardware/pcb/lcsc.yaml). The specifications below
-are kept because they are what the codes were chosen *against*, and because a
-future substitution has to satisfy the same constraints.
+`tools/fab_package.py` reports **127 of 127 covered** and exits zero
+(2026-08-22). Codes are in [hardware/pcb/lcsc.yaml](../hardware/pcb/lcsc.yaml).
+The specifications below are kept because they are what the codes were chosen
+*against*, and because a future substitution has to satisfy the same
+constraints.
+
+> **The count rose from 92 to 127 without a single part being added.**
+> [ADR 0010](decisions/0010-nothing-is-dnp.md) cleared every DNP, so parts that
+> were previously excluded from the assembly order now have to be bought. Three
+> had no code and were found on 2026-08-22:
+>
+> | ref | value | LCSC | how it was chosen |
+> | --- | --- | --- | --- |
+> | R45 | 3k | `C4211` | already named below and already in the absonus order |
+> | R43, R44 | 4k7 | `C23162` | **a new selection**, see below |
+>
+> `C23162` is `0603WAF4701T5E`, 4.7 kΩ ±1% 100 mW 0603, Basic library, verified
+> against JLC's live catalogue rather than recalled. It is the same Uniroyal
+> `0603WAF…T5E` series as `C4211` and the board's other resistors. `C25900` is
+> the identical part in 0402 and was rejected on footprint. This is the one code
+> here chosen by tooling rather than stated by Matt, and it is flagged so that a
+> substitution is a decision rather than a discovery.
 
 **Basic wherever the specification allows.** Six lines moved to the Basic
 library on 2026-08-18, none of them a downgrade:

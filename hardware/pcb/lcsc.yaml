@@ -90,6 +90,10 @@ by_value_footprint:
     {lcsc: C23039, note: "392R 1% 0603, Extended. R67 and R68, the x256 gain legs. E96, so it carries a loading fee like the other E96 values."}
   "510|R_0603_1608Metric":
     {lcsc: C23193, note: "Basic, $0.0102 ea -- R40"}
+  "3k|R_0603_1608Metric":
+    {lcsc: C4211, note: "0603WAF3001T5E 3k 1% 0603, Basic. R45, the SoftPot pulldown. Named in docs/sourcing.md and already in the absonus order; needed for assembly only since ADR 0010 fitted R45."}
+  "4k7|R_0603_1608Metric":
+    {lcsc: C23162, note: "0603WAF4701T5E 4k7 1% 0603, Basic. R43/R44, the I2C pull-ups fitted by ADR 0010. Verified against the JLC catalogue 2026-08-22 -- same Uniroyal 0603WAF...T5E series as C4211. C25900 is the same part in 0402 and was rejected on footprint."}
   "100n|C_0603_1608Metric":
     {lcsc: C14663, note: "YAGEO CC0603KRX7R9BB104 100nF 50V X7R 0603, Basic. Was C108079, Extended."}
   "10n|C_0603_1608Metric":

@@ -142,7 +142,20 @@ evidence:
     Resolves the open question raised by the entry above; the offset and the
     switch keep-out are the same decision, as inferred.
 
-last_verified: 2026-08-18
+  - >-
+    2026-08-22: an "R45 sits 1.22 mm from the board edge, review with the
+    enclosure in hand" concern was carried in conversation across several
+    sessions and RETIRED as unfounded. It was never written into this record or
+    any other, which is why it survived: measured now from
+    hardware/pcb/caryatid.kicad_pcb, R45's courtyard is 141.260..142.720 x
+    111.540..114.500, putting it 5.500 mm from the board's bottom edge, and both
+    neighbours reach FURTHER toward that edge than it does -- J15 to y 115.55 and
+    J9 to y 115.78, against R45's 114.50. Matt raised this, having already taken
+    the enclosure measurements above. No enclosure check was ever needed: the
+    board's own edges sit 5-14 mm inside the interior rectangle recorded here, so
+    a part 5.5 mm inside the board edge cannot approach a wall.
+
+last_verified: 2026-08-22
 
 notes: >-
   THE MEASUREMENT IS MORE GENEROUS THAN BOTH DERIVED FIGURES. Against the

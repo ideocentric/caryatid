@@ -2,60 +2,56 @@
 
 Where the board is, and what happens next. Read this first.
 
-## ▶ RESUME HERE — 2026-08-21
+## ▶ RESUME HERE — 2026-08-22
 
-**The board is unrouted, on purpose.** Placement, schematic, symbol links and
-BOM all carry forward; the copper does not. `907fa83` removed 949 tracks
-(4324 mm), 203 vias and every zone fill, keeping the 10 zone outlines.
+**The board is routed, filled, silkscreened and fab-ready.** The 2026-08-21
+strip-and-re-place is complete: re-placed into the upper board, re-routed,
+ground stitched, silkscreen cleared, and `fab_package.py` reports **ready**.
 
-**The routed board is not gone** — it is tag **`snapshot/routed-2026-08-21`**:
-
-```sh
-git checkout snapshot/routed-2026-08-21 -- hardware/pcb/caryatid.kicad_pcb
-git show snapshot/routed-2026-08-21:hardware/pcb/caryatid.kicad_pcb   # just read it
-```
-
-**Why it was stripped, and it was not dissatisfaction with the route.** The
-routed board had no room where it needed it. ADR 0010's right-channel jumpers
-could not be placed within **41.6 mm** of the circuitry they select — measured
-against every courtyard, pad, via and F.Cu track — while the upper board sat
-largely empty. Defending that layout means long analogue runs to a trio of
-jumpers parked across the board. Re-placing into the free space and routing
-again is the cheaper move.
-
-**State now:**
+**State now**, every figure re-derived from the board rather than carried
+forward:
 
 | | |
 | --- | --- |
-| schematic parity | **0** — the board matches the schematic |
-| unconnected | **263**, the full ratsnest. The same number this board had before it was ever routed |
+| schematic parity | **0** |
+| unconnected | **0** |
 | `check_board.py` | **12/12** |
-| tracks / vias / fills | **0 / 0 / 0** |
-| footprints | **135**, positions and orientations unchanged |
+| DRC, plain | **2** — `lib_footprint_mismatch` on A1 and A2 only, see below |
+| tracks / vias / zones | **957** (4186 mm) / **167** / 10, all filled |
+| tracks under the 0.20 mm rule | **0** |
+| ground | F.Cu 26 islands, main 5003.5 mm²; B.Cu a single 11448.3 mm² plane |
+| floating ground copper | **0** — every island carries a via or a through-hole GND pad |
+| footprints | **135** |
+| DNP | **0**, and check 12 fails if any reappears |
 
-### The plan, in the intended order
+**The two remaining DRC lines are A1 and A2, and they are metadata.** Verified
+2026-08-22 by diffing all 20 pads of each against
+`caryatid.pretty/DaisySeed_Socket_A_1x20.kicad_mod`: **none differ**. What
+differs is what KiCad adds when a footprint is placed — `path`, `sheetfile`,
+`sheetname`, two extra property fields and their hide flags — none of it copper,
+and none of it removable without breaking the schematic link.
+`drc_exclusions.py` accepts them with reasons and reports **0 new, 5 accepted**.
+They still appear in plain DRC because the project file carries only three
+exclusion keys; adding the other two is a one-time right-click → *Exclude this
+violation* in pcbnew's DRC panel. The tool will not synthesise those keys — it
+tried once and got the coordinate wrong for exactly these two.
 
-1. **Re-place, rebalancing into the upper board.** That is where the free space
-   is, and the reason for the exercise. JP4/JP5/JP6 and R68 are still at the
-   parking coordinates and want a home beside the right channel — which means
-   making room there.
-2. **Draw and fill the pours first**, then route into them.
+**R45 was a third such line and was FIXED rather than excluded**, 2026-08-22.
+Its pads were stored at 270° against a footprint at 90° — 180° relative, where
+`Resistor_SMD` has 0° — and it was the only one of 64 0603 resistors on the
+board like that. The half turn was harmless, since a 0.800 × 0.950 mm rectangle
+is unchanged by it and both pad centres are identical before and after, which is
+precisely why excusing it was wrong: a lone outlier that costs nothing to
+normalise should be normalised. It picked up the flip when `3fe330e` rotated it
+beside J9/J10.
 
-   > **Eight of the ten zone outlines go stale the moment U1 or U2 moves.**
-   > Only GND on F.Cu and B.Cu is plane; the other eight are hand-drawn power
-   > pours that [ADR 0008](decisions/0008-board-outline-and-layer-count.md) uses
-   > *as routing* for VBAT, VOUT, +5V_RAW, VIN_DC and SW, shaped around those
-   > two parts. They were kept because deleting one is a click and redrawing it
-   > is not — not because they stay correct.
+### What is left before ordering
 
-3. **Re-run the silkscreen tools once placement settles** — `ref_silk.py`,
-   `pin_labels.py`, `jumper_legend.py --apply`. 23 silk items are outstanding
-   from the parked jumpers and move with them.
-4. **Then** `stale_tracks.py`, DRC with `--schematic-parity`, `check_board.py`,
-   `fab_package.py`.
+1. **Exclude A1 and A2 in pcbnew's DRC panel**, once, so plain DRC reads zero.
+2. **Order.** `local/fab/caryatid-fab.zip` is written and current.
 
-**The counts in "Manufacturing readiness" are stale**, and are marked as such
-rather than guessed at.
+Nothing else is outstanding. The boost hot loop, R45's placement and the necked
+tracks were all checked on 2026-08-22 and none needed work — see below.
 
 ## The board *was* routed, at `snapshot/routed-2026-08-21`
 
@@ -160,34 +156,35 @@ pour strategy and the footprint set carry forward. The route does not.
 
    | gate | |
    | --- | --- |
-   | ERC | **0** |
-   | DRC, plain | **0** violations, 0 unconnected, 0 footprint errors |
-   | DRC, all severities + `--schematic-parity` | **0 parity**, 5 excluded |
-   | `check_board.py` | **10/10** over 131 footprints |
+   | DRC, plain | **2** — `lib_footprint_mismatch` A1/A2, metadata only |
+   | DRC + `--schematic-parity` | **0 parity**, **0 unconnected** |
+   | `check_board.py` | **12/12** over 135 footprints |
    | `drc_exclusions.py` | **0 new**, 5 accepted with reasons |
-   | `verify_parts.py` | **0 of 37 flagged** against JLC's live data |
-   | LCSC coverage | **91 of 91** assembled (BT1 self-fit, see below) |
+   | `verify_parts.py` | **0 of 43 flagged** against JLC's live data, 2 pre-order |
+   | LCSC coverage | **127 of 127** placed (BT1 self-fit, see below) |
 
-   **Package** — `local/fab/caryatid-fab.zip`, 14 files, 279 kB: 9 Gerber
-   layers, drill, drill map, job file, `bom.csv`, `cpl.csv`. Deliberately *not*
-   courtyard, fab, adhesive or Eco layers, which an unrestricted export emits —
-   and *not* `self-fit.csv`, which is the owner's shopping list and would only
-   confuse the assembler.
+   **Package** — `local/fab/caryatid-fab.zip`, 14 files, 373 kB: 9 Gerber
+   layers, drill, drill map, job file, `cpl.csv`. `bom.csv` sits beside it.
+   Deliberately *not* courtyard, fab, adhesive or Eco layers, which an
+   unrestricted export emits — and *not* `self-fit.csv`, which is the owner's
+   shopping list and would only confuse the assembler.
 
    **Always run DRC with `--schematic-parity`.** Plain `kicad-cli pcb drc` does
    not check it and once hid 7 issues.
 
-   **Board** 150 × 90 mm, 2 layers, 131 footprints, 926 tracks, 192 vias.
-   **BOM** 47 lines, **91 placed by JLC** — 32 DNP excluded by design (the
-   audio network is fitted per instrument), and BT1 excluded as self-fit. 92
-   parts are populated per board; the assembler fits 91 of them.
+   **Board** 150 × 90 mm, 2 layers, 135 footprints, 957 tracks (4186 mm),
+   167 vias. **BOM** 42 lines, **127 placed by JLC**, plus BT1 self-fit.
 
-   **Those two lines are the ones ADR 0010 invalidates.** The schematic now
-   carries **128 symbols and no DNP at all**, so the "32 DNP excluded" line
-   becomes zero and the placed count rises correspondingly. The board figures
-   (footprints, tracks, vias) move once JP4–JP6 and R68 are placed and the four
-   deleted positions come out. **Re-run `fab_package.py` and paste what it
-   reports.**
+   **NOTHING IS DNP.** An earlier revision of this section read "47 lines, 91
+   placed, 32 DNP excluded by design". [ADR 0010](decisions/0010-nothing-is-dnp.md)
+   overturned that: DNP was an instruction to a person, and JLC fits the
+   through-hole parts too. `--exclude-dnp` stays on both exports as a guard
+   rather than a filter.
+
+   **BT1 is `self_fit`, which is not DNP.** A DNP part is one the board is
+   complete without; a self-fit part is one it is **not** complete without.
+   BT1 goes to `self-fit.csv` because Digi-Key beat JLC's pre-order on both
+   price and lead time, not because it is optional.
 
    **Cost** — re-derived 2026-08-18 from live price ladders by
    `tools/cost_estimate.py`, which selects the correct price band for the actual

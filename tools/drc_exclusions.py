@@ -95,6 +95,15 @@ ACCEPTED = {
         "metadata only -- pads and graphics are byte-identical to the library.",
     ("lib_footprint_mismatch", ("Footprint A2",)):
         "metadata only -- pads and graphics are byte-identical to the library.",
+    # R45 WAS HERE AND WAS FIXED INSTEAD OF EXCLUDED, 2026-08-22. Its pads were
+    # stored at 270 deg against a footprint at 90 -- 180 RELATIVE, where
+    # Resistor_SMD has 0 -- and it was the ONLY one of 64 0603 resistors on the
+    # board like that; the other 28 at 90 deg all store 90. The half turn was
+    # harmless (a 0.800 x 0.950 rectangle is unchanged by it, and both pad
+    # centres are identical before and after), which is exactly why excusing it
+    # was the wrong call: a lone outlier that costs nothing to normalise should
+    # be normalised, not written into the allow-list. It picked up the flip when
+    # 3fe330e rotated it beside J9/J10.
 }
 
 

@@ -66,7 +66,25 @@ evidence:
     tools/cost_estimate.py -- 100 SMT and 111 through-hole per board, split by
     assemblyModeBatch rather than assumed from footprint names.
 
-last_verified: 2026-08-19
+  - >-
+    2026-08-22: fab_package.py reported 124 of 127 parts covered, 3 without an
+    LCSC number -- R43 and R44 (4k7) and R45 (3k), all R_0603_1608Metric, all
+    made assembly-relevant by ADR 0010 rather than by any change of value. Both
+    gaps closed against the live JLC catalogue
+    (cart.jlcpcb.com getComponentDetail, the same endpoint verify_parts.py uses),
+    not from recollection:
+    C4211 = "0603WAF3001T5E, 100mW 3kOhm 75V Thick Film Resistor +/-1%
+    +/-100ppm/C 0603", Basic library, stock 7,702,550 -- already named in
+    docs/sourcing.md as matching R45 and already in the absonus order, so this
+    confirms a stated fact rather than choosing a part.
+    C23162 = "0603WAF4701T5E, 100mW 4.7kOhm 75V Thick Film Resistor +/-1%
+    +/-100ppm/C 0603", Basic library, stock 28,020,142 -- a NEW SELECTION for
+    R43/R44, made by me. No LCSC code for 4k7 was stated anywhere in the repo.
+    It is the same Uniroyal 0603WAF...T5E series, Basic library, 1%, 100 mW as
+    C4211 and the board's other resistors. C25900 was rejected on footprint: it
+    is the same 4.7k 1% part in 0402, and these pads are 0603.
+
+last_verified: 2026-08-22
 
 notes: >-
   THE API HAS TWO FIELDS THAT LOOK AUTHORITATIVE AND ARE NOT. leastNumberPrice

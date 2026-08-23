@@ -12,13 +12,23 @@ fab, adhesive, Eco1/Eco2, user comments. Those are internal drawing layers. A
 fab that receives them may ignore them, or may not. This exports exactly the
 ten layers a two-layer board needs and nothing else.
 
-DNP IS NOT COSMETIC HERE
-------------------------
-32 of this board's 124 components are Do-Not-Populate by design -- the audio
-network is fitted per instrument, per docs/audio.md. Both the BOM and the
-position file are exported with --exclude-dnp. Without it the assembler places
-thirty-two parts that should not be there, including U4 and every 'open'
-resistor, and the first anyone knows is a board that behaves wrongly.
+DNP, AND WHY THIS BOARD NO LONGER HAS ANY
+-----------------------------------------
+This once read "32 of this board's 124 components are DNP by design". ADR 0010
+overturned that: DNP was an instruction to a person, and JLC fits the
+through-hole parts too, so every DNP line was either a part nobody would fit or
+a decision nobody had made. NOTHING on this board is DNP now, and
+check_board.py check 12 fails if anything becomes so.
+
+The --exclude-dnp flags stay on both exports. They are now a guard rather than a
+filter: if a dnp ever reappears, the assembler must not place it, and the export
+should not have to be revisited to notice.
+
+WHAT REPLACED IT IS self_fit, WHICH IS NOT THE SAME THING. BT1 is bought and
+soldered by hand -- Digi-Key beat JLC's pre-order on both price and lead time --
+so it is pulled from the assembly order into self-fit.csv. A DNP part is one the
+board is complete without. A self-fit part is one the board is NOT complete
+without, and conflating them ships an unpopulated battery holder.
 
 THE PART NUMBERS ARE THE GATE
 -----------------------------
