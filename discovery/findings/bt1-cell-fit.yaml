@@ -1,0 +1,137 @@
+id: BT1-cell-fit
+kind: other
+source_claim: >-
+  That BT1 (MPD BH-18650-PC) and a protected 18650 are compatible. Never stated
+  outright anywhere; it was assumed by every document that discusses the battery,
+  and the board silkscreens "PROTECTED CELL ONLY" beside BT1, which asserts the
+  requirement without ever checking that a protected cell physically fits.
+source_ref: >-
+  hardware/pcb/lcsc.yaml self_fit.BT1; docs/sourcing.md; the "PROTECTED CELL
+  ONLY" gr_text at hardware/pcb/caryatid.kicad_pcb:38541
+resource: >-
+  MPD BH-18650-PC holder (Digi-Key 3029216) against Orbtronic 3400 mAh protected
+  button-top 18650 (Panasonic NCR18650B core), five of each
+status: conflict
+
+measured:
+  holder:
+    part: MPD BH-18650-PC
+    accepts_cell_length_mm: [65, 68]
+    wording: "65-68MM in length only"
+    named_compatible_examples: [Panasonic NCR 18650B, Samsung 26J]
+    top_type: button top only, protected (PCB)
+    contacts: 302 stainless spring temper, nickel plated
+    cavity_length_mm: null      # NOT PUBLISHED, see notes
+    contact_travel_mm: null     # NOT PUBLISHED
+  cell:
+    part: Orbtronic 3400 mAh protected button top
+    core: Panasonic NCR18650B
+    length_mm: 68.9
+    length_tolerance_mm: 0.03
+    diameter_mm: 18.6
+    diameter_tolerance_mm: 0.03
+    capacity_mah: 3400
+    length_measured_mm: 69.48   # Matt, in hand, INCLUDING the shrinkwrap
+  holder_cavity:
+    internal_length_mm: 72.9    # per the BT1 sheet
+    spring_wire_width_mm: 0.38
+    # Derived from MPD's OWN two numbers, not from anything measured:
+    # a 72.9 mm cavity accepting 65-68 mm cells means the spring occupies
+    # between 4.9 mm (at the longest cell) and 7.9 mm (at the shortest).
+    spring_window_mm: [4.9, 7.9]
+    gap_with_this_cell_mm: 3.42 # 72.9 - 69.48
+  delta_mm: 1.48                # 69.48 measured, against a 68 mm stated maximum
+
+evidence:
+  - >-
+    2026-08-23: Matt stated the cells are already ordered, direct from Orbtronic:
+    "18650 3400mAh Protected Battery Rechargeable Lithium-ion 3.7V Orbtronic
+    Button Top (Core Cell: Panasonic-Sanyo)".
+  - >-
+    2026-08-23: cell dimensions read from orbtronic.com's own product page for
+    that part. It states "Length (mm): 68.9 mm (+/- 0.03)" and "Diameter (mm):
+    18.6 mm (+/- 0.03)", capacity 3.4 Ah, core cell Panasonic NCR18650B.
+  - >-
+    2026-08-23: holder limits read from batteryholders.com (MPD's own site) for
+    BH-18650-PC. It states the holder is for a "protected button top 18650
+    battery (PCB)" and takes cells "65-68MM in length only", naming Panasonic
+    NCR 18650B and Samsung 26J as examples. CONFLICTS with the cell above by
+    0.9 mm.
+  - >-
+    2026-08-23: products.memoryprotectiondevices.com checked for a cavity
+    dimension, contact travel or spring compression figure that might show
+    whether 68.9 mm seats anyway. NONE PUBLISHED. The page gives materials,
+    temperature range and compliance only, and offers no datasheet PDF. So the
+    65-68 mm range is the only figure there is, and there is no published basis
+    for arguing past it.
+  - >-
+    2026-08-23: searched MPD's range for a same-footprint holder accepting a
+    longer cell. Nothing found that drops in. BK-18650-PC2, BH-18650-W and
+    BK-18650-PC8 differ in mounting, termination or cell count. Substituting the
+    holder was ALREADY rejected once on 2026-08-19 because BT1's footprint is
+    dimensionally specific and swapping it is a board change; that reasoning is
+    unchanged and now matters more.
+
+  - >-
+    2026-08-23: Matt MEASURED a cell in hand at 69.48 mm INCLUDING its plastic
+    shrinkwrap. This supersedes the 68.9 mm catalogue figure and is worse: the
+    published number evidently excludes the wrap. Against the holder's stated
+    68 mm maximum the overshoot is 1.48 mm, not 0.9.
+  - >-
+    2026-08-23: the overshoot resolved against the holder's cavity rather than
+    its stated cell range, using MPD's own numbers. The BT1 sheet gives 72.9 mm
+    internal and the springs are 0.38 mm wire. A 72.9 mm cavity that accepts
+    65-68 mm cells means the spring stack occupies between 4.9 mm (longest cell)
+    and 7.9 mm (shortest). A 69.48 mm cell leaves 3.42 mm, which is 1.48 mm
+    INSIDE the bottom of that window. The spring would have to compress past the
+    travel MPD's own range implies, and at 0.38 mm wire a 3.42 mm gap is close
+    to coil bind for any realistic coil count. THIS IS NO LONGER A MARGINAL
+    OVERSHOOT ON A CONSERVATIVE SPEC. It is outside the geometry the holder
+    describes, and the failure mode is a cell that will not seat or a holder
+    held under permanent stress.
+  - >-
+    2026-08-23: PROVENANCE. Matt reports the cells were bought from a link
+    supplied in an earlier conversation about this specific BT1, so the pairing
+    was recommended rather than independently chosen. The recommendation was
+    wrong, and neither part is at fault on its own: BH-18650-PC is a sound
+    holder for a 65-68 mm cell and the Orbtronic 3400 is a sound cell. It is the
+    PAIRING that was never checked against both specifications.
+
+last_verified: 2026-08-23
+
+notes: >-
+  SUPERSEDED 2026-08-23 BY A MEASUREMENT. An earlier revision of this note
+  called the conflict 0.9 mm and "not obviously fatal", reasoning that spring
+  contacts usually have travel beyond their stated range. Matt then measured a
+  cell at 69.48 mm with its shrinkwrap, and resolving that against the 72.9 mm
+  cavity leaves 3.42 mm for a spring stack MPD's own numbers say needs 4.9 mm at
+  minimum. The optimistic reading is gone. Treat the pairing as incompatible
+  until something measured says otherwise.
+
+  IT IS RECORDED AS `conflict` RATHER THAN RESOLVED, DELIBERATELY. Two sources
+  disagree, both are the manufacturers' own, and picking the convenient one is
+  exactly what the ledger exists to prevent. MPD names the Panasonic NCR18650B
+  as compatible and the Orbtronic cell IS an NCR18650B, which is suggestive and
+  proves nothing: a bare NCR18650B is about 65.3 mm, and the protection PCB and
+  button top are what carry it to 68.9. MPD may be describing a shorter
+  protected build from another vendor.
+
+  WHY THIS IS CHEAP TO SETTLE RIGHT NOW, AND EXPENSIVE LATER. The cells are in
+  hand and the holders are NOT ordered yet; they are a line on a Digi-Key order
+  that has not been placed. So the question can be closed by measuring a cell
+  and, if there is doubt, buying one holder before committing to five. After the
+  boards are assembled the options are worse: a different holder is a board
+  change, because BT1's footprint is dimensionally specific and its two M3 bolt
+  holes are at 55.61 mm.
+
+  THE FALLBACK IS A DIFFERENT CELL, NOT A DIFFERENT HOLDER. Protected 18650s
+  vary in length by vendor and several sit inside 65-68 mm. Changing the cell
+  costs an order; changing the holder costs a board revision.
+
+  SEPARATELY, AND NOT A CONFLICT: the cell is 3400 mAh where docs/values.md
+  assumes 3000 mAh throughout. That is the safe direction for runtime, which
+  becomes conservative rather than wrong. It is NOT the safe direction for
+  charge time, which gets roughly 13% longer at the same 1 A. Charge rate
+  improves slightly, 1 A on 3400 mAh being 0.29C against the 0.33C the document
+  reasons about. Those figures should be regenerated from 3400 mAh rather than
+  left reading as though they described the cell that was actually bought.
