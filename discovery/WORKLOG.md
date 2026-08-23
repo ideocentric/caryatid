@@ -136,3 +136,71 @@ delete the four removed footprints, then **run `tools/stale_tracks.py` before
 routing anything** — five pads change net and KiCad leaves the old tracks
 behind. Re-route, refill, DRC with `--schematic-parity`, `check_board.py`,
 `jumper_legend.py --apply`, `fab_package.py`.
+
+## 2026-08-22 18:30 — Silkscreen finished, necks widened, last 3 parts sourced; fab package READY
+
+**Completed:**
+
+- **Silkscreen closed out.** J12 pin labels shortened to R/G/B on their pads;
+  J13 vertical at 1.3 mm pitch (the 3-row stagger ran off the board); reference
+  left / role right on one bottom row for J6-J10, J12, J15, J19; J14/J17/J18 on
+  a vertical J19-style baseline at x 197.8 with their pin labels right-justified
+  per jack; role labels centred on the BODY outline, not a bounding box that
+  swallowed the pin-1 marker. `15915bf`, `28c54f1`.
+- **All 5 necked tracks widened to 0.20 mm** — they were never load-bearing.
+  `widen_necks.py` was verifying against a pour it had not recomputed, so one
+  false positive reverted four sound repairs. It now runs ZONE_FILLER between
+  the widen and the check. `221b236`.
+- **One GND via at (67.52, 55.8)** stitching the 5.56 mm2 F.Cu pocket at U1's
+  south-west corner to the plane, placed clear of the EP. `6efdcfb`.
+- **JLC-BOM-sourcing: 127 of 127 parts covered.** R45 -> C4211 (already stated
+  in sourcing.md), R43/R44 -> C23162 (a NEW selection, mine, catalogue-verified).
+  `fab_package.py` reports **ready**; `local/fab/caryatid-fab.zip` written,
+  373 kB, 14 files. Evidence: `2026-08-22-lcsc-r43-r44-r45.json`,
+  `2026-08-22-fab-readiness.txt`.
+- **R45's pad angle normalised** 270 -> 90 (180 relative -> 0). It was the only
+  one of 64 0603 resistors like that. I put it in drc_exclusions' allow-list
+  first; that was wrong and Matt's question caught it. Plain DRC 3 -> 2.
+- **BUD-CU-477-interior:** the "R45 sits 1.22 mm from the board edge" concern is
+  RETIRED as never-true. Measured 5.500 mm, with J15 and J9 both reaching
+  further toward that edge. It was never in any record, which is why it survived
+  four sessions.
+- **Checked, no work needed:** boost hot loop against SLVSF14B Fig 10-1 —
+  U2.6->C6.1 1.785 mm, C6.2->U2.4 1.834 mm, perimeter 6.519 mm, returning
+  through a shared 23.1 mm2 F.Cu island rather than a track; SW node 3.717 mm
+  and 0.612 mm2 of copper; C5 2.465 mm off the VOUT input pin.
+- **status.md and sourcing.md re-derived from the board.** status.md still said
+  "the board is unrouted, on purpose" and reported 0 tracks.
+
+**Verified:** DRC 0 unconnected, 0 parity, 0 clearance, 0 track_width, 0 silk;
+2 lib_footprint_mismatch (A1/A2 only). `check_board.py` 12/12 over 135
+footprints. `drc_exclusions.py` 0 new, 5 accepted. `verify_parts.py` 0 of 43
+flagged, 2 pre-order. 957 tracks (4186 mm), 167 vias, 10 zones filled; F.Cu 26
+islands main 5003.5 mm2, B.Cu one 11448.3 mm2 plane; 0 DNP.
+
+**In flight:** nothing. Working tree clean, both repos pushed.
+
+**Open questions:**
+
+- **A1/A2 need a one-time right-click exclude in pcbnew's DRC panel.** Their
+  mismatch is metadata only — all 20 pads of each were diffed against
+  `caryatid.pretty/DaisySeed_Socket_A_1x20.kicad_mod` and NONE differ; what
+  differs is `path`, `sheetfile`, `sheetname` and two property fields KiCad adds
+  on placement. `drc_exclusions.py` will not synthesise the keys: it tried once
+  and got the coordinate wrong for exactly these two.
+- **C23162 (4k7, R43/R44) is a tooling choice, not Matt's.** Commodity 0603 1%
+  Basic, same Uniroyal series as C4211, catalogue-verified — but it is the one
+  code in the BOM nobody stated. Worth a glance before ordering.
+- **R52/R54 dissipation** — 92 mW on a 100 mW 0603 if a carbon capsule sits at
+  0.5 V, both populated. Measure a capsule, then decide on 0805. (Carried.)
+- **`MIC_RTN` is shared by both channels** — one gated return, two capsules.
+  (Carried.)
+- Everything still open from 2026-08-19: the Extended fee basis, the PCB fab
+  area price, and the three bench measurements.
+
+**Next step:** open `hardware/pcb/caryatid.kicad_pcb` in pcbnew, run DRC from
+the panel, right-click each of the two `lib_footprint_mismatch` violations on A1
+and A2 and choose **Exclude this violation**, save, then run
+`python3 tools/drc_exclusions.py --apply` to attach the documented reasons.
+Plain DRC then reads zero and `local/fab/caryatid-fab.zip` is orderable as it
+stands.

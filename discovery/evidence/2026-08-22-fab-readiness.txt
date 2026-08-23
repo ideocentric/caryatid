@@ -1,0 +1,41 @@
+$ python3 tools/fab_package.py
+  exporting ...
+  11 fab files
+      caryatid-B_Cu.gbr
+      caryatid-B_Mask.gbr
+      caryatid-B_Paste.gbr
+      caryatid-B_Silkscreen.gbr
+      caryatid-Edge_Cuts.gbr
+      caryatid-F_Cu.gbr
+      caryatid-F_Mask.gbr
+      caryatid-F_Paste.gbr
+      caryatid-F_Silkscreen.gbr
+      caryatid-drl_map.gbr
+      caryatid.drl
+
+  BOM 42 lines / 127 parts to place (DNP excluded)
+  CPL 127 placements
+  LCSC: 127 of 127 parts covered, 0 without a part number
+
+  1 part(s) pulled from the assembly order -- YOU buy and solder these:
+    BT1    18650 protected         Digi-Key 3029216
+  -> self-fit.csv. They are NOT DNP: the board is not complete until they are fitted.
+
+  ready
+
+$ python3 tools/drc_exclusions.py
+  5 violations with --severity-all
+
+  accepted  lib_footprint_mismatch   Footprint A2
+  accepted  lib_footprint_mismatch   Footprint A1
+  accepted  lib_footprint_mismatch   Footprint C4
+  accepted  lib_footprint_mismatch   Footprint C6
+  accepted  lib_footprint_mismatch   Footprint L1
+
+  GATE: 0 new, 5 accepted -- clean
+  pass --apply to also write KiCad exclusions
+
+$ python3 tools/check_board.py | tail -3
+board 150.0 x 90.0 mm   135 front / 0 back   standoff 2.0 mm
+
+  all twelve checks pass

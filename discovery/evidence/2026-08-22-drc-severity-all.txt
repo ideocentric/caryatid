@@ -1,0 +1,28 @@
+** Drc report for caryatid.kicad_pcb **
+** Created on 2026-08-22T18:32:18-0700 **
+
+** Found 5 DRC violations **
+[lib_footprint_mismatch]: Footprint 'DaisySeed_Socket_B_1x20' does not match copy in library 'caryatid'.
+    Local override; warning
+    @(92.1700 mm, 63.6000 mm): Footprint A2
+[lib_footprint_mismatch]: Footprint 'DaisySeed_Socket_A_1x20' does not match copy in library 'caryatid'.
+    Local override; warning
+    @(92.1700 mm, 78.6000 mm): Footprint A1
+[lib_footprint_mismatch]: Footprint 'C_0805_2012Metric' does not match copy in library 'Capacitor_SMD'.
+    Local override; warning (excluded)
+    @(67.6000 mm, 82.6000 mm): Footprint C4
+    pad angle differs from library by exactly 180 deg; a rectangle is symmetric under it. C4 and C5 have identical pad geometry in pcbnew and only C4 is flagged. Gerbers come from the board, not the library.
+[lib_footprint_mismatch]: Footprint 'C_0805_2012Metric' does not match copy in library 'Capacitor_SMD'.
+    Local override; warning (excluded)
+    @(76.0500 mm, 80.3500 mm): Footprint C6
+    pad angle 180 deg from library; same rectangle. Resolves to 1.450 x 1.000 mm for its -90 deg placement, which is correct.
+[lib_footprint_mismatch]: Footprint 'L_Vishay_IFSC-1515AH_4x4x1.8mm' does not match copy in library 'Inductor_SMD'.
+    Local override; warning (excluded)
+    @(71.9000 mm, 83.8500 mm): Footprint L1
+    pad angle 180 deg from library; same rectangle. Resolves to 1.150 x 3.600 mm, which is correct.
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

@@ -1,0 +1,26 @@
+{
+ "C4211": {
+  "componentCode": "C4211",
+  "componentModelEn": "0603WAF3001T5E",
+  "describe": "-55℃~+155℃ 100mW 3kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+  "componentLibraryType": "base",
+  "stockCount": 7702555,
+  "componentBrandEn": "UNI-ROYAL(Uniroyal Elec)"
+ },
+ "C23162": {
+  "componentCode": "C23162",
+  "componentModelEn": "0603WAF4701T5E",
+  "describe": "-55℃~+155℃ 100mW 4.7kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+  "componentLibraryType": "base",
+  "stockCount": 28018987,
+  "componentBrandEn": "UNI-ROYAL(Uniroyal Elec)"
+ },
+ "C25900": {
+  "componentCode": "C25900",
+  "componentModelEn": "0402WGF4701TCE",
+  "describe": "-55℃~+155℃ 4.7kΩ 50V 62.5mW Thick Film Resistor ±1% ±100ppm/℃ 0402 Chip Resistor - Surface Mount ROHS",
+  "componentLibraryType": "base",
+  "stockCount": 21957758,
+  "componentBrandEn": "UNI-ROYAL(Uniroyal Elec)"
+ }
+}
