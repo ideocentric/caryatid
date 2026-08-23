@@ -235,3 +235,61 @@ than Matt's and is worth a glance before ordering; R52/R54 dissipation; shared
 **Next step:** order. `local/fab/caryatid-fab.zip` (373 kB, 14 files) plus
 `bom.csv` and `cpl.csv` beside it are current and every gate is green. BT1 is
 bought separately — `self-fit.csv`, Digi-Key 3029216.
+
+## 2026-08-23 — /bootstrap Phases 1–2; the Extended fee was never still open
+
+**Completed:**
+
+- **`/bootstrap` Phase 1 (inventory) and Phase 2 (scaffold).** `engagement.yaml`
+  written here and in loa, both git-excluded via `.git/info/exclude` per the
+  rekor and gcc precedents — this repo is published, so working configuration
+  stays out of it. `CLAUDE.local.md` created here for the first time: caryatid
+  is the canonical clone where all work happens and it had no local context at
+  all, only loa's.
+- **Voice recorded.** caryatid is `voice: professional`; loa, absonus and
+  baby-borg are `creative`, carrying the Nervous Gender Reloaded personality.
+  Confirmed by Matt 2026-08-23. `ideocentric/_org.md` currently lists all four
+  together under one "Hardware projects" heading without distinguishing them —
+  a refinement is proposed there but NOT yet applied.
+- **Phase 3 deliberately narrowed, and the narrowing is not new.** A mass
+  salvage of ~700 numeric claims across 15 documents into `unverified` records
+  was refused. `discovery/README.md` already scopes this ledger to facts the
+  repo cannot check for itself, and `ideocentric/_org.md` carries the same
+  exception for hardware projects. DRC, `check_board.py`, `verify_parts.py` and
+  `fab_package.py` verify the board's numbers continuously; records would be a
+  staler second copy.
+
+**Corrected:**
+
+- **The Extended loading fee has NOT been an open question since before this
+  worklog said it was.** Carried here as unresolved three times — "whether the
+  fee is charged per unique part ($60) or per BOM line" — while
+  `~/.claude/contexts/ideocentric/_org.md` states it is **per unique part, not
+  per BOM line**, and `tools/cost_estimate.py` has implemented exactly that
+  (`"extended_fee": 3.00, # per UNIQUE Extended part`). Settled in two places,
+  carried as open in a third. **It is closed.**
+- `discovery/README.md` said the sourcing record covers "The 36 LCSC codes". It
+  is 43. Now dated rather than restated.
+
+**In flight:** Phase 2 is otherwise done. Two `~/.claude` edits are PROPOSED and
+not applied — refining `ideocentric/_org.md`'s voice section to distinguish
+caryatid from the instruments, and filling the 8-line `ngr/_org.md` stub, which
+needs NGR's actual tone and vocabulary from Matt rather than my invention.
+
+**Open questions** — five, down from the six carried yesterday:
+
+- PCB fab area price: 150 × 90 mm is past JLC's 100 × 100 tier and
+  `cost_estimate.py`'s `PCB_FAB` is a placeholder. Needs a quote.
+- Handset capsule DC resistance (bench).
+- J4 green die at 3.0 V (bench).
+- Switch lamp current (bench).
+- Part behaviour no catalogue field states, per `verify_parts.py`: C6 needs
+  ≥4 µF **effective** at 5 V bias; C7 must be aluminium electrolytic for its
+  ESR; FB1 DCR ≤50 mΩ at ≥1 A.
+
+None of these has a ledger record. They are the genuine Phase 3 scope.
+
+**Next step:** order the boards. Every gate is green — plain DRC 0 violations,
+`check_board.py` 12/12, `fab_package.py` ready at 127 of 127, and
+`local/fab/caryatid-fab.zip` is current. BT1 is bought separately
+(`self-fit.csv`, Digi-Key 3029216).
