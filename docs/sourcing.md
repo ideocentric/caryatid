@@ -650,15 +650,21 @@ what you buy yourself:
 
 | | five boards | per board |
 | --- | --- | --- |
-| JLC turnkey | $168.87 | $33.77 |
+| JLC turnkey (ENIG) | $188.87 | $37.77 |
 | cells | $67.45 | $13.49 |
 | BT1 holders | $17.35 | $3.47 |
 | shunts (buy 100, 30 used) | $2.47 | $0.15 |
-| **total** | **$256.14** | **$51.23** |
+| **total** | **$276.14** | **$55.23** |
 
 Before Digi-Key shipping, quoted at $8.49 ground. **The JLC-only figure
-understates the build by $87.27, or 52%**, and the cell alone is the largest
-line per board, ahead of the $12.48 of JLC parts that go on the board itself.
+understates the build by $87.27, or 46%**, and the cell alone is the second
+largest line per board, behind only the JLC turnkey charge.
+
+The JLC line includes the **ENIG** upgrade, about $20 over LeadFree HASL, taken
+so U1's QFN-16 has a flat surface to sit on. A no-lead package has no legs to
+flex and its exposed pad needs even contact across a face nobody can inspect
+afterwards; HASL leaves slightly domed pads, ENIG does not. **The solder paste
+stays lead-free**, which is the matched pair for ENIG and required no change.
 
 > ⚠️ **This weakens the recorded reason for building five rather than ten.**
 > That rationale said a second five would cost $15.99/board against $33.77,

@@ -23,12 +23,12 @@ settings:
     pcb_color: Black
     silkscreen: White
     material_type: FR4 TG135
-    surface_finish: LeadFree HASL
+    surface_finish: ENIG          # changed from LeadFree HASL 2026-08-23
   high_spec_options:
     outer_copper_weight_oz: 1
     via_covering: Tented
     via_plating_method: Not Specified
-    min_via_hole_size: "0.4mm/(0.4/0.45mm)"      # 🔴 CONFLICT, see below
+    min_via_hole_size: "0.3mm/(0.4/0.35mm)"      # corrected 2026-08-23, agrees
     board_outline_tolerance: "+-0.2mm (Regular)"
     confirm_production_file: false
     mark_on_pcb: Remove Mark
@@ -66,7 +66,7 @@ settings:
     photo_confirmation: false
     conformal_coating: false
     packaging: Antistatic bubble film
-    solder_paste: High temp.
+    solder_paste: High temp.     # UNCHANGED, and correct for ENIG
     nitrogen_reflow_soldering: true      # available on Economic
     assembly_remark: null
 
@@ -80,9 +80,12 @@ checked_against_the_board:
   qty: {setting: 5, recorded_decision: 5, agrees: true, ref: JLC-BOM-sourcing.decision}
   pcba_type: {setting: Economic, agrees: true,
               note: "U1 BQ24074 and U2 TPS61023 were both confirmed to run on Economic"}
-  min_via_hole: {setting: 0.4, board_min_drill: 0.3, agrees: false}   # 🔴
+  min_via_hole: {setting: 0.3, board_min_drill: 0.3, agrees: true,
+                 note: "board pads are 0.7 mm on the 0.3 mm drills, a 0.2 mm ring"}
   silkscreen: {board_min_text_mm: 0.80, jlc_floor_mm: 0.80, agrees: true,
                note: "31 items sit exactly on the floor, zero margin"}
+  finish_vs_paste: {finish: ENIG, paste: "High temp. (lead-free SAC)", agrees: true,
+                    note: "matched pair; ENIG contributes no solder to the alloy"}
 
 evidence:
   - >-
@@ -112,27 +115,64 @@ evidence:
     because four 0.90 mm mask discs would have covered 2.545 mm2 of a 2.822 mm2
     pad. Those vias were removed. With no via inside any paste aperture, a
     blanket tent has nothing left to conflict with.
+  - >-
+    2026-08-23: CORRECTION from Matt, superseding the entry above. The minimum
+    via hole size is "0.3mm/(0.4/0.35mm)", not the "0.4mm/(0.4/0.45mm)" I
+    transcribed. THE BLOCKING CONFLICT WAS MINE AND DOES NOT EXIST. The board's
+    0.3 mm drills are inside the declared minimum and their 0.7 mm pads clear
+    the declared via diameter comfortably. All eight checkable settings now
+    agree with the board. The entry above is left standing rather than edited,
+    because evidence is append-only and a wrong reading is worth being able to
+    see.
 
+  - >-
+    2026-08-23: SURFACE FINISH CHANGED FROM LEADFREE HASL TO ENIG, about $20 on
+    the order, decided by Matt. This closes hasl-under-fine-pitch. THE PASTE WAS
+    DELIBERATELY LEFT ON "High temp.", and that is correct rather than an
+    oversight: ENIG contains no solder, being electroless nickel under a thin
+    immersion gold that dissolves into the joint within seconds, so the joint
+    forms against the nickel and the alloy is whatever the paste brings. Nothing
+    is contributed that was not already in the paste, so a lead-free finish and
+    lead-free paste stay a matched pair and the board stays RoHS.
+  - >-
+    2026-08-23: A LEADED HASL REVERT WAS CONSIDERED AND REJECTED, and the reason
+    is worth keeping because the option looked harmless. Matt proposed reverting
+    to "HASL Leaded", JLC's default. It would not have addressed the QFN concern
+    at all, since that was about HASL versus ENIG rather than lead-free versus
+    leaded, and leaded HASL is still HASL. Worse, it would have paired a
+    lead-bearing finish with the lead-free SAC paste already selected, giving a
+    MIXED ALLOY JOINT: lead from the finish dissolves in and produces a
+    Sn-Pb-Ag-Cu mixture with a lower melting point and less predictable
+    reliability. That is the classic backward-compatibility trap of the
+    lead-free transition and is worse than either system used consistently. Had
+    the revert gone ahead, the paste would have had to change with it.
+  - >-
+    2026-08-23: ENIG's known failure mode recorded so the term is not new if it
+    ever appears. "Black pad" is a corroded nickel surface caused by poor
+    phosphorus control in the plating bath; joints look sound and are brittle.
+    It is a fab process-control problem rather than a design choice, and JLC
+    runs ENIG at very high volume. Not a reason to avoid it, and no action.
 open_questions:
   - id: min-via-hole-mismatch
-    severity: blocking
+    severity: resolved
     summary: >-
-      The order declares a 0.4 mm minimum via hole; the board has 157 vias at
-      0.3 mm. Either the form needs the smaller option selected, which usually
-      changes the price, or JLC raises it in engineering review, or worst case
-      the drills get enlarged to suit the declared spec. 0.3 mm drill on a
-      0.7 mm pad is a 0.2 mm annular ring; enlarging to 0.4 mm leaves 0.15 mm,
-      which is at the edge of what a 2-layer process holds reliably.
-      SETTLE THIS BEFORE SUBMITTING.
+      RESOLVED 2026-08-23, and it was a transcription error rather than a
+      setting error. The form is "0.3mm/(0.4/0.35mm)", not the 0.4 mm first
+      recorded here. The board's 157 vias at 0.3 mm drill are inside it, and
+      their 0.7 mm pads give a 0.2 mm annular ring against a declared minimum
+      via diameter of 0.35-0.40 mm. Nothing to change and nothing to re-quote.
   - id: hasl-under-fine-pitch
-    severity: worth-knowing
+    severity: resolved
     summary: >-
-      LeadFree HASL against U1, a QFN-16 on 0.5 mm pitch with an exposed pad.
-      HASL leaves a less flat finish than ENIG, and flatness is what fine-pitch
-      and EP joints care about. Very common and usually fine; ENIG is the usual
-      upgrade when a board is QFN-heavy. Raised as a considered trade rather
-      than an error, because it is one part and the rest of the board is
-      forgiving.
+      CLOSED 2026-08-23 by changing the finish to ENIG for about $20. The
+      concern was U1, a QFN-16 on 0.5 mm pitch with an exposed pad: a no-lead
+      package has no legs to flex, so it sits on the solder rigidly and cannot
+      take up an uneven surface, and its exposed pad needs even contact across
+      a face nobody can inspect afterwards. HASL leaves slightly domed pads
+      because surface tension mounds the solder; ENIG plates a thin even layer
+      and is essentially as flat as the copper beneath. NO PASTE CHANGE WAS
+      NEEDED, which is the part worth recording, and it is NOT true of every
+      finish. See the leaded-hasl-mixed-alloy note below.
   - id: no-placement-confirmation
     severity: worth-knowing
     summary: >-
@@ -149,6 +189,11 @@ open_questions:
       the board is fully routed and poured, so holes added inside the outline
       would land in copper. Fiducials already exist, so the alignment need is
       covered.
+
+cost_effect_usd:
+  finish_upgrade: 20.00        # ENIG over LeadFree HASL, Matt's figure from the form
+  jlc_order: {was: 168.87, now: 188.87}
+  five_boards_all_in: {was: 256.14, now: 276.14, per_board: 55.23}
 
 last_verified: 2026-08-23
 

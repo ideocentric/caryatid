@@ -43,9 +43,17 @@ owner_bought_usd:
 
 true_total_usd:
   # What five boards ACTUALLY cost, as opposed to what estimated_total_usd says.
-  qty_5: {total: 256.14, per_board: 51.23}
-  jlc_only_qty_5: {total: 168.87, per_board: 33.77}
-  understated_by: {usd: 87.27, percent: 52}
+  # Includes the 2026-08-23 ENIG upgrade, +$20 on the JLC line.
+  qty_5: {total: 276.14, per_board: 55.23}
+  qty_5_before_enig: {total: 256.14, per_board: 51.23}
+  jlc_only_qty_5: {total: 188.87, per_board: 37.77, note: "with ENIG"}
+  jlc_only_qty_5_before_enig: {total: 168.87, per_board: 33.77}
+  # Two different gaps, easily conflated:
+  owner_bought_gap: {usd: 87.27, percent_of_jlc_line: 46,
+                     note: "cells, holders and shunts; what the JLC figure alone omits"}
+  vs_estimated_total_usd: {usd: 107.27, percent: 64,
+                           note: "estimated_total_usd still reads 168.87, which predates
+                                  both the ENIG upgrade and the owner-bought lines"}
 
 estimated_total_usd:
   qty_5:  {total: 168.87, per_board: 33.77}
@@ -249,6 +257,13 @@ evidence:
     but 65% of the first-five cost rather than the 47% the rationale implies,
     and the saving is nearly all JLC setup rather than anything about the cells.
     The DECISION to build five is not disturbed; the reasoning quoted for it is.
+
+  - >-
+    2026-08-23: surface finish upgraded from LeadFree HASL to ENIG, about $20,
+    to give U1's QFN-16 a flat surface to sit on. The JLC line goes 168.87 ->
+    188.87 and five boards all in go 256.14 -> 276.14, $55.23 a board. The paste
+    stays lead-free "High temp.", which is the matched pair for ENIG and needed
+    no change. Full reasoning in JLC-order-2026-08-23.
 
 last_verified: 2026-08-23
 
