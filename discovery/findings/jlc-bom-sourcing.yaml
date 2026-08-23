@@ -84,7 +84,25 @@ evidence:
     C4211 and the board's other resistors. C25900 was rejected on footprint: it
     is the same 4.7k 1% part in 0402, and these pads are 0603.
 
-last_verified: 2026-08-22
+  - >-
+    2026-08-23: C23162 (R43/R44, 4k7) CORROBORATED, and it is no longer a bare
+    tooling choice. Matt asked it to be checked against the absonus order, which
+    CANNOT confirm it: absonus carries only two resistors, R1 10k (C15401) and
+    R2 3k (C4211), and no 4k7 at all
+    (synths/daisy/ribbon-synth/hardware/pcb/absonus-v0.2/production/bom.csv).
+    That is why C4211 was findable there and C23162 was not. The corroboration
+    came from elsewhere: BABY-BORG ALREADY USES C23162 FOUR TIMES -- R3, R4, R5,
+    R6, each 4.7kOhm on Resistor_SMD:R_0603_1608Metric, the identical value and
+    footprint to caryatid's R43/R44
+    (synths/daisy/baby-borg/pcb/baby-borg/baby-borg/baby-borg.kicad_sch and
+    .kicad_pcb). Matt separately confirmed the part is stocked as a JLC BASIC
+    part: https://jlcpcb.com/partdetail/23889-0603WAF4701T5E/C23162 -- the same
+    manufacturer part number the catalogue query returned. NOT VERIFIED: whether
+    baby-borg was ever ordered or assembled. No production BOM, gerber set or
+    order record was found in that repo, only design files and dated backups, so
+    this is prior USE of the code in a design of Matt's, not a proven purchase.
+
+last_verified: 2026-08-23
 
 notes: >-
   THE API HAS TWO FIELDS THAT LOOK AUTHORITATIVE AND ARE NOT. leastNumberPrice

@@ -93,7 +93,7 @@ by_value_footprint:
   "3k|R_0603_1608Metric":
     {lcsc: C4211, note: "0603WAF3001T5E 3k 1% 0603, Basic. R45, the SoftPot pulldown. Named in docs/sourcing.md and already in the absonus order; needed for assembly only since ADR 0010 fitted R45."}
   "4k7|R_0603_1608Metric":
-    {lcsc: C23162, note: "0603WAF4701T5E 4k7 1% 0603, Basic. R43/R44, the I2C pull-ups fitted by ADR 0010. Verified against the JLC catalogue 2026-08-22 -- same Uniroyal 0603WAF...T5E series as C4211. C25900 is the same part in 0402 and was rejected on footprint."}
+    {lcsc: C23162, note: "0603WAF4701T5E 4k7 1% 0603, Basic. R43/R44, the I2C pull-ups fitted by ADR 0010. Verified against the JLC catalogue 2026-08-22; same Uniroyal 0603WAF...T5E series as C4211. C25900 is the same part in 0402 and was rejected on footprint. Corroborated 2026-08-23: baby-borg already uses this code four times at the same value and footprint. The absonus order does NOT contain a 4k7 and cannot confirm it."}
   "100n|C_0603_1608Metric":
     {lcsc: C14663, note: "YAGEO CC0603KRX7R9BB104 100nF 50V X7R 0603, Basic. Was C108079, Extended."}
   "10n|C_0603_1608Metric":

@@ -610,9 +610,23 @@ constraints.
 > `C23162` is `0603WAF4701T5E`, 4.7 kΩ ±1% 100 mW 0603, Basic library, verified
 > against JLC's live catalogue rather than recalled. It is the same Uniroyal
 > `0603WAF…T5E` series as `C4211` and the board's other resistors. `C25900` is
-> the identical part in 0402 and was rejected on footprint. This is the one code
-> here chosen by tooling rather than stated by Matt, and it is flagged so that a
-> substitution is a decision rather than a discovery.
+> the identical part in 0402 and was rejected on footprint.
+>
+> **Checked against the absonus order 2026-08-23, which cannot confirm it.**
+> absonus carries only two resistors — R1 10k (`C15401`) and R2 3k (`C4211`) —
+> and no 4k7 at all, which is exactly why `C4211` was findable there and this
+> was not. The corroboration came from **baby-borg, which already uses `C23162`
+> four times** (R3–R6, 4.7 kΩ on `R_0603_1608Metric`, the same value and
+> footprint as R43/R44), and from the JLC listing confirming Basic stock:
+> <https://jlcpcb.com/partdetail/23889-0603WAF4701T5E/C23162>.
+>
+> Not verified: whether baby-borg was ever ordered. That repo holds design files
+> and dated backups, no production BOM or gerber set — so this is prior *use* of
+> the code, not a proven purchase.
+>
+> **Note the divergence on 10k.** absonus used `C15401`; caryatid deliberately
+> does not, because it is 5% *and* Extended. Prior orders are a source of
+> candidates, not of specifications.
 
 **Basic wherever the specification allows.** Six lines moved to the Basic
 library on 2026-08-18, none of them a downgrade:
