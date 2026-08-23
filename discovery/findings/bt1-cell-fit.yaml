@@ -39,8 +39,24 @@ measured:
     m3_hole_spacing_mm: 55.610  # NPTH d3.2 at x 89.345 and 144.955
     courtyard_mm: [79.20, 22.40]
   holder_cavity:
-    internal_length_mm: 72.9    # per the BT1 sheet, BUT SEE THE AMBIGUITY BELOW
+    # SUPERSEDED by the STEP model below. The 72.9 mm figure is neither a cavity
+    # nor a coincidence: it is the PIN SPACING, and it also happens to be twice
+    # the 36.640 mm contact root position.
+    internal_length_mm: 72.9
     figure_is_ambiguous: true
+  step_model:
+    # local/reference/BH-18650-PC.STEP, SolidWorks 2016, AP214, dated 2019-11-12.
+    # Three named solids: Housing, Positive Contact, Negative Contact.
+    source: local/reference/BH-18650-PC.STEP
+    housing_overall_mm: [77.700, 25.235, 20.900]
+    contact_face_at_rest_mm: 30.752      # each side, so 61.504 mm apart
+    contact_root_mm: 36.640              # where it anchors
+    contact_length_mm: 5.888             # 36.640 - 30.752, the deflection budget
+    housing_inner_wall_mm: 35.450        # innermost housing material in the
+                                         # cell's swept envelope, so the cell
+                                         # cannot exceed 70.900 mm at all
+    free_separation_mm: 61.504
+    hard_stop_cell_length_mm: 70.900
     spring_wire_width_mm: 0.38
     # Derived from MPD's OWN two numbers, not from anything measured:
     # a 72.9 mm cavity accepting 65-68 mm cells means the spring occupies
@@ -136,9 +152,40 @@ evidence:
     Note also that 71.64 mm does not match this board's 72.900 mm pin spacing,
     so a Keystone 1043 is a board change regardless.
 
+  - >-
+    2026-08-23: RESOLVED GEOMETRICALLY from the manufacturer's own STEP model,
+    which Matt placed at local/reference/BH-18650-PC.STEP. It carries three
+    named solids -- Housing, Positive Contact, Negative Contact -- so the
+    contacts can be measured separately from the body. Contacts are modelled AT
+    REST: each contact face sits at 30.752 mm from centre, 61.504 mm apart,
+    anchored at 36.640 mm, giving each 5.888 mm of length to deflect through.
+    The innermost housing material in the cell's swept envelope is at 35.450 mm,
+    so the housing itself cannot accept a cell longer than 70.900 mm.
+    THE CELL FITS. At 69.48 mm it stops 0.710 mm short of the housing walls on
+    each side, so there is no interference. What it does is DEFLECT EACH CONTACT
+    3.988 mm, against 3.248 mm at MPD's stated 68 mm maximum and 1.748 mm at
+    their 65 mm minimum. That is 23% more deflection than the rating allows, and
+    it leaves 1.900 mm of contact length where the rating leaves 2.640 mm.
+    SO THE 65-68 mm RATING IS ABOUT CONTACT STRESS, NOT ABOUT INTERFERENCE, and
+    the two claims were never really in conflict: the cell goes in, and the
+    question is whether the contacts take a permanent set. At 0.38 mm material
+    and 1.900 mm remaining they are not near a flat stack, which would be
+    roughly 0.8-1.1 mm, so this is over-deflection rather than coil bind.
+    RESIDUAL RISK, and it is the one worth weighing: a contact pushed past its
+    elastic limit stops springing back, and would then make poor pressure on any
+    shorter cell fitted later. For an instrument whose cell is fitted once and
+    rarely removed that is a mild consequence. It is not zero.
+
 last_verified: 2026-08-23
 
 notes: >-
+  RESOLVED 2026-08-23 BY THE STEP MODEL, AND THE ANSWER IS "IT FITS, UNDER
+  PROTEST". The cell clears the housing by 0.710 mm a side and over-deflects
+  each contact by 0.740 mm beyond rating. Status stays `conflict` rather than
+  `confirmed` because nothing has been ASSEMBLED yet: the geometry says it
+  seats, and only a holder in hand says it seats with sane force. That test now
+  costs $3.47 and settles it completely.
+
   SUPERSEDED 2026-08-23 BY A MEASUREMENT. An earlier revision of this note
   called the conflict 0.9 mm and "not obviously fatal", reasoning that spring
   contacts usually have travel beyond their stated range. Matt then measured a
