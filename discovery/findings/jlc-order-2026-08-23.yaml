@@ -181,6 +181,32 @@ open_questions:
       orientation and footprint errors before anything is soldered. Turning them
       on costs time rather than money. Photo Confirmation is off too, so nothing
       is seen before the boards ship.
+  - id: jumper-placement-preview-wrong
+    severity: for-next-time
+    raised: 2026-08-23
+    summary: >-
+      NOTED FOR A FUTURE BUILD, DELIBERATELY NOT CHASED NOW. Matt reports that in
+      JLC's Component Placing preview the JUMPERS come through almost always with
+      the wrong orientation AND shifted off their own footprints. Seen across
+      builds, so it is a pattern rather than a one-off on this board.
+      Not investigated here because it does not block the order: the CPL is
+      generated from the board by fab_package.py and the board itself is
+      verified, so the question is where the discrepancy is introduced.
+      WHERE TO LOOK NEXT TIME, cheapest first:
+      (1) compare cpl.csv's rotation column for JP1-JP6 against the board's own
+          footprint rotations, which settles whether the export or the import is
+          at fault;
+      (2) check whether the KiCad footprint origin for PinHeader_1x03 sits on
+          pin 1 rather than the body centre, since JLC positions from the origin
+          and a pin-1 origin reads as a shift;
+      (3) check JLC's own rotation convention for headers against KiCad's, which
+          are known to differ for several package families and are the usual
+          cause of exactly this symptom.
+      IF IT MATTERS THIS BUILD: the jumpers are 3-pin headers whose three pins
+      are electrically interchangeable by position, so a 180 degree rotation
+      changes which pin is pin 1 and therefore which pair a shunt bridges. That
+      is a real functional error, not cosmetic, and it is worth eyeballing the
+      preview before approving even though the root cause is being deferred.
   - id: tooling-holes-by-jlc
     severity: worth-knowing
     summary: >-
