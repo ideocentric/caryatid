@@ -469,8 +469,17 @@ def surviving_labels(t):
         up, dn = th_split(size)
         ju = re.search(r"\(justify ([a-z ]+)\)", blk)
         j = ju.group(1) if ju else ""
-        if abs(rot) % 180 == 90:
-            box = (x - up, y - w/2, x + up, y + w/2)
+        if abs(rot) % 180 == 90 and j:
+            # ROTATED **AND** JUSTIFIED: which end the anchor sits at depends on
+            # the rotation sense, and nothing on this board exercises it yet, so
+            # this takes the UNION of both possibilities rather than guessing.
+            # An obstacle model may over-reserve; it may not under-reserve.
+            box = (x - up, y - w, x + dn, y + w)
+        elif abs(rot) % 180 == 90:
+            # x + dn, not x + up: th_split splits the line height ASYMMETRICALLY
+            # about the anchor, so reusing `up` on both sides drew a box that was
+            # the wrong height and off-centre for every rotated label.
+            box = (x - up, y - w/2, x + dn, y + w/2)
         elif "right" in j:
             box = (x - w, y - up, x, y + dn)
         elif "left" in j:

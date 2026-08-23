@@ -194,7 +194,7 @@
 		(descr "Through hole IDC box header, 2x05, 2.54mm pitch, DIN 41651 / IEC 60603-13, double rows, https://docs.google.com/spreadsheets/d/16SsEcesNF15N3Lb4niX7dcUr-NY5_MFPQhobNuNppn4/edit#gid=0")
 		(tags "Through hole vertical IDC box header THT 2x05 2.54mm double row")
 		(property "Reference" "J5"
-			(at 0 16.7302 0)
+			(at 1.2700 16.8750 0)
 			(layer "F.SilkS")
 			(uuid "4c1d31e0-c1ed-41d5-93bc-7ea408cd75ac")
 			(effects
@@ -5041,7 +5041,7 @@
 		(descr "JST XH series connector, B3B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J18"
-			(at 2.5 -3.55 90)
+			(at -1.392 4.506 90)
 			(layer "F.SilkS")
 			(uuid "8434e84a-6938-408f-acf0-943c0a453375")
 			(effects
@@ -8147,7 +8147,7 @@
 		(descr "JST XH series connector, B3B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J17"
-			(at 2.5 -3.55 90)
+			(at -1.392 4.65 90)
 			(layer "F.SilkS")
 			(uuid "1d9a5008-d16e-44bf-a233-bd0af35c6e57")
 			(effects
@@ -12741,7 +12741,7 @@
 		(descr "JST XH series connector, B2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J14"
-			(at 1.25 -3.55 90)
+			(at -1.583 4.546 90)
 			(layer "F.SilkS")
 			(uuid "03639efa-6efa-4503-9b58-9f750ce38bad")
 			(effects
@@ -13783,7 +13783,7 @@
 		(descr "JST XH series connector, B2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J10"
-			(at 0 4.7798 0)
+			(at -1.392 4.782 0)
 			(layer "F.SilkS")
 			(uuid "8a0ccccb-7d93-4a0b-a900-76860a25a75b")
 			(effects
@@ -15777,7 +15777,7 @@
 		(descr "JST XH series connector, B2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J7"
-			(at 0 4.7798 0)
+			(at -1.868 4.78 0)
 			(layer "F.SilkS")
 			(uuid "833242f6-7cc5-477b-83b8-7f65a384152c")
 			(effects
@@ -21987,7 +21987,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R45"
-			(at -3.1098 0.0000 0)
+			(at -3.1098 0 0)
 			(layer "F.SilkS")
 			(uuid "0a1a5f73-dbc7-4c56-a3ce-b6a27b046fa1")
 			(effects
@@ -21996,7 +21996,7 @@
 					(thickness 0.15)
 				)
 			)
-	)
+		)
 		(property "Value" "3k"
 			(at 0 1.43 90)
 			(layer "F.Fab")
@@ -23944,7 +23944,7 @@
 		(descr "JST XH series connector, B2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J6"
-			(at 0 4.7798 0)
+			(at -1.868 4.78 0)
 			(layer "F.SilkS")
 			(uuid "c3502804-6a4f-4675-9941-42790f69b9b2")
 			(effects
@@ -25270,7 +25270,7 @@
 		(descr "JST XH series connector, B2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J8"
-			(at 0 4.7798 0)
+			(at -1.868 4.78 0)
 			(layer "F.SilkS")
 			(uuid "d6796a25-eb3c-46bf-9a37-ff0903938723")
 			(effects
@@ -26154,7 +26154,7 @@
 		(descr "JST XH series connector, B3B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J9"
-			(at 8.535 0.38 90)
+			(at -1.868 4.555 0)
 			(layer "F.SilkS")
 			(uuid "433b6b2b-fa09-4ea4-b55a-0424161e5a48")
 			(effects
@@ -26609,7 +26609,7 @@
 		(descr "JST XH series connector, B4B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J12"
-			(at 3.75 -3.55 0)
+			(at 8.602 -3.768 0)
 			(layer "F.SilkS")
 			(uuid "9649c9b0-1b9c-4d42-83b5-cac867d24a08")
 			(effects
@@ -27330,7 +27330,7 @@
 		(descr "JST XH series connector, B6B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J15"
-			(at 0 4.7798 0)
+			(at -1.392 4.78 0)
 			(layer "F.SilkS")
 			(uuid "43bf2897-38b9-4bd9-a8ab-2cee941ddf81")
 			(effects
@@ -28882,7 +28882,7 @@
 		(descr "Through hole IDC box header, 2x05, 2.54mm pitch, DIN 41651 / IEC 60603-13, double rows, https://docs.google.com/spreadsheets/d/16SsEcesNF15N3Lb4niX7dcUr-NY5_MFPQhobNuNppn4/edit#gid=0")
 		(tags "Through hole vertical IDC box header THT 2x05 2.54mm double row")
 		(property "Reference" "J11"
-			(at 1.29 -6.345 0)
+			(at 1.2700 -6.3450 0)
 			(layer "F.SilkS")
 			(uuid "635ad790-d76c-4e14-93fb-97fb47c8a13e")
 			(effects
@@ -30633,7 +30633,7 @@
 		(descr "JST XH series connector, B6B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH vertical")
 		(property "Reference" "J19"
-			(at 0 4.7798 0)
+			(at -1.392 4.78 0)
 			(layer "F.SilkS")
 			(uuid "8d9c0752-7380-4366-b473-c60be4f96075")
 			(effects
@@ -38538,6 +38538,42 @@
 		(layer "Edge.Cuts")
 		(uuid "dfd033d2-bab6-51ba-9298-335da76c1e6f")
 	)
+	(gr_text "PROTECTED CELL ONLY"
+		(at 86 56 0)
+		(layer "F.SilkS")
+		(uuid "016a69b9-4ebe-48d6-8369-0a3a9c706976")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+			(justify bottom)
+		)
+	)
+	(gr_text "AUDIO OUT"
+		(locked yes)
+		(at 197.8 49.491 90)
+		(layer "F.SilkS")
+		(uuid "03c0e7e4-0358-537a-a4d0-123d3ea8dbd5")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "COMMS A"
+		(locked yes)
+		(at 116.221 116.43 0)
+		(layer "F.SilkS")
+		(uuid "06b37af8-eddc-5840-acba-57925914171a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "Elect"
 		(at 114.395479 92.740709 0)
 		(layer "F.SilkS")
@@ -38599,12 +38635,24 @@
 	)
 	(gr_text "3V3A"
 		(locked yes)
-		(at 145.534 108.250 0)
+		(at 145.534 108.25 0)
 		(layer "F.SilkS")
 		(uuid "0f21b916-510a-500a-99b5-b42e37105a4b")
 		(effects
 			(font
 				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SPI1"
+		(locked yes)
+		(at 108.752 97.565 0)
+		(layer "F.SilkS")
+		(uuid "10b23a13-e81c-5a86-9d61-8616c5d34fda")
+		(effects
+			(font
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
@@ -38619,6 +38667,18 @@
 				(thickness 0.15)
 			)
 			(justify right)
+		)
+	)
+	(gr_text "MIC RTN"
+		(locked yes)
+		(at 197.88 75.72 90)
+		(layer "F.SilkS")
+		(uuid "25b51168-172a-574e-8dcf-5b65de549903")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
 		)
 	)
 	(gr_text "SW2"
@@ -38655,13 +38715,50 @@
 			)
 		)
 	)
+	(gr_text "COMMS B"
+		(locked yes)
+		(at 137.163 116.43 0)
+		(layer "F.SilkS")
+		(uuid "2f34a66d-5483-5eb3-a5b6-c60d43707b2b")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "5V"
-		(at 186.757 31.687 0)
+		(locked yes)
+		(at 186.757 33.1 0)
 		(layer "F.SilkS")
 		(uuid "2f5f3672-4cad-510c-8ff7-df3258d45b6b")
 		(effects
 			(font
 				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "LEFT MIC"
+		(at 139.32 89.5 0)
+		(layer "F.SilkS")
+		(uuid "34548043-22c0-44d1-80ce-170922ad888c")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify bottom)
+		)
+	)
+	(gr_text "SOFT POT"
+		(locked yes)
+		(at 150.856 116.43 0)
+		(layer "F.SilkS")
+		(uuid "357b1b90-31f6-5f0f-a513-04ce3d3abf90")
+		(effects
+			(font
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
@@ -38679,7 +38776,8 @@
 		)
 	)
 	(gr_text "3V3"
-		(at 170 32.24 0)
+		(locked yes)
+		(at 169.85 32.646 90)
 		(layer "F.SilkS")
 		(uuid "39f1ddcf-1bf1-5721-9498-94a80f33dd81")
 		(effects
@@ -38727,7 +38825,7 @@
 	)
 	(gr_text "A5"
 		(locked yes)
-		(at 148.950 108.250 0)
+		(at 148.95 108.25 0)
 		(layer "F.SilkS")
 		(uuid "3d5083c5-3ae4-57ad-8a67-83c48b9cb635")
 		(effects
@@ -38924,7 +39022,8 @@
 		)
 	)
 	(gr_text "GND"
-		(at 169 33.45 0)
+		(locked yes)
+		(at 168.55 32.531 90)
 		(layer "F.SilkS")
 		(uuid "6b2eec57-ab5a-54a9-9b86-2e61bf2d2ae6")
 		(effects
@@ -38960,7 +39059,7 @@
 	)
 	(gr_text "RTN"
 		(locked yes)
-		(at 188.544 81.102 0)
+		(at 189.61 78.97 0)
 		(layer "F.SilkS")
 		(uuid "7dda2b78-37bf-5d37-942b-c584b09bbb86")
 		(effects
@@ -39031,7 +39130,8 @@
 		)
 	)
 	(gr_text "D12"
-		(at 171 31.03 0)
+		(locked yes)
+		(at 171.15 32.588 90)
 		(layer "F.SilkS")
 		(uuid "8d111677-00c1-5f13-93ed-22b42d94cc08")
 		(effects
@@ -39088,6 +39188,30 @@
 			(justify right)
 		)
 	)
+	(gr_text "RGB"
+		(locked yes)
+		(at 188.282 41.25 0)
+		(layer "F.SilkS")
+		(uuid "9496937b-5746-5510-a4fb-f5b88b7aa4f3")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "RIGHT MIC"
+		(at 157.35 89.5 0)
+		(layer "F.SilkS")
+		(uuid "94c98de6-c96a-45e0-ad12-3f013e1d6023")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify bottom)
+		)
+	)
 	(gr_text "A9"
 		(at 163.13 66.695 0)
 		(layer "F.SilkS")
@@ -39123,6 +39247,30 @@
 			(justify left)
 		)
 	)
+	(gr_text "ANALOG BUS"
+		(locked yes)
+		(at 156.8300 83.2423 0)
+		(layer "F.SilkS")
+		(uuid "9994498d-691f-5963-aec5-2b531d5dbecc")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "AUDIO IN"
+		(locked yes)
+		(at 197.8 62.6334 90)
+		(layer "F.SilkS")
+		(uuid "9be19257-ad12-5364-b941-b78a2f1ef7f9")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "GND"
 		(at 130.2 108.025 0)
 		(layer "F.SilkS")
@@ -39134,8 +39282,33 @@
 			)
 		)
 	)
-	(gr_text "RED"
-		(at 184.257 33.097 0)
+	(gr_text "SW3"
+		(locked yes)
+		(at 97.416 116.43 0)
+		(layer "F.SilkS")
+		(uuid "a51ab2c5-6d95-510a-a2df-f82d19db37cd")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "CHG LEDS"
+		(locked yes)
+		(at 57.151 68.7443 0)
+		(layer "F.SilkS")
+		(uuid "a5bba026-d53e-5bc8-b308-aa4a9d9e47ec")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "R"
+		(locked yes)
+		(at 184.257 33.1 0)
 		(layer "F.SilkS")
 		(uuid "a71672c1-0058-51d6-ab5e-9c174668f8a6")
 		(effects
@@ -39180,9 +39353,21 @@
 			(justify left)
 		)
 	)
+	(gr_text "DIGITAL BUS"
+		(locked yes)
+		(at 58.6800 84.5273 0)
+		(layer "F.SilkS")
+		(uuid "b0df4fbc-d795-53ee-927f-f93f478cacca")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "GND"
 		(locked yes)
-		(at 152.361 108.250 0)
+		(at 152.361 108.25 0)
 		(layer "F.SilkS")
 		(uuid "b1915a26-9fe1-565e-a7b3-9aaf29ddd620")
 		(effects
@@ -39203,8 +39388,9 @@
 			)
 		)
 	)
-	(gr_text "BLU"
-		(at 179.257 33.097 0)
+	(gr_text "B"
+		(locked yes)
+		(at 179.257 33.1 0)
 		(layer "F.SilkS")
 		(uuid "b3b71a71-739f-56e2-818b-2039e8ae9d84")
 		(effects
@@ -39227,7 +39413,7 @@
 	)
 	(gr_text "R"
 		(locked yes)
-		(at 188.544 64.730 0)
+		(at 189.61 64.73 0)
 		(layer "F.SilkS")
 		(uuid "c0678514-e3a5-5daa-98e2-b0a0aa32c58f")
 		(effects
@@ -39236,6 +39422,18 @@
 				(thickness 0.15)
 			)
 			(justify right)
+		)
+	)
+	(gr_text "DC IN"
+		(locked yes)
+		(at 56.937 43.5583 0)
+		(layer "F.SilkS")
+		(uuid "c18984e9-ba0a-5eab-a500-d308347f7cba")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
 		)
 	)
 	(gr_text "SW3"
@@ -39257,6 +39455,18 @@
 		(effects
 			(font
 				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "FSR"
+		(locked yes)
+		(at 162.413 116.53 0)
+		(layer "F.SilkS")
+		(uuid "cc298e00-3f5c-5abb-9a21-aff4e42e67a7")
+		(effects
+			(font
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
@@ -39342,8 +39552,21 @@
 			)
 		)
 	)
+	(gr_text "SW1"
+		(locked yes)
+		(at 75.416 116.43 0)
+		(layer "F.SilkS")
+		(uuid "e203d7e3-9360-59a1-9667-26fda0291b7e")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "D11"
-		(at 172 33.45 0)
+		(locked yes)
+		(at 172.45 32.588 90)
 		(layer "F.SilkS")
 		(uuid "e53ab4d3-e5a7-5b3b-b721-7ddb878c7a23")
 		(effects
@@ -39355,7 +39578,7 @@
 	)
 	(gr_text "L"
 		(locked yes)
-		(at 188.400 55.829 0)
+		(at 189.466 53.56 0)
 		(layer "F.SilkS")
 		(uuid "e5cb8dfd-e66c-511b-84fa-1bb58c329466")
 		(effects
@@ -39373,6 +39596,18 @@
 		(effects
 			(font
 				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "SW2"
+		(locked yes)
+		(at 86.416 116.43 0)
+		(layer "F.SilkS")
+		(uuid "eb5b663d-e0d7-5295-9574-4f7adcc02504")
+		(effects
+			(font
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
@@ -39415,7 +39650,7 @@
 	)
 	(gr_text "GND"
 		(locked yes)
-		(at 188.400 46.569 0)
+		(at 189.466 48.73 0)
 		(layer "F.SilkS")
 		(uuid "ee352778-0f0b-5347-981a-a612aed4d25a")
 		(effects
@@ -39440,7 +39675,7 @@
 	)
 	(gr_text "R"
 		(locked yes)
-		(at 188.400 51.054 0)
+		(at 189.466 51.054 0)
 		(layer "F.SilkS")
 		(uuid "effe7e51-8168-5660-9991-6e4f8ad4b9cd")
 		(effects
@@ -39453,7 +39688,7 @@
 	)
 	(gr_text "GND"
 		(locked yes)
-		(at 188.544 74.342 0)
+		(at 189.61 76.34 0)
 		(layer "F.SilkS")
 		(uuid "f2199975-5eb7-5ed4-9a34-34c0f732e363")
 		(effects
@@ -39462,6 +39697,18 @@
 				(thickness 0.15)
 			)
 			(justify right)
+		)
+	)
+	(gr_text "LATCH"
+		(locked yes)
+		(at 57.278 53.6313 0)
+		(layer "F.SilkS")
+		(uuid "f2a3f4c9-8fd6-5ae2-89f7-2ba05cea1893")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
 		)
 	)
 	(gr_text "D9"
@@ -39477,7 +39724,7 @@
 	)
 	(gr_text "L"
 		(locked yes)
-		(at 188.544 69.505 0)
+		(at 189.61 67.49 0)
 		(layer "F.SilkS")
 		(uuid "f3b0a082-7e70-59d8-a5a8-bdcf41f3cae6")
 		(effects
@@ -39512,8 +39759,9 @@
 			(justify bottom)
 		)
 	)
-	(gr_text "GRN"
-		(at 181.757 31.687 0)
+	(gr_text "G"
+		(locked yes)
+		(at 181.757 33.1 0)
 		(layer "F.SilkS")
 		(uuid "f7e6b750-82da-5d1e-8620-a0f0f53a561c")
 		(effects
@@ -39525,7 +39773,7 @@
 	)
 	(gr_text "RTN"
 		(locked yes)
-		(at 188.544 60.245 0)
+		(at 189.61 62.13 0)
 		(layer "F.SilkS")
 		(uuid "fc6219d5-0bba-548c-9411-defec4ea379e")
 		(effects
@@ -46741,6 +46989,15 @@
 		(uuid "6017df07-0e06-4ac9-96ed-84e17e725440")
 	)
 	(via
+		(at 74.64 97.77)
+		(size 0.7)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 91)
+		(uuid "603e743a-8065-4631-8456-ae3e2cb6bbcc")
+	)
+	(via
 		(at 165.375 84.825)
 		(size 0.7)
 		(drill 0.3)
@@ -46841,6 +47098,15 @@
 		(free yes)
 		(net 91)
 		(uuid "7e67a6d6-6b35-4d88-a82c-ebfcadba0b9f")
+	)
+	(via
+		(at 74.68 101.25)
+		(size 0.7)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 91)
+		(uuid "80fcbd7d-a87d-4dc9-b127-a07b01247620")
 	)
 	(via
 		(at 140 102)
@@ -54457,244 +54723,4 @@
 		)
 	)
 	(embedded_fonts no)
-	(gr_text "LEFT MIC"
-		(at 139.32 89.5 0)
-		(layer "F.SilkS")
-		(uuid "34548043-22c0-44d1-80ce-170922ad888c")
-		(effects
-			(font
-				(size 1.0 1.0)
-				(thickness 0.15)
-			)
-			(justify bottom)
-		)
-	)
-	(gr_text "RIGHT MIC"
-		(at 157.35 89.5 0)
-		(layer "F.SilkS")
-		(uuid "94c98de6-c96a-45e0-ad12-3f013e1d6023")
-		(effects
-			(font
-				(size 1.0 1.0)
-				(thickness 0.15)
-			)
-			(justify bottom)
-		)
-	)
-	(gr_text "PROTECTED CELL ONLY"
-		(at 86.0 56.0 0)
-		(layer "F.SilkS")
-		(uuid "016a69b9-4ebe-48d6-8369-0a3a9c706976")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-			(justify bottom)
-		)
-	)
-	(gr_text "DC IN"
-		(at 57.3170 43.5583 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "c18984e9-ba0a-5eab-a500-d308347f7cba")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "LATCH"
-		(at 57.6580 53.6313 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "f2a3f4c9-8fd6-5ae2-89f7-2ba05cea1893")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "CHG LEDS"
-		(at 57.5310 68.7443 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "a5bba026-d53e-5bc8-b308-aa4a9d9e47ec")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "ANALOG BUS"
-		(at 158.1000 83.2423 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "9994498d-691f-5963-aec5-2b531d5dbecc")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "SW1"
-		(at 67.0562 111.6500 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "e203d7e3-9360-59a1-9667-26fda0291b7e")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "SW2"
-		(at 82.7000 117.7873 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "eb5b663d-e0d7-5295-9574-4f7adcc02504")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "SW3"
-		(at 93.7000 117.7873 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "a51ab2c5-6d95-510a-a2df-f82d19db37cd")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "SOFT POT"
-		(at 146.4500 117.5123 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "357b1b90-31f6-5f0f-a513-04ce3d3abf90")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "FSR"
-		(at 158.6020 117.8853 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "cc298e00-3f5c-5abb-9a21-aff4e42e67a7")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "DIGITAL BUS"
-		(at 59.9500 84.5273 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "b0df4fbc-d795-53ee-927f-f93f478cacca")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "RGB"
-		(at 186.7570 41.1193 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "9496937b-5746-5510-a4fb-f5b88b7aa4f3")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "MIC RTN"
-		(at 193.2940 72.5143 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "25b51168-172a-574e-8dcf-5b65de549903")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "COMMS B"
-		(at 125.2000 117.7873 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "2f34a66d-5483-5eb3-a5b6-c60d43707b2b")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "SPI1"
-		(at 108.7520 97.5650 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "10b23a13-e81c-5a86-9d61-8616c5d34fda")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "AUDIO OUT"
-		(at 193.1500 44.7413 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "03c0e7e4-0358-537a-a4d0-123d3ea8dbd5")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "AUDIO IN"
-		(at 193.2940 58.4173 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "9be19257-ad12-5364-b941-b78a2f1ef7f9")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
-	(gr_text "COMMS A"
-		(at 104.2000 117.7873 0)
-		(layer "F.SilkS")
-		(locked yes)
-		(uuid "06b37af8-eddc-5840-acba-57925914171a")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.15)
-			)
-		)
-	)
 )
