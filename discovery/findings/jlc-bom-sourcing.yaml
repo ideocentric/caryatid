@@ -31,6 +31,22 @@ pre_order:
 # NOT measured. Published rates applied to the measured counts above; the PCB
 # fab line is a flat placeholder and 150 x 90 mm is area-priced past the
 # 100 x 100 tier. tools/cost_estimate.py isolates these in RATES / PCB_FAB.
+owner_bought_usd:
+  # Bought outside the JLC order. Recorded 2026-08-23; the cells figure is
+  # Matt's actual Orbtronic order, the rest are catalogue prices.
+  cells:   {qty: 5, total: 67.45, unit: 13.49, source: "Orbtronic, direct", status: ordered}
+  holders: {qty: 5, total: 17.35, unit: 3.47,  source: "Digi-Key 3029216",  status: not_ordered}
+  shunts:  {qty: 100, total: 2.47, unit: 0.0247, source: "Digi-Key S9001-ND", status: not_ordered,
+            note: "30 consumed by five boards, $0.74 of the $2.47; the rest are spares"}
+  total_for_five: 87.27
+  excludes: "Digi-Key shipping, quoted at $8.49 ground"
+
+true_total_usd:
+  # What five boards ACTUALLY cost, as opposed to what estimated_total_usd says.
+  qty_5: {total: 256.14, per_board: 51.23}
+  jlc_only_qty_5: {total: 168.87, per_board: 33.77}
+  understated_by: {usd: 87.27, percent: 52}
+
 estimated_total_usd:
   qty_5:  {total: 168.87, per_board: 33.77}
   qty_10: {total: 248.81, per_board: 24.88}
@@ -210,6 +226,29 @@ evidence:
     Orbtronic and their price is NOT RECORDED -- Matt ordered them and has not
     stated a figure. So the true five-board cost is at least $188.69 plus the
     cells and Digi-Key shipping, against the $168.87 this record reports.
+
+  - >-
+    2026-08-23: Matt gave the Orbtronic order as $67.45 for five cells, $13.49
+    each. That closes the last unpriced line and the totals can finally be
+    stated. FIVE BOARDS ALL IN ARE $256.14, or $51.23 a board: $168.87 to JLC,
+    $67.45 of cells, $17.35 of holders and $2.47 of shunts, before Digi-Key
+    shipping. estimated_total_usd reports $168.87 and $33.77 a board, so THE
+    RECORDED FIGURE UNDERSTATES THE BUILD BY $87.27, OR 52%. Both numbers are
+    now carried, the JLC one under its own name.
+    THE CELL IS THE LARGEST SINGLE LINE PER BOARD at $13.49, more than the
+    $12.48 of JLC parts that go on the board itself.
+  - >-
+    2026-08-23: THE BUILD-QUANTITY RATIONALE IS WEAKENED BY THE SAME OMISSION
+    and should be re-read before it is relied on. It argued that ten was
+    rejected "for now" because "the second five would cost $15.99/board against
+    $33.77 for the first five, because $68 is fixed, so the option stays cheap
+    if taken later". That marginal figure is JLC-only. The owner-bought parts
+    have NO fixed-cost leverage at all: cells, holder and shunts are $17.11 a
+    board whether you build five or fifty. The real marginal cost of a second
+    five is $33.10 a board against $51.23 for the first five. Still cheaper,
+    but 65% of the first-five cost rather than the 47% the rationale implies,
+    and the saving is nearly all JLC setup rather than anything about the cells.
+    The DECISION to build five is not disturbed; the reasoning quoted for it is.
 
 last_verified: 2026-08-23
 

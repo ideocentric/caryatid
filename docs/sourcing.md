@@ -638,10 +638,35 @@ with a per-board quantity, and `fab_package.py` writes
 same reason `self-fit.csv` does: handing the assembler a list of parts they are
 explicitly not fitting invites the confusion the mechanism exists to prevent.
 
-| item | per board | source | |
-| --- | --- | --- | --- |
-| jumper shunt | 6 | Digi-Key `S9001-ND` | Sullins SPC02SYAN |
-| 18650 cell | 1 | Orbtronic, direct | protected, already ordered |
+| item | per board | source | unit | |
+| --- | --- | --- | --- | --- |
+| jumper shunt | 6 | Digi-Key `S9001-ND` | $0.0247 | Sullins SPC02SYAN |
+| 18650 cell | 1 | Orbtronic, direct | **$13.49** | protected, already ordered |
+
+### What five boards actually cost
+
+The cost figures elsewhere in this document are **the JLC order only**. Adding
+what you buy yourself:
+
+| | five boards | per board |
+| --- | --- | --- |
+| JLC turnkey | $168.87 | $33.77 |
+| cells | $67.45 | $13.49 |
+| BT1 holders | $17.35 | $3.47 |
+| shunts (buy 100, 30 used) | $2.47 | $0.15 |
+| **total** | **$256.14** | **$51.23** |
+
+Before Digi-Key shipping, quoted at $8.49 ground. **The JLC-only figure
+understates the build by $87.27, or 52%**, and the cell alone is the largest
+line per board, ahead of the $12.48 of JLC parts that go on the board itself.
+
+> ⚠️ **This weakens the recorded reason for building five rather than ten.**
+> That rationale said a second five would cost $15.99/board against $33.77,
+> "because $68 is fixed, so the option stays cheap if taken later". Fixed-cost
+> leverage applies only to JLC. Cells, holders and shunts are $17.11 a board
+> whether you build five or fifty, so a second five really costs $33.10/board
+> against $51.23. Still cheaper, but 65% rather than the 47% implied. The
+> decision to build five stands; the arithmetic quoted for it does not.
 
 **The shunt is closed top, and that is a decision.** The grip version
 (TE `2-881545-2`, gold 30 µin, 10.90 mm) was proposed and rejected: the board
