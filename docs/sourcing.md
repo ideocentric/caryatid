@@ -284,7 +284,10 @@ with the electrolytic is the usual answer if measured ripple comes out high.
 ## The cell
 
 **Protected 18650, 3000 mAh design basis** — the specified cell is 3400 mAh, so
-every derived figure below is conservative. ~18 × 65 mm bare, **~18 × 69 mm
+the *runtime* figures below are conservative. **Charge time is not**: at the same
+1 A it goes roughly 13% longer than the ~3.5 h stated, and the charge rate eases
+from 0.33C to 0.29C. Those numbers still describe a 3000 mAh cell rather than the
+one actually bought. ~18 × 65 mm bare, **~18 × 69 mm
 protected** — the protection PCB adds length at the negative end, which is the
 dimension that catches people fitting a holder.
 
@@ -324,13 +327,28 @@ button-top; a flat-top bare cell may not seat or make contact.
 
 **The cell is
 [Orbtronic 3400 mAh protected](https://www.orbtronic.com/protected-3400mah-18650-li-ion-battery-panasonic-ncr18650B-orbtronic)**
-— Panasonic NCR18650B inside, button top, **68.9 mm**, inside what the
-BH-18650-PC is cut for.
+— Panasonic NCR18650B inside, button top, **68.9 mm catalogue and 69.48 mm
+measured with the shrinkwrap**.
+
+> 🔴 **This sentence used to read "inside what the BH-18650-PC is cut for", and
+> that was wrong.** MPD rates the holder for cells "65-68MM in length only", so
+> neither figure is inside it. The claim was never checked against the holder's
+> own rating, and it is what the cell purchase was made on. Corrected
+> 2026-08-23; the full working is
+> [`discovery/findings/bt1-cell-fit.yaml`](../discovery/findings/bt1-cell-fit.yaml).
+>
+> **The cell does fit.** MPD's STEP model settles it: the contacts sit 61.504 mm
+> apart at rest with 5.888 mm of travel each, and the housing wall stops a cell
+> at 70.900 mm. A 69.48 mm cell clears the wall by 0.710 mm a side and deflects
+> each contact 3.988 mm, against 3.248 mm at the 68 mm rating. So the rating is
+> about **contact stress, not interference**: it seats, while over-deflecting the
+> contacts by about 23%. The residual risk is a contact taking a permanent set
+> and then gripping a shorter cell poorly. For a cell fitted once, mild.
 
 | | Spec | |
 | --- | --- | --- |
 | Capacity | 3400 mAh, 12.2 Wh | design basis is 3000, so runtimes above are a **floor** |
-| Length | **68.9 mm ±0.03** | the number the holder choice turned on |
+| Length | **68.9 mm ±0.03** catalogue, **69.48 mm measured** | the catalogue figure excludes the shrinkwrap; both exceed the holder's 65-68 mm rating, see above |
 | Diameter | 18.6 mm ±0.03 | wider than a bare cell's ~18.4; the holder is cut for protected |
 | Weight | 46 g | |
 | Nominal | 3.6–3.7 V, charge to 4.2 V | matches what the bq24074 delivers |

@@ -194,6 +194,23 @@ evidence:
     is smaller those figures are wrong and should be regenerated, not left
     reading as though they were measured.
 
+  - >-
+    2026-08-23: BT1's ACTUAL SOURCE recorded here for the first time. This record
+    carried only the JLC pre-order line, C5339083 at $4.8616, which is the option
+    that was REJECTED. What is being bought is MPD BH-18650-PC via DIGI-KEY
+    3029216 at $3.47, cheaper and immediate against JLC's 21-day pre-order. That
+    was decided on 2026-08-20 and lived only in lcsc.yaml's self_fit note until
+    now, so the ledger described a purchase that is not happening.
+  - >-
+    2026-08-23: OWNER-BOUGHT SPEND IS NOT IN THE COST TOTALS ABOVE, and the
+    totals should not be read as a project cost. estimated_total_usd covers the
+    JLC order only: $168.87 for five boards. Outside it, per five boards:
+    BT1 holders 5 x $3.47 = $17.35 and jumper shunts, buy 100 at $0.0247 =
+    $2.47, both Digi-Key, one shipment. Cells were bought separately direct from
+    Orbtronic and their price is NOT RECORDED -- Matt ordered them and has not
+    stated a figure. So the true five-board cost is at least $188.69 plus the
+    cells and Digi-Key shipping, against the $168.87 this record reports.
+
 last_verified: 2026-08-23
 
 notes: >-
