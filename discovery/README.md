@@ -41,4 +41,5 @@ unverified, and should say so.
 | --- | --- |
 | [`bud-cu477-interior.yaml`](findings/bud-cu477-interior.yaml) | BUD CU-477 floor, height, plate profile, board mounting datum and the power switch intrusion |
 | [`bt1-cell-fit.yaml`](findings/bt1-cell-fit.yaml) | Whether the Orbtronic 3400 mAh protected cell fits the BH-18650-PC holder. `conflict`: it seats, over-deflecting the contacts past their rating |
+| [`jlc-order-2026-08-23.yaml`](findings/jlc-order-2026-08-23.yaml) | Every setting on the JLCPCB order form for the first build, checked against the board. `in-progress`: not yet placed |
 | [`jlc-bom-sourcing.yaml`](findings/jlc-bom-sourcing.yaml) | The LCSC codes (43 as of 2026-08-23): cost, library split, assembly mode, pre-orders, and the build-quantity decision |

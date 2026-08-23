@@ -1,0 +1,169 @@
+id: JLC-order-2026-08-23
+kind: other
+source_claim: >-
+  The JLCPCB order configuration for the first caryatid build. Nothing in the
+  repository can derive these: what was selected in JLC's web form is not
+  recoverable from the board, the BOM or git history, so if a later batch
+  behaves differently this record is the only way to know what changed.
+source_ref: "Matt, transcribed from the JLCPCB quote form 2026-08-23"
+resource: "JLCPCB order, 5 boards, PCB + Economic assembly, top side"
+status: in-progress          # NOT PLACED YET. See open_questions.
+
+settings:
+  online_pcb_quote:
+    base_material: FR-4
+    layers: 2
+    dimensions_mm: [150, 90]
+    pcb_qty: 5
+    product_type: Industrial/Consumer electronics
+  pcb_specifications:
+    different_design: 1
+    delivery_format: Single PCB
+    pcb_thickness_mm: 1.6
+    pcb_color: Black
+    silkscreen: White
+    material_type: FR4 TG135
+    surface_finish: LeadFree HASL
+  high_spec_options:
+    outer_copper_weight_oz: 1
+    via_covering: Tented
+    via_plating_method: Not Specified
+    min_via_hole_size: "0.4mm/(0.4/0.45mm)"      # 🔴 CONFLICT, see below
+    board_outline_tolerance: "+-0.2mm (Regular)"
+    confirm_production_file: false
+    mark_on_pcb: Remove Mark
+    electrical_test: Flying Probe Fully Test
+    gold_fingers: false
+    castellated_holes: false
+    edge_plating: false
+    blind_slots: false
+    ul_marking: false
+    humidity_indicator_card: false
+  advanced_options:
+    four_wire_kelvin_test: false
+    paper_between_pcbs: false
+    appearance_quality: IPC Class 2 Standard
+    silkscreen_technology: Ink-jet Printing Silkscreen
+    package_box: With JLCPCB Logo
+    inspection_report: false
+    pcb_remark: null
+  pcb_assembly:
+    pcba_type: Economic
+    assembly_side: Top Side
+    pcba_qty: 5
+    tooling_holes: Added by JLCPCB
+    confirm_parts_placement: false
+    stencil_storage: false
+    fixture_storage: false
+    parts_selection: By Customer (Self-Service)
+  assembly_advanced:
+    bake_components: false
+    board_cleaning: false
+    special_stencil: false
+    depanel_and_edge_rail_before_delivery: false
+    flying_probe_test: false
+    function_test: false
+    photo_confirmation: false
+    conformal_coating: false
+    packaging: Antistatic bubble film
+    solder_paste: High temp.
+    nitrogen_reflow_soldering: true      # available on Economic
+    assembly_remark: null
+
+checked_against_the_board:
+  # Verified 2026-08-23 by reading hardware/pcb/caryatid.kicad_pcb directly.
+  dimensions: {setting: [150, 90], board: [150.0, 90.0], agrees: true}
+  layers: {setting: 2, board: 2, agrees: true, ref: ADR 0008}
+  thickness: {setting: 1.6, board_stackup: 1.6, agrees: true,
+              note: "the 26.91 mm enclosure stack in BUD-CU-477-interior assumes 1.6"}
+  assembly_side: {setting: Top Side, board: "135 front / 0 back", agrees: true}
+  qty: {setting: 5, recorded_decision: 5, agrees: true, ref: JLC-BOM-sourcing.decision}
+  pcba_type: {setting: Economic, agrees: true,
+              note: "U1 BQ24074 and U2 TPS61023 were both confirmed to run on Economic"}
+  min_via_hole: {setting: 0.4, board_min_drill: 0.3, agrees: false}   # 🔴
+  silkscreen: {board_min_text_mm: 0.80, jlc_floor_mm: 0.80, agrees: true,
+               note: "31 items sit exactly on the floor, zero margin"}
+
+evidence:
+  - >-
+    2026-08-23: settings transcribed by Matt from the JLCPCB quote form before
+    placing the order, and recorded here rather than in conversation.
+  - >-
+    2026-08-23: 🔴 MIN VIA HOLE SIZE CONFLICTS WITH THE BOARD. The form is set to
+    "0.4mm/(0.4/0.45mm)" but the board carries 157 vias at 0.3 mm drill (0.7 mm
+    pad) and only 10 at 0.4 mm (0.8 mm pad). 94% of the vias are below the size
+    the order declares. Read off the board directly, not inferred.
+  - >-
+    2026-08-23: silkscreen verified against the ink-jet floor. Smallest VISIBLE
+    silk text is exactly 0.80 mm and NOTHING is below it: 31 items at 0.80,
+    8 at 0.85, 2 at 0.90, 175 at 1.00, plus the two large brand items. So the
+    board is inside the process, with zero margin on 31 of them. On black mask
+    with white ink that is the combination most likely to read soft, but it is
+    not a violation and no change is proposed.
+  - >-
+    2026-08-23: FID1, FID2 and FID3 exist on the board, so assembly has proper
+    optical alignment targets independent of whatever JLC does about tooling
+    holes.
+  - >-
+    2026-08-23: "Via Covering: Tented" is now unambiguously the right choice and
+    was not always. fix_ep_thermal.py records that U1's exposed pad once carried
+    four thermal vias sitting inside the EP's mask aperture, open on top and
+    sealed underneath, with paste printed across them; tenting them was rejected
+    because four 0.90 mm mask discs would have covered 2.545 mm2 of a 2.822 mm2
+    pad. Those vias were removed. With no via inside any paste aperture, a
+    blanket tent has nothing left to conflict with.
+
+open_questions:
+  - id: min-via-hole-mismatch
+    severity: blocking
+    summary: >-
+      The order declares a 0.4 mm minimum via hole; the board has 157 vias at
+      0.3 mm. Either the form needs the smaller option selected, which usually
+      changes the price, or JLC raises it in engineering review, or worst case
+      the drills get enlarged to suit the declared spec. 0.3 mm drill on a
+      0.7 mm pad is a 0.2 mm annular ring; enlarging to 0.4 mm leaves 0.15 mm,
+      which is at the edge of what a 2-layer process holds reliably.
+      SETTLE THIS BEFORE SUBMITTING.
+  - id: hasl-under-fine-pitch
+    severity: worth-knowing
+    summary: >-
+      LeadFree HASL against U1, a QFN-16 on 0.5 mm pitch with an exposed pad.
+      HASL leaves a less flat finish than ENIG, and flatness is what fine-pitch
+      and EP joints care about. Very common and usually fine; ENIG is the usual
+      upgrade when a board is QFN-heavy. Raised as a considered trade rather
+      than an error, because it is one part and the rest of the board is
+      forgiving.
+  - id: no-placement-confirmation
+    severity: worth-knowing
+    summary: >-
+      Confirm Parts Placement and Confirm Production File are both off, on a
+      FIRST ARTICLE carrying 127 placements. Those steps exist to catch
+      orientation and footprint errors before anything is soldered. Turning them
+      on costs time rather than money. Photo Confirmation is off too, so nothing
+      is seen before the boards ship.
+  - id: tooling-holes-by-jlc
+    severity: worth-knowing
+    summary: >-
+      Tooling holes are set to "Added by JLCPCB" while Delivery Format is Single
+      PCB and depanelling is off. Worth knowing where they intend to put them:
+      the board is fully routed and poured, so holes added inside the outline
+      would land in copper. Fiducials already exist, so the alignment need is
+      covered.
+
+last_verified: 2026-08-23
+
+notes: >-
+  STATUS IS `in-progress` BECAUSE THE ORDER IS NOT PLACED. It moves to
+  `confirmed` when the order is submitted and JLC accepts the files without an
+  engineering query, and the quoted total is recorded against it. If JLC comes
+  back on the via hole size, that is the mismatch above and not a surprise.
+
+  EVERYTHING NOT LISTED AS AN OPEN QUESTION AGREES WITH THE BOARD. Dimensions,
+  layer count, thickness, assembly side, quantity and assembly type were each
+  checked against the file or against an existing record rather than accepted
+  as typed.
+
+  THE FAB PRICE IS STILL THE UNKNOWN. 150 x 90 mm is area-priced past JLC's
+  100 x 100 tier and cost_estimate.py's PCB_FAB is a placeholder, so the quoted
+  total is the figure that closes that open question. Run
+  `.venv/bin/python tools/cost_estimate.py 5 --quote <total>` once it is known.
