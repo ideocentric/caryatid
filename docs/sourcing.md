@@ -605,6 +605,47 @@ for that kind of claim. (absonus's own schematic disagrees
 with its own board there, listing `R_0201_0603Metric`; the PCB is what was
 built. Not chased — it is absonus's discrepancy, not caryatid's.)
 
+## Accessories: what a bill of materials cannot see
+
+A `self_fit` part is on the BOM and pulled out of the assembly order. An
+**accessory was never on the BOM**, because it is not soldered to the board and
+a netlist has no way to know it exists. `fab_package.py` reported **ready**
+while six shunts per board were unbought and unrecorded; they are discussed in
+six documents on this site and were sourced in none of them. Caught at ordering
+time, 2026-08-23.
+
+They now live in [`lcsc.yaml`](../hardware/pcb/lcsc.yaml) under `accessories:`
+with a per-board quantity, and `fab_package.py` writes
+`local/fab/accessories.csv`. That file stays **out** of the fab zip, for the
+same reason `self-fit.csv` does: handing the assembler a list of parts they are
+explicitly not fitting invites the confusion the mechanism exists to prevent.
+
+| item | per board | source | |
+| --- | --- | --- | --- |
+| jumper shunt | 6 | Digi-Key `S9001-ND` | Sullins SPC02SYAN |
+| 18650 cell | 1 | Orbtronic, direct | protected, already ordered |
+
+**The shunt is closed top, and that is a decision.** The grip version
+(TE `2-881545-2`, gold 30 µin, 10.90 mm) was proposed and rejected: the board
+lives sealed in a BUD CU-477 and JP1 to JP6 are set once per capsule, so a
+finger tab buys nothing and stands 4.40 mm further into the loom where a cable
+can unseat it. The closed top also encloses the header's 6 mm pins completely.
+Gold flash is the correct spec once insertion cycles are ruled out; 30 µin gold
+is durability against a stress this application never applies. Preci-Dip
+`999-19-220-00` is lower again at 5.00 mm and was rejected on supply: 8 units
+from a marketplace seller, 11 week manufacturer lead time.
+
+**The cell must be protected, and the board says so in silkscreen.** The
+bq24074 protects the charge path, not the cell, so over-discharge and short
+protection come from the cell's own PCM. `PROTECTED CELL ONLY` is printed beside
+BT1.
+
+> ⚠️ **The Orbtronic model and capacity are not recorded.** Every figure in
+> [values.md](values.md) assumes 3000 mAh: charge time at 1 A (0.33C) and
+> runtime from roughly 2500 mAh usable down to 3.0 V. If the ordered cell is
+> smaller, those numbers are wrong and want regenerating rather than leaving to
+> read as measured.
+
 ## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
 
 `tools/fab_package.py` reports **127 of 127 covered** and exits zero

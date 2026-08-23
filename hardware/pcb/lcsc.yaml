@@ -130,6 +130,22 @@ by_value_footprint:
 self_fit:
   BT1: {source: "Digi-Key 3029216", note: "MPD BH-18650-PC, $3.47/1, 948 in stock 2026-08-19. JLC pre-order quoted 21 days on 2026-08-20 at $4.8616 -- Digi-Key is cheaper AND immediate. 2 through-hole joints (VBAT, GND) plus two M3 bolt holes at 55.61mm. Fit LAST: tallest part, spans 72.9mm. Substituting a different holder was rejected -- the footprint is dimensionally specific and swapping it is a board change."}
 
+# ACCESSORIES: parts the board needs that are on NO bill of materials.
+#
+# A self_fit part is on the BOM and pulled out of the assembly order. An
+# accessory was never on the BOM at all, because it is not soldered to the
+# board: it is fitted afterwards, and a netlist has no way to know it exists.
+# That is why fab_package.py could report "ready" while six shunts per board
+# were unbought and unrecorded. Discussed in six documents, sourced in none,
+# until Matt caught it at ordering time on 2026-08-23.
+#
+# `per_board` drives the quantity arithmetic in the readiness report. There is
+# no reference designator, so nothing here is matched against the BOM and
+# nothing is pulled from the assembly order.
+accessories:
+  cell-18650: {source: "Orbtronic, direct", per_board: 1, note: "18650 PROTECTED cell, the thing BT1 holds. ALREADY ORDERED by Matt direct from Orbtronic, recorded 2026-08-23. THE BOARD SILKSCREENS *PROTECTED CELL ONLY* BESIDE BT1 and that is a requirement, not advice: the bq24074 protects the charge path, not the cell, so over-discharge and short protection have to come from the cell's own PCM. Design figures in values.md assume 3000 mAh -- charge time at 1 A (0.33C, gentle, chosen over 1.5 A for cell life) and runtime from ~2500 mAh usable down to 3.0 V. NOT RECORDED HERE: the exact Orbtronic model and capacity. If it is under 3000 mAh the runtime table in values.md moves and should be regenerated rather than left to read as measured."}
+  jumper-shunt: {source: "Digi-Key S9001-ND", per_board: 6, note: "Sullins SPC02SYAN, 2.54mm 2-position CLOSED TOP, gold flash, 6.50mm tall, $0.0247/100. Bridges one adjacent pair on JP1-JP6, the mic capsule selects. CLOSED TOP IS DELIBERATE: the grip version (TE 2-881545-2) was proposed and rejected by Matt 2026-08-23 -- the board lives sealed in a BUD CU-477 and these are set once, so a 10.90mm finger tab buys nothing and stands in the loom where a cable can unseat it. The header pins are 6mm, so a 6.50mm closed top encloses them completely. Gold flash suits a set-once jumper; 30uin gold buys durability against insertion cycles this application never applies."}
+
 # Deliberately NOT mapped, with the reason:
 #
 

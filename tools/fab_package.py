@@ -30,6 +30,15 @@ so it is pulled from the assembly order into self-fit.csv. A DNP part is one the
 board is complete without. A self-fit part is one the board is NOT complete
 without, and conflating them ships an unpopulated battery holder.
 
+AND ACCESSORIES ARE A THIRD CATEGORY AGAIN, WHICH A BOM CANNOT SEE.
+A self-fit part is on the BOM and pulled out of the assembly order. An accessory
+was never on the BOM, because it is not soldered to the board and a netlist has
+no way to know it exists. The six jumper shunts JP1-JP6 need are the case that
+found this: discussed in six documents, sourced in none, while this tool
+reported "ready". A readiness report that covers only what the assembler fits is
+not a readiness report. They are listed from lcsc.yaml `accessories:` with a
+per-board quantity, and they go to the owner's shopping list, never to the fab.
+
 THE PART NUMBERS ARE THE GATE
 -----------------------------
 An assembly house cannot quote a BOM without supplier part numbers, and this
@@ -154,6 +163,34 @@ def load_self_fit():
     return out
 
 
+def load_accessories():
+    """Parts on no BOM, bought by the owner and fitted after assembly.
+
+    Keyed by a NAME, not a reference designator, because there is no designator
+    to key on -- a shunt is not a placed component. Nothing here is matched
+    against the BOM or pulled from the assembly order; the quantity is derived
+    from per_board instead."""
+    if not os.path.exists(MAP): return {}
+    out, section = {}, None
+    for raw in open(MAP):
+        line = raw.rstrip("\n")
+        if not line.strip() or line.lstrip().startswith("#"): continue
+        if not line.startswith((" ", "\t")):
+            section = line.split(":")[0].strip(); continue
+        if section != "accessories": continue
+        m = re.match(r'\s+"?([^":]+)"?:\s*\{(.*)\}\s*$', line)
+        if not m: continue
+        body = m.group(2)
+        src = re.search(r'source:\s*"([^"]*)"', body)
+        per = re.search(r'per_board:\s*(\d+)', body)
+        note = re.search(r'note:\s*"([^"]*)"', body)
+        out[m.group(1).strip()] = {
+            "source": src.group(1) if src else "",
+            "per_board": int(per.group(1)) if per else 0,
+            "note": note.group(1) if note else ""}
+    return out
+
+
 def split_refs(field):
     """BOM reference fields group refs and may use ranges. Expand both, so a
     self-fit ref inside a grouped row is actually found rather than missed."""
@@ -201,6 +238,7 @@ def main():
 
     by_ref, by_fp, by_vf = load_map()
     self_fit = load_self_fit()
+    accessories = load_accessories()
 
     # The BOARD is the authority on reference names. pcbnew stores them
     # literally; the schematic BOM exporter does not. It parses a reference as
@@ -338,6 +376,14 @@ def main():
             w = csv.DictWriter(f, fieldnames=list(pulled[0].keys()))
             w.writeheader(); w.writerows(pulled)
 
+    if accessories:
+        with open(tmp + "/accessories.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["Item", "PerBoard", "Source", "Note"])
+            w.writeheader()
+            for name, a in sorted(accessories.items()):
+                w.writerow({"Item": name, "PerBoard": a["per_board"],
+                            "Source": a["source"], "Note": a["note"]})
+
     total = sum(int(r["QUANTITY"]) for r in out)
     ncpl = len(open(tmp + "/cpl.csv").readlines()) - 1
     print(f"\n  BOM {len(out)} lines / {total} parts to place (DNP excluded)")
@@ -355,6 +401,15 @@ def main():
         print(f"  -> self-fit.csv. They are NOT DNP: the board is not complete "
               f"until they are fitted.")
 
+    if accessories:
+        print(f"\n  {len(accessories)} accessory line(s) on NO bill of materials -- "
+              f"YOU buy these too:")
+        for name, a in sorted(accessories.items()):
+            print(f"    {name:<14} {a['per_board']}/board   {a['source']}")
+        print(f"  -> accessories.csv. A BOM cannot see these: they are not "
+              f"soldered to the board, so nothing places them and nothing "
+              f"misses them either.")
+
     if apply_:
         os.makedirs(OUT, exist_ok=True)
         z = os.path.join(OUT, "caryatid-fab.zip")
@@ -364,12 +419,14 @@ def main():
         # whole mechanism exists to avoid.
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
             for f in sorted(os.listdir(tmp)):
-                if f == "self-fit.csv": continue
+                if f in ("self-fit.csv", "accessories.csv"): continue
                 zf.write(os.path.join(tmp, f), f)
-        for f in ("bom.csv", "cpl.csv", "self-fit.csv"):
+        for f in ("bom.csv", "cpl.csv", "self-fit.csv", "accessories.csv"):
             src = os.path.join(tmp, f)
             if os.path.exists(src): shutil.copy(src, OUT)
-        extra = " + self-fit.csv (yours, not the fab's)" if pulled else ""
+        yours = [n for n, c in (("self-fit.csv", pulled),
+                                ("accessories.csv", accessories)) if c]
+        extra = f" + {' + '.join(yours)} (yours, not the fab's)" if yours else ""
         print(f"\n  wrote {z} ({os.path.getsize(z)//1024} kB) and bom/cpl{extra} beside it")
 
     if missing:

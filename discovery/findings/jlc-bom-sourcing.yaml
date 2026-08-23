@@ -160,6 +160,40 @@ evidence:
     regulator, a codec, a ferrite -- and no part in this BOM should be justified
     by "absonus has it" on that basis alone.
 
+  - >-
+    2026-08-23: ACCESSORIES ADDED AS A THIRD SOURCING CATEGORY, after Matt
+    caught at ordering time that six jumper shunts per board were unbought and
+    unrecorded. They are not DNP and not self_fit. A self_fit part is on the BOM
+    and pulled out of the assembly order; an accessory was never on the BOM,
+    because it is not soldered to the board and a netlist cannot see it. That is
+    how fab_package.py reported "ready" while a part the board does not work
+    without appeared on no list at all. Shunts were discussed in six documents
+    and sourced in none. Recorded in hardware/pcb/lcsc.yaml under `accessories:`
+    with a per_board quantity, reported by fab_package.py, and written to
+    local/fab/accessories.csv, which stays OUT of the fab zip for the same
+    reason self-fit.csv does.
+    JUMPER SHUNT = Sullins SPC02SYAN, Digi-Key S9001-ND: 2.54mm 2-position,
+    CLOSED TOP, gold flash, 6.50mm tall, $0.0247 at qty 100, 947,077 in stock,
+    verified against digikey.com 2026-08-23. Six per board for JP1-JP6.
+    I FIRST RECOMMENDED THE GRIP VERSION AND WAS WRONG. TE 2-881545-2 has a
+    finger tab, gold 30uin and stands 10.90mm. Matt rejected it: the board lives
+    sealed inside a BUD CU-477, the jumpers are set once per capsule and not
+    revisited, so the tab buys nothing and stands 4.40mm further into the loom
+    where a cable can unseat it. The closed top also fully encloses the header's
+    6mm pins. Gold flash is the right spec once insertion cycles are ruled out;
+    30uin gold is durability against a stress this application never applies.
+    Preci-Dip 999-19-220-00 is lower again at 5.00mm and was rejected on supply:
+    8 units from a marketplace seller, 11 week manufacturer lead time.
+    CELL = 18650 PROTECTED, one per board, ALREADY ORDERED by Matt direct from
+    Orbtronic. The board silkscreens "PROTECTED CELL ONLY" beside BT1 and that
+    is a requirement rather than advice: the bq24074 protects the charge path,
+    not the cell, so over-discharge and short protection must come from the
+    cell's own PCM. NOT VERIFIED: the exact Orbtronic model and capacity. The
+    figures in docs/values.md assume 3000 mAh for both charge time at 1 A
+    (0.33C) and runtime from ~2500 mAh usable down to 3.0 V. If the ordered cell
+    is smaller those figures are wrong and should be regenerated, not left
+    reading as though they were measured.
+
 last_verified: 2026-08-23
 
 notes: >-
