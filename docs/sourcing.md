@@ -589,6 +589,22 @@ Both are already mapped, so 5 of caryatid's placed parts need no purchase.
 now fitted** (ADR 0010), so unlike when this was written, it *is* needed for
 assembly.
 
+**Corroborated against the fabricated board, 2026-08-23.**
+`absonus-v0.2.kicad_pcb` places R2 on `Resistor_SMD:R_0603_1608Metric` — the
+same footprint caryatid uses for R45 — so the code *and* the footprint pairing
+are confirmed against hardware that exists.
+
+⚠️ **absonus v0.2 is not fully tested.** What fabrication establishes is a
+*package-level* fact: `C4211` was ordered against an 0603 land pattern and the
+two went to hardware together. It does not establish that the part behaves
+correctly in circuit. For R45 that distinction does not bite — the claim is that
+a 3 kΩ 1% 0603 resistor fits an 0603 footprint, which testing would add nothing
+to. **It would bite for anything whose correctness is behavioural** — a
+regulator, a codec, a ferrite — and no part here should rest on "absonus has it"
+for that kind of claim. (absonus's own schematic disagrees
+with its own board there, listing `R_0201_0603Metric`; the PCB is what was
+built. Not chased — it is absonus's discrepancy, not caryatid's.)
+
 ## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
 
 `tools/fab_package.py` reports **127 of 127 covered** and exits zero
@@ -620,9 +636,25 @@ constraints.
 > footprint as R43/R44), and from the JLC listing confirming Basic stock:
 > <https://jlcpcb.com/partdetail/23889-0603WAF4701T5E/C23162>.
 >
-> Not verified: whether baby-borg was ever ordered. That repo holds design files
-> and dated backups, no production BOM or gerber set — so this is prior *use* of
-> the code, not a proven purchase.
+> **baby-borg was never ordered** (Matt, 2026-08-23), so those four instances
+> are a consistency check, not a second source — the same commodity part chosen
+> by the same person in a design that never reached a fab. baby-borg is *not*
+> superseded by this board, incidentally: it is a planned future consumer of it.
+>
+> **Checked against the built absonus v0.2, not just its BOM.** v0.2 is the
+> variation with I2C added and it *was* fabricated. Its schematic carries
+> exactly two resistors — R1 10k (`C15401`) and R2 3k (`C4211`). The absence of
+> a 4k7 is informative rather than empty: **v0.2 has I2C via a Qwiic connector
+> (J1, `C160404`) but fits no pull-ups at all**, relying on the sensor
+> breakout's own. caryatid fits R43/R44 itself per
+> [ADR 0010](decisions/0010-nothing-is-dnp.md), which is why it needs a 4k7 and
+> absonus never did.
+>
+> The evidence for `C23162` is therefore the catalogue query and the JLC
+> listing: **one source on the part, none on this board's use of it**, and no
+> prior order anywhere contains a 4k7. For a 4.7 kΩ 1% 0603 pull-up that is
+> enough — the specification *is* the value, tolerance and footprint, all three
+> confirmed — but it should not be described as three sources.
 >
 > **Note the divergence on 10k.** absonus used `C15401`; caryatid deliberately
 > does not, because it is 5% *and* Extended. Prior orders are a source of

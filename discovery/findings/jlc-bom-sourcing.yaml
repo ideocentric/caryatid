@@ -102,6 +102,64 @@ evidence:
     order record was found in that repo, only design files and dated backups, so
     this is prior USE of the code in a design of Matt's, not a proven purchase.
 
+  - >-
+    2026-08-23: the baby-borg corroboration for C23162 is WEAKER THAN THE ENTRY
+    ABOVE IMPLIES, and the open question in it is now answered. Matt states
+    baby-borg WAS NEVER ORDERED, and that this design supersedes it. So the four
+    R3-R6 instances are not prior use in a board that shipped; they are the same
+    commodity part chosen by the same person in an earlier design that never
+    reached a fab, and they inherit whatever reasoning that choice had -- which
+    is not independently recorded anywhere. Treat them as a consistency check,
+    not as a second source. THE EVIDENCE FOR C23162 IS THEREFORE: the live JLC
+    catalogue query of 2026-08-22, and Matt's confirmation of the Basic-library
+    listing at https://jlcpcb.com/partdetail/23889-0603WAF4701T5E/C23162. Both
+    are about the PART. Neither is about this board's use of it, and no prior
+    order anywhere contains a 4k7. For a 4.7kOhm 1% 0603 pull-up that is
+    sufficient -- the specification is the value, the tolerance and the
+    footprint, all three confirmed -- but it is one source on the part and zero
+    on the application, and it should not be described as three.
+
+  - >-
+    2026-08-23: CORRECTION to the entry above, which said "this design supersedes
+    it". That is wrong and was my inference, not Matt's words. baby-borg is NOT
+    superseded -- it is a PLANNED FUTURE CONSUMER of caryatid: an I2C link to a
+    small lidar, an electret mic and flex sensors, housed inside a baby doll,
+    with the control set still undetermined. That is the case ADR 0002 makes --
+    caryatid scopes the choices already known so an instrument can defer the
+    rest. Integration is explicitly deferred; loa and caryatid stand alone for
+    now. What IS true from that entry: baby-borg was never ordered, so its four
+    C23162 instances remain a consistency check rather than a second source.
+  - >-
+    2026-08-23: the absonus check re-run against the BUILT v0.2 board rather
+    than only its production/bom.csv, since Matt noted v0.2 was the variation
+    with I2C added and was built. Confirms the earlier finding and improves on
+    it. absonus-v0.2.kicad_sch carries exactly TWO resistors -- R1 10k (C15401)
+    and R2 3k (C4211) -- so there is no 4k7 in any prior order, and C23162 gains
+    nothing here. THE REASON IS INFORMATIVE RATHER THAN AN ABSENCE: v0.2 does
+    have I2C, as a Qwiic connector J1 (C160404), but fits NO pull-ups at all and
+    relies on the sensor breakout's own. caryatid fits its own R43/R44 instead,
+    per ADR 0010, which is why it needs a 4k7 and absonus never did.
+    SEPARATELY, C4211/R45 IS NOW CORROBORATED PROPERLY. absonus-v0.2.kicad_pcb
+    places R2 on Resistor_SMD:R_0603_1608Metric -- the same footprint caryatid
+    uses for R45 -- so the code and the footprint pairing are both confirmed
+    against a board that was actually fabricated. Note the schematic disagrees
+    with its own board there, listing R_0201_0603Metric on R2; the PCB is what
+    was built and the PCB matches. Not chased -- it is absonus's discrepancy,
+    not caryatid's.
+
+  - >-
+    2026-08-23: QUALIFIER on the entry above, from Matt: absonus v0.2 IS NOT
+    FULLY TESTED. It was fabricated, so what it corroborates is that C4211 was
+    ordered against an R_0603_1608Metric footprint and the two were committed to
+    hardware together -- a PACKAGE-LEVEL fact. It does NOT corroborate that the
+    part behaves correctly in circuit, because the circuit has not been fully
+    exercised. For R45 that distinction happens not to bite: the claim being
+    supported is that a 3k 1% 0603 resistor fits an 0603 land pattern, which
+    fabrication establishes and testing would add nothing to. It WOULD bite for
+    anything whose correctness depends on behaviour rather than geometry -- a
+    regulator, a codec, a ferrite -- and no part in this BOM should be justified
+    by "absonus has it" on that basis alone.
+
 last_verified: 2026-08-23
 
 notes: >-
