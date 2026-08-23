@@ -64,6 +64,7 @@ the wrong directory.
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Datasheets, links and document numbers | [docs/datasheets.md](docs/datasheets.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
+| **Rules the tools must follow, and what each cost** | [docs/conventions.md](docs/conventions.md) |
 
 **`docs/pins.yaml` is the source of truth.** The markdown table is generated:
 

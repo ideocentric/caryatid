@@ -204,3 +204,34 @@ and A2 and choose **Exclude this violation**, save, then run
 `python3 tools/drc_exclusions.py --apply` to attach the documented reasons.
 Plain DRC then reads zero and `local/fab/caryatid-fab.zip` is orderable as it
 stands.
+
+## 2026-08-23 — A1/A2 excluded; plain DRC reads zero; tool conventions written down
+
+**Completed:**
+
+- **Matt excluded the A1 and A2 `lib_footprint_mismatch` violations** in
+  pcbnew's DRC panel. The keys landed at x 115.853, y 66.248 and 76.265 — the
+  coordinates `drc_exclusions.py` could not reconstruct and rightly refused to
+  synthesise. `drc_exclusions.py --apply` attached their documented reasons:
+  5 exclusions kept, 2 given a reason, **plain DRC now reports 0 violations**.
+- **`docs/conventions.md` written.** Eight rules that apply across tools, each
+  with the failure that produced it and the measurement that proves it. They
+  had been buried in individual docstrings where the next tool to repeat the
+  mistake could not see them. Linked from the README's "Start here" table.
+  Rule 1 is the one that prompted this: **recompute the zone fill before
+  verifying a copper change**, which cost four sound repairs when
+  `widen_necks.py` judged widened tracks against a pour that had not moved.
+
+**Verified:** plain DRC **0 violations**, 0 unconnected, 0 parity;
+`drc_exclusions.py` 0 new, 5 accepted; `check_board.py` 12/12;
+`fab_package.py` **ready**, 127 of 127.
+
+**In flight:** nothing.
+
+**Open questions:** unchanged — C23162 (4k7, R43/R44) is a tooling choice rather
+than Matt's and is worth a glance before ordering; R52/R54 dissipation; shared
+`MIC_RTN`; and the three items carried from 2026-08-19.
+
+**Next step:** order. `local/fab/caryatid-fab.zip` (373 kB, 14 files) plus
+`bom.csv` and `cpl.csv` beside it are current and every gate is green. BT1 is
+bought separately — `self-fit.csv`, Digi-Key 3029216.
