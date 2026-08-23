@@ -32,8 +32,15 @@ measured:
     diameter_tolerance_mm: 0.03
     capacity_mah: 3400
     length_measured_mm: 69.48   # Matt, in hand, INCLUDING the shrinkwrap
+  board_commitment:
+    # Measured from hardware/pcb/caryatid.kicad_pcb 2026-08-23. This is what a
+    # holder substitution would have to match, or the board changes.
+    pin_spacing_mm: 72.900      # pads at x 80.900 and 153.800
+    m3_hole_spacing_mm: 55.610  # NPTH d3.2 at x 89.345 and 144.955
+    courtyard_mm: [79.20, 22.40]
   holder_cavity:
-    internal_length_mm: 72.9    # per the BT1 sheet
+    internal_length_mm: 72.9    # per the BT1 sheet, BUT SEE THE AMBIGUITY BELOW
+    figure_is_ambiguous: true
     spring_wire_width_mm: 0.38
     # Derived from MPD's OWN two numbers, not from anything measured:
     # a 72.9 mm cavity accepting 65-68 mm cells means the spring occupies
@@ -96,6 +103,38 @@ evidence:
     wrong, and neither part is at fault on its own: BH-18650-PC is a sound
     holder for a 65-68 mm cell and the Orbtronic 3400 is a sound cell. It is the
     PAIRING that was never checked against both specifications.
+
+  - >-
+    2026-08-23: BT1's footprint measured off the board. Its two electrical pads
+    are 72.900 mm apart and its two M3 holes 55.610 mm apart, courtyard
+    79.20 x 22.40 mm. THIS CASTS DOUBT ON THE 72.9 mm "internal" FIGURE. 72.900
+    is the PIN SPACING on this board, and pins sit at the outer ends with the
+    contacts inboard of them, so a holder's cell cavity is necessarily SHORTER
+    than its pin spacing. If the sheet figure is the same 72.9, it is most
+    likely that same pin dimension rather than a cavity, in which case the gap
+    left for the spring is smaller than 3.42 mm and the fit is worse than the
+    arithmetic above suggests, not better. The 3.42 mm figure should be treated
+    as a CEILING on the spring space, not an estimate of it.
+  - >-
+    2026-08-23: MPD's own family page states that PCM-equipped cells are "1mm
+    longer than standard", which puts a protected cell around 66.3 mm. The
+    market says otherwise: a protection PCB adds 2-3 mm and protected button-top
+    18650s run 68-71 mm, with 68 the practical floor. THAT IS THE ROOT CAUSE.
+    BH-18650-PC's 65-68 mm window was specified against an underestimate of how
+    long protected cells actually are, which is why it sits at the very bottom
+    of the real distribution and admits almost none of the market.
+  - >-
+    2026-08-23: searched for a replacement holder that publishes a cell-length
+    range covering ~70 mm. NONE FOUND. Keystone 1043 (Digi-Key 36-1043-ND,
+    77 x 20.65 x 14.86 mm overall, 71.64 mm pin spacing, $2.99/1, 19,165 in
+    stock) publishes overall dimensions and pin spacing but no cavity length or
+    cell range; Digi-Key's Keystone highlight page distinguishes 1042/1043 only
+    as SMD versus through-hole, not standard versus protected. MPD is unusual in
+    publishing a range at all. CONSEQUENCE: no substitute can currently be
+    recommended ON SPECIFICATION, because the specification is not published.
+    Swapping to an unverified holder trades one unchecked pairing for another.
+    Note also that 71.64 mm does not match this board's 72.900 mm pin spacing,
+    so a Keystone 1043 is a board change regardless.
 
 last_verified: 2026-08-23
 
