@@ -1,0 +1,105 @@
+id: carbon-capsule-DC-resistance
+kind: other
+source_claim: >-
+  That R52/R54 dissipate about 92 mW on a 100 mW 0603, "if the capsule sits at
+  0.5 V". The 0.5 V is an ASSUMPTION carried in docs/sourcing.md, not a
+  measurement, and it implies a capsule resistance of about 24 ohm that nobody
+  has checked.
+source_ref: >-
+  docs/sourcing.md "Power is not a constraint" callout; docs/audio.md;
+  ADR 0009 fitted the left channel and ADR 0010 the right, so both resistors are
+  populated on every board
+resource: >-
+  R52 and R54, 220 ohm 0603 1% 100 mW, the carbon mic bias pair, +5V into
+  BIAS_C_L and BIAS_C_R
+status: unverified          # nothing measured yet; this record exists to say WHAT to measure
+
+the_measurement:
+  what: DC resistance of the carbon capsule, in ohm
+  why_only_this: >-
+    The capsule sits in series with the 220 ohm resistor across 5 V, so the
+    divider is fully determined by it. One number fixes the current, the
+    dissipation in R52/R54, and the total through the gated MIC_RTN return.
+    Nothing else needs measuring to close this.
+  how: >-
+    Multimeter across the capsule's two terminals, OUT OF CIRCUIT, lowest ohms
+    range.
+  two_traps:
+    - >-
+      CARBON CAPSULES ARE NOT STABLE RESISTORS. The granules resettle, which is
+      the same effect docs/mic-configurations.md calls the carbon tell: "jumps
+      when tapped". Take several readings, tap the capsule between them, and USE
+      THE LOWEST. Lowest is worst case for R52, and worst case is what a power
+      rating is judged against.
+    - >-
+      MEASURE EVERY CAPSULE INTENDED FOR USE, not one representative. The spread
+      across carbon elements is wide and the resistor has to survive the worst
+      one anyone plugs in.
+
+# P = (5 / (220 + Rc))^2 * 220. Computed 2026-08-23, not measured.
+decision_table:
+  formula: "I = 5 / (220 + Rc);  P_R52 = I^2 * 220"
+  thresholds:
+    over_0603_rating_below_ohm: 14.5      # P exceeds 100 mW
+    over_50pc_derate_below_ohm: 111.7     # P exceeds 50 mW
+  worked:
+    - {rc_ohm: 0,   ma: 22.7, mw: 113.6, verdict: over rating}
+    - {rc_ohm: 14.5, ma: 21.3, mw: 100.0, verdict: at the rating}
+    - {rc_ohm: 25,  ma: 20.4, mw: 91.6,  verdict: "over 50% derate; this is what the 0.5 V assumption implies"}
+    - {rc_ohm: 50,  ma: 18.5, mw: 75.4,  verdict: over 50% derate}
+    - {rc_ohm: 100, ma: 15.6, mw: 53.7,  verdict: over 50% derate}
+    - {rc_ohm: 112, ma: 15.1, mw: 49.9,  verdict: comfortable}
+    - {rc_ohm: 200, ma: 11.9, mw: 31.2,  verdict: comfortable}
+    - {rc_ohm: 300, ma: 9.6,  mw: 20.3,  verdict: comfortable}
+  what_to_do:
+    below_14_5_ohm: >-
+      R52/R54 exceed the 0603 rating outright. Move both to 0805. This is not a
+      judgement call.
+    between_14_5_and_112_ohm: >-
+      Inside rating, above a 50% derate. A judgement call, and the relevant
+      factor is that these run continuously whenever the jumper is on carbon and
+      the hook switch is closed. 0805 costs a footprint change on two parts.
+    above_112_ohm: >-
+      Nothing to do. Record the measurement and close this.
+
+# The same number answers a second carried question for free.
+also_answers:
+  question: MIC_RTN carries both channels through one gated hook switch
+  total_current_ma:
+    - {rc_ohm: 25, both_channels_ma: 41}
+    - {rc_ohm: 50, both_channels_ma: 37}
+    - {rc_ohm: 100, both_channels_ma: 31}
+  note: >-
+    Tens of milliamps is not alarming for a hook switch, but it is the figure to
+    check the gating element against, and it costs nothing once Rc is known.
+
+evidence: []          # deliberately empty: nothing has been measured
+
+last_verified: 2026-08-23
+
+notes: >-
+  THIS RECORD EXISTS BECAUSE THE QUESTION KEPT BEING CARRIED WITHOUT BEING
+  SPECIFIED. "Measure a capsule, then decide whether those two want an 0805" has
+  appeared in the worklog since 2026-08-19 without ever saying what reading
+  would mean what. A carried question with no threshold attached cannot be
+  closed by anyone, including the person who wrote it.
+
+  WHAT IS COMPUTED HERE AND WHAT IS NOT. The formula, the two thresholds and the
+  table are arithmetic from the schematic values, done 2026-08-23. They are
+  reliable in the sense that they follow from 220 ohm and 5 V. The 0.5 V capsule
+  drop in the original note is neither measured nor derived; it appears to be an
+  illustrative figure that hardened into a specification through repetition, and
+  it happens to land in the middle band where the answer is a judgement rather
+  than at either end where it would be obvious.
+
+  IT IS NOT URGENT AND IT IS NOT NOTHING. Two things keep it off the critical
+  path: the resistor only dissipates when its jumper is on the carbon position
+  (2-3), and MIC_RTN gates the current at the hook switch. Neither makes an 0603
+  at 92% of rating a comfortable place to be, and a stereo carbon pair puts both
+  currents through one gated return.
+
+  THE BOARDS ARE ALREADY IN FABRICATION with 0603 fitted. If the measurement
+  comes back under 14.5 ohm the fix on existing boards is a hand-fitted 0805
+  bridging the 0603 land, which is ugly but workable, or running that channel on
+  electret. A board revision would only be warranted if carbon turns out to be
+  the common case rather than an option.

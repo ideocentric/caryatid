@@ -41,5 +41,6 @@ unverified, and should say so.
 | --- | --- |
 | [`bud-cu477-interior.yaml`](findings/bud-cu477-interior.yaml) | BUD CU-477 floor, height, plate profile, board mounting datum and the power switch intrusion |
 | [`bt1-cell-fit.yaml`](findings/bt1-cell-fit.yaml) | Whether the Orbtronic 3400 mAh protected cell fits the BH-18650-PC holder. `conflict`: it seats, over-deflecting the contacts past their rating |
-| [`jlc-order-2026-08-23.yaml`](findings/jlc-order-2026-08-23.yaml) | Every setting on the JLCPCB order form for the first build, checked against the board. `in-progress`: not yet placed |
+| [`carbon-capsule-dc-resistance.yaml`](findings/carbon-capsule-dc-resistance.yaml) | What to measure on a carbon capsule, and what each reading means for R52/R54. `unverified`: nothing measured yet |
+| [`jlc-order-2026-08-23.yaml`](findings/jlc-order-2026-08-23.yaml) | Every setting on the JLCPCB order form for the first build, checked against the board, plus what was actually paid. `confirmed`: placed 2026-08-23 |
 | [`jlc-bom-sourcing.yaml`](findings/jlc-bom-sourcing.yaml) | The LCSC codes (43 as of 2026-08-23): cost, library split, assembly mode, pre-orders, and the build-quantity decision |

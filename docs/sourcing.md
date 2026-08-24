@@ -834,8 +834,16 @@ against the 100 mW 0603 rating — nearly 6× margin. Nothing else exceeds 18 mW
 > (`2-3`), and `MIC_RTN` gates the current at the hook switch. **Neither is a
 > reason to leave it unchecked** — an 0603 at 92% of rating is a thermal
 > question whichever way the shunt is set, and a stereo carbon pair puts both
-> currents through one gated return. Measure the capsule, then decide whether
-> these two want an 0805. See [audio.md](audio.md).
+> currents through one gated return.
+>
+> **What to measure and what each reading means is now specified**, in
+> [`discovery/findings/carbon-capsule-dc-resistance.yaml`](../discovery/findings/carbon-capsule-dc-resistance.yaml).
+> One number decides it, the capsule's DC resistance, and there are two
+> thresholds: **below 14.5 Ω** these exceed the 0603 rating outright and must go
+> 0805; **below about 112 Ω** they are inside rating but past a 50% derate, which
+> is a judgement call. Above that, nothing to do. Note the 0.5 V above is an
+> assumption rather than a measurement, and it implies about 24 Ω, which lands
+> in the middle band. See also [audio.md](audio.md).
 
 **Tolerance is a constraint, in three places:**
 
