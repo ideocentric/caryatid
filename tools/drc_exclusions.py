@@ -33,6 +33,15 @@ TWO MECHANISMS, AND WHY
    and the tool exits nonzero. This is the part that makes a run meaningful,
    and it does not depend on KiCad's file format at all.
 
+1b. RE-RUN --apply AFTER EVERY KiCad SESSION. KiCad rewrites .kicad_pro when it
+   opens the project and DROPS THE COMMENT TEXT from exclusions it did not
+   write itself, leaving the entry in place with an empty reason. Observed
+   2026-08-23: A1 and A2 kept their exclusions and lost both reasons after the
+   board was opened at 23:49. The gate still passes, because the gate matches on
+   type and item rather than on the comment, so nothing fails loudly. The
+   exclusion survives and its justification quietly does not, which is the worse
+   of the two failure modes. Re-running --apply restores them in a second.
+
 2. KiCad-native exclusions. THIS TOOL NEVER INVENTS ONE. Excluding is done in
    KiCad's DRC panel (right-click -> Exclude this violation); the tool reads
    what KiCad wrote, attaches the documented reason to it, and prunes entries
