@@ -3,25 +3,22 @@
 **How to build an instrument on this board: what it gives you, what you must
 provide, and what you may not change.**
 
-This is the document to read first. [connectors.md](connectors.md) is the pin-by-pin
-reference; this is the shape of the thing.
+[platform.md](platform.md) comes first and decides whether to use the board at
+all. [connectors.md](connectors.md) is the pin-by-pin reference. This is the
+shape of the thing in between.
 
 ---
 
-## What caryatid is
+## Before this page
 
-A common power and I/O carrier for a **Daisy Seed**. It provides the charger,
-the boost converter, the indicators, the Seed socket, the audio jacks and every
-panel connector. One PCB layout serves absonus, loa and baby borg — each
-populates the subset it needs.
+**[platform.md](platform.md) is the capability specification**: what the board
+supports, what it deliberately does not, the physical envelope, and where the
+boundary sits. Read that to decide whether caryatid suits your build.
 
-**150 × 90 mm, 2 layers, and nothing is DNP.** ADR 0010 closed the last of it:
-the right audio channel is fitted and jumper-selected like the left, the
-panel-io options are fitted, and the four `open` divider legs are deleted. BT1
-is fitted by hand, not by the assembler. **The part count is deliberately absent
-here until the board is updated from the schematic** — see
-[status.md](status.md), which is where the counts are re-derived by
-`fab_package.py` rather than written down twice.
+This page assumes you have decided. It covers what you must provide, what you
+may not change, and the choices each instrument still has to make.
+
+### Division of responsibility
 
 | caryatid provides | the instrument provides |
 | --- | --- |
@@ -89,14 +86,13 @@ the 5 V rail, check it against that table rather than assuming headroom.
 
 ---
 
-## Mechanical requirements
+## Mechanical
 
-| | |
-| --- | --- |
-| Board | 150 × 90 mm, 3 mm corner radius |
-| Mounting | Four M3, **±70 × ±40 mm** about the board centre, 5 mm in from every edge |
-| Standoff | **4 mm as built** (2 mm is the electrical minimum — everything is on the front face, so the back is bare copper) |
-| Tallest part | 26.91 mm stack |
+**The envelope, the standoff reasoning and the vertical budget are in
+[platform.md](platform.md)**, including why the standoff wants to be short and
+why cable terminations, not the board, usually decide the height.
+
+What follows is specific to one enclosure.
 
 ### If you use the BUD CU-477
 
@@ -223,6 +219,9 @@ rather than during one.
 ---
 
 ## Licensing
+
+The full split is in [platform.md](platform.md); what matters when you
+distribute is below.
 
 | | |
 | --- | --- |

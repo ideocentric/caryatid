@@ -26,7 +26,7 @@ states what is supported, and where the boundary is. Once you have decided,
 | --- | --- |
 | **Module** | Daisy Seed, seated on two 1×20 sockets |
 | **Board** | 150 × 90 mm, two layers, 3 mm corner radius |
-| **Power in** | DC barrel jack via a 2-way connector, 5 V nominal |
+| **Power in** | DC barrel jack via a 2-way connector, **5 to 9 V** |
 | **Battery** | One 18650, on-board holder, charged in place |
 | **Charge** | bq24074, 1 A, with power-path so the instrument runs while charging |
 | **Boost** | TPS61023 to 5.0 V, so the rail holds as the cell falls |
@@ -100,9 +100,11 @@ yours to choose.
 
 ## Power
 
-**Input.** 5 V nominal at J1. A series Schottky gives reverse-polarity
-protection at about 0.4 V, and the charger needs 4.35 V minimum at `IN`, so a
-5 V adapter has margin. The input limit is set at 1.29 A.
+**Input.** **5 to 9 V** at J1, never 12 V. A series Schottky gives
+reverse-polarity protection at about 0.4 V, and the charger needs 4.35 V minimum
+at `IN`, so a 5 V adapter still has margin. Input over-voltage protection trips
+at 10.2 to 10.8 V, which is what puts the ceiling at 9. The input current limit
+is set at 1.29 A.
 
 **Battery.** One 18650 in an on-board holder. **A protected cell is required**,
 and the board says so in silkscreen: the charger protects the charge path, not
@@ -268,6 +270,10 @@ and the tooling, not what you write against the header.
 
 Per-file `SPDX-License-Identifier` headers are authoritative. See
 [LICENSING.md](../LICENSING.md).
+
+**If you distribute something built on this board**, note that CERN-OHL-S
+defines *Complete Source* as the editable design files: shipping Gerbers alone
+does not discharge it. [integration.md](integration.md) has the detail.
 
 ---
 
