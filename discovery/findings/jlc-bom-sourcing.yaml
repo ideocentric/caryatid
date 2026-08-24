@@ -326,6 +326,22 @@ evidence:
     five spare holders and seventy spare shunts, so the consumed cost of these
     five boards is about $407.83 or $81.57 a board.
 
+  - >-
+    2026-08-23: docs/values.md REGENERATED from the cell actually bought, closing
+    the note carried since the cell was priced. It had reasoned from a 3000 mAh
+    design basis throughout while the ordered cell is 3400 mAh. The derivation
+    was recovered from the document's own printed numbers rather than assumed:
+    usable capacity is 83.3% of nameplate (2500/3000), and runtime is usable
+    divided by cell current, which reproduces the published 10.8 / 6.5 / 4.6 h
+    to within rounding. Charge is CC to roughly 80% then the CV tail, which
+    reproduces the published 3.5 h.
+    RESTATED AT 3400 mAh: usable 2833 mAh; runtime 12.3 h quiet, 7.3 h typical,
+    5.2 h loud; charge 4.0 h at 1 A, 2.7 h at 1.5 A; rate 0.29C at 1 A and 0.44C
+    at 1.5 A. Runtime improved and charge time lengthened, which is why calling
+    the whole set "conservative" was wrong.
+    Also rebased: the A10 gauge leakage comparison, 92 mAh over six months,
+    which was quoted against 3000 mAh in BOTH values.md and seed-sheet.md.
+
 last_verified: 2026-08-23
 
 notes: >-

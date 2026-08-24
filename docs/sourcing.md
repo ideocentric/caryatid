@@ -283,19 +283,17 @@ with the electrolytic is the usual answer if measured ripple comes out high.
 
 ## The cell
 
-**Protected 18650, 3000 mAh design basis** — the specified cell is 3400 mAh, so
-the *runtime* figures below are conservative. **Charge time is not**: at the same
-1 A it goes roughly 13% longer than the ~3.5 h stated, and the charge rate eases
-from 0.33C to 0.29C. Those numbers still describe a 3000 mAh cell rather than the
-one actually bought. ~18 × 65 mm bare, **~18 × 69 mm
+**Protected 18650, 3400 mAh.** Every figure below is derived from the cell
+actually bought rather than from the old 3000 mAh design basis; see
+[values.md](values.md), re-derived 2026-08-23. ~18 × 65 mm bare, **~18 × 69 mm
 protected** — the protection PCB adds length at the negative end, which is the
 dimension that catches people fitting a holder.
 
 | | |
 | --- | --- |
-| Charge current | 1 A = **0.33C** — gentle for any 18650 |
-| Charge time | ~3.5 h |
-| Runtime | 10.8 h quiet, **6.5 h typical**, 4.6 h loud |
+| Charge current | 1 A = **0.29C**, gentle for any 18650 |
+| Charge time | **~4.0 h** |
+| Runtime | 12.3 h quiet, **7.3 h typical**, 5.2 h loud |
 | Connector | none — the cell seats in BT1, which cannot be wired backwards |
 
 **Protection is a requirement, not a preference** (P-7: over-charge,
@@ -373,7 +371,7 @@ output.** `TS` still gets a fixed 10 kΩ — the charger has no way to see it. E
 to misread as changing that.
 
 **Charge rate** is 1 A = 0.29C on 3400 mAh, gentler than the 0.33C the values
-were derived at. The vendor warns never to charge above 4.25 V; the bq24074 is a
+were originally derived at and now restated to. The vendor warns never to charge above 4.25 V; the bq24074 is a
 4.2 V CC/CV part, so it is exactly the charger they ask for.
 
 **Buy two.** Cells are priced and sold individually. The socketed holder was
@@ -701,11 +699,10 @@ bq24074 protects the charge path, not the cell, so over-discharge and short
 protection come from the cell's own PCM. `PROTECTED CELL ONLY` is printed beside
 BT1.
 
-> ⚠️ **The Orbtronic model and capacity are not recorded.** Every figure in
-> [values.md](values.md) assumes 3000 mAh: charge time at 1 A (0.33C) and
-> runtime from roughly 2500 mAh usable down to 3.0 V. If the ordered cell is
-> smaller, those numbers are wrong and want regenerating rather than leaving to
-> read as measured.
+> **Capacity recorded and the figures regenerated, 2026-08-23.** The cell is the
+> Orbtronic 3400 mAh, and [values.md](values.md) no longer reasons from the old
+> 3000 mAh design basis: charge time is ~4.0 h at 0.29C and runtime derives from
+> ~2833 mAh usable down to 3.0 V. Runtime went up, charge time went up with it.
 
 ## ~~The 56 parts still without a part number~~ — **all sourced 2026-08-18**
 

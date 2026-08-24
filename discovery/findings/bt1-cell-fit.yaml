@@ -220,5 +220,6 @@ notes: >-
   becomes conservative rather than wrong. It is NOT the safe direction for
   charge time, which gets roughly 13% longer at the same 1 A. Charge rate
   improves slightly, 1 A on 3400 mAh being 0.29C against the 0.33C the document
-  reasons about. Those figures should be regenerated from 3400 mAh rather than
-  left reading as though they described the cell that was actually bought.
+  reasons about. DONE 2026-08-23: docs/values.md is regenerated from
+  3400 mAh and no longer reasons from the design basis. Charge 4.0 h at 0.29C,
+  runtime 12.3 / 7.3 / 5.2 h from 2833 mAh usable.

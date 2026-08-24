@@ -29,12 +29,19 @@ The datasheet is explicit that **RISET must be 1%**, and not for accuracy: the
 part runs a short test on RISET at the maximum charge setting, and a loose
 resistor can trip it.
 
-**Charge time**, 3000 mAh cell at 1 A, allowing for the constant-voltage tail:
-about **3.5 hours**. Requirement P-9 asks for "fast enough between soundcheck
-and downbeat", which this is not. 1.5 A would give ~2.4 h. The trade is heat and
-cell life; 1 A on an 18650 is 0.33C and gentle, 1.5 A is 0.5C and still within
-spec for most cells. **Left at 1 A** — the barrel jack means charging can start
-early, and cell longevity is worth more than an hour.
+**Charge time**, 3400 mAh cell at 1 A, allowing for the constant-voltage tail:
+about **4.0 hours**. Requirement P-9 asks for "fast enough between soundcheck
+and downbeat", which this is not. 1.5 A would give ~2.7 h. The trade is heat and
+cell life; 1 A on this cell is 0.29C and gentle, 1.5 A is 0.44C and still within
+spec. **Left at 1 A**: the barrel jack means charging can start early, and cell
+longevity is worth more than an hour.
+
+> **These figures were re-derived from the cell actually bought, 2026-08-23.**
+> They previously assumed a 3000 mAh design basis and read ~3.5 h at 0.33C. The
+> ordered cell is the Orbtronic 3400 mAh, so charge takes about 13% longer and
+> the C rate eases. Runtime moved the other way; see below. The derivation is
+> CC to roughly 80% then the constant-voltage tail, which is what reproduces the
+> original numbers at 3000 mAh.
 
 `IIN-MAX = KILIM / RILIM`, **KILIM = 1550 AΩ**, and **RILIM must be 1.1 kΩ to
 8 kΩ**.
@@ -152,13 +159,17 @@ None of this threatens the copper — the `+5V_RAW` pour necks to 0.80 mm, good
 for 2.03 A at a 10 °C rise, which is 3.4× the worst documented case. **These
 numbers matter for runtime**, which is what the table below quotes.
 
-Runtime on a 3000 mAh cell, ~2500 mAh usable down to 3.0 V:
+Runtime on the **3400 mAh** cell, ~2833 mAh usable down to 3.0 V:
 
 | | Load | From cell | Runtime |
 | --- | --- | --- | --- |
-| Quiet | 150 mA | 231 mA | **10.8 h** |
-| Typical | 250 mA | 386 mA | **6.5 h** |
-| Loud, LEDs lit | 350 mA | 540 mA | **4.6 h** |
+| Quiet | 150 mA | 231 mA | **12.3 h** |
+| Typical | 250 mA | 386 mA | **7.3 h** |
+| Loud, LEDs lit | 350 mA | 540 mA | **5.2 h** |
+
+Re-derived 2026-08-23 from the cell actually bought. The earlier table assumed
+3000 mAh with 2500 usable; the usable fraction is unchanged at 83.3%, so 3400
+gives 2833.
 
 A gig is covered comfortably. Note the last row of the first table: a WiFi
 module pushes cell current past 1 A at low state of charge, which is the
@@ -250,7 +261,7 @@ knob.
 
 **A10 battery gauge** — 100 k / 100 k from BAT, 1 kΩ / 10 nF into the pin.
 Draws **~21 µA continuously, including while switched off**: about 0.5 mAh a
-day, 92 mAh over six months. Acceptable against 3000 mAh, but it is the one
+day, 92 mAh over six months. Acceptable against 3400 mAh, but it is the one
 thing on the board that never stops.
 
 **A11 charge status** — **superseded by the one-value version**: 10 k pull-up,

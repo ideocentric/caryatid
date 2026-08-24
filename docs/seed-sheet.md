@@ -78,7 +78,7 @@ Divides by two: 4.2 V reads 2.10 V, 3.0 V reads 1.50 V — comfortably inside th
 ADC range with room at both ends.
 
 **This draws ~21 µA continuously, including while the instrument is off** —
-about 0.5 mAh a day, 92 mAh over six months. Acceptable against 3000 mAh, and it
+about 0.5 mAh a day, 92 mAh over six months. Acceptable against 3400 mAh, and it
 is the one thing on the board that never stops. If that ever matters, the fix is
 a MOSFET in the divider leg, not larger resistors: raising them past 100 kΩ
 starts to fight the ADC's input impedance.
