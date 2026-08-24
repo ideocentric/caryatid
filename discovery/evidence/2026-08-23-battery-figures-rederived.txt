@@ -1,0 +1,24 @@
+values.md battery figures, re-derived for the 3400 mAh cell
+The model is VALIDATED against the document's own published numbers first,
+then re-run. That is what makes the new figures checkable.
+
+usable fraction implied by the doc: 0.8333  (2500/3000)
+usable at 3400 mAh: 2833 mAh
+
+RUNTIME = usable / cell current
+             load   cell  model@3000  printed   ->   @3400
+Quiet       150 mA  231 mA       10.82     10.8   ->   12.27
+Typical     250 mA  386 mA        6.48      6.5   ->    7.34
+Loud        350 mA  540 mA        4.63      4.6   ->    5.25
+
+CHARGE = CC to ~80% of capacity, then the CV tail
+  at 3000: CC 2.40 h + CV 1.10 h = 3.50 h   printed 3.5
+  at 3400: CC 2.72 h + CV 1.25 h = 3.97 h
+  at 3400, 1.5 A: 2.72 h   (printed 2.4 h at 3000)
+
+RATE
+  1.0 A on 3400 mAh = 0.294C   (was 0.33C)
+  1.5 A on 3400 mAh = 0.441C   (was 0.50C)
+
+Both models reproduce the printed 3000 mAh figures to within rounding,
+so the 3400 mAh restatement rests on the same reasoning, not a scale factor.

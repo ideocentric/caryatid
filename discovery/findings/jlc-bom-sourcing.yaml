@@ -341,6 +341,9 @@ evidence:
     the whole set "conservative" was wrong.
     Also rebased: the A10 gauge leakage comparison, 92 mAh over six months,
     which was quoted against 3000 mAh in BOTH values.md and seed-sheet.md.
+    Working saved as discovery/evidence/2026-08-23-battery-figures-rederived.txt,
+    which validates each model against the printed 3000 mAh numbers before
+    re-running it.
 
 last_verified: 2026-08-23
 

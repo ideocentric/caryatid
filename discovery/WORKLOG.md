@@ -354,3 +354,42 @@ whether the contact returns. That closes `BT1-cell-fit`. If it does not seat
 acceptably, the fallback is a different cell rather than a different holder,
 because BT1's footprint is dimensionally specific and swapping it is a board
 change.
+
+## 2026-08-23 19:10 — Battery figures regenerated from the cell actually bought
+
+**Completed:**
+
+- **`docs/values.md` regenerated at 3400 mAh.** It had reasoned from a 3000 mAh
+  design basis throughout while the ordered cell is the Orbtronic 3400.
+  Runtime 12.3 / 7.3 / 5.2 h from 2833 mAh usable, charge 4.0 h at 1 A and 2.7 h
+  at 1.5 A, rate 0.29C and 0.44C.
+- **The derivation was recovered from the document's own numbers, not assumed.**
+  Usable is 83.3% of nameplate and runtime is usable over cell current, which
+  reproduces the printed 10.8 / 6.5 / 4.6 h; charge is CC to ~80% then the CV
+  tail, which reproduces the printed 3.5 h. Both models validated at 3000 before
+  being re-run at 3400. Working in
+  `2026-08-23-battery-figures-rederived.txt`.
+- **Two further figures were resting on the old capacity**: the A10 gauge
+  leakage comparison, 92 mAh over six months, quoted against 3000 mAh in BOTH
+  values.md and seed-sheet.md. Both rebased. The 3000 mAh in sourcing.md's
+  LiPo-pouch comparison is a different cell and was left alone.
+- **`ideocentric/_org.md` gained a costing section** (in ~/.claude, committed
+  separately as 42209e1): merchandise is not landed cost, every import so far
+  carried a tariff, and read the price ladder at the quantity actually bought.
+
+**Corrected:** I had called the whole 3400 mAh set "conservative" because the
+cell is bigger than the design basis. Runtime improved and CHARGE TIME
+LENGTHENED. A bigger cell is only conservative in one direction.
+
+**In flight:** nothing. All three orders placed, boards in fabrication.
+
+**Open questions:** unchanged from the previous entry. `BT1-cell-fit` stays
+`conflict` until a holder and a cell meet. The jumper placement preview, the
+three confirmation steps left off, and JLC's tooling holes are all still open.
+R52/R54 dissipation and the shared `MIC_RTN` both still want a capsule measured.
+
+**Next step:** unchanged and physical. On delivery, **seat one Orbtronic cell in
+one BH-18650-PC** before building anything, and judge the insertion force and
+whether the contact springs back. That closes `BT1-cell-fit`. The fallback is a
+different cell rather than a different holder, because BT1's footprint is
+dimensionally specific and swapping it is a board change.
