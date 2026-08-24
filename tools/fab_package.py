@@ -40,19 +40,26 @@ reported "ready". A readiness report that covers only what the assembler fits is
 not a readiness report. They are listed from lcsc.yaml `accessories:` with a
 per-board quantity, and they go to the owner's shopping list, never to the fab.
 
-THE BOARD PDF, AND WHY --archive IS SEPARATE
--------------------------------------------
---apply writes a nine-page reference plot to local/fab/, one page per layer with
-the outline on every page, so the board can be read without KiCad. local/ is
-gitignored and that copy is disposable: it regenerates from the board in a
-second, and a file that regenerates is not an artefact.
+THE REFERENCE PDFs, AND WHY --archive IS SEPARATE
+------------------------------------------------
+--apply writes two human-readable PDFs to local/fab/: the BOARD as one composite
+page stacked the way the PCB viewer shows it, and the SCHEMATIC as one page per
+sheet. local/ is gitignored and those copies are disposable: they regenerate in
+a second, and a file that regenerates is not an artefact.
 
---archive copies it to discovery/evidence/ under a DATED, SHA-STAMPED name, and
-that copy is meant to be committed. Use it when an order is placed. The point is
-not the picture, it is being able to answer "what exactly did we buy" in five
-years without a KiCad install and without checking out an old commit to find
-out. The SHA is the board's last-changed commit rather than HEAD, because HEAD
-moves for documentation and the board does not.
+--archive copies both to discovery/evidence/ under DATED, SHA-STAMPED names, and
+those copies are meant to be committed. Use it when an order is placed. The
+point is not the picture, it is being able to answer "what exactly did we buy"
+in five years without a KiCad install and without checking out an old commit to
+find out.
+
+EACH IS STAMPED BY ITS OWN LAST CHANGE, not by today and not by each other. The
+board and the schematic move independently, so a shared stamp would claim one
+changed when only the other did, and re-running would churn filenames for
+identical content. The schematic stamp reads the WHOLE HIERARCHY rather than the
+root sheet: caryatid.kicad_sch is a container and the circuits live in the child
+sheets, so the root alone dated the first archive 2026-08-09 when the schematic
+had actually been edited on 2026-08-21.
 
 THE PART NUMBERS ARE THE GATE
 -----------------------------
@@ -78,11 +85,14 @@ MAP = os.path.join(os.path.dirname(PCB), "lcsc.yaml")
 LAYERS = ("F.Cu,B.Cu,F.Mask,B.Mask,F.Silkscreen,B.Silkscreen,"
           "F.Paste,B.Paste,Edge.Cuts")
 
-# Human-readable reference plot. One page per layer with the outline on every
-# page, so the board can be read without KiCad. NOT a fab deliverable: the
+# Human-readable reference plot: ONE COMPOSITE PAGE, stacked the way the PCB
+# viewer shows it rather than one page per layer. NOT a fab deliverable; the
 # gerbers are what gets manufactured, and this is for the shelf and the eye.
-PDF_LAYERS = "F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,F.Fab,B.Fab"
-PDF_COMMON = "Edge.Cuts"
+#
+# ORDER IS THE STACKING ORDER, first plotted is furthest back. Back copper
+# underneath, front copper over it, silkscreen on top where it stays readable,
+# outline last. A layer list that reads bottom-to-top is the whole trick here.
+PDF_LAYERS = "B.Cu,F.Cu,F.Silkscreen,Edge.Cuts"
 
 
 def load_map():
@@ -172,23 +182,44 @@ def board_sha():
 
 
 def board_pdf(dst):
-    """Multi-page reference plot of the board.
+    """One composite page, layers stacked as the PCB viewer presents them.
 
-    --mode-multipage treats -o as a DIRECTORY and names the file after the
-    board, which is not what the rest of this tool assumes. Export into a
-    scratch directory, then move the one file out under the name we wanted."""
-    stage = dst + ".stage"
-    shutil.rmtree(stage, ignore_errors=True)
-    subprocess.run([CLI, "pcb", "export", "pdf", "--mode-multipage",
-                    "--layers", PDF_LAYERS, "--common-layers", PDF_COMMON,
-                    "--include-border-title", "--subtract-soldermask",
-                    "-o", stage, PCB], check=True, capture_output=True)
-    made = [f for f in os.listdir(stage) if f.endswith(".pdf")]
-    if len(made) != 1:
-        sys.exit(f"  PDF export produced {len(made)} files, expected 1")
-    shutil.move(os.path.join(stage, made[0]), dst)
-    shutil.rmtree(stage, ignore_errors=True)
+    --mode-single takes the output path as a complete filename, unlike
+    --mode-multipage which treats it as a directory and names the file itself.
+    Single is what we want anyway: the point is one picture of the board, not a
+    stack of monochrome separations nobody reads."""
+    subprocess.run([CLI, "pcb", "export", "pdf", "--mode-single",
+                    "--layers", PDF_LAYERS, "--subtract-soldermask",
+                    "-o", dst, PCB], check=True, capture_output=True)
     return dst
+
+
+def schematic_pdf(dst):
+    """The whole hierarchy, one page per sheet."""
+    subprocess.run([CLI, "sch", "export", "pdf", "-o", dst, SCH],
+                   check=True, capture_output=True)
+    return dst
+
+
+def sch_sha_and_date():
+    """Stamp the schematic by ITS OWN last change, not the board's.
+
+    ACROSS THE WHOLE HIERARCHY, not just the root sheet. caryatid.kicad_sch is
+    a container; the circuits live in power/seed/panel-io/audio. Stamping the
+    root alone dated the first archive 2026-08-09 when the schematic had been
+    edited on 2026-08-21, because ADR 0010's changes were in the child sheets
+    and never touched the root. A snapshot that claims to predate its own
+    contents is worse than no snapshot.
+
+    The board and the schematic still move independently of each other, which is
+    why they carry separate stamps."""
+    d = os.path.dirname(SCH)
+    sheets = sorted(f for f in os.listdir(d) if f.endswith(".kicad_sch"))
+    def g(fmt):
+        return subprocess.run(["git", "log", "-1", f"--format={fmt}",
+                               "--date=format:%Y-%m-%d", "--"] + sheets,
+                              cwd=d, capture_output=True, text=True).stdout.strip()
+    return (g("%h") or "nogit"), (g("%ad") or "undated")
 
 
 def load_self_fit():
@@ -430,6 +461,7 @@ def main():
             w.writeheader(); w.writerows(pulled)
 
     board_pdf(tmp + "/caryatid-board.pdf")
+    schematic_pdf(tmp + "/caryatid-schematic.pdf")
 
     if accessories:
         with open(tmp + "/accessories.csv", "w", newline="") as f:
@@ -475,34 +507,42 @@ def main():
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
             for f in sorted(os.listdir(tmp)):
                 if f in ("self-fit.csv", "accessories.csv",
-                         "caryatid-board.pdf"): continue
+                         "caryatid-board.pdf",
+                         "caryatid-schematic.pdf"): continue
                 zf.write(os.path.join(tmp, f), f)
         for f in ("bom.csv", "cpl.csv", "self-fit.csv", "accessories.csv",
-                  "caryatid-board.pdf"):
+                  "caryatid-board.pdf", "caryatid-schematic.pdf"):
             src = os.path.join(tmp, f)
             if os.path.exists(src): shutil.copy(src, OUT)
         yours = [n for n, c in (("self-fit.csv", pulled),
                                 ("accessories.csv", accessories)) if c]
-        yours.append("caryatid-board.pdf")
+        yours += ["caryatid-board.pdf", "caryatid-schematic.pdf"]
         extra = f" + {' + '.join(yours)} (yours, not the fab's)" if yours else ""
 
         if archive:
-            ev = os.path.join(os.path.dirname(os.path.dirname(PCB)),
-                              "..", "discovery", "evidence")
-            ev = os.path.normpath(ev)
+            ev = os.path.normpath(os.path.join(
+                os.path.dirname(os.path.dirname(PCB)), "..",
+                "discovery", "evidence"))
             os.makedirs(ev, exist_ok=True)
-            stamp = subprocess.run(["git", "log", "-1", "--format=%ad",
+            bdate = subprocess.run(["git", "log", "-1", "--format=%ad",
                                     "--date=format:%Y-%m-%d", "--", PCB],
                                    cwd=os.path.dirname(PCB),
                                    capture_output=True, text=True).stdout.strip()
-            name = f"{stamp or 'undated'}-board-snapshot-{board_sha()}.pdf"
-            target = os.path.join(ev, name)
-            shutil.copy(os.path.join(OUT, "caryatid-board.pdf"), target)
-            kb = os.path.getsize(target) // 1024
-            print(f"\n  ARCHIVED {name} ({kb} kB) into discovery/evidence/")
-            print(f"  Dated by the board's last change, not by today, so re-running")
-            print(f"  produces the same filename until the copper actually moves.")
-            print(f"  COMMIT IT: local/fab/ is gitignored and this is the copy that lasts.")
+            ssha, sdate = sch_sha_and_date()
+            print()
+            for src, name in (
+                ("caryatid-board.pdf",
+                 f"{bdate or 'undated'}-board-snapshot-{board_sha()}.pdf"),
+                ("caryatid-schematic.pdf",
+                 f"{sdate}-schematic-snapshot-{ssha}.pdf")):
+                target = os.path.join(ev, name)
+                shutil.copy(os.path.join(OUT, src), target)
+                print(f"  ARCHIVED {name} ({os.path.getsize(target)//1024} kB)")
+            print(f"  -> discovery/evidence/. Each is stamped by ITS OWN last")
+            print(f"  change, not by today and not by each other: the board and")
+            print(f"  the schematic move independently, so re-running produces")
+            print(f"  the same two filenames until that file actually changes.")
+            print(f"  COMMIT THEM: local/fab/ is gitignored and this copy lasts.")
         print(f"\n  wrote {z} ({os.path.getsize(z)//1024} kB) and bom/cpl{extra} beside it")
 
     if missing:

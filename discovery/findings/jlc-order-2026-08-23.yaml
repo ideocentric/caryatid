@@ -249,6 +249,20 @@ open_questions:
     moment someone happened to export it, and re-running produces the same name
     until the board actually moves. It answers "what exactly did we buy" without
     a KiCad install and without checking out an old commit to find out.
+  - >-
+    2026-08-24: the snapshot format changed on Matt's instruction from nine
+    monochrome separations to ONE COMPOSITE PAGE, stacked as the PCB viewer
+    presents it: back copper underneath, front copper over it, silkscreen on top
+    where it stays readable. A stack of separations is what a fab reads; a
+    person reading a board wants the picture. A SCHEMATIC SNAPSHOT was added
+    alongside it, 2026-08-21-schematic-snapshot-eb5a8e1.pdf, six pages covering
+    the whole hierarchy.
+    A BUG WAS CAUGHT DOING THIS. The schematic stamp first read only
+    caryatid.kicad_sch, the root sheet, and dated the archive 2026-08-09 when
+    the schematic was last edited on 2026-08-21. The root is a container and the
+    circuits live in power, seed, panel-io and audio; ADR 0010's changes never
+    touched it. A snapshot claiming to predate its own contents is worse than no
+    snapshot. It now stamps from the whole hierarchy.
 
 actual_usd:
   # As paid, 2026-08-23. Grand total is what left the account.
@@ -267,6 +281,7 @@ actual_usd:
                             evidence_file: discovery/evidence/2026-08-23-cost-reconcile.txt}
   gates_at_order: discovery/evidence/2026-08-23-gates-at-order.txt
   board_snapshot: discovery/evidence/2026-08-22-board-snapshot-28c54f1.pdf
+  schematic_snapshot: discovery/evidence/2026-08-21-schematic-snapshot-eb5a8e1.pdf
 
 cost_effect_usd:
   finish_upgrade: 20.00        # ENIG over LeadFree HASL, Matt's figure from the form
