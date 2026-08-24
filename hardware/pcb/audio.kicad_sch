@@ -5882,7 +5882,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x03")
-		(at 480.06 391.16 0)
+		(at 480.06 368.3 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5890,7 +5890,7 @@
 		(dnp no)
 		(uuid "a77f3d76-e2dd-570d-bee6-948741849ab2")
 		(property "Reference" "JP6"
-			(at 486.06 379.16 0)
+			(at 486.06 356.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5898,7 +5898,7 @@
 			)
 		)
 		(property "Value" "Mic gain select R"
-			(at 486.06 382.16 0)
+			(at 486.06 359.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5952,7 +5952,7 @@
 	)
 	(wire
 		(pts
-			(xy 474.98 388.62) (xy 469.9 388.62)
+			(xy 474.98 365.76) (xy 469.9 365.76)
 		)
 		(stroke
 			(width 0)
@@ -5961,7 +5961,7 @@
 		(uuid "4dfe55b0-34bf-5f0f-9c9d-420fa1537b4a")
 	)
 	(label "LEG_101_R"
-		(at 469.9 388.62 180)
+		(at 469.9 365.76 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5972,7 +5972,7 @@
 	)
 	(wire
 		(pts
-			(xy 474.98 391.16) (xy 469.9 391.16)
+			(xy 474.98 368.3) (xy 469.9 368.3)
 		)
 		(stroke
 			(width 0)
@@ -5981,7 +5981,7 @@
 		(uuid "f945a31a-b9a9-5510-b120-4060df9479c0")
 	)
 	(label "GAINLEG_R"
-		(at 469.9 391.16 180)
+		(at 469.9 368.3 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5992,7 +5992,7 @@
 	)
 	(wire
 		(pts
-			(xy 474.98 393.7) (xy 469.9 393.7)
+			(xy 474.98 370.84) (xy 469.9 370.84)
 		)
 		(stroke
 			(width 0)
@@ -6001,7 +6001,7 @@
 		(uuid "5e0b45c0-f71e-5948-8e86-5bec123948fe")
 	)
 	(label "LEG_256_R"
-		(at 469.9 393.7 180)
+		(at 469.9 370.84 180)
 		(effects
 			(font
 				(size 1.27 1.27)
