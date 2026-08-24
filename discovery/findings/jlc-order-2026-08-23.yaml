@@ -239,6 +239,17 @@ open_questions:
     real base fab came in cheaper than guessed. Every other quantity in PCB_FAB
     is still a placeholder and is now labelled as such.
 
+  - >-
+    2026-08-24: BOARD SNAPSHOT ARCHIVED as
+    discovery/evidence/2026-08-22-board-snapshot-28c54f1.pdf, a nine-page
+    reference plot of exactly the copper this order was placed against. Produced
+    by `fab_package.py --apply --archive`, which was added for this purpose.
+    DATED AND STAMPED BY THE BOARD'S LAST CHANGE (28c54f1, 2026-08-22) RATHER
+    THAN BY THE RUN, so the filename identifies the copper rather than the
+    moment someone happened to export it, and re-running produces the same name
+    until the board actually moves. It answers "what exactly did we buy" without
+    a KiCad install and without checking out an old commit to find out.
+
 actual_usd:
   # As paid, 2026-08-23. Grand total is what left the account.
   merchandise: 176.24
@@ -255,6 +266,7 @@ actual_usd:
   estimate_vs_merchandise: {estimate: 161.68, actual: 176.24, out_by: 14.56, percent: 9,
                             evidence_file: discovery/evidence/2026-08-23-cost-reconcile.txt}
   gates_at_order: discovery/evidence/2026-08-23-gates-at-order.txt
+  board_snapshot: discovery/evidence/2026-08-22-board-snapshot-28c54f1.pdf
 
 cost_effect_usd:
   finish_upgrade: 20.00        # ENIG over LeadFree HASL, Matt's figure from the form

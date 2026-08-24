@@ -4,6 +4,7 @@
 
     python3 tools/fab_package.py                # report readiness only
     python3 tools/fab_package.py --apply        # write local/fab/ and a zip
+    python3 tools/fab_package.py --apply --archive   # ... and keep a board PDF
 
 WHAT GOES TO A FAB, AND WHAT MUST NOT
 -------------------------------------
@@ -39,6 +40,20 @@ reported "ready". A readiness report that covers only what the assembler fits is
 not a readiness report. They are listed from lcsc.yaml `accessories:` with a
 per-board quantity, and they go to the owner's shopping list, never to the fab.
 
+THE BOARD PDF, AND WHY --archive IS SEPARATE
+-------------------------------------------
+--apply writes a nine-page reference plot to local/fab/, one page per layer with
+the outline on every page, so the board can be read without KiCad. local/ is
+gitignored and that copy is disposable: it regenerates from the board in a
+second, and a file that regenerates is not an artefact.
+
+--archive copies it to discovery/evidence/ under a DATED, SHA-STAMPED name, and
+that copy is meant to be committed. Use it when an order is placed. The point is
+not the picture, it is being able to answer "what exactly did we buy" in five
+years without a KiCad install and without checking out an old commit to find
+out. The SHA is the board's last-changed commit rather than HEAD, because HEAD
+moves for documentation and the board does not.
+
 THE PART NUMBERS ARE THE GATE
 -----------------------------
 An assembly house cannot quote a BOM without supplier part numbers, and this
@@ -62,6 +77,12 @@ MAP = os.path.join(os.path.dirname(PCB), "lcsc.yaml")
 
 LAYERS = ("F.Cu,B.Cu,F.Mask,B.Mask,F.Silkscreen,B.Silkscreen,"
           "F.Paste,B.Paste,Edge.Cuts")
+
+# Human-readable reference plot. One page per layer with the outline on every
+# page, so the board can be read without KiCad. NOT a fab deliverable: the
+# gerbers are what gets manufactured, and this is for the shelf and the eye.
+PDF_LAYERS = "F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,F.Fab,B.Fab"
+PDF_COMMON = "Edge.Cuts"
 
 
 def load_map():
@@ -139,6 +160,37 @@ def write_jlc_cpl(src, dst, drop=()):
     return out
 
 
+def board_sha():
+    """Short SHA of the commit that last changed the BOARD, not HEAD.
+
+    HEAD moves for documentation; the board does not. Naming the artefact after
+    HEAD would imply a board changed when only prose did, and two snapshots of
+    the same copper would carry different names."""
+    r = subprocess.run(["git", "log", "-1", "--format=%h", "--", PCB],
+                       cwd=os.path.dirname(PCB), capture_output=True, text=True)
+    return (r.stdout.strip() or "nogit")
+
+
+def board_pdf(dst):
+    """Multi-page reference plot of the board.
+
+    --mode-multipage treats -o as a DIRECTORY and names the file after the
+    board, which is not what the rest of this tool assumes. Export into a
+    scratch directory, then move the one file out under the name we wanted."""
+    stage = dst + ".stage"
+    shutil.rmtree(stage, ignore_errors=True)
+    subprocess.run([CLI, "pcb", "export", "pdf", "--mode-multipage",
+                    "--layers", PDF_LAYERS, "--common-layers", PDF_COMMON,
+                    "--include-border-title", "--subtract-soldermask",
+                    "-o", stage, PCB], check=True, capture_output=True)
+    made = [f for f in os.listdir(stage) if f.endswith(".pdf")]
+    if len(made) != 1:
+        sys.exit(f"  PDF export produced {len(made)} files, expected 1")
+    shutil.move(os.path.join(stage, made[0]), dst)
+    shutil.rmtree(stage, ignore_errors=True)
+    return dst
+
+
 def load_self_fit():
     """Refs the owner buys and solders, not the assembler. See lcsc.yaml.
 
@@ -214,6 +266,7 @@ def run(cmd):
 
 def main():
     apply_ = "--apply" in sys.argv
+    archive = "--archive" in sys.argv
     tmp = "/tmp/caryatid-fab"
     shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
 
@@ -376,6 +429,8 @@ def main():
             w = csv.DictWriter(f, fieldnames=list(pulled[0].keys()))
             w.writeheader(); w.writerows(pulled)
 
+    board_pdf(tmp + "/caryatid-board.pdf")
+
     if accessories:
         with open(tmp + "/accessories.csv", "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=["Item", "PerBoard", "Source", "Note"])
@@ -419,14 +474,35 @@ def main():
         # whole mechanism exists to avoid.
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
             for f in sorted(os.listdir(tmp)):
-                if f in ("self-fit.csv", "accessories.csv"): continue
+                if f in ("self-fit.csv", "accessories.csv",
+                         "caryatid-board.pdf"): continue
                 zf.write(os.path.join(tmp, f), f)
-        for f in ("bom.csv", "cpl.csv", "self-fit.csv", "accessories.csv"):
+        for f in ("bom.csv", "cpl.csv", "self-fit.csv", "accessories.csv",
+                  "caryatid-board.pdf"):
             src = os.path.join(tmp, f)
             if os.path.exists(src): shutil.copy(src, OUT)
         yours = [n for n, c in (("self-fit.csv", pulled),
                                 ("accessories.csv", accessories)) if c]
+        yours.append("caryatid-board.pdf")
         extra = f" + {' + '.join(yours)} (yours, not the fab's)" if yours else ""
+
+        if archive:
+            ev = os.path.join(os.path.dirname(os.path.dirname(PCB)),
+                              "..", "discovery", "evidence")
+            ev = os.path.normpath(ev)
+            os.makedirs(ev, exist_ok=True)
+            stamp = subprocess.run(["git", "log", "-1", "--format=%ad",
+                                    "--date=format:%Y-%m-%d", "--", PCB],
+                                   cwd=os.path.dirname(PCB),
+                                   capture_output=True, text=True).stdout.strip()
+            name = f"{stamp or 'undated'}-board-snapshot-{board_sha()}.pdf"
+            target = os.path.join(ev, name)
+            shutil.copy(os.path.join(OUT, "caryatid-board.pdf"), target)
+            kb = os.path.getsize(target) // 1024
+            print(f"\n  ARCHIVED {name} ({kb} kB) into discovery/evidence/")
+            print(f"  Dated by the board's last change, not by today, so re-running")
+            print(f"  produces the same filename until the copper actually moves.")
+            print(f"  COMMIT IT: local/fab/ is gitignored and this is the copy that lasts.")
         print(f"\n  wrote {z} ({os.path.getsize(z)//1024} kB) and bom/cpl{extra} beside it")
 
     if missing:
