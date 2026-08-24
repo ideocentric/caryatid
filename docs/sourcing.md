@@ -640,8 +640,11 @@ explicitly not fitting invites the confusion the mechanism exists to prevent.
 
 | item | per board | source | unit | |
 | --- | --- | --- | --- | --- |
-| jumper shunt | 6 | Digi-Key `S9001-ND` | $0.0247 | Sullins SPC02SYAN |
-| 18650 cell | 1 | Orbtronic, direct | **$13.49** | protected, already ordered |
+| jumper shunt | 6 | Digi-Key `S9001-ND` | $0.0247 | Sullins SPC02SYAN, 100 bought |
+| 18650 cell | 1 | Orbtronic, direct | **$13.49** | protected |
+| BT1 holder | 1 | Digi-Key `BH-18650-PC-ND` | $2.88 | MPD BH-18650-PC, 10 bought |
+
+All three orders were placed on 2026-08-23.
 
 ### What five boards actually cost
 
@@ -653,10 +656,17 @@ what you buy yourself:
 | | five boards | per board |
 | --- | --- | --- |
 | JLC, delivered | **$306.95** | $61.39 |
-| cells | $67.45 | $13.49 |
-| BT1 holders | $17.35 | $3.47 |
-| shunts (buy 100, 30 used) | $2.47 | $0.15 |
-| **total** | **$394.22** | **$78.84** |
+| Orbtronic cells | $67.45 | $13.49 |
+| Digi-Key, delivered | $49.56 | $9.91 |
+| **total** | **$423.96** | **$84.79** |
+
+$16.13 of the Digi-Key line is stock rather than build cost: five spare BT1
+holders and seventy spare shunts. Consumed cost for these five boards is about
+$407.83, or $81.57 each.
+
+**Every import line carried a tariff.** JLC's customs duties were 35.9% of
+merchandise and Digi-Key's tariff 18.9% of subtotal. Two orders out of two, and
+`cost_estimate.py` models neither.
 
 Before Digi-Key shipping, quoted at $8.49 ground. **The JLC-only figure
 understates the build by $87.27, or 46%**, and the cell alone is the second

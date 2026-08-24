@@ -35,11 +35,32 @@ owner_bought_usd:
   # Bought outside the JLC order. Recorded 2026-08-23; the cells figure is
   # Matt's actual Orbtronic order, the rest are catalogue prices.
   cells:   {qty: 5, total: 67.45, unit: 13.49, source: "Orbtronic, direct", status: ordered}
-  holders: {qty: 5, total: 17.35, unit: 3.47,  source: "Digi-Key 3029216",  status: not_ordered}
-  shunts:  {qty: 100, total: 2.47, unit: 0.0247, source: "Digi-Key S9001-ND", status: not_ordered,
+  holders: {qty: 10, total: 28.80, unit: 2.88, source: "Digi-Key BH-18650-PC-ND", status: ordered,
+            note: "TEN bought, not five. $2.88 is a qty-10 break against the $3.47 recorded
+                   here from the qty-1 ladder; five would have cost $17.35, ten cost $28.80,
+                   so five spares came to $11.45. Five are consumed by this build."}
+  shunts:  {qty: 100, total: 2.47, unit: 0.0247, source: "Digi-Key S9001-ND", status: ordered,
             note: "30 consumed by five boards, $0.74 of the $2.47; the rest are spares"}
-  total_for_five: 87.27
-  excludes: "Digi-Key shipping, quoted at $8.49 ground"
+  digikey_order:
+    subtotal: 31.27
+    shipping: 8.49
+    tariff: 5.90            # 18.9% of subtotal
+    sales_tax: 3.90
+    total: 49.56
+  total_for_five: 116.99       # 67.45 cells + 49.56 Digi-Key delivered
+  spares_included: {usd: 16.13, note: "5 holders and 70 shunts, stock for a future build"}
+
+project_cash_out_usd:
+  # EVERY dollar spent, 2026-08-23. Three orders, all placed.
+  jlc: 306.95
+  orbtronic: 67.45
+  digikey: 49.56
+  total: 423.96
+  per_board_across_five: 84.79
+  note: >-
+    $16.13 of that is stock rather than build cost: five spare BT1 holders and
+    seventy spare shunts. Consumed cost for these five boards is about $407.83,
+    or $81.57 a board.
 
 landed_total_usd:
   # ACTUAL, 2026-08-23. This is the number, and it is the one to quote.
@@ -286,6 +307,24 @@ evidence:
     IS 2.33x. The estimate was never wrong about the boards; it was silent about
     everything between the factory and the door, and nobody noticed because the
     silence looked like a total.
+
+  - >-
+    2026-08-23: DIGI-KEY ORDER PLACED, and it corrects a price this record has
+    been carrying. Line items as ordered: BH-18650-PC-ND, 10 at $2.88 = $28.80,
+    and S9001-ND, 100 at $0.0247 = $2.47. Subtotal $31.27, shipping $8.49,
+    tariff $5.90, sales tax $3.90, TOTAL $49.56.
+    THE HOLDER IS $2.88 AT QTY 10, NOT THE $3.47 RECORDED HERE. That $3.47 came
+    off the qty-1 ladder. Matt bought TEN rather than five, so five spares cost
+    $11.45 against what five would have been.
+    TARIFF APPEARS ON THIS ORDER TOO, at 18.9% of subtotal against JLC's 35.9%.
+    Smaller, but the pattern is now two for two: no import line in this project
+    has come in without one, and nothing in cost_estimate.py models them.
+  - >-
+    2026-08-23: ALL THREE ORDERS ARE NOW PLACED and the project's cash out is
+    $423.96: JLC $306.95, Orbtronic $67.45, Digi-Key $49.56. Across five boards
+    that is $84.79 each. $16.13 of it is stock rather than build cost, being
+    five spare holders and seventy spare shunts, so the consumed cost of these
+    five boards is about $407.83 or $81.57 a board.
 
 last_verified: 2026-08-23
 
