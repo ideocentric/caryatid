@@ -14,6 +14,8 @@ sensors, switches, comms) enters through a connector, and each instrument
 populates the subset it needs. Order once, stuff per instrument. It carries
 absonus, loa, baby borg, and whatever comes next.
 
+![caryatid, top](docs/img/board-top.png)
+
 ### Is it right for what you are building?
 
 **[docs/platform.md](docs/platform.md)** is the capability specification: what
@@ -55,6 +57,7 @@ state; treat anything marked unverified there as exactly that.
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Datasheets, links and document numbers | [docs/datasheets.md](docs/datasheets.md) |
 | **What it supports, and what it does not** | [docs/platform.md](docs/platform.md) |
+| The board and schematic as PDFs | [docs/reference/](docs/reference/) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 | **Rules the tools must follow, and what each cost** | [docs/conventions.md](docs/conventions.md) |
 

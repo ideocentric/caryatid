@@ -20,6 +20,8 @@ states what is supported, and where the boundary is. Once you have decided,
 
 ---
 
+![caryatid, top](img/board-top.png)
+
 ## What you get
 
 | | |
@@ -281,6 +283,8 @@ does not discharge it. [integration.md](integration.md) has the detail.
 
 | | |
 | --- | --- |
+| **The board as a drawing** | [reference/caryatid-board.pdf](reference/caryatid-board.pdf) |
+| **The schematic** | [reference/caryatid-schematic.pdf](reference/caryatid-schematic.pdf) |
 | Decided, now building | [integration.md](integration.md) |
 | The frozen pin map | [pinmap.md](pinmap.md), generated from [pins.yaml](pins.yaml) |
 | Connectors and what plugs in | [connectors.md](connectors.md) |

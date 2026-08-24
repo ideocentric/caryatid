@@ -94,6 +94,12 @@ LAYERS = ("F.Cu,B.Cu,F.Mask,B.Mask,F.Silkscreen,B.Silkscreen,"
 # outline last. A layer list that reads bottom-to-top is the whole trick here.
 PDF_LAYERS = "B.Cu,F.Cu,F.Silkscreen,Edge.Cuts"
 
+# Where the human-readable copies live, under stable names, for reading in the
+# repository rather than for provenance. discovery/evidence/ keeps the dated,
+# SHA-stamped copies; these are simply "current".
+DOCS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(C.PCB))), "..", "docs")
+DOCS = os.path.normpath(DOCS)
+
 
 def load_map():
     """Minimal YAML reader for the shape this file actually has -- avoids a
@@ -191,6 +197,19 @@ def board_pdf(dst):
     subprocess.run([CLI, "pcb", "export", "pdf", "--mode-single",
                     "--layers", PDF_LAYERS, "--subtract-soldermask",
                     "-o", dst, PCB], check=True, capture_output=True)
+    return dst
+
+
+def board_render(dst, side="top"):
+    """Photographic render, the view JLC shows on an order page.
+
+    Quality `high` takes about 8 seconds against `basic`'s 0.3, and the
+    difference is visible: soldermask sheen, component shadows, legible
+    silkscreen. Worth it for something committed and looked at, not worth it
+    per-iteration, which is why nothing calls this outside --apply."""
+    subprocess.run([CLI, "pcb", "render", "--side", side, "--quality", "high",
+                    "--width", "2000", "--height", "1200", "-o", dst, PCB],
+                   check=True, capture_output=True)
     return dst
 
 
@@ -462,6 +481,8 @@ def main():
 
     board_pdf(tmp + "/caryatid-board.pdf")
     schematic_pdf(tmp + "/caryatid-schematic.pdf")
+    board_render(tmp + "/board-top.png", "top")
+    board_render(tmp + "/board-bottom.png", "bottom")
 
     if accessories:
         with open(tmp + "/accessories.csv", "w", newline="") as f:
@@ -507,16 +528,31 @@ def main():
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
             for f in sorted(os.listdir(tmp)):
                 if f in ("self-fit.csv", "accessories.csv",
-                         "caryatid-board.pdf",
-                         "caryatid-schematic.pdf"): continue
+                         "caryatid-board.pdf", "caryatid-schematic.pdf",
+                         "board-top.png", "board-bottom.png"): continue
                 zf.write(os.path.join(tmp, f), f)
         for f in ("bom.csv", "cpl.csv", "self-fit.csv", "accessories.csv",
-                  "caryatid-board.pdf", "caryatid-schematic.pdf"):
+                  "caryatid-board.pdf", "caryatid-schematic.pdf",
+                  "board-top.png", "board-bottom.png"):
             src = os.path.join(tmp, f)
             if os.path.exists(src): shutil.copy(src, OUT)
         yours = [n for n, c in (("self-fit.csv", pulled),
                                 ("accessories.csv", accessories)) if c]
-        yours += ["caryatid-board.pdf", "caryatid-schematic.pdf"]
+        yours += ["caryatid-board.pdf", "caryatid-schematic.pdf",
+                  "board-top.png", "board-bottom.png"]
+
+        os.makedirs(os.path.join(DOCS, "reference"), exist_ok=True)
+        os.makedirs(os.path.join(DOCS, "img"), exist_ok=True)
+        published = []
+        for src, rel in (("caryatid-board.pdf", "reference/caryatid-board.pdf"),
+                         ("caryatid-schematic.pdf", "reference/caryatid-schematic.pdf"),
+                         ("board-top.png", "img/board-top.png"),
+                         ("board-bottom.png", "img/board-bottom.png")):
+            shutil.copy(os.path.join(tmp, src), os.path.join(DOCS, rel))
+            published.append(rel)
+        print(f"\n  published to docs/: {', '.join(published)}")
+        print(f"  Stable names, always current. discovery/evidence/ keeps the")
+        print(f"  dated, SHA-stamped copies of what was actually ordered.")
         extra = f" + {' + '.join(yours)} (yours, not the fab's)" if yours else ""
 
         if archive:
