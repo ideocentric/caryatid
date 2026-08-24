@@ -1,0 +1,36 @@
+$ kicad-cli pcb drc --schematic-parity
+Found 0 violations
+Found 0 unconnected items
+Found 0 schematic parity issues
+** Drc report for caryatid.kicad_pcb **
+** Created on 2026-08-23T18:35:30-0700 **
+
+** Found 0 DRC violations **
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **
+Saved DRC Report to /dev/stdout
+
+$ python3 tools/check_board.py
+board 150.0 x 90.0 mm   135 front / 0 back   standoff 2.0 mm
+
+  all twelve checks pass
+
+$ python3 tools/fab_package.py
+  BOM 42 lines / 127 parts to place (DNP excluded)
+  CPL 127 placements
+  LCSC: 127 of 127 parts covered, 0 without a part number
+
+  1 part(s) pulled from the assembly order -- YOU buy and solder these:
+    BT1    18650 protected         Digi-Key 3029216
+  -> self-fit.csv. They are NOT DNP: the board is not complete until they are fitted.
+
+  2 accessory line(s) on NO bill of materials -- YOU buy these too:
+    cell-18650     1/board   Orbtronic, direct
+    jumper-shunt   6/board   Digi-Key S9001-ND
+  -> accessories.csv. A BOM cannot see these: they are not soldered to the board, so nothing places them and nothing misses them either.
+
+  ready

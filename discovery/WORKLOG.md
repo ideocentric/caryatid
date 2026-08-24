@@ -293,3 +293,64 @@ None of these has a ledger record. They are the genuine Phase 3 scope.
 `check_board.py` 12/12, `fab_package.py` ready at 127 of 127, and
 `local/fab/caryatid-fab.zip` is current. BT1 is bought separately
 (`self-fit.csv`, Digi-Key 3029216).
+
+## 2026-08-23 18:35 — All three orders placed; boards are in fabrication
+
+**Completed:**
+
+- **BOARDS ORDERED.** JLC, five, full turnkey, Economic assembly, top side, ENIG.
+  Merchandise $176.24, grand total **$306.95** after $46.97 shipping, $63.21
+  customs duties, $1.43 payment fee and $19.10 sales tax. Recorded as
+  `JLC-order-2026-08-23`, status `confirmed`, with every form setting captured
+  and eight of eight checkable ones verified against the board.
+- **Digi-Key ordered**: ten BH-18650-PC-ND at $2.88 and one hundred S9001-ND at
+  $0.0247, total **$49.56**. Ten holders rather than five, so five spares.
+- **Surface finish changed to ENIG** for about $20, closing
+  `hasl-under-fine-pitch`. U1 is a QFN-16 on 0.5 mm pitch with an exposed pad,
+  and a no-lead package cannot flex to take up an uneven surface. **The paste
+  was deliberately left lead-free**, which is correct for ENIG and would NOT
+  have been correct for the leaded HASL revert that was considered and rejected.
+- **BT1 fit resolved from MPD's STEP model.** Contacts sit 61.504 mm apart at
+  rest with 5.888 mm of travel each, housing wall stops a cell at 70.900 mm.
+  Matt's 69.48 mm cell clears the wall by 0.710 mm a side while over-deflecting
+  each contact 23% past rating. Seats, under protest.
+- **`accessories:` added to lcsc.yaml** as a third sourcing category. Six shunts
+  per board were on no bill of materials and no shopping list while
+  fab_package.py reported "ready".
+- `/bootstrap` Phases 1 and 2, `engagement.yaml` in both repos, caryatid's first
+  `CLAUDE.local.md`, `docs/conventions.md`, NGR voice filled, em dash ban made a
+  house rule.
+
+**Verified:** plain DRC 0 violations, 0 unconnected, 0 parity; `check_board.py`
+12/12; `fab_package.py` ready at 127 of 127. Evidence saved this session:
+`2026-08-23-bt1-step-geometry.txt`, `-cost-reconcile.txt`, `-gates-at-order.txt`.
+
+**In flight:** nothing. Three orders placed, all trees clean and pushed.
+
+**Open questions:**
+
+- **`BT1-cell-fit` is `conflict` and stays that way until something is
+  assembled.** Geometry says the cell seats; only a holder in hand says it seats
+  with sane force and that the contact springs back. **First thing to do when
+  the parcels land.**
+- **Jumper placement preview** comes through rotated and offset across builds.
+  Filed `for-next-time` with three places to look. Not cosmetic: on a 3-pin
+  header a 180 degree rotation changes which pair a shunt bridges.
+- Confirm Parts Placement, Confirm Production File and Photo Confirmation were
+  all off on a first article of 127 placements.
+- Tooling holes "Added by JLCPCB" on a fully routed and poured board.
+- **Costs were understated by 2.5x for most of this project's life** and the
+  cause is now recorded: `cost_estimate.py` models merchandise only. Shipping,
+  duties, fees and tax added 74% at JLC and 19% at Digi-Key. Two imports out of
+  two carried a tariff and nothing models them.
+- Carried: R52/R54 dissipation on a 100 mW 0603, and `MIC_RTN` shared by both
+  channels. Both want a capsule measured.
+- `docs/values.md` still reasons from a 3000 mAh cell; the ordered cell is
+  3400 mAh, so runtime is conservative and charge time is about 13% optimistic.
+
+**Next step:** wait for delivery. On arrival, before building anything, **seat
+one Orbtronic cell in one BH-18650-PC** and judge the insertion force and
+whether the contact returns. That closes `BT1-cell-fit`. If it does not seat
+acceptably, the fallback is a different cell rather than a different holder,
+because BT1's footprint is dimensionally specific and swapping it is a board
+change.

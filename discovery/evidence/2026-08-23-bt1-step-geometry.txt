@@ -1,0 +1,24 @@
+BT1 fit, derived from MPD's STEP model
+source: /Users/matt/Documents/GitHub/personal/loa/local/reference/BH-18650-PC.STEP
+SolidWorks 2016, AP214, dated 2019-11-12; three named solids
+
+solid                   X min    X max   X span  Z span
+Positive Contact       30.752   36.640    5.888   6.050
+Negative Contact      -36.640  -30.752    5.888   6.050
+Housing               -38.850   38.850   77.700  20.900
+
+contact face at rest   30.752 mm from centre -> 61.504 mm apart
+contact root           36.640 mm -> 5.888 mm of travel each
+housing inner wall     35.450 mm -> 70.900 mm hard stop on cell length
+
+MPD rates the holder for cells 65-68 mm. Matt measured a cell at 69.48 mm.
+
+  cell mm   deflection each   contact left
+    65.00             1.748          4.140
+    68.00             3.248          2.640
+    69.48             3.988          1.900
+    70.90             4.698          1.190
+
+CONCLUSION: the cell seats, clearing the housing wall by 0.710 mm a side,
+while deflecting each contact 0.740 mm past the 68 mm rating. The rating is
+about contact stress, not interference.

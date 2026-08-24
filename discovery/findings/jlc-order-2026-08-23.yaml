@@ -252,7 +252,9 @@ actual_usd:
   # $30.27 shipping. Both changed before payment; the coupon does not appear in
   # the final breakdown. $306.95 is the number.
   superseded_quote: 197.51
-  estimate_vs_merchandise: {estimate: 161.68, actual: 176.24, out_by: 14.56, percent: 9}
+  estimate_vs_merchandise: {estimate: 161.68, actual: 176.24, out_by: 14.56, percent: 9,
+                            evidence_file: discovery/evidence/2026-08-23-cost-reconcile.txt}
+  gates_at_order: discovery/evidence/2026-08-23-gates-at-order.txt
 
 cost_effect_usd:
   finish_upgrade: 20.00        # ENIG over LeadFree HASL, Matt's figure from the form

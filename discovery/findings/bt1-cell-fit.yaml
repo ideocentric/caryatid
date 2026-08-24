@@ -48,6 +48,7 @@ measured:
     # local/reference/BH-18650-PC.STEP, SolidWorks 2016, AP214, dated 2019-11-12.
     # Three named solids: Housing, Positive Contact, Negative Contact.
     source: local/reference/BH-18650-PC.STEP
+    evidence_file: discovery/evidence/2026-08-23-bt1-step-geometry.txt
     housing_overall_mm: [77.700, 25.235, 20.900]
     contact_face_at_rest_mm: 30.752      # each side, so 61.504 mm apart
     contact_root_mm: 36.640              # where it anchors
