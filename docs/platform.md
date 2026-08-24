@@ -44,18 +44,51 @@ states what is supported, and where the boundary is. Once you have decided,
 ```
 board            150 x 90 mm
 mounting         4 x M3, 140 x 80 mm pattern, 5 mm in from every edge
-standoff         2 mm minimum electrical; 4 mm as built
-stack height     26.91 mm, board underside to the top of the tallest part
+board thickness  1.6 mm
+tallest part     21.31 mm above the board, the 18650 holder
+standoff         2 mm minimum electrical
 ```
 
-**The tallest part is the 18650 holder**, and it sets everything. Budget about
-**30 mm of interior height** and you have room to work; the measured BUD CU-477
-at 34.0 mm leaves 7.09 mm spare above the stack.
+The stack is **standoff + 1.6 + 21.31**, so it is not a fixed number: it is
+whatever your standoff choice makes it. At 4 mm that is 26.91 mm, which is what
+the BUD CU-477 figures elsewhere in this repository are quoted against.
 
-**Every component is on the front face.** The back is bare copper, so the
-standoff only has to clear solder joints, not parts. That is why 2 mm is
-electrically sufficient and why the board can sit closer to a floor than its
-component height suggests.
+### Keep the standoff short
+
+**Every component is on the front face and the back is bare copper**, so the
+standoff only has to clear solder joints. **2 mm is electrically sufficient.**
+That is unusual and it is worth exploiting: the board can sit closer to the
+floor than its component height suggests.
+
+**Every millimetre of standoff costs a millimetre of headroom**, and headroom is
+contended from above as well as below. Panel-mounted potentiometers and switches
+intrude into the same space from the lid, and on a shallow enclosure they, not
+the board, decide the fit.
+
+⚠️ **4 mm standoffs are harder to source than 5 mm.** If you default to what is
+on the shelf you will spend an extra millimetre without deciding to. Where
+headroom is tight, source short deliberately rather than taking the common size.
+
+### Budget for the cables, not just the board
+
+The tallest thing in the box may not be a component. **What you plug in adds
+height above the connector**, and the difference between choices is real:
+
+| | body height above board |
+| --- | --- |
+| JST-XH, 2 to 6 way | **7 mm** |
+| JST-SH Qwiic | 4.32 mm |
+
+A mated housing sits on top of that, and then the wires. **Shrink-wrapped
+crimps** stand a cable up rather than letting it lie down, and a **latching IDC
+socket** on the 2×5 digital bus is the tall case: header, socket body, latch
+ears and the ribbon's own bend radius, all stacked above the board.
+
+**So budget 30 mm of interior height as a floor, and more depending on how you
+terminate.** A build using right-angle or low-profile terminations and short
+standoffs fits considerably less; one using latching IDC and shrink-wrapped JST
+wants noticeably more. The board dimension is knowable in advance; your cable
+choices are the variable, and they are yours.
 
 The enclosure question this board is designed around: **can a person charge it
 and see its state without opening the case?** A panel DC jack, a panel switch

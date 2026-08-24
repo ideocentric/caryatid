@@ -155,7 +155,24 @@ evidence:
     board's own edges sit 5-14 mm inside the interior rectangle recorded here, so
     a part 5.5 mm inside the board edge cannot approach a wall.
 
-last_verified: 2026-08-22
+  - >-
+    2026-08-23: STANDOFF HEIGHT REASONING CORRECTED, and it reverses what an
+    earlier analysis in conversation implied. I had worked out that a 5 mm
+    standoff clears the perimeter lip by 1.16 mm against 4 mm's 0.16 mm and read
+    that as an argument for going taller. IT IS NOT AN ARGUMENT AT ALL: this
+    record already establishes that 150 x 90 sits 5-14 mm inside the 178 x 110
+    interior and so never overlaps the lip in plan, which is why the note here
+    says that margin "is never actually tested". I re-derived a non-issue.
+    THE REAL CONSTRAINT RUNS THE OTHER WAY. Matt: the standoff should be SHORT,
+    because panel-mounted potentiometers (TIWADE) and switches intrude from the
+    lid into the same headroom, so every millimetre of standoff is spent twice.
+    The back of the board is bare copper and the standoff only clears solder
+    joints, so 2 mm is electrically sufficient and there is real room to exploit.
+    A SOURCING TRAP WORTH KNOWING: 4 mm standoffs are harder to find than 5 mm,
+    so defaulting to what is stocked costs a millimetre nobody decided to spend.
+    Recorded in docs/platform.md as guidance for any enclosure, not just this one.
+
+last_verified: 2026-08-23
 
 notes: >-
   THE MEASUREMENT IS MORE GENEROUS THAN BOTH DERIVED FIGURES. Against the
