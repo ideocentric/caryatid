@@ -393,3 +393,47 @@ one BH-18650-PC** before building anything, and judge the insertion force and
 whether the contact springs back. That closes `BT1-cell-fit`. The fallback is a
 different cell rather than a different holder, because BT1's footprint is
 dimensionally specific and swapping it is a board change.
+
+## 2026-08-23 19:40 — R52/R54 specified rather than carried
+
+**Completed:**
+
+- **`carbon-capsule-DC-resistance` opened**, `unverified` with an empty evidence
+  list because nothing has been measured. It replaces the line carried since
+  2026-08-19, "measure a capsule, then decide whether those two want an 0805",
+  which never said what reading would mean what. **A carried question with no
+  threshold attached cannot be closed by anyone**, which is the same shape as
+  the R45 edge-clearance concern that survived four sessions.
+- **One number decides it**, the capsule's DC resistance, since it sits in
+  series with the 220 ohm resistor across 5 V. `P = (5/(220+Rc))^2 * 220`.
+  Below **14.5 ohm** R52/R54 exceed the 100 mW 0603 rating outright and must go
+  0805; below **112 ohm** they are inside rating but past a 50% derate, a
+  judgement call; above that, nothing to do.
+- **The procedure carries its two traps**, both of which would produce a
+  confident wrong answer: take several readings while tapping and USE THE
+  LOWEST, since granules resettle and lowest is worst case for R52; and measure
+  every capsule intended for use, not one representative.
+- **The same measurement closes the carried `MIC_RTN` question**: both channels
+  on carbon put 31 to 41 mA through the one gated hook switch depending on Rc.
+- Noted in the record: the 0.5 V in the existing sourcing.md note is an
+  assumption, not a measurement. It implies about 24 ohm, landing in the middle
+  band where the answer is a judgement rather than at either end where it would
+  be obvious.
+- `discovery/README.md`'s entry for the order record was stale, still saying
+  "not yet placed".
+
+**In flight:** nothing. Boards in fabrication, all three orders placed.
+
+**Open questions:** five records, two of them open by design.
+`BT1-cell-fit` is `conflict` until a holder and a cell meet.
+`carbon-capsule-DC-resistance` is `unverified` until a capsule is measured.
+Both now say exactly what would close them. Also carried on the order record:
+the jumper placement preview, the three confirmation steps left off, and JLC's
+tooling holes.
+
+**Next step:** unchanged, and physical, and now there are two of them, both
+needing parts in hand. On delivery, **seat one Orbtronic cell in one
+BH-18650-PC** and judge insertion force and whether the contact springs back.
+Separately, whenever a carbon capsule is to hand, **measure its DC resistance**
+against the thresholds above. Neither needs the boards, so the capsule
+measurement can happen any time.
