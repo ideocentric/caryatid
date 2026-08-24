@@ -1,52 +1,39 @@
 # caryatid
 
-A common power and I/O board for Daisy Seed instruments — absonus, loa, baby
-borg, and whatever comes next.
+**A carrier board that gives a Daisy Seed a rechargeable battery, honest power
+indication, and a fixed set of I/O on connectors, in a shape that drops into an
+enclosure.**
 
-*A caryatid is a column carved as a figure, bearing the weight of what stands on
-it. Named for the role rather than for any instrument it carries: calling it
-after one of them would have implied it belonged to that one.*
+Plenty of Seed carriers break out pins well. Fewer solve *running on a battery
+you can charge without opening the box, and knowing what state that battery is
+in when the instrument is switched off*. This board treats that as the core
+requirement rather than an accessory.
 
-**Deciding whether to use it?** [docs/platform.md](docs/platform.md) is the
-capability specification: what it supports, what it does not, and where the
-boundary sits.
+**One PCB layout serves every build.** Every variable element (pots, keypad,
+sensors, switches, comms) enters through a connector, and each instrument
+populates the subset it needs. Order once, stuff per instrument. It carries
+absonus, loa, baby borg, and whatever comes next.
 
-**One PCB layout serves every build.** Every variable element — pots, keypad,
-sensors, switches, comms — enters through a connector, and each instrument
-populates the subset it needs. Order once, stuff per instrument.
+### Is it right for what you are building?
 
-Status: **schematic captured, board placed and fully routed.** Every electrical
-check is at zero — no unconnected nets, no shorts, no clearance or hole
-violations, no copper under the width rule, no floating ground. See
-[docs/status.md](docs/status.md) for what is left and what happens next.
+**[docs/platform.md](docs/platform.md)** is the capability specification: what
+it supports, what it deliberately does not, and where the boundary sits. It
+states the limits as plainly as the features, because knowing them before you
+commit is worth more than discovering them after.
 
-## ⚠ Which checkout is this?
+### Status
 
-**caryatid is developed as a standalone clone. It is also consumed as a git
-submodule by the instrument repositories, and those copies are read-only.**
+**Five boards ordered 2026-08-23; none has been powered yet.**
 
-If the path to this file runs through another project's submodule directory —
-for loa that is `hardware/platform/` — **you are in a consumer copy. Do not edit
-it and do not commit to it.** Find the standalone clone and work there.
+Every electrical check is at zero: no unconnected nets, no shorts, no clearance
+or hole violations, no copper under the width rule, no floating ground, and no
+DRC violations of any kind. The firmware stub compiles against libDaisy and has
+never been run on hardware. [docs/status.md](docs/status.md) is the current
+state; treat anything marked unverified there as exactly that.
 
-The sequence, in order, every time:
-
-1. Change, review and commit in the **standalone clone**.
-2. Push.
-3. *Then* update the consuming repository's submodule pointer — a
-   `Bump caryatid: …` commit on that side.
-
-**Why this matters more than it looks.** A submodule checkout sits on a detached
-HEAD, so commits made there belong to no branch and the standalone clone knows
-nothing about them. The two diverge silently, and the symptoms all point
-somewhere other than the cause: KiCad in one directory keeps showing a schematic
-that another directory has already changed.
-
-That is not hypothetical. A whole session's work — ADR 0010, the schematic
-edits, two tools, thirteen documents — was written into loa's submodule on
-2026-08-21. It pushed to the same remote so nothing was lost, but an hour went
-into diagnosing "update from schematic shows nothing new", which was only ever
-the wrong directory.
+> **Working on caryatid itself rather than building with it?** Read
+> [the checkout warning](#working-on-caryatid-itself) at the foot of this file
+> before you commit anything. It is the one way to lose a session's work here.
 
 ## Start here
 
@@ -192,3 +179,39 @@ CPP_SOURCES += hardware/platform/firmware/src/caryatid.cpp
 board provides, what the instrument must provide, the electrical and mechanical
 requirements, and the four things about this board that are not guessable from
 a pin number.
+
+## The name
+
+*A caryatid is a column carved as a figure, bearing the weight of what stands on
+it. Named for the role rather than for any instrument it carries: calling it
+after one of them would have implied it belonged to that one.*
+
+## Working on caryatid itself
+
+### ⚠ Which checkout is this?
+
+**caryatid is developed as a standalone clone. It is also consumed as a git
+submodule by the instrument repositories, and those copies are read-only.**
+
+If the path to this file runs through another project's submodule directory —
+for loa that is `hardware/platform/` — **you are in a consumer copy. Do not edit
+it and do not commit to it.** Find the standalone clone and work there.
+
+The sequence, in order, every time:
+
+1. Change, review and commit in the **standalone clone**.
+2. Push.
+3. *Then* update the consuming repository's submodule pointer — a
+   `Bump caryatid: …` commit on that side.
+
+**Why this matters more than it looks.** A submodule checkout sits on a detached
+HEAD, so commits made there belong to no branch and the standalone clone knows
+nothing about them. The two diverge silently, and the symptoms all point
+somewhere other than the cause: KiCad in one directory keeps showing a schematic
+that another directory has already changed.
+
+That is not hypothetical. A whole session's work — ADR 0010, the schematic
+edits, two tools, thirteen documents — was written into loa's submodule on
+2026-08-21. It pushed to the same remote so nothing was lost, but an hour went
+into diagnosing "update from schematic shows nothing new", which was only ever
+the wrong directory.
