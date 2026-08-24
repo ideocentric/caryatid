@@ -1,0 +1,130 @@
+id: mic-gain-budget
+kind: other
+source_claim: >-
+  The gain targets in docs/audio.md and ADR 0009: carbon "~x3, or attenuation",
+  electret "~x100 (40 dB)", dynamic "~x1000 (60 dB)". These are asserted with no
+  capsule output level anywhere in either repository to derive them from. There
+  is no "capsule puts out X mV, codec wants Y, therefore gain = Y/X" written
+  down. Everything DOWNSTREAM of the targets is derived and sourced; the input
+  assumption is not.
+source_ref: >-
+  docs/audio.md "The gain stage - one footprint, all three outcomes" and "The
+  gain ceiling"; docs/decisions/0009-mic-input-is-jumper-selected.md
+resource: "The mic front-end gain budget: capsule to WM8731 line input"
+status: unverified          # the targets check out on TYPICAL figures; no capsule measured
+
+# WHY THIS RECORD EXISTS
+# ADR 0009 says it plainly of the capsule requirement: "The requirement was
+# never written down, and the board was built without it... This is a
+# documentation failure before it is a design failure." The same is true one
+# level down, of the levels the gain targets rest on. Matt noticed the gap at
+# ordering time and could not find the calculations, because they were never
+# recorded.
+
+the_target:
+  parameter: VINLINE
+  value_vrms: 1.0
+  condition: "Input Signal Level (0dB), Line Input to ADC"
+  scaling: "AVDD/3.3, so 1.0 Vrms at a 3.3 V AVDD"
+  source: >-
+    WM8731 datasheet PD Rev 4.0 (Feb 2005), Electrical Characteristics, read
+    2026-08-23 from the SparkFun-hosted copy cited in docs/datasheets.md.
+    Extracted with pdftotext rather than read off a summary.
+
+# ⚠️ THE ONE ASSUMPTION EVERYTHING RESTS ON, STATED RATHER THAN BURIED.
+the_spl_assumption:
+  value_db_spl: 94
+  equals_pa: 1.0
+  rationale: >-
+    Microphone sensitivity is quoted at 1 kHz and 94 dB SPL, which is 1 Pa. A
+    close-talked handset mouthpiece is taken to be about that. It is a
+    convenient coincidence rather than a measurement, and it is why this record
+    is `unverified`.
+  if_wrong: >-
+    Speech at a mouthpiece can reach 100 dB SPL or more, which is 2x the
+    pressure and so 2x every output level below. That halves every gain
+    requirement and moves electret and dynamic toward the low end of their
+    ranges. It does not change which leg is selected for which capsule, because
+    the ranges are an order of magnitude apart; it changes the margin.
+
+capsule_output_at_1pa:
+  # Typical figures for a CLASS of part, not measurements of Matt's handset.
+  electret: {mv_lo: 5.0, mv_hi: 17.8, spec: "-46 to -35 dBV/Pa"}
+  dynamic:  {mv_lo: 1.0, mv_hi: 4.0,  spec: "-60 to -48 dBV/Pa, some to -70"}
+  carbon:   {mv_lo: 100, mv_hi: 500,  spec: "hundreds of mV of signal swing"}
+  sources:
+    - >-
+      Analog Devices, "Understanding Microphone Sensitivity": most analog
+      electret and MEMS microphones fall between -46 dBV and -35 dBV, which is
+      5.0 to 17.8 mV/Pa.
+    - >-
+      Dynamic microphones typically 1 to 4 mV/Pa, -60 to -48 dBV/Pa, with some
+      as low as -70 dBV.
+    - >-
+      Telephone practice: electronic handset stations using electret or dynamic
+      elements need mic signal levels in the TENS of millivolts, while carbon
+      transmitter telephones swing HUNDREDS of millivolts. This is the figure
+      that makes carbon a bypass case rather than a gain case.
+
+derived_requirement:
+  # gain = 1.0 Vrms / capsule output
+  electret: {gain_lo: 56,  gain_hi: 200}
+  dynamic:  {gain_lo: 250, gain_hi: 1000}
+  carbon:   {gain_lo: 2,   gain_hi: 10}
+
+what_the_board_provides:
+  opamp_legs: {bypass: 1, r58_1k: 101, r67_392r: 256}
+  codec_pga_db: [-34.5, 12]
+  reconciliation:
+    - {capsule: Electret, path: "x101, PGA 0 dB",    total: 101,  at_codec_v: "0.51 - 1.80", verdict: covers it}
+    - {capsule: Dynamic,  path: "x256, PGA +12 dB",  total: 1020, at_codec_v: "1.02 - 4.08", verdict: covers it}
+    - {capsule: Carbon,   path: "bypass, PGA trims", total: 1,    at_codec_v: "0.10 - 0.50", verdict: covers it}
+
+evidence:
+  - >-
+    2026-08-23: VINLINE read from the WM8731 datasheet itself. "Input Signal
+    Level (0dB), VINLINE, 1.0, Vrms", under "Line Input to ADC", with the
+    AVDD/3.3 scaling note beneath it. Extracted with pdftotext from the copy
+    docs/datasheets.md cites, so it is the datasheet's own words rather than a
+    secondary summary.
+  - >-
+    2026-08-23: capsule sensitivity ranges taken from published typical figures
+    for each class of part, cited above. These are TYPICAL VALUES FOR A CLASS,
+    not measurements of the handset this instrument will use.
+  - >-
+    2026-08-23: the derivation was run and THE DOCUMENTED TARGETS HOLD UP.
+    Electret needs 56x to 200x and gets 101x; dynamic needs 250x to 1000x and
+    gets 1020x with the codec's +12 dB; carbon needs 2x to 10x and is passed
+    through at 1x with the codec trimming either way. Every case lands inside
+    its range. The "~x3 / ~x100 / ~x1000" figures in audio.md were correct all
+    along; what was missing was any way to check them.
+
+last_verified: 2026-08-23
+
+notes: >-
+  THE CONCLUSION IS REASSURING AND THE RECORD IS STILL `unverified`, and both
+  halves of that matter. The gain targets reconcile against sourced typical
+  figures with margin, so nothing on the board needs to change. But every number
+  above is a class typical or an assumption about mouthpiece SPL, and this
+  project has twice this week watched an illustrative figure harden into a
+  specification through repetition. It is promoted to `confirmed` by measuring a
+  real capsule into a real board, not by anyone agreeing the arithmetic looks
+  right.
+
+  WHAT WOULD ACTUALLY CLOSE IT. Drive the capsule at a known level, or simply
+  speak into the handset at working distance, and measure the op-amp output on a
+  scope with each gain leg selected. One reading per capsule type available. The
+  question is not "is the gain about right" but "does the loudest realistic
+  input clip, and is the quietest usable".
+
+  THE CARBON CASE IS THE ONE WITH REAL RISK, and audio.md already says so from
+  the other direction: a source hot enough to clip the codec BEFORE the PGA is
+  not helped by the PGA. At 100-500 mV a carbon capsule is comfortably under the
+  1.0 Vrms input, but carbon output varies enormously with the element and with
+  how hard it is driven, and ADR 0010 removed the resistor pad that would have
+  handled a hot one. That trade was made deliberately and is recorded there; this
+  record simply notes that the headroom it depends on is unmeasured.
+
+  PAIRS WITH carbon-capsule-DC-resistance, which schedules a DC measurement on
+  the same part for a different reason. Both close on one bench session with a
+  capsule in hand.

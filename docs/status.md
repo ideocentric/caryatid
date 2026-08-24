@@ -201,22 +201,34 @@ pour strategy and the footprint set carry forward. The route does not.
    parts at ~$3 each. That is 40% of a 5-board order, which is why the second
    five cost $15.99/board against $33.77 for the first five.
 
-   **Superseded 2026-08-20 by pulling BT1 out of the assembly.** JLC's share
-   drops to **$141.36 for 5** ($28.27/board): 19 Extended rather than 20, so
-   $65 fixed, and $38.25 of parts. Add $17.35 of Digi-Key holders and the real
-   total is **~$159**, about $10 below the all-JLC route *and* three weeks
-   earlier. Re-derive with `tools/cost_estimate.py`, which reads the BOM and
-   picks the change up on its own.
+   **Superseded 2026-08-23 by three real orders.** Every estimate in this
+   section is history; these are actuals:
+
+   | | five boards | per board |
+   | --- | --- | --- |
+   | JLC, delivered | **$306.95** | $61.39 |
+   | Orbtronic cells | $67.45 | $13.49 |
+   | Digi-Key, delivered | $49.56 | $9.91 |
+   | **total** | **$423.96** | **$84.79** |
+
+   **The estimate was fine and the budget was not.** `cost_estimate.py`
+   predicted $161.68 of merchandise against $176.24, out by 9%. It models
+   merchandise only: shipping, customs duties, payment fee and sales tax added
+   $130.71 to the JLC order, a 74% uplift, and both imports carried a tariff.
+   See [`JLC-order-2026-08-23`](../discovery/findings/jlc-order-2026-08-23.yaml)
+   and `~/.claude/contexts/ideocentric/_org.md`.
 
    > **A superseded figure lived here: "$5.24/board in components."** Do not
    > reinstate it. Beware `leastNumberPrice` in the JLC API — it reads $0.101 for
    > the Seed socket and $0.7533 for BT1, against real ladder prices of $0.338
    > and $4.86. It is not the price you pay.
 
-   The fee is per unique part, **not per BOM line**. The 20 that stay Extended
-   cannot move without a real compromise: connectors are absent from the Basic
-   library, R3/R4/R7/R8 are E96 values that set charge current and boost output
-   voltage, and C1 is 25 V X7R, which is a demanding part in 0805.
+   The fee is per unique part, **not per BOM line**. The **22** that stay
+   Extended cannot move without a real compromise: connectors are absent from
+   the Basic library, R3/R4/R7/R8 are E96 values that set charge current and
+   boost output voltage, and C1 is 25 V X7R, which is a demanding part in 0805.
+   (22 Extended / 20 Basic as of 2026-08-23; it read 20 before ADR 0010 fitted
+   the right channel.)
 
    **Assembly splits in two.** `assemblyModeBatch` separates the SMT line from
    hand soldering: **100 SMT joints and 111 through-hole joints per board**, the
@@ -291,12 +303,17 @@ and `PCB_FAB` in the tool from the answer and every future quantity improves.
 **Two lines are worth checking specifically**, because they are where the
 estimate is most likely wrong:
 
-1. **PCB fab.** 150 × 90 mm is past JLC's 100 × 100 cheap tier, so it is
-   area-priced and the tool does not model their area formula. `PCB_FAB` is a
-   flat placeholder.
-2. **Whether the Extended fee is per unique part or per BOM line.** 20 unique
-   Extended parts at $3 is $60; counted per line it looks like about half that.
-   Getting this backwards understated a figure once already here.
+1. ~~**PCB fab.**~~ **Measured 2026-08-23.** `PCB_FAB[5]` is $42.56 with ENIG,
+   derived by reconciling the tool against a real $176.24 merchandise total.
+   Every other quantity in that table is still a placeholder.
+2. ~~**Whether the Extended fee is per unique part or per BOM line.**~~
+   **It was never open.** Per unique part, stated in
+   `~/.claude/contexts/ideocentric/_org.md` and implemented in
+   `cost_estimate.py` all along, while this list and the worklog carried it as
+   unresolved. Closed 2026-08-23.
+3. **What a landed cost actually is.** The tool models merchandise. Shipping,
+   duties, fees and tax were 74% on top at JLC and 19% at Digi-Key, and nothing
+   models them. This is the live one.
 
 ## Known open, beyond that list
 

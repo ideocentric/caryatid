@@ -142,6 +142,16 @@ than an iron.
 | Electret | stage + bias resistor | ~×100 (40 dB) |
 | Dynamic | stage at maximum, no bias | ~×1000 (60 dB) |
 
+> **Where those three numbers come from**, which was missing until 2026-08-23:
+> [`discovery/findings/mic-gain-budget.yaml`](../discovery/findings/mic-gain-budget.yaml).
+> The target is the WM8731's own `VINLINE` of **1.0 Vrms at 0 dB**, and the
+> sources are class-typical sensitivities: electret 5 to 17.8 mV/Pa, dynamic
+> 1 to 4 mV/Pa, carbon hundreds of mV. Dividing gives 56–200×, 250–1000× and
+> 2–10× respectively, and **all three targets above land inside their range**.
+> The record is `unverified` regardless, because those are typical figures for a
+> class and the mouthpiece SPL is an assumption. Nothing needs to change; it can
+> now be checked.
+
 #### Single supply needs a mid-rail bias — this is not optional
 
 An op-amp on a single 3V3 rail has no negative supply, so an AC signal must sit
