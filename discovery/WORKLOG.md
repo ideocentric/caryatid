@@ -487,3 +487,62 @@ left off, and JLC's tooling holes.
 Whenever a capsule is to hand, **measure its DC resistance** against the 14.5
 and 112 ohm thresholds, and **read the op-amp output on a scope** with each gain
 leg selected. Neither capsule measurement needs the boards.
+
+## 2026-08-24 — Documentation reframed around who reads it; KiCad stripped two exclusion reasons
+
+**Completed:**
+
+- **`docs/platform.md` written**, the capability specification this repository
+  never had. Fifteen documents answered "what is on this board and why we chose
+  it"; none answered "should I use it". Leads with the gap the board fills,
+  states the support envelope, and carries a limits section written plainly with
+  each limit's escape route. Every hard number verified against the board,
+  `pins.yaml` or a ledger record before committing: 10 of 10 checks.
+- **README reframed.** The first section a stranger met was a warning about
+  which git checkout they were in. Reordered around the reader's questions, with
+  a one-line pointer keeping the checkout hazard visible to anyone about to
+  commit. Status now reads "five ordered, none powered" rather than "fully
+  routed", which answers a question someone outside this repo is actually asking.
+- **`integration.md` narrowed** to "now that you have decided", losing the
+  evaluation material `platform.md` now owns and a stale line about part counts
+  being absent until the board was updated.
+- **Corrected in `platform.md`:** I wrote the DC input as "5 V nominal". It is
+  **5 to 9 V**, never 12, with OVP tripping at 10.2 to 10.8 V. `integration.md`
+  had it right and my new document understated the board. Read back from
+  `power-sheet.md` rather than reconciled between the two.
+- **Standoff guidance reversed.** I had argued for a taller standoff on lip
+  clearance; the enclosure record already establishes the board never overlaps
+  the lip in plan. Matt's constraint runs the other way: panel pots intrude from
+  the lid, so every millimetre of standoff is spent twice. Now says keep it
+  short, with the sourcing trap that 4 mm is harder to find than 5 mm, and that
+  cable terminations rather than the board usually decide the height.
+
+**Corrected this session, and it is a recurrence worth naming:**
+
+- **KiCad stripped the reasons from two DRC exclusions** when the board was
+  opened at 23:49. A1 and A2 kept their exclusions and lost both justifications.
+  **The gate does not catch this**: it matches on violation type and item, not on
+  the comment, so it reported "0 new, 5 accepted, clean" with two of five excused
+  by nobody. Restored with `--apply` in a second; the tool's docstring now says
+  to re-run it after any KiCad session.
+
+**Verified:** the board file is untouched at 2026-08-23 10:41, so the design that
+was ordered is intact. Only the project file's annotations moved.
+
+**In flight:** nothing. Six ledger records, both trees clean apart from one
+untracked file, see below.
+
+**Open questions:** three records open, all stating what closes them, and **two
+of the three no longer wait on the boards.** Matt has the telephone in hand, so
+the handset capsule can be measured now: DC resistance against the 14.5 and 112
+ohm thresholds, and output level against the gain budget. The keypad wants
+beeping out before anyone assumes it is discrete rather than a matrix.
+
+**Undecided, and left for Matt:** `hardware/pcb/caryatid-v0.1.pdf`, exported
+from KiCad at 23:59 and untracked. **No PDF is tracked anywhere in this
+repository** and nothing in `.gitignore` covers it, so it is neither established
+convention nor deliberately excluded. It wants a decision rather than a default.
+
+**Next step:** measure the handset capsule. It needs nothing that has not
+arrived, it closes two of the three open records, and the thresholds are already
+written down.
