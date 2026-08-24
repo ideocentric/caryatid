@@ -7,7 +7,7 @@ source_claim: >-
   behaves differently this record is the only way to know what changed.
 source_ref: "Matt, transcribed from the JLCPCB quote form 2026-08-23"
 resource: "JLCPCB order, 5 boards, PCB + Economic assembly, top side"
-status: in-progress          # NOT PLACED YET. See open_questions.
+status: confirmed            # PLACED 2026-08-23
 
 settings:
   online_pcb_quote:
@@ -215,6 +215,44 @@ open_questions:
       the board is fully routed and poured, so holes added inside the outline
       would land in copper. Fiducials already exist, so the alignment need is
       covered.
+
+  - >-
+    2026-08-23: ORDER PLACED. Merchandise $176.24, shipping $46.97, customs
+    duties and taxes $63.21, payment fee $1.43, sales tax $19.10, GRAND TOTAL
+    $306.95. A mid-checkout figure of $197.51 (with a $9.00 coupon and $30.27
+    shipping) was superseded before payment; the coupon is absent from the final
+    breakdown.
+  - >-
+    2026-08-23: THE ESTIMATE WAS GOOD AND THE BUDGET WAS NOT, and the two are
+    different claims. cost_estimate.py predicted $161.68 of merchandise against
+    $176.24 actual, out by $14.56 or 9%, which for a tool with an admitted
+    placeholder on the fab line is a decent result. But it models MERCHANDISE
+    ONLY. Shipping, duties, payment fee and sales tax added $130.71, a 74%
+    UPLIFT on the goods, with customs duties alone at 36% of merchandise. An
+    estimate can land within 9% of the goods and still be half the money that
+    actually leaves the account.
+  - >-
+    2026-08-23: PCB_FAB[5] moved from a $28.00 guess to $42.56 MEASURED,
+    attributing the whole $14.56 gap to the only line the tool flagged as
+    guessed. That is consistent rather than convenient: the $28.00 predated the
+    ENIG change, ENIG cost about $20, so a naive expectation was $48 and the
+    real base fab came in cheaper than guessed. Every other quantity in PCB_FAB
+    is still a placeholder and is now labelled as such.
+
+actual_usd:
+  # As paid, 2026-08-23. Grand total is what left the account.
+  merchandise: 176.24
+  shipping: 46.97
+  customs_duties_and_taxes: 63.21
+  payment_fee: 1.43
+  sales_tax: 19.10
+  grand_total: 306.95
+  landed_uplift: {usd: 130.71, percent_of_merchandise: 74.2}
+  # An earlier figure of $197.51 was quoted mid-checkout with a $9.00 coupon and
+  # $30.27 shipping. Both changed before payment; the coupon does not appear in
+  # the final breakdown. $306.95 is the number.
+  superseded_quote: 197.51
+  estimate_vs_merchandise: {estimate: 161.68, actual: 176.24, out_by: 14.56, percent: 9}
 
 cost_effect_usd:
   finish_upgrade: 20.00        # ENIG over LeadFree HASL, Matt's figure from the form

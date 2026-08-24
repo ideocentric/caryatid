@@ -41,6 +41,16 @@ owner_bought_usd:
   total_for_five: 87.27
   excludes: "Digi-Key shipping, quoted at $8.49 ground"
 
+landed_total_usd:
+  # ACTUAL, 2026-08-23. This is the number, and it is the one to quote.
+  jlc_delivered: 306.95      # incl. shipping, duties, payment fee, sales tax
+  cells: 67.45
+  holders: 17.35             # not yet ordered
+  shunts: 2.47               # not yet ordered
+  qty_5: {total: 394.22, per_board: 78.84}
+  plus_digikey_shipping: {total: 402.71, per_board: 80.54, shipping: 8.49}
+  vs_originally_recorded: {was: 168.87, was_per_board: 33.77, ratio: 2.33}
+
 true_total_usd:
   # What five boards ACTUALLY cost, as opposed to what estimated_total_usd says.
   # Includes the 2026-08-23 ENIG upgrade, +$20 on the JLC line.
@@ -264,6 +274,18 @@ evidence:
     188.87 and five boards all in go 256.14 -> 276.14, $55.23 a board. The paste
     stays lead-free "High temp.", which is the matched pair for ENIG and needed
     no change. Full reasoning in JLC-order-2026-08-23.
+
+  - >-
+    2026-08-23: LANDED COST, and it supersedes every earlier total in this
+    record. The JLC order was delivered-priced at $306.95, not the $188.87
+    merchandise estimate: shipping, customs duties, payment fee and sales tax
+    added $130.71 on top of $176.24 of goods, a 74% uplift, duties alone 36%.
+    Five boards all in are therefore $394.22, or $78.84 a board, and $402.71
+    with Digi-Key shipping for the holders and shunts still to be bought.
+    AGAINST THE $168.87 AND $33.77 A BOARD THIS RECORD ORIGINALLY CARRIED, THAT
+    IS 2.33x. The estimate was never wrong about the boards; it was silent about
+    everything between the factory and the door, and nobody noticed because the
+    silence looked like a total.
 
 last_verified: 2026-08-23
 

@@ -648,13 +648,15 @@ explicitly not fitting invites the confusion the mechanism exists to prevent.
 The cost figures elsewhere in this document are **the JLC order only**. Adding
 what you buy yourself:
 
+**Ordered 2026-08-23. These are actuals, not estimates.**
+
 | | five boards | per board |
 | --- | --- | --- |
-| JLC turnkey (ENIG) | $188.87 | $37.77 |
+| JLC, delivered | **$306.95** | $61.39 |
 | cells | $67.45 | $13.49 |
 | BT1 holders | $17.35 | $3.47 |
 | shunts (buy 100, 30 used) | $2.47 | $0.15 |
-| **total** | **$276.14** | **$55.23** |
+| **total** | **$394.22** | **$78.84** |
 
 Before Digi-Key shipping, quoted at $8.49 ground. **The JLC-only figure
 understates the build by $87.27, or 46%**, and the cell alone is the second

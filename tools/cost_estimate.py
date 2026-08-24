@@ -28,8 +28,17 @@ and 111 of the 211 joints are the expensive kind.
 
 GUESSED: everything in RATES, and the PCB fab line most of all. 150 x 90 mm is
 past JLC's 100 x 100 cheap tier so it is area-priced, and this does not model
-their area formula -- PCB_FAB is a flat guess per quantity. Treat the fab line
-as a placeholder until a real quote replaces it.
+their area formula -- PCB_FAB is a flat guess per quantity. PCB_FAB[5] is now
+MEASURED from a real order; every other quantity is still a placeholder.
+
+WHAT THIS TOOL DOES NOT COST AT ALL, AND IT IS THE LARGEST LINE
+---------------------------------------------------------------
+MERCHANDISE ONLY. Shipping, customs duties, payment fees and sales tax are not
+modelled and are not small: on the 2026-08-23 order of five they added $130.71
+to $176.24 of goods, a 74% uplift, with duties alone at 36% of merchandise.
+An estimate that lands within 9% of the goods total can still be half the money
+that actually leaves the account. Reconcile against MERCHANDISE, and treat the
+landed figure as a separate number that only a real order can give you.
 
 THE POINT THE ESTIMATE IS ACTUALLY MAKING
 -----------------------------------------
@@ -60,7 +69,13 @@ RATES = {
     "smt_per_joint":    0.0017,
     "tht_per_joint":    0.0173,  # hand soldering, the expensive one
 }
-PCB_FAB = {5: 28.00, 10: 40.00, 20: 60.00, 25: 70.00, 50: 120.00}
+# 5 is MEASURED as of 2026-08-23, the rest are still guesses. A real order of
+# five came to $176.24 of merchandise against a $161.68 estimate; attributing
+# the whole $14.56 gap to this line, which was the only one flagged as a guess,
+# puts fab at $42.56 WITH THE ENIG UPGRADE INCLUDED. That hangs together: the
+# $28.00 guess predated the finish change, ENIG cost about $20, so a naive
+# expectation was $48 and the real base fab came in cheaper than guessed.
+PCB_FAB = {5: 42.56, 10: 40.00, 20: 60.00, 25: 70.00, 50: 120.00}
 PCB_FAB_DEFAULT_PER_BOARD = 3.00   # crude fallback for quantities not listed
 
 # The public ladder cannot see pre-order pricing. Confirmed 2026-08-18.
