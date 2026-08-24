@@ -437,3 +437,53 @@ BH-18650-PC** and judge insertion force and whether the contact springs back.
 Separately, whenever a carbon capsule is to hand, **measure its DC resistance**
 against the thresholds above. Neither needs the boards, so the capsule
 measurement can happen any time.
+
+## 2026-08-23 20:10 — Cross-repo review: three gaps closed, one of them nine days old
+
+**Completed:**
+
+- **`status.md`'s cost section was stale four ways.** It claimed "$141.36 for 5
+  ($28.27/board)... real total ~$159" against actuals of $306.95 to JLC and
+  $423.96 all in; said 19 and 20 Extended where the board now has **22**; listed
+  `PCB_FAB` as an open placeholder after it was measured at $42.56; and still
+  carried the Extended-fee question after it was closed. Both open questions
+  struck through with what closed them, and a third added that genuinely is
+  live: **nothing models landed cost**.
+- **loa's `docs/design/12-phone-build.md` contradicted caryatid AND itself.**
+  Last revised 2026-08-11, nine days before ADR 0009. One paragraph said the
+  capsule measurement "no longer gates the board, since **the gain stage is DNP
+  either way**"; the next said it "gates the board". The first is false: ADR
+  0009 populates the front-end at assembly, ADR 0010 cleared every DNP, U4 is
+  fitted with both halves live. Corrected, with a dated banner at the top of the
+  page because anything else there reasoning from a DNP front-end is stale for
+  the same reason.
+- **`mic-gain-budget` opened**, `unverified`. audio.md and ADR 0009 both state
+  gain targets of ~x3 / ~x100 / ~x1000 and **neither repository contained a
+  single capsule output level to derive them from**. ADR 0009 says the capsule
+  requirement "was never written down" and calls it a documentation failure
+  before a design failure; the same was true one level down, of the levels its
+  own targets rest on. This is what Matt could not find at ordering time.
+
+**Verified:** target is the WM8731's own `VINLINE`, **1.0 Vrms at 0 dB**,
+extracted with pdftotext from the datasheet rather than a summary and saved as
+`2026-08-23-wm8731-line-input-level.txt` because the fetched PDF was in a temp
+path. Against class-typical sensitivities, **all three documented targets land
+inside their range**: electret needs 56-200x and gets 101x; dynamic needs
+250-1000x and gets 1020x with the codec's +12 dB; carbon needs 2-10x and is
+passed at 1x with the PGA trimming either way. **The targets were right all
+along; what was missing was any way to check them.**
+
+**In flight:** nothing. Six ledger records, both trees clean and pushed.
+
+**Open questions:** three records open, all by design and all stating what would
+close them. `BT1-cell-fit` (`conflict`) wants a holder and a cell in the same
+hand. `carbon-capsule-DC-resistance` and `mic-gain-budget` (both `unverified`)
+want a capsule, and **both close in the same bench session**. Also carried on
+the order record: the jumper placement preview, the three confirmation steps
+left off, and JLC's tooling holes.
+
+**Next step:** unchanged, and all three open items are physical. On delivery,
+**seat one Orbtronic cell in one BH-18650-PC** before building anything.
+Whenever a capsule is to hand, **measure its DC resistance** against the 14.5
+and 112 ohm thresholds, and **read the op-amp output on a scope** with each gain
+leg selected. Neither capsule measurement needs the boards.

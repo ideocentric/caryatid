@@ -29,7 +29,9 @@ the_target:
   source: >-
     WM8731 datasheet PD Rev 4.0 (Feb 2005), Electrical Characteristics, read
     2026-08-23 from the SparkFun-hosted copy cited in docs/datasheets.md.
-    Extracted with pdftotext rather than read off a summary.
+    Extracted with pdftotext rather than read off a summary. Verbatim lines
+    saved as discovery/evidence/2026-08-23-wm8731-line-input-level.txt, because
+    the fetched PDF lived in a temporary path that will not survive.
 
 # ⚠️ THE ONE ASSUMPTION EVERYTHING RESTS ON, STATED RATHER THAN BURIED.
 the_spl_assumption:

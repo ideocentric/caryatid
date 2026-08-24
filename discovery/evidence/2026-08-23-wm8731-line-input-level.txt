@@ -1,0 +1,23 @@
+WM8731 line input level, extracted 2026-08-23
+source: https://cdn.sparkfun.com/datasheets/Dev/Arduino/Shields/WolfsonWM8731.pdf
+        (the copy docs/datasheets.md cites; PD Rev 4.0, Feb 2005)
+method: pdftotext -layout, Electrical Characteristics section
+
+--- verbatim ---
+Analogue Reference Levels
+Reference voltage (VMID)             VVMID                                            AVDD/2                        V
+Potential divider resistance         RVMID                                              50k                       Ohms
+Line Input to ADC
+Input Signal Level (0dB)             VINLINE                                            1.0                        Vrms
+                                                                                      AVDD/3.3
+Signal to Noise Ratio           SNR            A-weighted, 0dB gain         85           90                         dB
+
+--- and the mic path, for contrast ---
+256fs unless otherwise stated.
+Microphone Input to ADC @ 0dB Gain, fs = 48kHz (40k ohm Source Impedance. See Figure 12)
+Input Signal Level (0dB)             VINMIC                                             1.0                      Vrms
+                                                                                      AVDD/3.3
+Signal to Noise Ratio                 SNR        A-weighted, 0dB gain                    85                       dB
+
+1.0 Vrms at 0 dB PGA is the target the mic gain budget is derived against.
+Note the AVDD/3.3 scaling: 1.0 Vrms holds at a 3.3 V AVDD.
