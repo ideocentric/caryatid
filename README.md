@@ -7,6 +7,10 @@ borg, and whatever comes next.
 it. Named for the role rather than for any instrument it carries: calling it
 after one of them would have implied it belonged to that one.*
 
+**Deciding whether to use it?** [docs/platform.md](docs/platform.md) is the
+capability specification: what it supports, what it does not, and where the
+boundary sits.
+
 **One PCB layout serves every build.** Every variable element — pots, keypad,
 sensors, switches, comms — enters through a connector, and each instrument
 populates the subset it needs. Order once, stuff per instrument.
@@ -63,6 +67,7 @@ the wrong directory.
 | Board-support firmware (MIT) | [firmware/](firmware/) |
 | What to do before and during capture | [docs/capture-checklist.md](docs/capture-checklist.md) |
 | Datasheets, links and document numbers | [docs/datasheets.md](docs/datasheets.md) |
+| **What it supports, and what it does not** | [docs/platform.md](docs/platform.md) |
 | Why things are the way they are | [docs/decisions/](docs/decisions/) |
 | **Rules the tools must follow, and what each cost** | [docs/conventions.md](docs/conventions.md) |
 
