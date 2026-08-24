@@ -109,6 +109,13 @@ it reports clearances confidently and wrongly.
 - **`pin_labels.surviving_labels`** used `x + up` on both sides of rotated text.
   `th_split` divides line height *asymmetrically* about the anchor, so every
   rotated label got a box of the wrong height, off centre.
+- **`check_schematic.py`** made the same mistake in a different file format, and
+  it is worth seeing twice. A net label in a `.kicad_sch` is anchored at the end
+  that touches the wire and grows away from it; a symbol field is centred. A
+  first version treated labels as centred, which halved their reach and reported
+  a sheet clean while a 300 dpi plot showed labels plainly over the resistors.
+  On `audio.kicad_sch`, `BIAS_E_L` anchors 8.89 mm from R51 and its text runs
+  back toward it.
 
 Where the anchor cannot be established, **over-reserve**. An obstacle model may
 claim more space than the ink needs; it may never claim less.
@@ -206,3 +213,42 @@ as dated evidence on `BUD-CU-477-interior`.
 
 If a claim matters enough to repeat, it belongs in
 [discovery/findings/](../discovery/findings/), not in a summary.
+
+---
+
+## 9. A `.kicad_sch` is not a `.kicad_pcb`, in two ways that will bite
+
+Both of these cost real time in `check_schematic.py`, and neither is guessable
+from experience with the board format.
+
+**A schematic embeds its symbol LIBRARY beside its placed instances, and the two
+are indistinguishable by their opening line.** Both are `(symbol ...)` at the
+same nesting. Matching both reported **49 symbols outside the page borders**,
+with references like `J`, `C` and `R` carrying no number and coordinates near
+the origin, because those were library definitions in symbol-local coordinates.
+
+```python
+if "(lib_id " not in blk:      # a placed instance has one; a definition does not
+    continue
+```
+
+The real answer was **one** symbol, JP6 in a title block. A checker that
+overcounts by fifty is worse than no checker: the finding that mattered was
+buried in noise that looked identical to it.
+
+**Property coordinates are ABSOLUTE in a schematic and RELATIVE in a board.** In
+a `.kicad_pcb`, a footprint's Reference sits at an offset from the footprint
+origin and has to be transformed by the footprint's rotation. In a
+`.kicad_sch`, the same field carries a page coordinate directly. Verified rather
+than assumed: R11's symbol sits at (190.5, 69.85) and its reference text at
+(196.5, 39.85).
+
+Carrying the board habit across produces offsets that look plausible and are
+nonsense, which is the failure mode that does not announce itself.
+
+**The corollary for symbol extents.** A placed instance does not record how big
+its body is; that lives in the embedded library definition, in symbol-local
+coordinates. Any check that needs a body size has to read `lib_symbols` and
+match on `lib_id`, or guess. A guess that fits a resistor is wrong for a
+twenty-pin connector, and a check calibrated on passives will silently miss
+every collision on the parts that matter.
