@@ -264,6 +264,20 @@ open_questions:
     touched it. A snapshot claiming to predate its own contents is worse than no
     snapshot. It now stamps from the whole hierarchy.
 
+  - >-
+    2026-08-24: THE ARCHIVED SCHEMATIC SNAPSHOT NOW DIFFERS FROM THE CURRENT
+    SCHEMATIC, deliberately and correctly.
+    2026-08-21-schematic-snapshot-eb5a8e1.pdf is the schematic as it stood when
+    this order was placed. Afterwards, JP6 was lifted 22.86 mm out of the title
+    block on audio.kicad_sch, a purely cosmetic move verified netlist-identical
+    across all 113 nets, ERC 0 and schematic parity 0. THE BOARD WAS NOT
+    TOUCHED, so nothing about what was manufactured changed. Re-running
+    --archive from here produces a second, differently stamped file rather than
+    overwriting this one, which is the intended behaviour: one snapshot per
+    state, and this one remains the answer to "what did we buy".
+    docs/reference/caryatid-schematic.pdf carries the current version, because
+    that copy is named for being current rather than for provenance.
+
 actual_usd:
   # As paid, 2026-08-23. Grand total is what left the account.
   merchandise: 176.24

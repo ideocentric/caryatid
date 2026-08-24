@@ -546,3 +546,56 @@ convention nor deliberately excluded. It wants a decision rather than a default.
 **Next step:** measure the handset capsule. It needs nothing that has not
 arrived, it closes two of the three open records, and the thresholds are already
 written down.
+
+## 2026-08-24 (later) — PDFs and renders published; a schematic checker, and JP6 fixed
+
+**Completed:**
+
+- **Reference artefacts automated.** `--apply` now writes a composite board PDF
+  stacked as the PCB viewer shows it (back copper, front copper, silkscreen on
+  top), a six-page schematic PDF, and top and bottom photographic renders at
+  `--quality high`. `--archive` copies the PDFs to `discovery/evidence/` under
+  dated, SHA-stamped names when an order is placed.
+- **Two places, two purposes.** `docs/reference/` and `docs/img/` carry stable
+  names and are always current, for reading. `discovery/evidence/` carries
+  stamped copies of what was ordered, for provenance. Each artefact is stamped
+  by ITS OWN last change: the board and schematic move independently.
+- **`check_schematic.py` added**, which reports and never edits. Found JP6 sitting
+  in audio.kicad_sch's title block, printing across "File: audio.kicad_sch",
+  plus five labels genuinely crossing the resistor they name.
+- **JP6 lifted 22.86 mm**, all seven attached elements moved together.
+
+**Corrected, and the checker is the reason:**
+
+- **I claimed twice that labels ran through the resistors**, from a 100 dpi plot
+  and then a 300 dpi one. For the short ones they do not: R51's body ends at
+  y 132.08 and BIAS_E_L begins at 132.67, clearing by **0.59 mm**. At plot scale
+  a sub-millimetre gap reads as contact. The tool now separates OVERLAP, a
+  defect, from NEAR, cosmetic, because an eye cannot measure. The longer labels
+  do genuinely overlap, so the instinct was half right and only geometry could
+  say which half.
+- **I nearly shipped a check that fires on healthy work**, reporting "220 of 272
+  texts more than 10 mm from their symbol". A reference 10 mm above a resistor
+  is correct placement. Dropped rather than reported.
+- **A schematic embeds its symbol library beside its placed instances** and the
+  two look identical. Matching both reported 49 symbols outside the page
+  borders. A placed instance carries `lib_id`; a definition does not. The real
+  answer was one.
+- **I committed Matt's hand-exported PDF by accident** with `git add -A`, one
+  message after saying it was his and I had not touched it. Untracked in
+  e6ca99b, history left alone at his instruction, file deleted.
+
+**Verified:** the JP6 move is netlist-identical across 113 nets, ERC 0,
+schematic parity 0, board file untouched. Connectivity in a schematic is
+positional, so moving the symbol without its three wires and three labels would
+have disconnected it silently while still looking right.
+
+**In flight:** nothing. Six ledger records, both trees clean and pushed.
+
+**Open questions:** three records open, two closable with the phone in hand.
+Five cosmetic label crossings remain on the schematic; they want a person in
+Eeschema, which is the work the checker exists to scope rather than to do.
+
+**Next step:** unchanged. Measure the handset capsule: DC resistance against the
+14.5 and 112 ohm thresholds, and output level against the gain budget. Beep out
+the keypad at the same time.
