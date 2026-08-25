@@ -72,6 +72,19 @@ WHAT IT CHECKS, AND WHY EACH EARNED ITS PLACE
    does not make what it measures unimportant, and a report that hedges
    everything gets read as a report that found nothing.
 
+KNOWN UNDER-RESERVATION: A LABEL'S FLAG IS WIDER THAN ITS TEXT
+---------------------------------------------------------------
+Every box here measures the TEXT. A global_label is also drawn with a pointed
+flag around that text, and the polygon is wider. Measured at 600 dpi on
+AUDIO_OUT_R (seed.kicad_sch): the text box ends at x 80.18 and the drawn flag
+reaches 81.36, an overhang of **1.18 mm**.
+
+So a global_label can graze something this check calls clear. It is recorded
+rather than fixed because the overhang is a constant of KiCad's rendering, not
+of the file, and guessing it would be exactly the mistake CHAR_W was. Measure it
+before relying on it. Where it currently matters (the A1 breakout on seed) the
+graze is 0.08 mm against a socket outline, which is below anything a plot shows.
+
 THE LIB_SYMBOLS TRAP, WHICH COST AN HOUR
 -----------------------------------------
 A .kicad_sch embeds its symbol LIBRARY as `(symbol ...)` blocks alongside the
@@ -158,6 +171,84 @@ def lib_extents(t):
     return out
 
 
+def lib_box(t, with_pins=False):
+    """True graphic extent per library symbol, ASYMMETRIC, in symbol-local mm.
+
+    lib_extents() returns max(|min|,|max|) per axis and every caller then builds
+    a box symmetric about the origin. That is rotation-invariant and safely
+    conservative, and it invents space that does not exist.
+
+    power:GND is the case that mattered: its graphic spans local y -2.54..0, so
+    ALL of its ink is on one side of the pin. The symmetric box claimed 2.54 mm
+    of empty page ABOVE the pin as well, and that phantom was the only thing
+    blocking AUDIO_OUT_R's repair on seed.kicad_sch -- a fix refused because of
+    ink that is not there. Real page ink is 123.19..125.73; the claim was
+    120.65..125.73.
+    """
+    out = {}
+    lib = re.search(r"^\t\(lib_symbols\b", t, re.M)
+    if not lib:
+        return out
+    block = sexp(t, lib.start() + 1)
+    for m in re.finditer(r'\(symbol "([^"]+)"', block):
+        name = m.group(1)
+        if ":" not in name:
+            continue
+        blk = sexp(block, m.start())
+        xs, ys = [], []
+        for g in re.finditer(r"\((?:rectangle|polyline|circle|arc)\b", blk):
+            gb = sexp(blk, g.start())
+            for a, b in re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", gb):
+                xs.append(float(a)); ys.append(float(b))
+            for a, b in re.findall(
+                    r"\((?:start|end|center|mid) ([-\d.]+) ([-\d.]+)\)", gb):
+                xs.append(float(a)); ys.append(float(b))
+        if with_pins:
+            for p in re.finditer(r"\(pin \w+ \w+", blk):
+                pb = sexp(blk, p.start())
+                at = re.search(r"\(at ([-\d.]+) ([-\d.]+) ([-\d.]+)\)", pb)
+                ln = re.search(r"\(length ([\d.]+)\)", pb)
+                if not at:
+                    continue
+                px, py = float(at.group(1)), float(at.group(2))
+                ang = float(at.group(3))
+                L = float(ln.group(1)) if ln else 0.0
+                tx = px - L if ang == 0 else px + L if ang == 180 else px
+                ty = py - L if ang == 270 else py + L if ang == 90 else py
+                xs += [px, tx]; ys += [py, ty]
+        if xs:
+            out[name] = (min(xs), min(ys), max(xs), max(ys))
+    return out
+
+
+def placed_body(sym, lb):
+    """Map a symbol-local box onto the page, honouring the placement angle.
+
+    Symbol space has +y UP, the page has +y DOWN, so page_y = origin_y - local_y
+    after rotating counter-clockwise by the placement angle.
+
+    VERIFIED against the plot rather than reasoned about, both ends of the
+    transform: power:GND at angle 0 on seed draws its bars BELOW the wire
+    (page y 123.19..125.73), and the same symbol at angle 180 on audio draws
+    them ABOVE it, measured 59.52..61.85 against a prediction of 59.69..62.23.
+    """
+    x0, y0, x1, y1 = lb
+    a = round(sym.get("rot", 0)) % 360
+    pts = []
+    for lx, ly in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
+        if a == 90:
+            rx, ry = -ly, lx
+        elif a == 180:
+            rx, ry = -lx, -ly
+        elif a == 270:
+            rx, ry = ly, -lx
+        else:
+            rx, ry = lx, ly
+        pts.append((sym["x"] + rx, sym["y"] - ry))
+    xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
 def lib_reach(t):
     """Half-extents INCLUDING pins, for the border check.
 
@@ -208,13 +299,14 @@ def placed_symbols(t):
         blk = sexp(t, m.start() + 1)
         if "(lib_id " not in blk:
             continue
-        at = re.search(r"\(at ([-\d.]+) ([-\d.]+)", blk)
+        at = re.search(r"\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?", blk)
         ref = re.search(r'\(property "Reference" "([^"]*)"', blk)
         if not at:
             continue
         lid = re.search(r'\(lib_id "([^"]+)"', blk)
         out.append({"ref": ref.group(1) if ref else "?",
                     "x": float(at.group(1)), "y": float(at.group(2)),
+                    "rot": float(at.group(3) or 0),
                     "lib": lid.group(1) if lid else "",
                     "blk": blk})
     return out
@@ -320,7 +412,7 @@ def main():
         W, H = PAPER[pm.group(1)]
         syms = placed_symbols(t)
         txs = texts(t)
-        reach = lib_reach(t)
+        reach = lib_box(t, with_pins=True)
         found = []
 
         # 1. outside the drawing border
@@ -332,9 +424,10 @@ def main():
         # paper edge, never tested at all because its reference starts with #.
         # A power flag is ink on the plot like anything else.
         for s in syms:
-            ex, ey = reach.get(s["lib"], (0.0, 0.0))
-            lo_x, hi_x = s["x"] - ex, s["x"] + ex
-            lo_y, hi_y = s["y"] - ey, s["y"] + ey
+            lbx = reach.get(s["lib"])
+            if lbx is None:
+                continue
+            lo_x, lo_y, hi_x, hi_y = placed_body(s, lbx)
             over = []
             if lo_x < BORDER:      over.append(f"left by {BORDER - lo_x:.2f}")
             if hi_x > W - BORDER:  over.append(f"right by {hi_x - (W - BORDER):.2f}")
@@ -363,16 +456,23 @@ def main():
         # BACK OVER the symbol from an anchor that is itself well clear: on
         # audio.kicad_sch, BIAS_E_L anchors 8.89 mm from R51 and still crosses
         # it. Anchor distance is the wrong question.
-        ext = lib_extents(t)
+        ext = lib_box(t)
         for tx in txs:
             if tx["kind"] not in ("label", "global_label", "hierarchical_label"):
                 continue
             tb = box(tx, anchored=True)
             for s in syms:
-                if s["ref"].startswith("#"):
-                    continue
-                ex, ey = ext.get(s["lib"], (BODY, BODY))
-                sb = (s["x"] - ex, s["y"] - ey, s["x"] + ex, s["y"] + ey)
+                # Power symbols are NOT skipped. That filter belongs to no
+                # check in this file and had leaked into two of them: the
+                # border test, where it hid a GND flag sitting 0.9 mm from the
+                # paper edge, and here. A label landing on a ground flag is a
+                # collision like any other, and this check could not see one:
+                # the D12 / GND-arrow overlap on panel-io was found by a
+                # separate tool, not by the checker whose job it was.
+                lbx = ext.get(s["lib"])
+                sb = (placed_body(s, lbx) if lbx else
+                      (s["x"] - BODY, s["y"] - BODY,
+                       s["x"] + BODY, s["y"] + BODY))
                 if overlap(tb, sb):
                     found.append(("crossing",
                                   f"label {tx['s']!r} crosses {s['ref']}"))

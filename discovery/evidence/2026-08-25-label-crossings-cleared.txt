@@ -62,3 +62,64 @@ STILL OPEN -- ONE, AND IT NEEDS A PERSON
   also overlap A1's pin NUMBERS and pin NAMES. Those live in the library
   definition, not in the sheet, so no check in this file sees them. That
   corner wants its layout reworked by hand rather than nudged.
+
+CLOSED, appended 2026-08-25 13:20
+--------------------------------------------------------------
+  The one remaining crossing, AUDIO_OUT_R against A1 on seed.kicad_sch, is
+  fixed. Three coordinated edits, because it was never only about the label:
+
+      1  GND flag at (68.58, 123.19)   rot 180 -> 0
+      2  its Value text                y 126.19 -> 127.46
+      3  AUDIO_OUT_R label + its wire  x 71.12 -> 67.31
+
+  THE LABEL. 11 characters anchored at 71.12, ink ending 83.99, against an A1
+  body starting at 81.28: 2.71 mm inside the socket. Its sibling AUDIO_OUT_L is
+  the same 11 characters anchored at 67.31. Matching it clears A1 by 1.10 mm,
+  which makes the drawing consistent with itself rather than with a preference.
+
+  THE OBSTRUCTION, AND A DIAGNOSIS I GOT WRONG FIRST. The corridor at y 120.65
+  was occupied by a power:GND flag placed at ROT 180, so its graphic draws ABOVE
+  its own wire at y 120.65..123.19.
+
+  I first called that block a modelling artefact: lib_extents() builds a box
+  symmetric about the origin, and power:GND has all its ink on one side of the
+  pin, so the box invents 2.54 mm of empty space. That WAS a real defect and is
+  now fixed (lib_box / placed_body, asymmetric, rotation-aware, verified against
+  the plot at angle 0 AND angle 180). But fixing it did not dissolve this
+  obstruction: with rotation handled correctly the ink really is at
+  120.65..123.19. The symmetric box gave the right answer here for the wrong
+  reason. Measured on the plot the triangle spans 120.44..122.13.
+
+  So the flag turned to rot 0 and hangs below its wire at 123.19..125.73. Of the
+  five power:GND symbols on this sheet the other four are at rot 0 or 270; this
+  was the only one drawn pointing up.
+
+  A THIRD FILTER LEAK. The crossing check was skipping every symbol whose
+  reference starts with '#' -- the same filter already removed from the border
+  test. A label landing on a ground flag was invisible to the check whose job it
+  was; the D12 / GND-arrow overlap on panel-io had to be found by a separate
+  tool. Removed. With power symbols now included AND accurate boxes, the report
+  is byte-identical to the conservative model: 0 findings either way.
+
+VERIFICATION
+--------------------------------------------------------------
+  netlist                  113 nets, identical nodes on every one
+  ERC                      0 messages, 0 errors, 0 warnings
+  schematic parity         0 violations, 0 unconnected pads, 0 footprint errors
+  .kicad_pcb               untouched
+  check_schematic.py       0 findings, 3 advisory near-misses at 0.50 mm
+
+  On the plot at 600 dpi: AUDIO_OUT_R's flag now ends at 81.36 against A1's
+  edge at 81.28, and A1's pin number sits clear at 82.63. Before the fix the
+  flags covered the pin numbers outright.
+
+KNOWN UNDER-RESERVATION, RECORDED NOT FIXED
+--------------------------------------------------------------
+  Every box in check_schematic.py measures TEXT. A global_label is drawn with a
+  pointed flag around that text and the polygon is wider: measured on
+  AUDIO_OUT_R, text ends 80.18 and the flag reaches 81.36, an overhang of
+  1.18 mm. A global_label can therefore graze something the check calls clear.
+
+  Not fixed, because the overhang is a constant of KiCad's rendering rather than
+  of the file, and guessing it would be precisely the mistake CHAR_W was. It is
+  written down so the next person measures it instead of assuming it.

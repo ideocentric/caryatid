@@ -1692,7 +1692,7 @@
 	)
 	(wire
 		(pts
-			(xy 76.2 120.65) (xy 71.12 120.65)
+			(xy 76.2 120.65) (xy 67.31 120.65)
 		)
 		(stroke
 			(width 0)
@@ -1702,7 +1702,7 @@
 	)
 	(global_label "AUDIO_OUT_R"
 		(shape bidirectional)
-		(at 71.12 120.65 180)
+		(at 67.31 120.65 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1723,7 +1723,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 68.58 123.19 180)
+		(at 68.58 123.19 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1740,7 +1740,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 68.58 126.19 0)
+			(at 68.58 127.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
