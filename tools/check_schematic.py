@@ -230,10 +230,12 @@ def texts(t):
             sz = re.search(r"\(size ([\d.]+)", blk)
             if not at:
                 continue
+            ju = re.search(r"\(justify ([^)]*)\)", blk)
             out.append({"s": m.group(1), "x": float(at.group(1)),
                         "y": float(at.group(2)),
                         "rot": float(at.group(3) or 0),
                         "h": float(sz.group(1)) if sz else 1.27,
+                        "justify": ju.group(1) if ju else "",
                         "kind": kind})
     for sym in placed_symbols(t):
         for pm in re.finditer(r'\(property "(Reference|Value)" "([^"]*)"', sym["blk"]):
@@ -264,12 +266,23 @@ def box(tx, anchored=False):
     w = max(len(tx["s"]), 1) * CHAR_W * (tx["h"] / 1.27)
     h = tx["h"]
     if anchored:
+        # DIRECTION COMES FROM justify, NOT FROM ROTATION. Deriving it from the
+        # angle alone put horizontal labels on the wrong side of their anchor.
+        # Measured at 600 dpi:
+        #   D9        rot   0, justify left   -> ink 518.25..524.81, anchor 518.16  (+x)
+        #   LEG_101_L rot 180, justify left   -> ink 219.92..229.87, anchor 219.71  (+x)
+        #   BIAS_E_L  rot 180, justify right  -> ink 461.52..469.78, anchor 469.90  (-x)
+        # So rot 0 and rot 180 behave IDENTICALLY and justify decides. Vertical
+        # labels on this board are all justify-left and run -y (BIAS_E_L at
+        # rot 270 anchored 138.43 reaches up to 129.07, confirmed on the plot).
         r = round(tx["rot"]) % 360
         x, y = tx["x"], tx["y"]
-        if r == 0:      return (x, y - h / 2, x + w, y + h / 2)
-        if r == 180:    return (x - w, y - h / 2, x, y + h / 2)
-        if r == 90:     return (x - h / 2, y - w, x + h / 2, y)
-        if r == 270:    return (x - h / 2, y - w, x + h / 2, y)
+        right = "right" in (tx.get("justify") or "")
+        if r in (0, 180):
+            return (x - w, y - h / 2, x, y + h / 2) if right else \
+                   (x, y - h / 2, x + w, y + h / 2)
+        return (x - h / 2, y, x + h / 2, y + w) if right else \
+               (x - h / 2, y - w, x + h / 2, y)
     if round(tx["rot"]) % 180 == 90:
         w, h = h, w
     return (tx["x"] - w / 2, tx["y"] - h / 2, tx["x"] + w / 2, tx["y"] + h / 2)
@@ -385,7 +398,12 @@ def main():
         # PWR_FLAG share an anchor EXACTLY on power.kicad_sch and print as
         # illegible mush, and +3V3 runs straight through D12 on panel-io at
         # 0.81 mm. Both were "advisory".
-        boxes = [(box(x), x) for x in txs]
+        # anchored=True for labels HERE TOO. Check 3 was fixed to anchor a
+        # label's box at the wire end; this check was left centred, so the same
+        # label had two different boxes in one tool depending on which loop was
+        # asking. That is rule 3's own failure, committed inside the file that
+        # documents it. It reported GAINLEG_L over a '10u' it does not touch.
+        boxes = [(box(x, anchored=("label" in x["kind"])), x) for x in txs]
         seen = set()
         for i in range(len(boxes)):
             for j in range(i + 1, len(boxes)):

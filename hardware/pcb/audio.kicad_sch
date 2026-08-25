@@ -1304,7 +1304,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 62.23) (xy 49.53 62.23)
+			(xy 54.61 62.23) (xy 46.99 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1314,7 +1314,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 49.53 62.23 180)
+		(at 46.99 62.23 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1322,7 +1322,7 @@
 		(dnp no)
 		(uuid "c67d92ff-8299-5e11-a1d3-9c95b673d269")
 		(property "Reference" "#PWR"
-			(at 49.53 62.23 0)
+			(at 46.99 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1331,7 +1331,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 49.53 65.22999999999999 0)
+			(at 46.99 65.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1440,7 +1440,7 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 48.26) (xy 110.49 53.34)
+			(xy 110.49 48.26) (xy 110.49 55.88)
 		)
 		(stroke
 			(width 0)
@@ -1449,7 +1449,7 @@
 		(uuid "55d456ec-ea86-5690-8d3c-b5648696833a")
 	)
 	(label "OUT_L_J"
-		(at 110.49 53.34 270)
+		(at 110.49 55.88 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1548,7 +1548,7 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 99.06) (xy 110.49 104.14)
+			(xy 110.49 99.06) (xy 110.49 106.68)
 		)
 		(stroke
 			(width 0)
@@ -1557,7 +1557,7 @@
 		(uuid "e9845460-cb0d-5bc5-a93a-f3ed4e5f2a70")
 	)
 	(label "OUT_R_J"
-		(at 110.49 104.14 270)
+		(at 110.49 106.68 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1785,7 +1785,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 242.57) (xy 49.53 242.57)
+			(xy 54.61 242.57) (xy 46.99 242.57)
 		)
 		(stroke
 			(width 0)
@@ -1795,7 +1795,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 49.53 242.57 180)
+		(at 46.99 242.57 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1803,7 +1803,7 @@
 		(dnp no)
 		(uuid "d5bae6d0-a3cb-57e2-8aae-34cbf68e3603")
 		(property "Reference" "#PWR"
-			(at 49.53 242.57 0)
+			(at 46.99 242.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1812,7 +1812,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 49.53 245.57 0)
+			(at 46.99 245.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1948,7 +1948,7 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 133.35) (xy 110.49 138.43)
+			(xy 110.49 133.35) (xy 110.49 142.24)
 		)
 		(stroke
 			(width 0)
@@ -1957,7 +1957,7 @@
 		(uuid "60a747f2-ca78-5f0f-9164-92e67720f595")
 	)
 	(label "BIAS_E_L"
-		(at 110.49 138.43 270)
+		(at 110.49 142.24 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2083,7 +2083,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 133.35) (xy 139.7 138.43)
+			(xy 139.7 133.35) (xy 139.7 142.24)
 		)
 		(stroke
 			(width 0)
@@ -2092,7 +2092,7 @@
 		(uuid "899753d6-e44d-5f30-b59c-2e2f6abed62a")
 	)
 	(label "BIAS_C_L"
-		(at 139.7 138.43 270)
+		(at 139.7 142.24 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2218,7 +2218,7 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 143.51) (xy 180.34 148.59)
+			(xy 180.34 143.51) (xy 180.34 151.13)
 		)
 		(stroke
 			(width 0)
@@ -2227,7 +2227,7 @@
 		(uuid "96ebde8c-ae01-522f-8066-55011914c7ab")
 	)
 	(label "VBIAS_L"
-		(at 180.34 148.59 270)
+		(at 180.34 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2595,7 +2595,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 158.75) (xy 149.86 163.83)
+			(xy 149.86 158.75) (xy 149.86 165.1)
 		)
 		(stroke
 			(width 0)
@@ -2604,7 +2604,7 @@
 		(uuid "0cbfcf11-1a2c-5c23-8409-567ca7856912")
 	)
 	(label "VBIAS_L"
-		(at 149.86 163.83 270)
+		(at 149.86 165.1 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2702,7 +2702,7 @@
 	)
 	(wire
 		(pts
-			(xy 250.19 138.43) (xy 250.19 143.51)
+			(xy 250.19 138.43) (xy 250.19 146.05)
 		)
 		(stroke
 			(width 0)
@@ -2711,7 +2711,7 @@
 		(uuid "23b04e72-7087-5cef-9caf-c4c382a7f6e7")
 	)
 	(label "OPA_L_O"
-		(at 250.19 143.51 270)
+		(at 250.19 146.05 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2818,12 +2818,12 @@
 		(uuid "fb713285-aa68-55e1-a60c-770f05547bd0")
 	)
 	(label "LEG_101_L"
-		(at 219.71 226.06 270)
+		(at 219.71 226.06 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify left)
 		)
 		(uuid "cf8d6e26-9e41-5b0b-82c6-0c310af577d9")
 	)
@@ -2905,12 +2905,12 @@
 		(uuid "5f38631a-3742-53c3-af3a-de988a1634c6")
 	)
 	(label "GAINLEG_L"
-		(at 219.71 236.22 90)
+		(at 219.71 236.22 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right)
 		)
 		(uuid "e12305e1-9c5a-5cb2-944d-93a6a221b71a")
 	)
@@ -3034,7 +3034,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 167.64) (xy 266.7 167.64)
+			(xy 271.78 167.64) (xy 265.43 167.64)
 		)
 		(stroke
 			(width 0)
@@ -3043,7 +3043,7 @@
 		(uuid "ef7ca1bd-9c21-58d9-80bd-0a1b03ef4576")
 	)
 	(label "VBIAS_L"
-		(at 266.7 167.64 180)
+		(at 265.43 167.64 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3054,7 +3054,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 172.72) (xy 266.7 172.72)
+			(xy 271.78 172.72) (xy 265.43 172.72)
 		)
 		(stroke
 			(width 0)
@@ -3063,7 +3063,7 @@
 		(uuid "b8b3d5e9-a9c7-5d98-ba0e-acebd02e7d74")
 	)
 	(label "OPA_L_N"
-		(at 266.7 172.72 180)
+		(at 265.43 172.72 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3181,7 +3181,7 @@
 	)
 	(wire
 		(pts
-			(xy 325.12 173.99) (xy 325.12 179.07)
+			(xy 325.12 173.99) (xy 325.12 182.88)
 		)
 		(stroke
 			(width 0)
@@ -3191,7 +3191,7 @@
 	)
 	(global_label "AMP_OUT_L"
 		(shape bidirectional)
-		(at 325.12 179.07 270)
+		(at 325.12 182.88 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3289,7 +3289,7 @@
 	)
 	(wire
 		(pts
-			(xy 400.05 213.36) (xy 400.05 218.44)
+			(xy 400.05 213.36) (xy 400.05 222.25)
 		)
 		(stroke
 			(width 0)
@@ -3299,7 +3299,7 @@
 	)
 	(global_label "BYPASS_L"
 		(shape bidirectional)
-		(at 400.05 218.44 270)
+		(at 400.05 222.25 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3425,7 +3425,7 @@
 	)
 	(wire
 		(pts
-			(xy 110.49 283.21) (xy 110.49 288.29)
+			(xy 110.49 283.21) (xy 110.49 292.1)
 		)
 		(stroke
 			(width 0)
@@ -3434,7 +3434,7 @@
 		(uuid "e310492e-db3e-5347-8b52-61b2fe1349a1")
 	)
 	(label "BIAS_E_R"
-		(at 110.49 288.29 270)
+		(at 110.49 292.1 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3560,7 +3560,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 283.21) (xy 139.7 288.29)
+			(xy 139.7 283.21) (xy 139.7 292.1)
 		)
 		(stroke
 			(width 0)
@@ -3569,7 +3569,7 @@
 		(uuid "9e7886cb-8c26-57a8-b624-5695452d1497")
 	)
 	(label "BIAS_C_R"
-		(at 139.7 288.29 270)
+		(at 139.7 292.1 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3695,7 +3695,7 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 293.37) (xy 180.34 298.45)
+			(xy 180.34 293.37) (xy 180.34 300.99)
 		)
 		(stroke
 			(width 0)
@@ -3704,7 +3704,7 @@
 		(uuid "936293c8-5f67-537a-b2e9-3211f5d20247")
 	)
 	(label "VBIAS_R"
-		(at 180.34 298.45 270)
+		(at 180.34 300.99 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4072,7 +4072,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 308.61) (xy 149.86 313.69)
+			(xy 149.86 308.61) (xy 149.86 314.96)
 		)
 		(stroke
 			(width 0)
@@ -4081,7 +4081,7 @@
 		(uuid "7102d60b-1e33-5e0b-92b8-2e00d62b8147")
 	)
 	(label "VBIAS_R"
-		(at 149.86 313.69 270)
+		(at 149.86 314.96 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4179,7 +4179,7 @@
 	)
 	(wire
 		(pts
-			(xy 250.19 288.29) (xy 250.19 293.37)
+			(xy 250.19 288.29) (xy 250.19 295.91)
 		)
 		(stroke
 			(width 0)
@@ -4188,7 +4188,7 @@
 		(uuid "c2b7c8a1-4aad-5503-bcb7-3e2676e0e891")
 	)
 	(label "OPA_R_O"
-		(at 250.19 293.37 270)
+		(at 250.19 295.91 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4295,12 +4295,12 @@
 		(uuid "02ab84c0-6013-5a44-bc46-2572f79b74d6")
 	)
 	(label "LEG_101_R"
-		(at 219.71 375.92 270)
+		(at 219.71 375.92 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify left)
 		)
 		(uuid "a232a7e8-a046-5303-94b6-62748867258e")
 	)
@@ -4382,12 +4382,12 @@
 		(uuid "f6651a20-42c3-548e-a1ca-3fa37f07b89a")
 	)
 	(label "GAINLEG_R"
-		(at 219.71 386.08 90)
+		(at 219.71 386.08 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right)
 		)
 		(uuid "1f9f92d7-6041-5f60-a453-d99aa990ec26")
 	)
@@ -4511,7 +4511,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 317.5) (xy 266.7 317.5)
+			(xy 271.78 317.5) (xy 265.43 317.5)
 		)
 		(stroke
 			(width 0)
@@ -4520,7 +4520,7 @@
 		(uuid "8ddf1cf8-cc0a-54e2-b00d-8eae3de4149e")
 	)
 	(label "VBIAS_R"
-		(at 266.7 317.5 180)
+		(at 265.43 317.5 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4531,7 +4531,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 322.58) (xy 266.7 322.58)
+			(xy 271.78 322.58) (xy 265.43 322.58)
 		)
 		(stroke
 			(width 0)
@@ -4540,7 +4540,7 @@
 		(uuid "c5e18719-a5c1-5fb5-bd58-41ce6dc367cb")
 	)
 	(label "OPA_R_N"
-		(at 266.7 322.58 180)
+		(at 265.43 322.58 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4658,7 +4658,7 @@
 	)
 	(wire
 		(pts
-			(xy 325.12 323.85) (xy 325.12 328.93)
+			(xy 325.12 323.85) (xy 325.12 332.74)
 		)
 		(stroke
 			(width 0)
@@ -4668,7 +4668,7 @@
 	)
 	(global_label "AMP_OUT_R"
 		(shape bidirectional)
-		(at 325.12 328.93 270)
+		(at 325.12 332.74 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4766,7 +4766,7 @@
 	)
 	(wire
 		(pts
-			(xy 400.05 363.22) (xy 400.05 368.3)
+			(xy 400.05 363.22) (xy 400.05 372.11)
 		)
 		(stroke
 			(width 0)
@@ -4776,7 +4776,7 @@
 	)
 	(global_label "BYPASS_R"
 		(shape bidirectional)
-		(at 400.05 368.3 270)
+		(at 400.05 372.11 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5599,7 +5599,7 @@
 	)
 	(wire
 		(pts
-			(xy 530.86 218.44) (xy 530.86 226.06)
+			(xy 530.86 218.44) (xy 530.86 228.6)
 		)
 		(stroke
 			(width 0)
@@ -5608,7 +5608,7 @@
 		(uuid "329321a8-4eea-59b9-a8a8-a48cf8091815")
 	)
 	(label "LEG_256_L"
-		(at 530.86 226.06 270)
+		(at 530.86 228.6 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6099,7 +6099,7 @@
 	)
 	(wire
 		(pts
-			(xy 530.86 368.3) (xy 530.86 375.92)
+			(xy 530.86 368.3) (xy 530.86 378.46)
 		)
 		(stroke
 			(width 0)
@@ -6108,7 +6108,7 @@
 		(uuid "41b7fb6e-b797-578f-b6f4-95b565240509")
 	)
 	(label "LEG_256_R"
-		(at 530.86 375.92 270)
+		(at 530.86 378.46 270)
 		(effects
 			(font
 				(size 1.27 1.27)

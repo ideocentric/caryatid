@@ -1,0 +1,64 @@
+Label crossings cleared across all four sheets
+==============================================================
+
+  BEFORE  30 crossings reported (deduped names); 60 label-symbol pairs.
+  Re-measured after the label box DIRECTION was corrected: 39 names.
+  AFTER   1 remains, named below.
+
+TWO CLASSES
+--------------------------------------------------------------
+  A  a vertical net label at the end of a ~5 mm stub, text 8-10 mm long,
+     running back over the resistor it names. THE LABEL MOVED, further
+     down its own stub, distance computed from the part's own geometry.
+  B  on a 2.54 mm connector pitch, a power symbol's graphic is ~5 mm tall
+     and spans its neighbour's row. THE POWER FLAG MOVED, out along its
+     own wire, so labels stay aligned with the pins they name.
+  C  four pairs of labels facing each other in a channel narrower than
+     their own text -- insoluble one at a time, since each is the other's
+     only obstacle. Turned horizontal, back to back.
+
+THE MODEL ERROR THIS EXPOSED, WHICH MATTERED MORE THAN THE MOVES
+--------------------------------------------------------------
+  A label's text direction comes from (justify ...), NOT from its angle.
+  check_schematic.py derived it from the angle, so horizontal labels were
+  modelled on the WRONG SIDE of their anchor. Measured at 600 dpi:
+
+      D9         rot   0  justify left   ink 518.25..524.81  anchor 518.16  (+x)
+      LEG_101_L  rot 180  justify left   ink 219.92..229.87  anchor 219.71  (+x)
+      BIAS_E_L   rot 180  justify right  ink 461.52..469.78  anchor 469.90  (-x)
+
+  rot 0 and rot 180 draw IDENTICALLY; justify decides. A first pass at
+  this task rotated four labels using the angle-derived model, and the
+  plot showed GAINLEG_L printed straight through C24's '10u'. That whole
+  pass was reverted and redone once the direction was measured.
+
+  Also fixed: the text-overlap check used CENTRED boxes for labels while
+  the crossing check used anchored ones -- the same label had two
+  different boxes in one tool depending on which loop was asking.
+
+VERIFICATION
+--------------------------------------------------------------
+  netlist                  113 nets, identical nodes on every one
+  ERC                      ERC messages: 0  Errors 0  Warnings 0
+  schematic parity         0 DRC violations, 0 unconnected pads, 0 Footprint errors
+  .kicad_pcb               untouched
+  re-run of the tool       0 further moves (idempotent)
+
+  Confirmed on the plot at 600 dpi, not just in the model:
+      BIAS_E_L / R51         label now starts below the body
+      LEG_101_L / GAINLEG_L  back to back, clear of R58 and C24
+      PGOOD_LEG pair         two lines, clear of R16/R17 and their values
+      D12 / J13 power flags  GND arrow clear of the label flag
+
+STILL OPEN -- ONE, AND IT NEEDS A PERSON
+--------------------------------------------------------------
+  AUDIO_OUT_R crosses A1 on seed.kicad_sch.
+  Every escape is blocked: reading right it enters the Daisy Seed socket
+  body (38 mm wide), reading left it lands on a GND flag whose graphic
+  top sits EXACTLY on the label's wire line at y 120.65, and that flag's
+  own stub is horizontal so it cannot slide clear either.
+
+  The plot shows more than the checker can: the AUDIO_OUT_L/R flags there
+  also overlap A1's pin NUMBERS and pin NAMES. Those live in the library
+  definition, not in the sheet, so no check in this file sees them. That
+  corner wants its layout reworked by hand rather than nudged.
