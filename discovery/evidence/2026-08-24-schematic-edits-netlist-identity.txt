@@ -1,0 +1,43 @@
+Netlist identity across the 2026-08-24 schematic drawing edits
+==============================================================
+
+  baseline  718d5dd  (before the label moves)
+  current   a5bc7cc  (Republish the schematic PDF with seed's fields reseated)
+
+  Commits under test:
+    a5bc7cc Republish the schematic PDF with seed's fields reseated
+    ea6cd62 Reseat seed.kicad_sch passive fields to the house offset
+    f249562 Move five labels off the resistors they clipped, verified by netlist
+
+  Command, run against each tree:
+    kicad-cli sch export netlist --format kicadsexpr caryatid.kicad_sch
+
+RESULT
+--------------------------------------------------------------
+  nets, baseline           113
+  nets, current            113
+  net names appeared       none
+  net names vanished       none
+  nets with altered nodes  none
+  total nodes, baseline    376
+  total nodes, current     376
+
+  VERDICT: connectivity is unchanged.
+
+  The two netlist FILES differ by 144 bytes and the netlist CONTENT does
+  not. kicad-cli embeds each symbol's field positions in the netlist as
+  properties, so moving a Reference changes the file while leaving every
+  net, node and pin identical. That is the whole point of comparing
+  parsed nets rather than diffing the file.
+
+OTHER GATES, current tree
+--------------------------------------------------------------
+  ERC                      0 messages, 0 errors, 0 warnings
+  schematic parity         0 DRC violations, 0 unconnected pads, 0 Footprint errors
+  check_schematic.py       0 hard findings, 8 advisory (labels clearing a
+                           resistor by 0.59 mm; measured clear, flagged because
+                           they READ as touching at plot scale)
+
+  .kicad_pcb last changed  28c54f1 2026-08-22 Source the last 3 parts, normalise R45's pad angle, refresh the stale docs
+  ^ predates every commit under test. The BOARDS ON ORDER ARE UNAFFECTED;
+    these edits are schematic drawing only.

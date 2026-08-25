@@ -599,3 +599,66 @@ Eeschema, which is the work the checker exists to scope rather than to do.
 **Next step:** unchanged. Measure the handset capsule: DC resistance against the
 14.5 and 112 ohm thresholds, and output level against the gain budget. Beep out
 the keypad at the same time.
+
+## 2026-08-24 20:13 — Schematic legibility closed out: five label crossings and seed's field offset
+
+**Completed:** the two drawing defects `check_schematic.py` was built to scope,
+both netlist-verified rather than eyeballed.
+
+- `f249562` — the five labels clipping their resistors (`LEG_101_L/R`,
+  `LEG_256_L/R` on audio, `PGOOD_LEG` on seed) moved 2.54 mm out, each with its
+  wire's FAR endpoint. The near endpoint is what touches the pin and did not
+  move; moving it is precisely how this edit silently changes a netlist.
+  Rotating the labels instead was considered and rejected: it clears the body
+  but points the text away from the wire it names, trading 0.13 mm of overlap
+  for a drawing that reads wrong.
+- `ea6cd62` — R11–R18, C8 and C9 on `seed.kicad_sch` reseated from (+6, −30) to
+  the (+6, −12) / (+6, −9) the other sheets already use. Sheet median field
+  distance 30.59 → 13.42 mm.
+- `a5bc7cc` — schematic PDF republished. Only that one artifact was committed:
+  the board PDF came back the same byte count differing solely in
+  `/CreationDate`, and the two renders differ by raytracer noise, the
+  `.kicad_pcb` being untouched. No reason to put 600 kB of that in history.
+
+**A1 and A2 were deliberately left at −30, and that is the finding.** Matt named
+seven parts; ten shared the bad offset; two more looked identical to the defect
+and were not. The Daisy Seed sockets have a 27.94 mm half-extent, so −30 puts
+their fields 2 mm above the body, which is correct. A blanket "move everything
+to −12" would have buried both labels inside the socket outline. Symbol extents
+come from the embedded `lib_symbols`, per conventions rule 9 — a placed instance
+does not record its own size.
+
+**Verified:** netlist identical across `718d5dd..HEAD`, 113 nets and 376 nodes
+with the same pins on every one; ERC 0/0/0; parity 0 violations, 0 unconnected
+pads, 0 footprint errors; `.kicad_pcb` last changed at `28c54f1` (2026-08-22),
+predating every commit under test. Saved as
+`2026-08-24-schematic-edits-netlist-identity.txt`. A field carries no
+connectivity so none of this *could* have moved a net, but "could not" and "did
+not" are different claims and the check costs a second.
+
+**The netlist FILE differs by 144 bytes while the netlist CONTENT does not** —
+kicad-cli embeds field positions as symbol properties, so a diff of the file
+would have shown a false change. Compare parsed nets, never the raw export.
+
+**My error, and Matt caught it by eye:** I had measured field-to-symbol distance
+across all five sheets, got a median of 10.82 mm, called it healthy and dropped
+the check. It *was* healthy — for four of them. Aggregating across sheets
+drowned a defect that was uniform inside one, where the median was 30.59 mm and
+every field exceeded 20 mm. A median over a mixed population hides a uniform
+defect in one member of it. The check should have been per-sheet from the start.
+
+**In flight:** nothing. Six ledger records unchanged this session, no fact
+touched — this was drawing, not discovery. Both trees clean and pushed.
+
+**Open questions:** three records still open (`bt1-cell-fit` in conflict,
+`carbon-capsule-dc-resistance` and `mic-gain-budget` unverified), two of them
+closable with the phone in hand and no boards needed. Eight advisory findings
+remain in `check_schematic.py`: labels clearing a resistor by 0.59 mm, measured
+clear, flagged because they read as touching at plot scale. Cosmetic, and a
+judgement call rather than a defect.
+
+**Next step:** unchanged, and now unblocked by nothing at all. Measure the
+handset capsule: DC resistance against the 14.5 Ω and 112 Ω thresholds in
+`carbon-capsule-dc-resistance`, and output level against the gain budget in
+`mic-gain-budget`. Beep out the keypad in the same sitting. That closes two of
+the three open records.
