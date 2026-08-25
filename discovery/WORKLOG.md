@@ -662,3 +662,86 @@ handset capsule: DC resistance against the 14.5 Ω and 112 Ω thresholds in
 `carbon-capsule-dc-resistance`, and output level against the gain budget in
 `mic-gain-budget`. Beep out the keypad in the same sitting. That closes two of
 the three open records.
+
+## 2026-08-25 12:04 — C21 off the page, and the measurement error underneath it
+
+**Completed:** what Matt reported was one capacitor hanging off a sheet. What it
+turned out to be was a text metric that had never been measured, invalidating
+every clearance number this project had produced.
+
+- `c831990` — **panel-io's debounce column refitted.** Three identical blocks
+  (connector, pull-up, series R, 74HC14 gate, filter cap to ground) repeat every
+  59.69 mm at rows 270.51 / 330.20 / 389.89, and A2 is one repeat short. C21's
+  lower pin reached 1.48 mm past the frame and the GND flag beneath it sat
+  **0.90 mm from the paper edge**. Nothing was wrong with block 3; the pitch was.
+  Dropped to 53.34 mm (42 × 1.27), block 1 anchoring, so blocks 2 and 3 rise
+  6.35 and 12.70. Bottom-most ink now clears by 3.60 mm. The sheet is on a 1.27
+  grid, not 2.54 — the original pitch is 23.5 × 2.54 — and assuming otherwise
+  would have thrown the column half a grid out.
+- `f0db482` — **20 "advisories" were real collisions.** The checker hedged every
+  text overlap as "widths are estimated", and I repeated that hedge back to Matt
+  all session as if it meant noise. `VIN_DC` and `PWR_FLAG` share an anchor
+  EXACTLY and print as mush. Now graded by interpenetration depth.
+- `b86c20b` — PWR_FLAG values hidden, 20 power-symbol texts moved off the
+  neighbouring pin rows, **and CHAR_W corrected from 0.72 to 1.17**.
+- `365ba12` — 39 label crossings down to 1, in 68 moves across four sheets.
+- `8cea8d7` — schematic PDF republished.
+
+**THE CENTRAL FINDING, and it invalidates things I wrote down as fact.** `CHAR_W`
+was 0.72 mm per character and carried a comment saying it was measured off a
+plot. It was not. Measured at 600 dpi: `'+5V_RAW'` 8.297/7 = 1.185, `'VOUT'`
+4.612/4 = 1.153, `'LEG_101_L'` 9.700/9 = 1.078. **A 1.6× underestimate on every
+text box in the file.** Consequences:
+
+- `BIAS_E_L` does not clear R51 by 0.59 mm. It runs **3.01 mm into it**.
+- The five crossings "fixed" on 2026-08-24 by moving them 2.54 mm were sized
+  from this same model, which called a 3 mm overshoot 0.13 mm. **The fix was
+  scaled by the error it was correcting**, so it could not have worked.
+- Thirty labels crossed, where the tool had reported zero.
+
+A second model error surfaced during the repair: **a label's text direction comes
+from `(justify ...)`, not its angle.** `rot 0` and `rot 180` draw identically and
+justify decides. The checker derived direction from the angle, so every
+horizontal label was modelled on the wrong side of its anchor. The first repair
+pass rotated four labels on that model; the plot showed `GAINLEG_L` printed
+through C24's `10u`. **That pass was reverted whole and redone from measured
+geometry.** The same tool was also using centred boxes for labels in its
+text-overlap check and anchored boxes in its crossing check — one label, two
+boxes, depending which loop asked.
+
+**The habit that cost this:** the rendered plot showed the crossings correctly at
+100 dpi and again at 300, and I overruled it both times with the model, then
+wrote the model's answer into `conventions.md` as established fact. A number
+feels like evidence and a picture feels like an impression. The plot IS the
+artefact being checked; the model is only a claim about it. Rule 3 in
+`conventions.md` is now marked REFUTED with the date rather than quietly edited.
+
+**My own errors this session, beyond the above:** I deleted an evidence file as
+redundant and restored it (`4bd5375`) — evidence is append-only and pruning it
+was mine to propose, not to do. I filtered power symbols by a `power:` lib prefix
+and silently skipped three `caryatid:+3V3A` instances, which is exactly the trap
+`conventions.md` warns about. And a slice-based self-patch with an empty needle
+grew a tool to 17 MB, recoverable only because the file was untracked and cheap
+to rewrite.
+
+**Verified:** netlist identical at 113 nets and 376 nodes throughout, ERC 0/0/0,
+parity clean, `.kicad_pcb` untouched since `28c54f1` (2026-08-22) — **the boards
+on order are unaffected by every commit here.** One proposed move would have
+merged `LEG_101_L` into `GAINLEG_L`; the netlist gate caught it and a wire
+adjacency check now refuses it a step earlier. Four fixes confirmed on the plot
+at 600 dpi rather than in the model.
+
+**In flight:** nothing. Six ledger records unchanged — this was drawing and
+tooling, not discovery.
+
+**Open questions:** three records still open (`bt1-cell-fit` in conflict,
+`carbon-capsule-dc-resistance` and `mic-gain-budget` unverified), two closable at
+the bench. One crossing remains: `AUDIO_OUT_R` against A1 on seed, boxed in on
+both sides, and the plot shows the label flags there also overlapping A1's pin
+numbers and names — which live in the library definition where no check in this
+repo can see them. **That is a known blind spot, not a clean sheet.**
+
+**Next step:** unchanged and still unblocked. Measure the handset capsule: DC
+resistance against the 14.5 Ω and 112 Ω thresholds in
+`carbon-capsule-dc-resistance`, and output level against the gain budget in
+`mic-gain-budget`. Beep out the keypad in the same sitting.
