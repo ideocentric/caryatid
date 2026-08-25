@@ -28,20 +28,45 @@ Component values and gain arithmetic: [audio.md](audio.md).
 only reliable test — the three types are indistinguishable at the connector,
 which is why the board cannot detect them for you.
 
+**Measure it both ways round.** Reversing the probes takes a second and is the
+most informative thing you can do.
+
 ```mermaid
 flowchart TB
     M["Measure DC ohms<br/>across the capsule"]
-    M -->|open circuit| E["ELECTRET"]
+    M -->|"1–3 kΩ, DIFFERENT when<br/>the probes are reversed"| EF["ELECTRET<br/>(integral FET)"]
+    M -->|open circuit| E["ELECTRET<br/>(bare element)"]
     M -->|"150–600 Ω, steady"| D["DYNAMIC"]
     M -->|"50–300 Ω, jumps when tapped"| C["CARBON"]
 
     classDef cap fill:#e8f0fe,stroke:#3367d6,stroke-width:2px
-    class E,D,C cap
+    class EF,E,D,C cap
 ```
+
+**A reading that changes with probe polarity is a semiconductor, and that
+settles it on its own.** A resistor reads the same both ways and so does a coil,
+so an asymmetric reading is neither carbon nor dynamic whatever the magnitude.
+It is a stronger test than any of the resistance bands, because it does not
+depend on the number landing where you expected.
 
 **"Jumps when tapped" is the carbon tell.** The granules resettle, and that
 variability *is* how the element works. A steady reading in the same range is a
 dynamic capsule.
+
+**Why "open circuit" alone was not enough.** A bare electret element is a
+capacitor and does read open. Nearly every capsule you will actually meet is a
+two-terminal package with a JFET built in, and that reads a finite kilohm value
+which differs by direction. loa's handset transmitter measured **1.75–1.77 kΩ
+one way and 1.05–1.06 kΩ reversed**, steady, matching none of the three branches
+this tree originally had: a reader following it would have concluded "not any of
+these" rather than "electret". Recorded in
+[loa-handset-capsule](../discovery/findings/loa-handset-capsule.yaml).
+
+> **Clean the terminals before trusting a reading.** loa's capsule was covered
+> in hot-melt glue and the first attempts probed through it. Glue is an
+> insulator, so a partial contact reads **high**, and high is the comfortable
+> end of every threshold here and in the R52/R54 power question. A bad contact
+> makes a capsule look safer than it is, never worse.
 
 ---
 
