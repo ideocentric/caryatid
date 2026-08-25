@@ -745,3 +745,71 @@ repo can see them. **That is a known blind spot, not a clean sheet.**
 resistance against the 14.5 Ω and 112 Ω thresholds in
 `carbon-capsule-dc-resistance`, and output level against the gain budget in
 `mic-gain-budget`. Beep out the keypad in the same sitting.
+
+## 2026-08-25 12:29 — Rule 10 written, and the last crossing closed
+
+Short increment on top of the 12:04 entry; three commits.
+
+**Completed:**
+
+- `745bb6e` — **conventions rule 10**, the candidate raised at the previous
+  checkpoint: *an empirical constant carries its measurement, or it is a guess
+  wearing a lab coat.* Any constant standing in for something physical or
+  rendered records the raw observation (what was measured, the sample, the
+  number before rounding), because a constant that merely *claims* provenance
+  cannot be audited. `CHAR_W = 0.72 # measured off a plot` was not measured, and
+  the comment is precisely what let it survive: the line reads as settled. Scope
+  is bounded so it does not become a demand to measure grid pitches, which come
+  from the file and are exact. It also carries the tie-break: **when a model and
+  a rendering disagree, measure the rendering.** Rule 3's REFUTED note now points
+  here instead of restating it.
+- `be52a15` — **AUDIO_OUT_R cleared, the last of the 39.** Three coordinated
+  edits: the `power:GND` at (68.58, 123.19) turned rot 180 → 0, its Value text
+  moved 1.27 mm with it, and the label plus its wire moved x 71.12 → 67.31.
+  The label is 11 characters like its sibling `AUDIO_OUT_L`, which is anchored
+  at 67.31; matching it clears A1 by 1.10 mm and makes the drawing agree with
+  itself rather than with a preference.
+- `50622bd` — schematic PDF republished.
+
+**A diagnosis I got wrong, and the correction is the useful part.** I called the
+GND obstruction a modelling artefact: `lib_extents()` builds a box symmetric
+about the origin, and `power:GND` has all its ink on one side of the pin, so it
+invents 2.54 mm of empty space. That defect was real and is now fixed
+(`lib_box()` / `placed_body()`, asymmetric and rotation-aware, verified against
+the plot at angle 0 **and** angle 180). **But fixing it did not dissolve the
+obstruction.** That flag is placed at rot 180, so with rotation handled correctly
+its ink genuinely occupies 120.65..123.19 — the corridor the label needed. The
+symmetric box had been right there for the wrong reason, and the plot agrees:
+the triangle measures 120.44..122.13. Being right for the wrong reason is not the
+same as being right, and it only showed up because the transform was checked
+against a rendering at two angles instead of one.
+
+**A third filter leak.** The crossing check was skipping every `#` reference, the
+same filter already pulled out of the border test. A label landing on a ground
+flag was invisible to the check whose job it was, which is why the D12/GND-arrow
+overlap on panel-io had to be found by a different tool. Removed. With power
+symbols now included **and** accurate boxes, the report is identical to the
+conservative model: **0 findings either way, across all five sheets.**
+
+**Recorded, not fixed:** a `global_label`'s drawn flag is wider than its text
+box, measured 1.18 mm on `AUDIO_OUT_R`. Every box in the checker measures text,
+so a label can graze something the check calls clear. Not encoded, because the
+overhang is a constant of KiCad's rendering rather than of the file, and guessing
+it would be exactly the mistake `CHAR_W` was. Rule 10 applied to itself.
+
+**Verified:** netlist identical at 113 nets, ERC 0/0/0, parity clean,
+`.kicad_pcb` untouched since `28c54f1`. On the plot the label's flag now ends at
+81.36 against A1's edge at 81.28 and A1's pin number sits clear at 82.63; before
+the fix the flags covered the pin numbers outright.
+
+**In flight:** nothing. Six ledger records unchanged; no fact touched.
+
+**Open questions:** three records open (`bt1-cell-fit` conflict,
+`carbon-capsule-dc-resistance` and `mic-gain-budget` unverified), two closable at
+the bench. Three advisory near-misses remain at 0.50 mm (`SW1_F`/`SW2_F`/`SW3_F`
+against R35/R37/R39), which are cosmetic and measured, not defects.
+
+**Next step:** unchanged. Measure the handset capsule: DC resistance against the
+14.5 Ω and 112 Ω thresholds, output level against the gain budget, and beep out
+the keypad in the same sitting. That closes two of the three open records and
+needs no boards.
