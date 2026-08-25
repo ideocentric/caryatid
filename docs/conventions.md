@@ -135,6 +135,10 @@ it reports clearances confidently and wrongly.
   picture feels like an impression. Neither is evidence about the other: the
   plot IS the artefact being checked, and the model is only a claim about it.
 
+  The general form of this (why the constant survived so long, and what a
+  constant has to carry so it cannot) is **rule 10**. This entry is the local
+  damage; rule 10 is the rule.
+
 - **`check_schematic.py`'s border test, again, and this one was found by eye.**
   It compared the symbol **origin** against the frame and skipped every symbol
   whose reference starts with `#`. Both are the same error as above in a
@@ -292,3 +296,58 @@ coordinates. Any check that needs a body size has to read `lib_symbols` and
 match on `lib_id`, or guess. A guess that fits a resistor is wrong for a
 twenty-pin connector, and a check calibrated on passives will silently miss
 every collision on the parts that matter.
+
+---
+
+## 10. An empirical constant carries its measurement, or it is a guess wearing a lab coat
+
+**Any constant standing in for a physical measurement must record the raw
+observation that produced it: what was measured, the sample, and the number
+before rounding.** A constant that merely *claims* provenance cannot be audited,
+and everything computed from it inherits the error silently.
+
+```python
+CHAR_W = 0.72          # width per character at 1.27 mm text, measured off a plot
+```
+
+It was not measured off a plot. It was a guess, and the comment is what made it
+survive: the line reads as settled, so nobody re-derives it, and there is nothing
+in it to check against. Measured at 600 dpi off the very plots the tool checks:
+
+| string | chars | inked width | mm/char |
+| --- | --- | --- | --- |
+| `+5V_RAW` | 7 | 8.297 mm | 1.185 |
+| `VOUT` | 4 | 4.612 mm | 1.153 |
+| `LEG_101_L` | 9 | 9.700 mm | 1.078 |
+
+**A 1.6× underestimate on every text box in the file**, for weeks.
+
+**What it cost.** Not one wrong number, but a wrong number that every later
+measurement was expressed in:
+
+- `BIAS_E_L` does not clear R51 by 0.59 mm. It runs **3.01 mm into it**. That
+  0.59 was quoted across four sessions, written into rule 3 above as established
+  fact, and used to overrule a 100 dpi plot and then a 300 dpi one.
+- **Thirty labels crossed while the checker reported zero.**
+- Five of them were "fixed" by moving them 2.54 mm, a distance taken from the
+  same model, which called a 3 mm overshoot 0.13 mm. **The repair was sized by
+  the error it was repairing**, so it could not have worked, and it was committed
+  and reported as done.
+
+**The tell is a model that keeps winning arguments against the artefact.** The
+plot showed those crossings correctly, twice, and lost to the geometry both
+times, because a number reads as evidence and a picture reads as an impression.
+Neither is evidence *about the other*: the plot is the thing being checked and
+the model is only a claim about it. **When a model and a rendering disagree,
+measure the rendering.** That is the tie-break, and it is cheap: `pdftoppm -r
+600` and a pixel span settled in minutes what four sessions of arguing had not.
+
+The same trap in a smaller size: `NEAR = 0.6` and `DEEP = 0.60` are thresholds
+about how a plot *reads*, not measurements, and they say so. A constant that
+cannot cite an observation should admit it is a judgement, so the next person
+knows which kind of thing they are looking at.
+
+**Scope.** This is not a demand to measure integers and grid pitches, which come
+from the file and are exact. It applies to any constant standing in for something
+physical or rendered: text metrics, stroke widths, clearances read off a plot,
+anything whose truth lives outside the source and can drift from it.
