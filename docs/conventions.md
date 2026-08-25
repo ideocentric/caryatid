@@ -117,6 +117,24 @@ it reports clearances confidently and wrongly.
   On `audio.kicad_sch`, `BIAS_E_L` anchors 8.89 mm from R51 and its text runs
   back toward it.
 
+  🔴 **REFUTED 2026-08-24, and the correction belongs here rather than in a
+  quiet edit.** Fixing the anchor was necessary and not sufficient: the box was
+  still too SHORT, because `CHAR_W` was 0.72 mm per character and had never been
+  measured despite a comment saying it was. Measured at 600 dpi off the plot
+  this tool checks, it is 1.08–1.19 (`'+5V_RAW'` 8.297 mm / 7, `'VOUT'`
+  4.612 mm / 4, `'LEG_101_L'` 9.700 mm / 9). A 1.6× underestimate on every box.
+
+  Everything that rested on it was wrong. `BIAS_E_L` does not clear R51 by
+  0.59 mm, it runs **3.01 mm into it**. Thirty labels cross, not zero. And the
+  five "cosmetic" crossings fixed by moving them 2.54 mm were sized from the
+  same broken model, which called a 3 mm overshoot 0.13 mm — **the fix was
+  scaled by the error it was correcting, so it could not have worked.**
+
+  The rendered plot had shown this correctly at 100 dpi and again at 300, and was
+  overruled both times by the model, because a number feels like evidence and a
+  picture feels like an impression. Neither is evidence about the other: the
+  plot IS the artefact being checked, and the model is only a claim about it.
+
 - **`check_schematic.py`'s border test, again, and this one was found by eye.**
   It compared the symbol **origin** against the frame and skipped every symbol
   whose reference starts with `#`. Both are the same error as above in a

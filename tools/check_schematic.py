@@ -34,15 +34,27 @@ WHAT IT CHECKS, AND WHY EACH EARNED ITS PLACE
    there. This is the check that pays for the file.
 
 3. LABELS CROSSING OR NEARLY TOUCHING A SYMBOL BODY.
-   **This check exists because I twice claimed it was failing when it was not.**
-   Looking at a 100 dpi plot, then a 300 dpi one, vertical net labels appeared to
-   run through the resistors they name. The geometry disagrees: on
-   audio.kicad_sch, R51's body ends at y 132.08 and BIAS_E_L's text begins at
-   132.67. They clear by 0.59 mm. At plot scale a sub-millimetre gap reads as
-   contact, which is a real cosmetic complaint and not a collision.
-   So the check reports both, separately: OVERLAP is a defect, NEAR is
-   0.6 mm or less of clearance and is cosmetic. Naming the difference is the
-   point, because an eye cannot measure and a plot cannot be trusted to.
+   **The eye was right and the model was wrong, twice, and then a third time
+   when I wrote the model's answer down as fact.**
+
+   Vertical net labels looked like they ran through the resistors they name, at
+   100 dpi and again at 300. The geometry said otherwise -- R51's body ends at
+   y 132.08 and BIAS_E_L's text began at 132.67, clearing by 0.59 mm -- so the
+   plot was recorded as a cosmetic near-miss and the check was built to say so.
+
+   That number came out of CHAR_W = 0.72, which was never measured. At 600 dpi
+   BIAS_E_L runs 3.01 mm INTO R51, and LEG_101_L's ink stops at y 215.98 against
+   an R58 body ending at 217.17, 1.19 mm inside it. Thirty labels cross. Every
+   "0.59 mm clearance" in this file's history was an artefact of one constant.
+
+   Worse, five of these were "fixed" by moving them 2.54 mm, a distance chosen
+   from the same broken model, which reported a 0.13 mm overshoot where the real
+   one was over 3 mm. The fix was sized by the error it was correcting.
+
+   The check still reports OVERLAP and NEAR separately, because the distinction
+   is real. What changed is which side these land on. **An eye cannot measure,
+   but it can see; when it disagrees with a model, the model is a hypothesis and
+   the plot is the evidence.**
 
 4. OVERLAPPING TEXT, GRADED BY DEPTH. Text height is known exactly from the
    file and width is estimated, which for a whole session was used to excuse
@@ -86,7 +98,18 @@ PAPER = {"A5": (210, 148), "A4": (297, 210), "A3": (420, 297),
 
 BORDER = 10.0          # the printed frame, all four sides
 TB_W, TB_H = 110.0, 32.0   # title block, bottom right, KiCad default sheet
-CHAR_W = 0.72          # width per character at 1.27 mm text, measured off a plot
+CHAR_W = 1.17          # mm of INKED width per character at 1.27 mm text.
+                       # MEASURED, at 600 dpi, off the plot this tool checks:
+                       #   '+5V_RAW'    7 chars  8.297 mm  -> 1.185
+                       #   'VOUT'       4 chars  4.612 mm  -> 1.153
+                       #   'LEG_101_L'  9 chars  9.700 mm  -> 1.078
+                       # Per-character width varies with the characters (digits
+                       # and underscores are narrower than letters), so 1.17 sits
+                       # at the top of the measured range ON PURPOSE: an obstacle
+                       # model may claim more than the ink needs, never less.
+                       # It was 0.72 and that was not measured, it was guessed
+                       # and labelled "measured off a plot". A 1.6x underestimate
+                       # on every box in the file. See BIAS_E_L in rule 3.
 BODY = 3.0             # fallback half-extent when a symbol has no graphics
 NEAR = 0.6             # mm; below this a gap reads as contact on a plot
 DEEP = 0.60            # mm of text interpenetration that CHAR_W cannot explain

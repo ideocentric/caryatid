@@ -3314,7 +3314,7 @@
 			)
 		)
 		(property "Value" "VBAT"
-			(at 172.72 70.31 0)
+			(at 168.91 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3574,7 +3574,7 @@
 			)
 		)
 		(property "Value" "VOUT"
-			(at 127.0 70.31 0)
+			(at 123.19 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4830,7 +4830,7 @@
 			)
 		)
 		(property "Value" "VOUT"
-			(at 29.21 170.64 0)
+			(at 25.4 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6812,7 +6812,7 @@
 			)
 		)
 		(property "Value" "VOUT"
-			(at 320.04 240.49 0)
+			(at 316.23 237.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7197,6 +7197,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -7273,6 +7274,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -7349,6 +7351,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -7425,6 +7428,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "1"
