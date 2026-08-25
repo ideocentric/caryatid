@@ -44,9 +44,21 @@ WHAT IT CHECKS, AND WHY EACH EARNED ITS PLACE
    0.6 mm or less of clearance and is cosmetic. Naming the difference is the
    point, because an eye cannot measure and a plot cannot be trusted to.
 
-4. OVERLAPPING TEXT. Two visible texts whose boxes intersect. Text height is
-   known exactly from the file; width is estimated, so this one is advisory and
-   says so.
+4. OVERLAPPING TEXT, GRADED BY DEPTH. Text height is known exactly from the
+   file and width is estimated, which for a whole session was used to excuse
+   EVERY overlap as advisory. That was wrong, and it hid twenty real ones.
+   CHAR_W is worth a tenth of a millimetre or two on a short string; the
+   overlaps on this board run 0.81 to 1.27 mm. Two of them share an anchor
+   EXACTLY -- VIN_DC and PWR_FLAG on power.kicad_sch print as illegible mush,
+   and +3V3 runs straight through D12 on panel-io. Both were "advisory".
+   So depth decides: >= 0.60 mm is a [collision] and a finding, less is [text]
+   and stays advisory. Verified against the plot at 600 dpi before the
+   threshold was chosen, not guessed.
+
+   The general lesson, which is check 3's lesson again from the other side: a
+   confidence caveat is not a severity. Saying a measurement is approximate
+   does not make what it measures unimportant, and a report that hedges
+   everything gets read as a report that found nothing.
 
 THE LIB_SYMBOLS TRAP, WHICH COST AN HOUR
 -----------------------------------------
@@ -77,6 +89,7 @@ TB_W, TB_H = 110.0, 32.0   # title block, bottom right, KiCad default sheet
 CHAR_W = 0.72          # width per character at 1.27 mm text, measured off a plot
 BODY = 3.0             # fallback half-extent when a symbol has no graphics
 NEAR = 0.6             # mm; below this a gap reads as contact on a plot
+DEEP = 0.60            # mm of text interpenetration that CHAR_W cannot explain
 
 
 def sexp(t, i):
@@ -243,6 +256,17 @@ def overlap(a, b):
     return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
 
 
+def depth(a, b):
+    """How far two boxes interpenetrate, mm. <= 0 means they miss.
+
+    The SHALLOWER axis, because that is what a reader sees: two words offset
+    almost a full line apart but sharing a long horizontal run are legible,
+    while the same pair sharing a line are not."""
+    ox = min(a[2], b[2]) - max(a[0], b[0])
+    oy = min(a[3], b[3]) - max(a[1], b[1])
+    return min(ox, oy) if (ox > 0 and oy > 0) else 0.0
+
+
 def main():
     strict = "--strict" in sys.argv
     files = sorted(glob.glob(os.path.join(SCH_DIR, "*.kicad_sch")))
@@ -326,18 +350,32 @@ def main():
                                   f"{gap:.2f} mm, reads as touching"))
                     break
 
-        # 4. overlapping text, advisory
+        # 4. overlapping text, graded by DEPTH
+        #
+        # A blanket "advisory, widths are estimated" hedge is what let 20 real
+        # collisions sit in this report unread for a whole session. CHAR_W is
+        # worth maybe 0.1-0.2 mm on a short string; an overlap 0.81 mm deep is
+        # not estimation error, it is two words printed on each other. Grading
+        # by depth separates the two cases instead of excusing both.
+        #
+        # Measured on the plot at 600 dpi to fix the threshold: VIN_DC and
+        # PWR_FLAG share an anchor EXACTLY on power.kicad_sch and print as
+        # illegible mush, and +3V3 runs straight through D12 on panel-io at
+        # 0.81 mm. Both were "advisory".
         boxes = [(box(x), x) for x in txs]
         seen = set()
         for i in range(len(boxes)):
             for j in range(i + 1, len(boxes)):
-                if overlap(boxes[i][0], boxes[j][0]):
-                    a, b = boxes[i][1]["s"], boxes[j][1]["s"]
-                    k = tuple(sorted((a, b)))
-                    if k in seen:
-                        continue
-                    seen.add(k)
-                    found.append(("text", f"{a!r} overlaps {b!r}"))
+                d = depth(boxes[i][0], boxes[j][0])
+                if d <= 0:
+                    continue
+                a, b = boxes[i][1]["s"], boxes[j][1]["s"]
+                k = tuple(sorted((a, b)))
+                if k in seen:
+                    continue
+                seen.add(k)
+                kind = "collision" if d >= DEEP else "text"
+                found.append((kind, f"{a!r} overlaps {b!r} by {d:.2f} mm"))
 
         print(f"\n  {name}  ({pm.group(1)}, {W}x{H} mm, {len(syms)} symbols)")
         if not found:
@@ -348,9 +386,11 @@ def main():
         total += len([x for x in found if x[0] not in ("text", "near")])
 
     print(f"\n  {total} finding(s) that are not advisory")
-    print("  Text overlap is ADVISORY: character widths are estimated, so a"
-          "\n  near-miss can read as a hit. Trust the border, title block and"
-          "\n  crossing checks; eyeball the rest against the plotted PDF.")
+    print(f"  Text overlap is graded by depth. [collision] is >= {DEEP} mm of"
+          f"\n  interpenetration, which CHAR_W's error cannot account for: those"
+          f"\n  are two words printed on each other and count as findings. [text]"
+          f"\n  is shallower and stays advisory, since a near-miss can read as a"
+          f"\n  hit either way. Check those against the plotted PDF.")
     return 1 if (strict and total) else 0
 
 

@@ -41,3 +41,37 @@ OTHER GATES, current tree
   .kicad_pcb last changed  28c54f1 2026-08-22 Source the last 3 parts, normalise R45's pad angle, refresh the stale docs
   ^ predates every commit under test. The BOARDS ON ORDER ARE UNAFFECTED;
     these edits are schematic drawing only.
+
+CORRECTION, appended 2026-08-24 22:40 (evidence is append-only)
+--------------------------------------------------------------
+  The "check_schematic.py  0 hard findings, 8 advisory" line above is WRONG
+  in both halves, and the way it was wrong is worth recording.
+
+  The count was produced by a regex matching only `[near ] advisory`. There
+  were 28 advisories, not 8: 8 near-misses plus 20 text overlaps that the
+  regex never saw. Counting one class and reporting it as the total.
+
+  Worse, the 20 were not advisory at all. Rendered at 600 dpi:
+
+      power.kicad_sch     VIN_DC and PWR_FLAG share an anchor EXACTLY at
+                          (69.85, 272.59) and print as illegible mush.
+                          Same for GND, VBAT and +5V against PWR_FLAG.
+      panel-io.kicad_sch  +3V3 prints straight through D12 on J13's 2.54 mm
+                          pin pitch; each power flag's Value text is drawn
+                          3.0 mm below its own symbol, landing it on the
+                          NEXT PIN ROW DOWN. 15 instances of this shape.
+      seed.kicad_sch      the PGOOD_LEG label bridge names both sides of the
+                          R16/R17 divider midpoint; the two labels collide.
+
+  They were dismissed because the tool hedged every text overlap as
+  "advisory: character widths are estimated". CHAR_W is worth 0.1-0.2 mm on
+  a short string. These run 0.81 to 1.27 mm.
+
+  A confidence caveat is not a severity. The tool now grades by
+  interpenetration depth: >= 0.60 mm is [collision] and counts as a finding.
+  It reports 20.
+
+  NO ELECTRICAL DEFECT IS IMPLIED. All 20 are text placement. The PGOOD_LEG
+  bridge was traced to be sure: ~{PGOOD} -> R17 -> PGOOD_LEG -> R16 ->
+  A11_DIV, a summing-ladder leg feeding one ADC pin, matching the *_LEG
+  convention used for LEG_101_L and LEG_256_R. Netlist unchanged, 113 nets.
