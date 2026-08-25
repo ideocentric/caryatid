@@ -1,0 +1,60 @@
+panel-io.kicad_sch: debounce column refitted onto the A2 page
+==============================================================
+
+  Reported by Matt: "C21 is off of the boundaries of the page."
+
+BEFORE  (commit 595d16e)
+--------------------------------------------------------------
+  Three identical switch-debounce blocks repeat every 59.69 mm at
+  rows 270.51 / 330.20 / 389.89. A2 is 594 x 420 mm, frame inset 10,
+  so the drawable area ends at y 410.
+
+    C21   body to 408.43, LOWER PIN to 411.48    past frame by 1.48 mm
+    GND   flag bottom at 419.10                  past frame by 9.10 mm
+                                                 0.90 mm from PAPER EDGE
+
+  Block 3 is a faithful copy of a block that works. The page is one
+  repeat short of the pitch; the defect is the pitch, not the block.
+
+AFTER
+--------------------------------------------------------------
+  Pitch 59.69 -> 53.34 mm (42 x 1.27). Block 1 anchors the column.
+    block 1   row 270.51   unmoved
+    block 2   row 323.85   up  6.35 mm
+    block 3   row 377.19   up 12.70 mm
+
+  bottom-most ink now, counting pins:
+        406.40  GND
+        403.86  wire
+        398.78  C21
+        398.78  wire
+      frame 410.00 -- clear by 3.60 mm
+
+  The sheet is drawn on a 1.27 mm grid, not 2.54: the original 59.69
+  pitch is 23.5 x 2.54, so rows alternate on and off the coarser grid.
+  Both deltas are whole multiples of 1.27.
+
+VERIFICATION
+--------------------------------------------------------------
+  netlist                  113 nets, identical nodes on every one
+  ERC                      ERC messages: 0  Errors 0  Warnings 0
+  schematic parity         0 DRC violations, 0 unconnected pads, 0 Footprint errors
+  wires straddling a block boundary   0  (checked before moving)
+  .kicad_pcb                          untouched
+
+WHY THE CHECKER MISSED IT, AND WHAT CHANGED
+--------------------------------------------------------------
+  check_schematic.py reported this sheet clean three times. Three causes:
+    1. it compared the symbol ORIGIN to the frame, not its extent
+    2. it skipped every ref starting with '#', so the GND flag 0.9 mm
+       from the paper edge was never tested -- that filter was written
+       for the label-crossing check and copied where it did not belong
+    3. lib_extents() measures graphics only; Device:C's body half-height
+       is 0.762 mm and its pins reach 3.81 mm
+
+  Fixed by adding lib_reach() (body + pins) and testing the extent of
+  every symbol including power flags. Regression-tested against the
+  pre-fix tree, where it now reports:
+      C21 at (144.78,407.67) crosses the frame, bottom by 1.48 mm
+      GND at (144.78,416.56) crosses the frame, bottom by 9.10 mm
+  Those match the hand-derived overshoots exactly.

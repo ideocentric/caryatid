@@ -122,6 +122,49 @@ def lib_extents(t):
     return out
 
 
+def lib_reach(t):
+    """Half-extents INCLUDING pins, for the border check.
+
+    Deliberately separate from lib_extents(), which is body-only and must stay
+    that way: the crossing check asks "does this label sit on the part", and a
+    label lying along a pin stub reads fine. The border check asks a different
+    question -- "is any ink off the page" -- and a pin is ink.
+
+    The distance between the two answers is not small. Device:C has a body
+    half-height of 0.762 mm and pins reaching 3.81 mm, a factor of five. C21 on
+    panel-io sat with its body inside the frame at 408.43 and its lower pin
+    through it at 411.48, and the body-only check passed it."""
+    out = {}
+    lib = re.search(r"^\t\(lib_symbols\b", t, re.M)
+    if not lib:
+        return out
+    block = sexp(t, lib.start() + 1)
+    body = lib_extents(t)
+    for m in re.finditer(r'\(symbol "([^"]+)"', block):
+        name = m.group(1)
+        if ":" not in name:
+            continue
+        blk = sexp(block, m.start())
+        ex, ey = body.get(name, (0.0, 0.0))
+        for p in re.finditer(r"\(pin \w+ \w+", blk):
+            pb = sexp(blk, p.start())
+            at = re.search(r"\(at ([-\d.]+) ([-\d.]+) ([-\d.]+)\)", pb)
+            ln = re.search(r"\(length ([\d.]+)\)", pb)
+            if not at:
+                continue
+            px, py = float(at.group(1)), float(at.group(2))
+            ang, L = float(at.group(3)), float(ln.group(1)) if ln else 0.0
+            # the pin ANCHOR is the connect point; the stub runs back into
+            # the body, so the tip is the far end at 180 degrees from `ang`
+            tx = px - L if ang == 0 else px + L if ang == 180 else px
+            ty = py - L if ang == 270 else py + L if ang == 90 else py
+            ex = max(ex, abs(px), abs(tx))
+            ey = max(ey, abs(py), abs(ty))
+        if ex or ey:
+            out[name] = (ex, ey)
+    return out
+
+
 def placed_symbols(t):
     """Instances only. See THE LIB_SYMBOLS TRAP above."""
     out = []
@@ -217,14 +260,31 @@ def main():
         W, H = PAPER[pm.group(1)]
         syms = placed_symbols(t)
         txs = texts(t)
+        reach = lib_reach(t)
         found = []
 
         # 1. outside the drawing border
+        #
+        # Test the EXTENT, not the origin, and include power symbols. Both of
+        # those cost a real miss: C21 on panel-io had its origin at y 407.67,
+        # inside the 410 frame, while its lower pin reached 411.48 -- and the
+        # GND flag under it sat at 416.56 with its bottom edge 0.9 mm from the
+        # paper edge, never tested at all because its reference starts with #.
+        # A power flag is ink on the plot like anything else.
         for s in syms:
-            if s["ref"].startswith("#"):
-                continue
-            if not (BORDER <= s["x"] <= W - BORDER and BORDER <= s["y"] <= H - BORDER):
-                found.append(("border", f"{s['ref']} at ({s['x']:.2f},{s['y']:.2f})"))
+            ex, ey = reach.get(s["lib"], (0.0, 0.0))
+            lo_x, hi_x = s["x"] - ex, s["x"] + ex
+            lo_y, hi_y = s["y"] - ey, s["y"] + ey
+            over = []
+            if lo_x < BORDER:      over.append(f"left by {BORDER - lo_x:.2f}")
+            if hi_x > W - BORDER:  over.append(f"right by {hi_x - (W - BORDER):.2f}")
+            if lo_y < BORDER:      over.append(f"top by {BORDER - lo_y:.2f}")
+            if hi_y > H - BORDER:  over.append(f"bottom by {hi_y - (H - BORDER):.2f}")
+            if over:
+                name = s["ref"] if not s["ref"].startswith("#") else s["lib"].split(":")[-1]
+                found.append(("border",
+                              f"{name} at ({s['x']:.2f},{s['y']:.2f}) crosses the "
+                              f"frame, {' and '.join(over)} mm"))
 
         # 2. inside the title block
         for s in syms:

@@ -117,8 +117,30 @@ it reports clearances confidently and wrongly.
   On `audio.kicad_sch`, `BIAS_E_L` anchors 8.89 mm from R51 and its text runs
   back toward it.
 
+- **`check_schematic.py`'s border test, again, and this one was found by eye.**
+  It compared the symbol **origin** against the frame and skipped every symbol
+  whose reference starts with `#`. Both are the same error as above in a
+  different disguise: a box smaller than the ink. C21 on `panel-io.kicad_sch`
+  had its origin at y 407.67, inside the 410 frame, while its lower pin reached
+  **411.48** — `Device:C` has a body half-height of 0.762 mm and pins reaching
+  3.81 mm, a factor of five. Underneath it the `GND` flag sat at 416.56 with its
+  bottom edge **0.9 mm from the paper edge**, and was never tested at all,
+  because the `#PWR` filter written for the *label-crossing* check had been
+  copied into the *border* check where it does not belong. A power flag is ink
+  on the plot like anything else.
+
+  The fix keeps `lib_extents()` body-only and adds a separate `lib_reach()`
+  including pins, because the two checks ask different questions. "Does this
+  label sit on the part" tolerates a label along a pin stub; "is any ink off
+  the page" does not.
+
 Where the anchor cannot be established, **over-reserve**. An obstacle model may
 claim more space than the ink needs; it may never claim less.
+
+**A filter is part of a check, not part of the file.** Three of the five misses
+above are a box or an exclusion carried from the place it was correct into a
+place it was not. When copying a guard between checks, restate what it is for;
+if that sentence does not survive the move, neither should the guard.
 
 ---
 
