@@ -11,7 +11,7 @@ source_ref: >-
   docs/audio.md "The gain stage - one footprint, all three outcomes" and "The
   gain ceiling"; docs/decisions/0009-mic-input-is-jumper-selected.md
 resource: "The mic front-end gain budget: capsule to WM8731 line input"
-status: unverified          # the targets check out on TYPICAL figures; no capsule measured
+status: unverified          # capsule TYPE now known; its OUTPUT LEVEL still unmeasured, and that is what the targets rest on
 
 # WHY THIS RECORD EXISTS
 # ADR 0009 says it plainly of the capsule requirement: "The requirement was
@@ -83,25 +83,13 @@ what_the_board_provides:
     - {capsule: Carbon,   path: "bypass, PGA trims", total: 1,    at_codec_v: "0.10 - 0.50", verdict: covers it}
 
 evidence:
-  - >-
-    2026-08-23: VINLINE read from the WM8731 datasheet itself. "Input Signal
-    Level (0dB), VINLINE, 1.0, Vrms", under "Line Input to ADC", with the
-    AVDD/3.3 scaling note beneath it. Extracted with pdftotext from the copy
-    docs/datasheets.md cites, so it is the datasheet's own words rather than a
-    secondary summary.
-  - >-
-    2026-08-23: capsule sensitivity ranges taken from published typical figures
-    for each class of part, cited above. These are TYPICAL VALUES FOR A CLASS,
-    not measurements of the handset this instrument will use.
-  - >-
-    2026-08-23: the derivation was run and THE DOCUMENTED TARGETS HOLD UP.
-    Electret needs 56x to 200x and gets 101x; dynamic needs 250x to 1000x and
-    gets 1020x with the codec's +12 dB; carbon needs 2x to 10x and is passed
-    through at 1x with the codec trimming either way. Every case lands inside
-    its range. The "~x3 / ~x100 / ~x1000" figures in audio.md were correct all
-    along; what was missing was any way to check them.
-
-last_verified: 2026-08-23
+  - "2026-08-25: capsule type settled -- loa's handset transmitter is an
+     ELECTRET, so the 56-200x row is the one that applies and the board's
+     x101 leg is the relevant path. This does NOT verify the record: the
+     94 dB SPL assumption and the capsule OUTPUT LEVEL are still unmeasured,
+     and they are what the gain targets rest on
+     (2026-08-25-handset-capsule-identification.txt, [[loa-handset-capsule]])"
+last_verified: 2026-08-25
 
 notes: >-
   THE CONCLUSION IS REASSURING AND THE RECORD IS STILL `unverified`, and both

@@ -1,0 +1,105 @@
+id: loa-handset-capsule
+kind: other
+source_claim: >-
+  Which capsule type sits in loa's handset was carried as an open question from
+  2026-08-19: "carbon, electret or dynamic. A DC resistance measurement sets the
+  answer." It gated the jumper settings, the gain leg and the R52/R54 power
+  question, and was never measured because the phone was not to hand.
+source_ref: >-
+  loa docs/design/12-phone-build.md items 191 and 203; caryatid
+  docs/capture-checklist.md "Measure the handset capsule";
+  docs/mic-configurations.md "First, identify the capsule"
+resource: >-
+  The transmitter (mouthpiece) capsule in loa's handset, and the receiver
+  (earpiece) element alongside it
+status: confirmed
+
+measured:
+  date: 2026-08-25
+  transmitter:
+    forward_kohm: [1.75, 1.77]
+    reverse_kohm: [1.05, 1.06]
+    steady: true          # no jump when tapped, which rules out carbon
+    conditions: >-
+      At the capsule terminals, out of circuit, after removing hot-melt glue
+      that had been covering them. Earlier readings taken by poking through
+      that glue are not recorded as capsule values: a bad contact reads HIGH,
+      which biases toward the safe-looking end of every threshold.
+  receiver:
+    ohm: 145.3
+    note: >-
+      Consistent with a magnetic/dynamic earpiece. Not needed for the mic
+      question; recorded because it identifies the other pair, and because it
+      is the figure to use if the receiver is ever driven as an output.
+  jack_pairs:
+    outer_kohm: 1.054     # matches the transmitter reverse reading -> the mic
+    inner_kohm: 0.824
+
+conclusion: ELECTRET
+
+why:
+  - >-
+    THE POLARITY DEPENDENCE IS THE PROOF, not the magnitude. 1.76k one way and
+    1.05k the other means a semiconductor junction. A resistor reads the same
+    both ways and so does a coil, so the element is neither carbon nor dynamic
+    regardless of what band the numbers fall in.
+  - >-
+    Steady with no jump when tapped independently rules out carbon, which is
+    docs/mic-configurations.md's own tell.
+
+documentation_defect:
+  where: docs/mic-configurations.md, "First, identify the capsule"
+  says: "open circuit -> ELECTRET"
+  problem: >-
+    True only of a BARE electret element, which is a capacitor. Nearly every
+    practical capsule is a two-terminal package with an integral JFET and reads
+    a finite kilohm value that changes with probe polarity. This capsule matches
+    none of the tree's three branches, so a reader following it would conclude
+    "not any of these" rather than "electret".
+  fix: >-
+    Add a fourth branch: "1-3 kohm, differs when the probes are reversed ->
+    ELECTRET with integral FET". Not yet applied.
+
+consequences:
+  jumpers: >-
+    JP1 on 1-2 (left) and JP4 on 1-2 (right), the electret legs, biased through
+    R51/R53 at 2k2 from 3V3A. The x101 gain leg.
+  carbon_record: >-
+    carbon-capsule-DC-resistance is no longer a question about loa's phone. Its
+    R52/R54 only carry capsule current with a jumper on the carbon position, and
+    an electret never sits across them. That record stays open for any carbon
+    capsule fitted later.
+  values_md: >-
+    The electret bias line in docs/values.md lists 1.5 mA per channel, which is
+    exactly 3.3 V / 2k2, i.e. R51 with the capsule treated as a SHORT. The
+    capsule is not a short, so that figure overstates the 3V3A load. It is NOT
+    corrected to 831 uA or 1015 uA either: see below.
+
+bias_current_is_bounded_not_measured:
+  bounds_ua: {capsule_as_short: 1500, at_1050_ohm: 1015, at_1770_ohm: 831}
+  why_none_of_these_is_the_answer: >-
+    A JFET is not a fixed resistor. Its DC operating point at 3.3 V is not what
+    an ohmmeter probes at roughly 0.3 V, so substituting a meter reading for an
+    operating resistance produces a number that looks derived and is not
+    measured. That is conventions rule 10 exactly.
+  what_would_close_it: >-
+    Voltage across R51 with the board powered; I = V(R51) / 2200. Needs the
+    boards, so it is not a bench item.
+
+evidence:
+  - "2026-08-25: transmitter 1.75-1.77k forward, 1.05-1.06k reversed, steady, measured at the capsule out of circuit; receiver 145.3 ohm; identified ELECTRET by polarity dependence (2026-08-25-handset-capsule-identification.txt)"
+
+last_verified: 2026-08-25
+
+notes: >-
+  WHAT THIS DOES NOT CLOSE. mic-gain-budget stays unverified. Identification
+  fixes WHICH gain range applies (56-200x for an electret) but not whether the
+  board's x101 lands inside it, because that rests on the capsule's OUTPUT LEVEL
+  at close-talk distance, which is still unmeasured and is an assumed 94 dB SPL.
+
+  THE GLUE IS WORTH REMEMBERING. The capsule terminals were covered in hot-melt
+  glue and the first attempts probed through it. Hot glue is an insulator, so a
+  partial contact reads high, and high is the comfortable end of every threshold
+  in carbon-capsule-DC-resistance. Had this been a carbon capsule, probing
+  through glue could have shown a safe-looking value for a part that was not
+  safe. Clean the terminals before trusting a reading.

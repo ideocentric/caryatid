@@ -1,0 +1,85 @@
+loa handset transmitter: capsule identification by DC resistance
+================================================================
+
+  Bench session 2026-08-25, Matt measuring, phone in hand, boards not needed.
+
+READINGS
+--------
+  receiver (earpiece), at its terminals inside the handset
+      145.3 ohm
+
+  transmitter (mouthpiece), at the capsule terminals, out of circuit,
+  after removing hot-melt glue that had been covering them
+      1.75 - 1.77 kohm   one probe polarity
+      1.05 - 1.06 kohm   probes reversed
+      steady in both directions; no jump when tapped
+
+  earlier, at the handset jack, before the capsule was reached
+      0.824 kohm  inner pair
+      1.054 kohm  outer pair
+  The 1.054 matches the transmitter's reverse-direction reading, so the OUTER
+  pair is the transmitter. Recorded because it identifies the pair, not because
+  the value adds anything.
+
+  A first reading of 145.3 ohm was initially offered as the capsule and
+  retracted by Matt as the speaker before anything was written down. It is
+  listed above as the receiver, which is where it belongs.
+
+IDENTIFICATION: ELECTRET
+------------------------
+  THE POLARITY DEPENDENCE IS THE PROOF. 1.76k one way and 1.05k the other is a
+  semiconductor junction. A resistor reads the same both ways and so does a
+  coil, so this is neither carbon nor dynamic, whatever the magnitudes.
+
+  Against docs/mic-configurations.md's decision tree:
+      open circuit          -> ELECTRET
+      150-600 ohm, steady   -> DYNAMIC
+      50-300 ohm, jumps     -> CARBON
+  the reading matches NONE of the three. The tree is incomplete, not wrong: it
+  describes a bare electret element, which is a capacitor and does read open.
+  Nearly every practical electret capsule is a two-terminal package with an
+  integral JFET, and that reads a finite kilohm value which varies with probe
+  polarity. The tree needs a fourth branch.
+
+  Steady, with no jump when tapped, independently rules out carbon.
+
+CONSEQUENCES
+------------
+  1. JUMPERS. Electret legs: JP1 on 1-2 (left), JP4 on 1-2 (right). Bias
+     through R51/R53, 2k2 from 3V3A. The x101 gain leg, which mic-gain-budget
+     puts at 56-200x for an electret.
+
+  2. carbon-capsule-DC-resistance IS NOT LIVE FOR THIS HANDSET. That record
+     exists to decide whether R52/R54 want an 0805, and they only carry capsule
+     current when a jumper is on the carbon position. An electret never sits
+     across them. The record stays open for any carbon capsule fitted later;
+     it is no longer a question about loa's phone.
+
+  3. values.md's electret bias figure is unsound. The table lists 1.5 mA per
+     channel, which is exactly 3.3 V / 2k2: the current through R51 with the
+     capsule treated as a SHORT. The capsule is not a short.
+
+BIAS CURRENT: BOUNDED, NOT MEASURED
+-----------------------------------
+      capsule as a short    3.3/2200        = 1500 uA   <- what values.md used
+      capsule as 1050 ohm   3.3/(2200+1050) = 1015 uA
+      capsule as 1770 ohm   3.3/(2200+1770) =  831 uA
+
+  NONE OF THESE IS A MEASUREMENT OF THE BIAS CURRENT, and the middle two are
+  not much better than the first. A JFET is not a fixed resistor: its DC
+  operating point at 3.3 V is not what an ohmmeter probes at roughly 0.3 V.
+  Substituting an ohmmeter reading for an operating resistance is the same
+  class of error as conventions rule 10 -- a number that looks derived and is
+  not measured.
+
+  What actually closes it: voltage across R51 with the board powered, then
+  I = V(R51) / 2200. That needs the boards, so it is not a bench item today.
+
+  What can be said now: the per-channel figure is below 1.5 mA, so the 3V3A
+  budget in values.md overstates this load. By how much is unknown.
+
+STILL UNMEASURED
+----------------
+  Capsule OUTPUT LEVEL in mV rms at close-talk distance. mic-gain-budget rests
+  on an assumed 94 dB SPL and remains unverified without it. Identification
+  does not close that record; it only fixes which gain range applies.

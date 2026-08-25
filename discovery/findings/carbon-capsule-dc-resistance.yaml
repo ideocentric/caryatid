@@ -12,7 +12,7 @@ source_ref: >-
 resource: >-
   R52 and R54, 220 ohm 0603 1% 100 mW, the carbon mic bias pair, +5V into
   BIAS_C_L and BIAS_C_R
-status: unverified          # nothing measured yet; this record exists to say WHAT to measure
+status: unverified          # no CARBON capsule measured; loa's own handset turned out electret, see evidence
 
 the_measurement:
   what: DC resistance of the carbon capsule, in ohm
@@ -73,9 +73,16 @@ also_answers:
     Tens of milliamps is not alarming for a hook switch, but it is the figure to
     check the gating element against, and it costs nothing once Rc is known.
 
-evidence: []          # deliberately empty: nothing has been measured
+evidence:
+  # Still no carbon capsule measured. What changed is that loa's handset is
+  # not one, so this stopped being a question about the phone in hand.
+  - "2026-08-25: loa's handset transmitter identified as ELECTRET (1.75-1.77k
+     forward, 1.05-1.06k reversed, steady) so R52/R54 carry no capsule current
+     on this phone; the carbon jumper position is unused. Record remains OPEN
+     for any carbon capsule fitted later, and no carbon element has been
+     measured (2026-08-25-handset-capsule-identification.txt, [[loa-handset-capsule]])"
 
-last_verified: 2026-08-23
+last_verified: 2026-08-25
 
 notes: >-
   THIS RECORD EXISTS BECAUSE THE QUESTION KEPT BEING CARRIED WITHOUT BEING
