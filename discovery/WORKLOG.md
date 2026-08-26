@@ -813,3 +813,71 @@ against R35/R37/R39), which are cosmetic and measured, not defects.
 14.5 Ω and 112 Ω thresholds, output level against the gain budget, and beep out
 the keypad in the same sitting. That closes two of the three open records and
 needs no boards.
+
+## 2026-08-25 23:20 — First bench session: the capsule is an electret
+
+The first entry this session that is discovery rather than drawing. Three
+commits, and the ledger gained two records.
+
+**Completed:**
+
+- `fb23f51` — **loa's handset transmitter measured and identified: ELECTRET.**
+  1.75–1.77 kΩ one probe polarity, 1.05–1.06 kΩ reversed, steady, no jump when
+  tapped, measured at the capsule terminals out of circuit. New record
+  `loa-handset-capsule`, status `confirmed`.
+- `d531d13` — **`mic-configurations.md` gains a fourth branch.** The tree said
+  "open circuit → ELECTRET", true only of a bare element, which is a capacitor.
+- `5fbc09e` — **`loa-keypad-matrix` created**, saying what to measure before
+  anything is measured. Evidence deliberately empty.
+
+**THE IDENTIFICATION RESTS ON POLARITY, NOT MAGNITUDE.** A resistor reads the
+same both ways and so does a coil, so an asymmetric reading is a semiconductor
+junction and the element is neither carbon nor dynamic whatever band the numbers
+fall in. This mattered: the reading matched **none** of the tree's three
+branches, so a reader following the documented procedure would have concluded
+"not any of these" rather than "electret". The test that actually worked was the
+one that does not depend on the number landing where you expected.
+
+**What it closes and what it does not.** Jumpers go to the electret legs, JP1
+and JP4 on `1-2`, biased through R51/R53. `carbon-capsule-DC-resistance` stops
+being a question about this phone, since R52/R54 only carry capsule current with
+a jumper on carbon and an electret never sits across them — but its status is
+**unchanged at `unverified`**, because no carbon capsule has been measured and
+the record still governs any fitted later. `mic-gain-budget` likewise stays
+`unverified`: knowing the type fixes which range applies (56–200×), not whether
+the board's ×101 lands inside it, which rests on an unmeasured output level.
+
+**A figure I had to walk back inside a day of writing rule 10.** I computed the
+electret bias current as 835 µA from the 1.75 kΩ reading. That is wrong the same
+way `values.md`'s 1.5 mA is wrong: `values.md` used 3.3/2k2, treating the capsule
+as a short, and I used an ohmmeter reading as an operating resistance. **A JFET
+is not a fixed resistor**, and its DC point at 3.3 V is not what a meter probes
+at ~0.3 V. The honest statement is a bound: under 1.5 mA per channel, so the
+3V3A budget overstates this load by an unknown amount. Closing it needs V across
+R51 with the board powered, which is not a bench item. Recorded in the record as
+`bias_current_is_bounded_not_measured` so the bound cannot be read as a value.
+
+**Two instrument traps, and they are the same trap.** The capsule terminals were
+under hot-melt glue and the first attempts probed through it; glue is an
+insulator, so a partial contact reads **high**, and high is the comfortable end
+of every threshold in the carbon record. Had this been carbon, probing through
+glue could have passed a part that was not safe. The keypad record carries the
+matching one before it can bite: the continuity **beeper** is the wrong
+instrument, because telephone keypads are conductive rubber on carbon pads that
+close at hundreds of ohms to a few kilohm, and a beeper triggering below ~50 Ω
+stays silent on a healthy key. **In both cases the instrument's default setting
+hides the reading rather than reporting it, and in both cases the failure is
+silent and reassuring.**
+
+**In flight:** nothing. Both trees clean and pushed.
+
+**Open questions:** five records open. `bt1-cell-fit` in conflict;
+`carbon-capsule-DC-resistance` unverified and now dormant for this phone;
+`mic-gain-budget` unverified pending an output level; `loa-keypad-matrix`
+unverified pending the bench; a bias-current measurement that needs the boards.
+
+**Next step:** two bench items, neither needing boards. **Capsule output level**
+in mV rms at close-talk distance, which is the number `mic-gain-budget` rests
+on. And **beep out the keypad** to the template in `loa-keypad-matrix`: twelve
+key/pair/resistance rows, the conductor count, and whether any reading changes
+with probe polarity. Log the WORST closed resistance, not a typical one.
