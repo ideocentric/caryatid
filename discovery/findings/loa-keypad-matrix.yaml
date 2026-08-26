@@ -1,0 +1,93 @@
+id: loa-keypad-matrix
+kind: other
+source_claim: >-
+  loa's pin map assigns J11's seven digital lines to a 4x3 keypad, "rows D0-D3,
+  columns D4-D6. Seven lines exactly." That assumes the phone's original keypad
+  is already matrix-wired in a 4x3 with seven conductors. It has never been
+  checked, and the platform spec warns the assumption is not safe.
+source_ref: >-
+  loa docs/design/12-phone-build.md, "Mapping onto caryatid" table and
+  "Still to take, with the phone open" item 1: "Where the keypad ribbon emerges,
+  and whether it is already a matrix ... beep it out before assuming seven
+  discrete lines."
+resource: >-
+  The original keypad in loa's telephone, and J11 on caryatid (IDC 2x5,
+  D0-D6 + 3V3D + DGND + spare, 100 ohm series on each line)
+status: unverified          # nothing beeped out yet; this record says WHAT to measure
+
+the_measurement:
+  what: >-
+    For each of the 12 keys, which pair of ribbon conductors closes, and the
+    resistance when closed.
+  why_both: >-
+    The pairs give the matrix map. The resistance decides whether the Seed's
+    internal pull-up can read it, which the pair map alone does not tell you.
+  how: >-
+    Multimeter in RESISTANCE mode, keypad disconnected from the phone's board.
+    Press one key at a time and probe conductor pairs until one reads closed.
+    With nothing pressed, every pair should read open.
+
+  🔴_do_not_use_the_continuity_BEEPER: >-
+    Telephone keypads are usually conductive-rubber pills on carbon pads. A good
+    key closes at hundreds of ohms to a few kilohm, NOT a dead short. A beeper
+    that triggers below about 50 ohm will stay silent on a perfectly healthy key,
+    and the wrong conclusion is "not a matrix" or "dead keypad". This is the same
+    shape as the hot-melt glue on the capsule: the instrument's default setting
+    hides the reading rather than reporting it.
+
+  watch_for:
+    - >-
+      MORE THAN SEVEN CONDUCTORS. Extra lines usually mean extra keys (flash,
+      redial, memory) or a common return rather than a true matrix. Count them
+      before mapping.
+    - >-
+      A READING THAT CHANGES WHEN THE PROBES ARE REVERSED means diodes are
+      fitted, which some keypads use for rollover. The same polarity test that
+      identified the capsule applies here, and it changes how the matrix is
+      scanned.
+    - >-
+      TWO KEYS SHARING A PAIR. In a true matrix all 12 pairs are distinct. A
+      duplicate means it is not a plain 4x3, or two conductors are shorted.
+
+acceptance:
+  wiring: >-
+    7 conductors, 12 distinct (row, column) pairs, each ROW conductor appearing
+    in exactly 3 keys and each COLUMN conductor in exactly 4. That maps straight
+    onto D0-D3 rows and D4-D6 columns with no glue logic.
+  closed_resistance:
+    comfortable_below_ohm: 5000
+    marginal_ohm: [5000, 20000]
+    rationale: >-
+      J11 puts 100 ohm in series with each line and there are no external
+      pull-ups, so a scan relies on the Seed's internal pull-up, on the order of
+      40 kohm. A few kilohm closed against 40 kohm pulls the pin well below
+      logic low. Tens of kilohm does not, and would need an external pull-down
+      or a stronger drive.
+    record_the_worst_key: >-
+      One bad key sets the requirement, so log the highest closed resistance
+      across all twelve, not a typical value.
+
+what_to_do:
+  if_a_clean_4x3: >-
+    Nothing. Wire the seven conductors to J11 and the pin map stands as written.
+  if_not_a_matrix: >-
+    Discrete or common-bus wiring needs either a rewire at the keypad or a
+    different input scheme. Seven lines is what J11 offers; it does not stretch.
+  if_more_than_12_keys: >-
+    Decide whether the extra keys are wanted before wiring. There are no spare
+    digital lines on J11 beyond the seven.
+
+evidence: []          # deliberately empty: nothing has been beeped out
+
+last_verified: 2026-08-25
+
+notes: >-
+  THIS RECORD EXISTS FOR THE SAME REASON carbon-capsule-DC-resistance DOES. The
+  keypad question has been carried in 12-phone-build.md as "beep it out before
+  assuming seven discrete lines" without ever saying what result would mean
+  what. A carried question with no threshold attached cannot be closed by
+  anyone, including the person who wrote it.
+
+  IT DOES NOT GATE THE BOARDS. caryatid is fabricated and J11 is a general
+  digital bus; nothing about this measurement changes what was ordered. It gates
+  loa's wiring and its firmware input reader.
