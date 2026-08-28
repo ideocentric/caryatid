@@ -13,7 +13,7 @@ source_ref: >-
 resource: >-
   The original keypad in loa's telephone, and J11 on caryatid (IDC 2x5,
   D0-D6 + 3V3D + DGND + spare, 100 ohm series on each line)
-status: unverified          # nothing beeped out yet; this record says WHAT to measure
+status: unverified          # connector characterised; the MATRIX itself is still unmeasured
 
 the_measurement:
   what: >-
@@ -77,9 +77,108 @@ what_to_do:
     Decide whether the extra keys are wanted before wiring. There are no spare
     digital lines on J11 beyond the seven.
 
-evidence: []          # deliberately empty: nothing has been beeped out
 
-last_verified: 2026-08-25
+# ---------------------------------------------------------------------------
+# THE CONNECTOR. Added 2026-08-26. Separate from the matrix question: this is
+# how the keypad is reached, not what is behind it. The matrix is still
+# unmeasured; see `the_measurement` above.
+# ---------------------------------------------------------------------------
+connector:
+  the_phone:
+    model: Bittel HA41T-25            # 41 series, wall-mount hotel bathroom set
+    board_silkscreen: "HA(41)T-25  KB  T1  2020.1.15"
+    designator: PX
+    keys: 12                          # confirmed by count: no redial, flash or service keys
+
+  measured:
+    header: 7 pins, vertical, board-mounted on the KB daughterboard
+    cable: grey flat ribbon, one RED conductor at the edge (pin 1 marker)
+    ribbon_width_mm: 9.0
+    conductors: 7
+    awg: 28
+    termination: >-
+      MASS TERMINATED. The ribbon enters the housing intact; the conductors are
+      not fanned out and individually crimped. This is what rules out every
+      crimp-only family.
+    cable_housing_width_mm: 11.5
+    retention: >-
+      NO LATCH. Small plastic rails on the cable-side housing engage side slots
+      on the board-side part. Friction and keying, not a positive lock.
+
+  derived_pitch_mm: 1.27
+  derivation: >-
+    A mass-terminated ribbon's pitch must equal the connector's, so the ribbon
+    width gives it directly. 7 conductors at 1.27 mm predicts 8.89 mm against
+    9.0 measured, 1.2% out. 1.25 is 2.8% out, 1.00 is 22%, 1.50 is 17%.
+    1.27 mm is 0.05 inch, the worldwide ribbon standard, and 28 AWG is its
+    standard conductor.
+
+  candidate: Molex Picoflex
+  candidate_status: FIT, NOT CONFIRMED
+  why_it_fits: >-
+    Picoflex is a 1.27 mm IDT system for standard ribbon, specifying 26-28 AWG,
+    circuits 4 to 26, low-profile vertical header to a ribbon-terminated
+    receptacle, available with or WITHOUT latches. Every observation matches,
+    including the absent latch.
+  how_to_confirm: >-
+    Look for a Molex logo or moulded part number on the receptacle, or buy ONE
+    7-circuit part and test-fit before ordering a quantity. Other vendors make
+    1.27 mm ribbon IDT connectors and nothing on this housing has been read as
+    a marking.
+  part_families_if_confirmed:
+    receptacle: Molex Picoflex 90325 series
+    header: Molex Picoflex 90814 series
+    assemblies: Molex Picoflex 90327 series, dual-ended ribbon
+    stocked_by: DigiKey, Mouser, TTI, TME
+
+  refuted_along_the_way:
+    - >-
+      "1.25 mm FFC" -- derived from the 11.5 mm housing using an FFC's ~2 mm
+      wall allowance. There are no exposed fingers; it was never an FFC. The
+      wall allowance came from the assumed family and took the answer with it.
+    - >-
+      "1.5 mm, JST ZH" -- same housing width re-derived with wire-to-board wall
+      thickness. Refuted because the part is ribbon-terminated and ZH is
+      crimp-only, with no ribbon variant.
+    - >-
+      "the JST GH comparison rules out anything below 1.5 mm" -- GH is 1.25 and
+      standard ribbon is 1.27. A 0.12 mm difference across the whole span
+      cannot be seen, so that comparison never carried the weight put on it.
+    - >-
+      AMP CT was not considered at all until Matt asked. The first pitch table
+      contained only JST and Molex families and silently excluded TE, whose CT
+      line spans 1.2 / 1.5 / 2.0 mm. The candidate set was too small and the
+      answer looked better determined than it was.
+
+  what_settled_it: >-
+    The width of the ribbon, with a ruler. Every earlier attempt inferred pitch
+    from a housing dimension through an assumed wall thickness, an assumption
+    stacked on an assumption. Measure the thing whose dimension is defined by
+    what you want to know. See conventions rule 10.
+
+  consequence_for_the_build: >-
+    1.27 mm ribbon is exactly half of J11's 0.1 inch IDC pitch, and 0.05 inch
+    ribbon is what 2.54 mm IDC connectors are built to bite, so the caryatid end
+    is a solved problem. The safest path needs nothing ordered: clip the ribbon
+    at the mainboard end, keep the red conductor as pin 1, and beep out from the
+    stripped ends. That harness is scrap once caryatid replaces the mainboard,
+    and the keypad and its header are never touched.
+
+evidence:
+  # The MATRIX is still unmeasured. These record the connector and the key
+  # count, which are what the beep-out will be done through.
+  - "2026-08-26: connector characterised. 7-way, 1.27 mm pitch derived from a
+     9.0 mm 7-conductor mass-terminated ribbon (1.2% fit), 28 AWG, no latch,
+     rails and slots for keying, cable housing 11.5 mm. Molex Picoflex is a fit
+     but NOT confirmed. Phone is a Bittel HA41T-25, keypad board HA(41)T-25 KB
+     T1 dated 2020.1.15, connector silkscreened PX
+     (2026-08-26-keypad-connector-identification.txt)"
+  - "2026-08-26: TWELVE keys counted, nothing else. No redial, flash or guest
+     service keys, so 7 conductors is consistent with a plain 4x3 matrix. This
+     CORROBORATES the pin map's assumption; it does not verify it, since 7
+     conductors could still be wired otherwise"
+
+last_verified: 2026-08-26
 
 notes: >-
   THIS RECORD EXISTS FOR THE SAME REASON carbon-capsule-DC-resistance DOES. The

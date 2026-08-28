@@ -1,0 +1,104 @@
+loa keypad connector: measurements, and three wrong answers on the way
+======================================================================
+
+  Bench session 2026-08-26, Matt measuring, phone open. Nothing dismantled.
+
+THE PHONE AND THE BOARD
+-----------------------
+  Bittel HA41T-25, a wall-mounted corded set from Bittel's 41 series
+  (hotel bathroom / communal). Keypad daughterboard silkscreened:
+
+      HA(41)T-25   KB   T1   2020.1.15
+
+  KB is the keypad board, T1 a revision, built 15 January 2020. The connector
+  is silkscreened PX.
+
+  TWELVE KEYS, NOTHING ELSE. No redial, no flash, no guest-service keys. The
+  41 series is the plainest set in Bittel's range, which is consistent. The
+  38 and 48 series advertise up to 10 programmable service keys and would have
+  broken the seven-conductor assumption immediately.
+
+MEASURED
+--------
+  header on KB board     7 pins, vertical, standing straight up
+  cable                  grey flat ribbon, ONE RED CONDUCTOR at the edge
+  ribbon width           9.0 mm
+  conductors             7, 28 AWG
+  termination            MASS TERMINATED. The ribbon enters the housing
+                         intact; conductors are not fanned out and crimped.
+  cable housing width    11.5 mm
+  retention              NO LATCH. Small plastic rails on the cable-side
+                         housing engage side slots on the board-side part.
+                         Friction and keying, not a positive lock.
+
+DERIVED: 1.27 mm PITCH
+----------------------
+  From the ribbon width, since a mass-terminated ribbon's pitch MUST equal the
+  connector's:
+
+      pitch   predicts ribbon   error vs 9.0 mm measured
+      1.00        7.00 mm            22.2%
+      1.25        8.75 mm             2.8%
+      1.27        8.89 mm             1.2%   <-- best fit
+      1.50       10.50 mm            16.7%
+
+  1.27 mm is 0.05 inch, the worldwide ribbon standard, and 28 AWG is its
+  standard conductor. Every other observation now agrees rather than
+  half-agreeing:
+
+      ribbon 9.0 mm        1.2% from prediction
+      "about 1.2 mm" gap   1.27 rounds to that
+      JST GH "too small"   1.25 vs 1.27 differs by 0.12 mm across the whole
+                           span, invisible by eye, so no conflict either way
+      housing 11.5 mm      1.94 mm wall per side, right for an IDC clamp with
+                           strain relief
+      no latch, rails      consistent with a low-profile IDT receptacle
+
+CANDIDATE, NOT CONFIRMED: MOLEX PICOFLEX
+----------------------------------------
+  Picoflex is a 1.27 mm IDT system built for standard ribbon, specifying
+  26-28 AWG, circuit sizes 4 to 26, low-profile vertical header to a
+  ribbon-terminated receptacle, available WITH OR WITHOUT LATCHES. Every one
+  of those matches.
+
+  IT IS A FIT, NOT AN IDENTIFICATION. Other vendors make 1.27 mm ribbon IDT
+  connectors. Nothing on this housing has been read as a Molex marking. To
+  confirm: look for a logo or moulded part number on the receptacle, or buy
+  ONE 7-circuit part and test-fit before ordering a quantity.
+
+THREE ANSWERS I GOT WRONG BEFORE THIS ONE
+-----------------------------------------
+  Recorded so they are not re-litigated, and because the pattern is the point.
+
+  1. "1.25 mm FFC." Derived from the 11.5 mm housing using an FFC's ~2 mm wall
+     allowance. Wrong because it was not an FFC at all: no exposed fingers.
+     The wall allowance came from the assumed family, and it took the answer
+     with it.
+  2. "1.5 mm, JST ZH." Same housing width, re-derived with wire-to-board wall
+     thickness once the header was known to be pins. Wrong because the part is
+     ribbon-terminated, and ZH is crimp-only with no ribbon variant.
+  3. "1.5 mm rules out anything smaller, per the JST GH comparison." Wrong
+     because standard ribbon is 1.27 and GH is 1.25. A 0.12 mm difference over
+     the full span cannot be seen, so that comparison never carried the weight
+     put on it.
+
+  Also worth recording: the first pitch table offered contained only JST and
+  Molex families, so it silently excluded TE entirely. Matt asked whether it
+  could be an AMP CT, and AMP CT spans 1.2 / 1.5 / 2.0 mm. The candidate set
+  was too small and the answer looked better determined than it was.
+
+  THE MEASUREMENT THAT SETTLED IT was the cheapest one available: the width of
+  the ribbon, with a ruler. Every earlier attempt inferred pitch from a housing
+  dimension through an assumed wall thickness, which is an assumption stacked
+  on an assumption. Conventions rule 10 again.
+
+WHAT THIS MEANS FOR THE BUILD
+-----------------------------
+  1.27 mm ribbon is exactly half of J11's 0.1 inch IDC pitch, and 0.05 inch
+  ribbon is what 2.54 mm IDC connectors are built to bite. The far end is a
+  solved problem.
+
+  The safest path needs nothing ordered: clip the ribbon at the mainboard end,
+  keep the red conductor as pin 1, and beep out the twelve keys from the
+  stripped ends. The phone's original mainboard is replaced by caryatid, so
+  that harness is scrap. The keypad and its header are never touched.
