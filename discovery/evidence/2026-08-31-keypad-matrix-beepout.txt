@@ -556,3 +556,32 @@ THE HARNESS, NOW FULLY SPECIFIED
 
 STATUS OF THIS SHEET: COMPLETE. Matrix confirmed, connector confirmed, pin 1
 anchored, harness specified. Nothing outstanding that gates loa's wiring.
+
+---------------------------------------------------------------------------
+ANCHOR CAVEATS CLOSED
+---------------------------------------------------------------------------
+
+  Matt, 2026-08-31, two observations that finish the anchor:
+
+  1. PX IS PRINTED TO ONE SIDE OF THE JACK, NOT CENTRED OVER IT. This was the
+     one caveat left on the anchor. It is now closed by direct observation:
+     the reference is end-adjacent and unambiguous, and does not need
+     restating against a board edge or a neighbouring component.
+
+  2. THE ORIGINAL CABLE HAD RED ON THE SIDE OPPOSITE PX. That is exactly what
+     was predicted above, since red is on pin 7 and pin 7 is the far end.
+     The cross-check PASSES.
+
+  WHAT THE CROSS-CHECK IS ACTUALLY WORTH, stated plainly so nobody later reads
+  it as stronger than it is. It is a CONSISTENCY check, not a second
+  independent measurement. "Red on pin 7" was already given in the same
+  left-to-right reading that put BLACK at position 1, so the two statements
+  were always going to agree unless one had been mis-transcribed. What it
+  genuinely rules out is a flip between the two readings. It does not double
+  the evidence for the anchor, which still rests on the single observation
+  that BLACK sits at the PX end.
+
+  That single observation is now enough, because caveat 1 is closed and PX is
+  a permanent board feature.
+
+  ANCHOR: CLOSED. No outstanding caveats on this record.
