@@ -122,3 +122,80 @@ ALSO RECORDED THIS SESSION
       4. a fourth, not yet characterised
   Only the keypad and the hook switch are wanted. The rest is line circuit and
   is replaced by caryatid.
+
+===========================================================================
+CORRECTION, same session: the numbers are withdrawn, the POLARITY stands
+===========================================================================
+
+  Matt: "the readings can be off due to the challenge of the connection to
+  take the reading. What it does indicate is that the telephone spring switch
+  is normally closed and when pressed it's open."
+
+WHAT IS WITHDRAWN
+-----------------
+  27 kohm and 37 Mohm are NOT usable figures. The probe connection was awkward
+  and the contact was poor. Nothing above that reasons numerically from 27
+  kohm describes the part; it describes the probing.
+
+  ONE THING SURVIVES, AND IT IS LOGIC NOT PRECISION. A poor probe connection
+  can only ADD series resistance. It cannot subtract any. So:
+
+      27 kohm is an UPPER BOUND on the true closed resistance.
+
+  The real figure is at or below it, possibly far below. That does not clear
+  the 2.69 kohm threshold, but it does mean the failure analysis above is the
+  worst conceivable case rather than the likely one. The spring contacts of a
+  telephone hook are metal on metal and would normally read well under an ohm.
+
+WHAT STANDS, AND IT IS THE MORE USEFUL HALF
+-------------------------------------------
+  THE HOOK IS A SPRING SWITCH, NORMALLY CLOSED. Pressed, it opens. The resting
+  handset is what presses it.
+
+      handset ON hook  (resting, spring pressed)   ->  switch OPEN
+      handset OFF hook (lifted,  spring released)  ->  switch CLOSED
+
+  The two readings corroborate this DIRECTIONALLY even though neither value is
+  trustworthy: off hook read low, on hook read effectively open. Direction
+  survives bad probe contact in a way magnitude does not. This is why the
+  polarity is the keeper and the ohms are not.
+
+IT CONFIRMS ADR 0007 RATHER THAN THREATENING IT
+-----------------------------------------------
+  ADR 0007 argues the inverted output is the SAFE polarity: "an unplugged cable
+  reads identically to switch open, for loa that means on-hook, so a broken
+  lead leaves the instrument silent with the mic bias off."
+
+  THAT ARGUMENT RESTED ON AN ASSUMPTION IT NEVER STATED: that on-hook is the
+  open state. Nobody had checked. It is now measured, and it holds.
+
+      on hook   spring pressed  switch OPEN    node -> 3V3
+                74HC14 in HIGH  D7 LOW         silent, mic bias off
+      off hook  spring free     switch CLOSED  node -> GND
+                74HC14 in LOW   D7 HIGH        live
+      broken lead               looks OPEN     D7 LOW    silent
+
+  Firmware reads D7 HIGH as off-hook. 12-phone-build.md's "switch closed is
+  high" is correct as written and needs no change.
+
+A BONUS FOR A BATTERY INSTRUMENT
+--------------------------------
+  ADR 0007 warns that each CLOSED switch draws 330 uA through its pull-up and
+  that this "is not zero on a build with latching switches that sit closed".
+  LOA'S HOOK SITS OPEN AT REST, because at rest the handset is down. The 330 uA
+  flows only while the instrument is in use. Idle draw on this channel is nil,
+  and the ADR's concern does not apply to it.
+
+WHAT IS STILL WANTED, NARROWED TO ONE NUMBER
+--------------------------------------------
+  THE CLOSED RESISTANCE OF THE SPRING CONTACTS, to usable precision. Cable off
+  at both ends, probed at the switch terminals, HANDSET LIFTED since that is
+  the closed state.
+
+  GET A GOOD CONTACT THIS TIME. Clip rather than hold. Short the probes first
+  and read the meter's own lead resistance, so the figure is the switch and not
+  the leads. At a 2.69 kohm threshold a couple of ohms of lead is irrelevant;
+  tens of kilohm of bad contact is precisely what went wrong.
+
+  DO NOT RE-MEASURE THE POLARITY. It is settled and it answered in the design's
+  favour.
