@@ -11,7 +11,7 @@ source_ref: >-
 resource: >-
   MPD BH-18650-PC holder (Digi-Key 3029216) against Orbtronic 3400 mAh protected
   button-top 18650 (Panasonic NCR18650B core), five of each
-status: conflict
+status: confirmed    # RESOLVED 2026-09-01 by the parts in hand. Read `resolution_2026_09_01`.
 
 measured:
   holder:
@@ -65,6 +65,47 @@ measured:
     spring_window_mm: [4.9, 7.9]
     gap_with_this_cell_mm: 3.42 # 72.9 - 69.48
   delta_mm: 1.48                # 69.48 measured, against a 68 mm stated maximum
+
+resolution_2026_09_01:
+  what_happened: >-
+    THE HOLDERS ARRIVED AND THE CELL FITS. Matt, 2026-09-01: "The battery fits
+    perfectly in the holder." That is the one test this record said could not be
+    substituted for: "only a holder in hand says it seats with sane force."
+
+  a_spec_and_a_part_disagreed_and_the_part_wins: >-
+    Nothing is withdrawn. MPD really does state 65-68 mm, and the cell really is
+    69.48 mm with its wrap, 1.48 mm over. BOTH REMAIN TRUE. What the fit
+    establishes is that MPD'S STATED RANGE IS CONSERVATIVE RATHER THAN
+    DIMENSIONAL, which is what the STEP analysis of 2026-08-23 predicted and
+    could not prove.
+
+  the_geometry_agrees_so_this_is_not_luck: >-
+    From the STEP model: free contact separation 61.504 mm, deflection budget
+    5.888 mm per contact, housing hard stop 70.900 mm.
+
+      cell        total defl   per contact   % of budget
+      65.00 mm      3.496        1.748          29.7    MPD stated minimum
+      68.00 mm      6.496        3.248          55.2    MPD stated MAXIMUM
+      69.48 mm      7.976        3.988          67.7    THIS CELL
+      70.90 mm      9.396        4.698          79.8    housing hard stop
+
+    The cell sits at 68% of available contact travel against 55% for the longest
+    cell MPD lists. Inside the mechanism's real limits with margin, outside the
+    published range. The prediction and the bench agree.
+
+  residual_risk_stated_because_it_is_not_zero: >-
+    SPRING SET OVER TIME IS UNMEASURED AND WILL STAY THAT WAY. A contact held at
+    68% of travel for years may relax, and no bench test today detects that. It
+    is an accepted deviation from a published spec, not compliant use, and if a
+    cell ever goes intermittent in service this is the first place to look
+    rather than the last.
+
+  check_more_than_one_pair: >-
+    Five cells and five holders were bought and ONE FIT IS ONE DATA POINT.
+    Tolerance stacks vary: the cell is +/-0.03 mm but the holder's is not
+    published at all. Seat each of the five before assembly. Cheap now,
+    expensive after the boards are populated, because BT1's footprint is
+    dimensionally specific and changing the holder is a board revision.
 
 evidence:
   - >-
@@ -177,12 +218,21 @@ evidence:
     shorter cell fitted later. For an instrument whose cell is fitted once and
     rarely removed that is a mild consequence. It is not zero.
 
+  - "2026-09-01: RESOLVED. Holders arrived and the cell SEATS. Matt: 'The
+     battery fits perfectly in the holder.' This is the in-hand test the record
+     said could not be substituted for. Nothing is withdrawn: MPD still states
+     65-68 mm and the cell is still 69.48 mm with wrap. What is established is
+     that the stated range is CONSERVATIVE, not dimensional, which is what the
+     2026-08-23 STEP analysis predicted. Against the STEP figures the cell uses
+     67.7% of contact travel, versus 55.2% for the longest cell MPD lists and
+     79.8% at the housing hard stop. Residual and unmeasurable: spring set over
+     years at 68% deflection. Five pairs bought, ONE tested"
   - "2026-08-31: NOT RESOLVABLE YET. The BT1 module has not arrived, so the
      conflict cannot be settled by measurement. This is a WAITING state, not an
      unexamined one. Do not re-flag it at checkpoint as though it were
      neglected; it reopens when the part is in hand"
 
-last_verified: 2026-08-31
+last_verified: 2026-09-01
 
 notes: >-
   RESOLVED 2026-08-23 BY THE STEP MODEL, AND THE ANSWER IS "IT FITS, UNDER

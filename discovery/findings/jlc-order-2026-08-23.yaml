@@ -152,6 +152,12 @@ evidence:
     phosphorus control in the plating bath; joints look sound and are brittle.
     It is a fab process-control problem rather than a design choice, and JLC
     runs ENIG at very high volume. Not a reason to avoid it, and no action.
+  - "2026-09-01: THE BOARDS ARRIVED, with the battery holders and the
+     jumpers. The order is closed end to end and caryatid moves from
+     FABRICATED to IN HAND. Noted alongside: docs/status.md still carried
+     a 2026-08-22 RESUME HERE listing 'Order' as an outstanding action,
+     nine days after the order was placed and until the boards were on
+     the bench"
 open_questions:
   - id: min-via-hole-mismatch
     severity: resolved
@@ -302,7 +308,7 @@ cost_effect_usd:
   jlc_order: {was: 168.87, now: 188.87}
   five_boards_all_in: {was: 256.14, now: 276.14, per_board: 55.23}
 
-last_verified: 2026-08-23
+last_verified: 2026-09-01
 
 notes: >-
   STATUS IS `in-progress` BECAUSE THE ORDER IS NOT PLACED. It moves to

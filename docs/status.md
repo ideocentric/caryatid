@@ -2,7 +2,7 @@
 
 Where the board is, and what happens next. Read this first.
 
-## ▶ RESUME HERE — 2026-08-22
+## ▶ RESUME HERE — 2026-09-01
 
 **The board is routed, filled, silkscreened and fab-ready.** The 2026-08-21
 strip-and-re-place is complete: re-placed into the upper board, re-routed,
@@ -45,12 +45,33 @@ precisely why excusing it was wrong: a lone outlier that costs nothing to
 normalise should be normalised. It picked up the flip when `3fe330e` rotated it
 beside J9/J10.
 
-### What is left before ordering
+### Ordered, and the boards are here
 
-1. **Exclude A1 and A2 in pcbnew's DRC panel**, once, so plain DRC reads zero.
-2. **Order.** `local/fab/caryatid-fab.zip` is written and current.
+**Ordered 2026-08-23. The boards arrived 2026-09-01**, with the battery holders
+and the jumpers. caryatid is no longer a design, it is five physical boards.
+Order detail, cost reconciliation and the ENIG decision are in
+[`jlc-order-2026-08-23`](../discovery/findings/jlc-order-2026-08-23.yaml).
 
-Nothing else is outstanding. The boost hot loop, R45's placement and the necked
+*This section read "What is left before ordering: 1. exclude A1 and A2 in DRC,
+2. Order" from 2026-08-22 until 2026-09-01, nine days after the order was
+placed. It was stale in the one file that is meant to be read first when
+picking this project up cold. The A1/A2 DRC exclusion was never done and is now
+moot for this batch: they are metadata, not copper, and the boards are made.*
+
+**BT1 fits.** The 65-68 mm vs 69.48 mm conflict that hung over the battery
+since 2026-08-23 is closed: the holders are in hand and the cell seats. MPD's
+stated range is conservative rather than dimensional, as the STEP analysis
+predicted. See
+[`bt1-cell-fit`](../discovery/findings/bt1-cell-fit.yaml), and seat all five
+pairs before assembly rather than trusting the one that was tried.
+
+### What is left now
+
+1. **Screws for the battery holders**, the only part still unsourced. M3, and
+   the length wants the holder measured rather than guessed. See `bt1-cell-fit`.
+2. **Bring up a board.** Nothing in this repo has been powered.
+
+Nothing else is outstanding on the design. The boost hot loop, R45's placement and the necked
 tracks were all checked on 2026-08-22 and none needed work — see below.
 
 ## The board *was* routed, at `snapshot/routed-2026-08-21`
