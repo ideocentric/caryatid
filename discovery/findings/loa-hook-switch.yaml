@@ -12,7 +12,7 @@ source_ref: >-
   docs/decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md.
 resource: >-
   The off-hook switch in loa's Bittel HA41T-25, and caryatid's SW3 input
-status: conflict       # POLARITY CONTRADICTED 2026-08-31. Was briefly recorded confirmed; it is not.
+status: in-progress    # CONFLICT DISSOLVED 2026-08-31 by the terminal count. Contacts not yet identified.
 
 the_circuit_it_has_to_drive:
   # ADR 0007. This is the thing the switch is being measured AGAINST, and it is
@@ -65,7 +65,48 @@ measured_2026_08_31:
     does mean the failure analysis below describes the worst conceivable case
     rather than the likely one.
 
-  🔴 POLARITY_IS_IN_CONFLICT_AND_MUST_NOT_BE_STATED_AS_FACT: >-
+  🔴 CONFLICT_DISSOLVED_BY_THE_TERMINAL_COUNT: >-
+    THE SWITCH HAS SIX TERMINALS. Almost certainly DPDT: two independent
+    changeover poles, each with a common, a normally-open and a normally-closed
+    contact. To be confirmed by the beep-out below, but six terminals in a
+    telephone hook switch is the classic arrangement, because the set itself
+    needs both senses at once (line loop one way, ringer or speech network the
+    other).
+
+    NEITHER STATEMENT WAS WRONG. "The switch is normally closed" and "when the
+    handset is down the switch is engaged connecting" are BOTH TRUE, of
+    DIFFERENT CONTACT PAIRS ON THE SAME SWITCH. A changeover has, at every
+    instant, some pairs closed and some open. "The switch" was simply the wrong
+    unit of description, and no amount of re-measuring would have settled an
+    argument phrased that way.
+
+    THE LESSON IS THE SAME ONE THIS PROJECT KEEPS PAYING FOR. The keypad taught
+    "record the datum, not only the number". This is its sibling: NAME THE
+    TERMINALS, NOT THE SWITCH. A polarity claim about a multi-pole part is not
+    false, it is not yet a claim.
+
+    AND IT MAKES THE DESIGN QUESTION A NON-EVENT. Both senses are available on
+    the same part, so the polarity is a WIRING CHOICE, not a constraint. Pick
+    the pair that is OPEN with the handset down, and ADR 0007's fail-safe holds
+    with nothing changed on the board and nothing inverted in firmware.
+
+  which_pair_loa_wants: >-
+    THE NORMALLY-CLOSED CONTACT OF EITHER POLE: common plus NC.
+    "Normally" means the actuator NOT pressed, which is the handset LIFTED.
+      handset lifted (off hook) -> COM-NC CLOSED -> node low  -> D7 HIGH -> live
+      handset down   (on hook)  -> COM-NC OPEN   -> node high -> D7 LOW  -> silent
+      broken lead               -> looks OPEN               -> D7 LOW  -> silent
+    That is exactly the chain ADR 0007 wanted, and 12-phone-build.md's "switch
+    closed is high" is correct as written.
+
+  the_spare_pole: >-
+    loa needs ONE pole. The second is a spare, fully isolated changeover that
+    follows the hook. There is nowhere to put it today, since ADR 0007 notes
+    the Seed map is fully allocated with D30 the only spare, so it is headroom
+    for a future revision rather than capacity now. Worth knowing it exists
+    before anyone assumes the hook is a single contact.
+
+  superseded_conflict_statements: >-
     RAISED 2026-08-31, within an hour of being recorded as confirmed. Two
     statements from Matt on the same day, and they are opposites:
 
@@ -191,18 +232,38 @@ the_next_measurement:
     redesigning anything: an optical interrupter (a phototransistor conducting
     at tens of kohm is exactly this shape), a Hall sensor, or a switch fitted in
     series with a resistor on the same board. Identify it before choosing a fix.
-  🔴 polarity_MUST_be_re-measured: >-
-    It was briefly recorded as settled and it is not. THE DECISIVE TEST, and it
-    takes ten seconds once the meter is on the contacts:
-      Cable off at both ends, probes clipped to the switch terminals, meter in
-      resistance. PRESS THE PLUNGER BY HAND, which is what the resting handset
-      does, and watch the meter. Note which state reads low. Pressed reading
-      low means B and the fail-safe inverts. Pressed reading open means A and
-      ADR 0007 stands.
-    Watch the meter through the transition rather than taking two static
-    readings, so a slipped probe shows up as noise instead of as an answer.
+  identify_the_six_terminals: >-
+    NO LONGER A POLARITY QUESTION. The switch offers both senses; what is
+    wanted is which terminal is which, so the right pair gets wired.
 
-  also_count_the_terminals: >-
+    Cable off at both ends, probes CLIPPED to the terminals, meter in
+    resistance. Fifteen pairs, but the structure collapses it:
+
+      1. PLUNGER RELEASED (handset lifted). Sweep for closed pairs. Expect TWO,
+         one per pole. Those are each pole's COM-NC.
+      2. PLUNGER PRESSED (handset down). Those two open and two DIFFERENT pairs
+         close. Those are each pole's COM-NO.
+      3. THE COMMON IS THE TERMINAL THAT APPEARS IN BOTH STATES. Within a pole,
+         one terminal is closed to something whether pressed or released; that
+         is COM. Its partner when released is NC, its partner when pressed is NO.
+
+    Watch the meter THROUGH the transition rather than taking static readings.
+    A slipped probe then shows as noise instead of as an answer, which is
+    exactly how the first set of numbers went wrong.
+
+    LIKELY LAYOUT, to check rather than assume: six terminals in two rows of
+    three, one row per pole, COM in the middle. Do not wire on that guess.
+
+    IF IT IS NOT DPDT the sweep says so immediately: anything other than two
+    closed pairs per state means a different configuration, and the pole
+    grouping above does not apply. Record what was actually found.
+
+  terminal_count_answered: >-
+    SIX, per Matt 2026-08-31. See `CONFLICT_DISSOLVED_BY_THE_TERMINAL_COUNT`.
+    The reasoning this note carried is kept below because it is why the count
+    was worth asking for.
+
+  superseded_also_count_the_terminals: >-
     HOW MANY TERMINALS DOES THE SWITCH HAVE? It decides whether B is a problem
     or a non-event.
       TWO  -> SPST. You get the polarity the switch gives you, and if it is B
@@ -248,6 +309,14 @@ evidence:
      measured the hook would never register. The finite 37 Mohm on-hook, where
      open contacts should read OL, indicates circuitry in the path and that the
      switch itself was not what was measured"
+  - "2026-08-31: THE SWITCH HAS SIX TERMINALS, almost certainly DPDT, two
+     changeover poles. THIS DISSOLVES THE POLARITY CONFLICT RATHER THAN
+     RESOLVING IT: both of Matt's statements are true of different contact
+     pairs on the same part, since a changeover always has some pairs closed
+     and some open. 'The switch' was the wrong unit of description. Design
+     consequence: polarity is a wiring choice, not a constraint. Take COM-NC of
+     either pole, which is open with the handset down, and ADR 0007's fail-safe
+     holds with nothing changed. One pole is spare"
   - "2026-08-31: POLARITY IN CONFLICT, raised within the hour. Matt earlier:
      'normally closed and when pressed it's open' (on hook OPEN). Matt later:
      'when the hand set is down (on Hook), the phone switch is engaged

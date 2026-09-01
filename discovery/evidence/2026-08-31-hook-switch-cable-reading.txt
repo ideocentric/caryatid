@@ -281,3 +281,85 @@ AND COUNT THE TERMINALS. It decides whether B is a problem or a non-event.
 
   Telephone hook switches are commonly SPDT, because the set itself needs both
   senses. CHECK THE TERMINAL COUNT BEFORE TREATING B AS A DESIGN PROBLEM.
+
+===========================================================================
+SIX TERMINALS. The conflict dissolves rather than resolving.
+===========================================================================
+
+  Matt, 2026-08-31: the hook switch has SIX TERMINALS.
+
+  Almost certainly DPDT: two independent changeover poles, each with a common,
+  a normally-open and a normally-closed contact. To be confirmed by the sweep
+  below, but six is the classic telephone hook arrangement, because the set
+  itself needs both senses at once, line loop one way and ringer or speech
+  network the other.
+
+NEITHER STATEMENT WAS WRONG
+---------------------------
+      A  "normally closed and when pressed it's open"
+      B  "when the hand set is down the phone switch is engaged connecting"
+
+  BOTH ARE TRUE, OF DIFFERENT CONTACT PAIRS ON THE SAME SWITCH. A changeover
+  has, at every instant, some pairs closed and some open. Whichever pair A was
+  describing does open when pressed; whichever pair B was describing does close
+  when pressed. There was never a factual disagreement to settle.
+
+  "THE SWITCH" WAS THE WRONG UNIT OF DESCRIPTION, and no amount of
+  re-measuring would have settled an argument phrased that way. Both parties,
+  including this record, were confidently discussing an object that does not
+  have a single polarity.
+
+  THE LESSON IS THE SIBLING OF THE KEYPAD'S. That one was "record the datum,
+  not only the number", after 9.0 mm turned out to mean two different things
+  depending on where the ruler was laid. This is: NAME THE TERMINALS, NOT THE
+  SWITCH. A polarity claim about a multi-pole part is not false, it is not yet
+  a claim.
+
+AND THE DESIGN QUESTION EVAPORATES
+----------------------------------
+  Both senses are available on the same part, so the polarity is a WIRING
+  CHOICE and not a constraint. There is nothing to redesign, nothing to invert
+  in firmware, and no compromise on the fail-safe.
+
+  LOA WANTS THE NORMALLY-CLOSED CONTACT OF EITHER POLE: common plus NC.
+  "Normally" means the actuator NOT pressed, which is the handset LIFTED.
+
+      handset lifted (off hook)  COM-NC CLOSED  node low   D7 HIGH  live
+      handset down   (on hook)   COM-NC OPEN    node high  D7 LOW   silent
+      broken lead                looks OPEN                D7 LOW   silent
+
+  That is exactly the chain ADR 0007 argued for, and 12-phone-build.md's
+  "switch closed is high" is correct as written. Nothing changes on the board.
+
+  THE SECOND POLE IS SPARE. A fully isolated changeover that follows the hook.
+  There is nowhere to put it today, since ADR 0007 notes the Seed map is fully
+  allocated with D30 the only spare, so it is headroom for a future revision
+  rather than capacity now. Worth knowing it exists before anyone assumes the
+  hook is a single contact.
+
+WHAT IS LEFT: IDENTIFY THE SIX, not the polarity
+------------------------------------------------
+  Cable off at both ends, probes CLIPPED, meter in resistance. Fifteen pairs,
+  but the structure collapses it to a few minutes:
+
+    1. PLUNGER RELEASED (handset lifted). Sweep for closed pairs. Expect TWO,
+       one per pole. Those are each pole's COM-NC.
+    2. PLUNGER PRESSED (handset down). Those two open and two DIFFERENT pairs
+       close. Those are each pole's COM-NO.
+    3. THE COMMON IS THE TERMINAL PRESENT IN BOTH STATES. Within a pole, one
+       terminal is closed to something whether pressed or released: that is
+       COM. Its partner when released is NC, its partner when pressed is NO.
+
+  WATCH THE METER THROUGH THE TRANSITION rather than taking static readings, so
+  a slipped probe shows as noise instead of as an answer.
+
+  LIKELY LAYOUT, to check rather than assume: two rows of three, one row per
+  pole, COM in the middle. Do not wire on that guess.
+
+  IF IT IS NOT DPDT the sweep says so at once: anything other than two closed
+  pairs per state is a different configuration and the pole grouping does not
+  apply. Record what was actually found.
+
+  STILL ALSO WANTED, and now from the right terminals: the CLOSED RESISTANCE of
+  the chosen COM-NC pair, against the 2.69 kohm threshold. Expect well under an
+  ohm from metal changeover contacts.
