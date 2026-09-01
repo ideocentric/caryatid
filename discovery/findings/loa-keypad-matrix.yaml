@@ -13,7 +13,8 @@ source_ref: >-
 resource: >-
   The original keypad in loa's telephone, and J11 on caryatid (IDC 2x5,
   D0-D6 + 3V3D + DGND + spare, 100 ohm series on each line)
-status: unverified          # connector characterised; the MATRIX itself is still unmeasured
+status: confirmed           # the MATRIX, 2026-08-31. The `connector:` block below is
+                            # now in CONFLICT and is NOT covered by this status.
 
 the_measurement:
   what: >-
@@ -34,6 +35,14 @@ the_measurement:
     and the wrong conclusion is "not a matrix" or "dead keypad". This is the same
     shape as the hot-melt glue on the capsule: the instrument's default setting
     hides the reading rather than reporting it.
+
+  premise_did_not_hold: >-
+    READ `result:` BEFORE THE BEEPER WARNING BELOW. Measured 2026-08-31, every
+    key closes between 10.6 and 17.5 ohm. This keypad is metallic, not
+    conductive rubber on carbon, so the beeper would in fact have worked. The
+    warning was a reasonable precaution and cost one meter setting; it is kept
+    verbatim because it was written before the measurement and rewriting it
+    would hide that. It describes a hazard, not this part.
 
   watch_for:
     - >-
@@ -67,6 +76,177 @@ acceptance:
       One bad key sets the requirement, so log the highest closed resistance
       across all twelve, not a typical value.
 
+result:
+  # Measured 2026-08-31 at the bench, Matt probing, keypad disconnected from the
+  # mainboard, line unplugged. Full sheet:
+  # discovery/evidence/2026-08-31-keypad-matrix-beepout.txt
+  verdict: >-
+    A PLAIN 4x3 MATRIX, seven conductors, twelve distinct pairs. The pin map in
+    loa's 12-phone-build.md stands exactly as written. No glue logic, no rewire,
+    no external components.
+
+  conductors_by_colour:
+    note: >-
+      The harness presents seven DISCRETE COLOURED WIRES. Colour is the stable
+      identifier and is used throughout; position numbers are not, because they
+      invert with the connector.
+    order_at_connector: [BLACK, RED, WHITE, YELLOW, ORANGE, GREEN, BLUE]
+    rows: [BLACK, RED, WHITE, YELLOW]      # -> J11 D0-D3, in keypad order
+    columns: [BLUE, GREEN, ORANGE]         # -> J11 D4-D6, col 1, 2, 3
+
+  map:
+    # key: [row colour, column colour, ohm closed]
+    "1": [BLACK,  BLUE,   15.0]
+    "2": [BLACK,  GREEN,  15.0]
+    "3": [BLACK,  ORANGE, 15.0]
+    "4": [RED,    BLUE,   15.0]
+    "5": [RED,    GREEN,  17.5]
+    "6": [RED,    ORANGE, 13.8]
+    "7": [WHITE,  BLUE,   16.0]
+    "8": [WHITE,  GREEN,  10.6]
+    "9": [WHITE,  ORANGE, 15.0]
+    "*": [YELLOW, BLUE,   13.4]
+    "0": [YELLOW, GREEN,  14.0]
+    "#": [YELLOW, ORANGE, 15.0]
+
+  acceptance_met:
+    conductors: 7
+    distinct_pairs: 12
+    each_row_in_keys: 3        # BLACK, RED, WHITE, YELLOW
+    each_column_in_keys: 4     # BLUE, GREEN, ORANGE
+    worst_closed_ohm: 17.5     # key 5. Threshold was 5000.
+    margin: >-
+      Comfortable by roughly two and a half orders of magnitude. The Seed's
+      ~40 kohm internal pull-up through J11's 100 ohm series reads this without
+      help. No external pull-down, no stronger drive, no buffering.
+
+  diodes: >-
+    NONE on any measured path. Ruled out by value: a series diode cannot read
+    10-18 ohm in resistance mode. A polarity reversal was NOT performed, so this
+    is inference from the readings rather than a direct polarity test. It is
+    strong inference and it is not a direct observation; recorded as such.
+
+  not_corrected_for_lead_resistance: >-
+    Probes were never shorted to read lead and clip resistance, so the figures
+    are raw. Immaterial at this margin, where the threshold is 5 kohm and the
+    worst reading is 17.5 ohm. It would matter if any figure were near the
+    limit; none is.
+
+  one_transcription_slip_caught: >-
+    Key 6 was first reported as RED/GREEN, the pair already recorded for key 5.
+    A duplicate pair fails acceptance outright, so it was flagged rather than
+    silently read as the value the completed matrix wanted. Re-probed as
+    RED/ORANGE: 13.8 ohm. This is what the distinctness criterion is for.
+
+  🔴 wiring_consequence_columns_are_reversed: >-
+    Rows appear at the connector in keypad order, BLACK RED WHITE YELLOW. The
+    COLUMNS DO NOT: position 5 is ORANGE which is column 3, position 7 is BLUE
+    which is column 1. A straight pin-for-pin harness onto J11 therefore gives
+    correct rows and BACKWARDS COLUMNS. Settle it deliberately, either by
+    crossing the three column wires in the harness or by reversing the column
+    index in the scan. The failure mode if neither is done is key 1 reading
+    as key 3.
+
+resolution_2026_08_31:
+  answer: JST ZH, 1.5 mm pitch, 7-way
+  status: confirmed
+  # The ZH hypothesis was raised on 2026-08-26 from the housing width, then
+  # discarded. It was right the first time.
+
+  what_confirms_it:
+    - >-
+      IT MATES. A bought JST ZH 7-way stub cable seats in the keypad's PX
+      header without force or slop.
+    - >-
+      🔴 AND IT CONDUCTED, ON ALL SEVEN. The entire matrix beep-out was made
+      THROUGH that stub: twelve distinct pairs, every conductor carrying,
+      10.6 to 17.5 ohm. THIS IS THE REAL PROOF, and it is stronger than the
+      fit. A 1.27 mm plug on a 1.5 mm header accumulates 0.23 mm of error per
+      position; by position 7 it is 1.38 mm out, nearly a whole pitch, and
+      the outer contacts cannot touch. Clean readings on all seven conductors
+      are only possible at the correct pitch. The measurement WAS the fit test
+      and neither of us noticed at the time.
+    - >-
+      The 11.5 mm housing width fits ZH (10.5 mm of pitch territory plus about
+      0.5 mm of wall each side) and misses Picoflex by 1.6 mm.
+
+  why_the_1.27_derivation_failed: >-
+    THE 9.0 mm FIGURE NEVER DISCRIMINATED. It was read as an overall ribbon
+    width, where 7 x 1.27 = 8.89 and the fit looks like 1.2%. But 6 x 1.50 =
+    9.00 EXACTLY, which is the pin-1-to-pin-7 centre span of a 1.5 mm 7-way
+    part. One number, two readings, both landing on 9.0, and WHERE THE RULER
+    WAS LAID WAS NEVER RECORDED. The derivation then reported a 1.2% fit as
+    though it excluded 1.5 mm, when 1.5 mm was an exact fit under the other
+    reading and was never computed.
+
+  the_methodology_lesson: >-
+    This record already contains the sentence "Measure the thing whose
+    dimension is defined by what you want to know", filed under
+    `what_settled_it`. That advice was followed and STILL produced the wrong
+    answer, because a measurement is only as good as the stated convention for
+    taking it. 9.0 mm is not a measurement; "9.0 mm, outer conductor edge to
+    outer conductor edge" is. RECORD THE DATUM, NOT ONLY THE NUMBER.
+    Worse, the housing width was the one figure that DID discriminate, and it
+    was discarded as the inferior method in favour of the one that could not.
+
+  the_original_cable_is_now_unexplained: >-
+    OPEN, and it does not gate anything. A 7-conductor ribbon at 1.5 mm pitch
+    should measure about 10.5 mm overall, not 9.0. Either the 9.0 mm was the
+    centre span after all, or "mass terminated" was mis-observed and the grey
+    cable is crimped wires in a sleeve. Re-measure only if the original cable
+    is still to hand and the answer is wanted; loa does not need it, because
+    loa's harness will be a ZH stub like the one that just worked.
+
+  🔴 the_colour_map_is_EPHEMERAL: >-
+    THE COLOURS BELONG TO A BOUGHT STUB CABLE, NOT TO THE KEYPAD. Black-red-
+    white-yellow-orange-green-blue is one vendor's rainbow order. Replace the
+    cable and every colour in `result:` becomes meaningless. What is durable is
+    the HEADER PIN position, which is why it is restated here:
+
+        header pin 1  ->  row 1   (keys 1 2 3)
+        header pin 2  ->  row 2   (keys 4 5 6)
+        header pin 3  ->  row 3   (keys 7 8 9)
+        header pin 4  ->  row 4   (keys * 0 #)
+        header pin 5  ->  column 3  (keys 3 6 9 #)
+        header pin 6  ->  column 2  (keys 2 5 8 0)
+        header pin 7  ->  column 1  (keys 1 4 7 *)
+
+    Rows run in keypad order, columns run BACKWARDS. See
+    `result.wiring_consequence_columns_are_reversed`.
+
+  🔴 pin_1_IS_NOT_YET_ANCHORED: >-
+    THE PIN TABLE ABOVE IS UNVERIFIED AT ONE POINT and it is the point that
+    would waste a day. It assumes the "left to right" Matt used when reading
+    the wire colours starts at header pin 1. Nothing anchors that to a physical
+    feature: not the PX silkscreen, not a housing key, not a board edge.
+    Flipped, rows still read as rows and columns still as columns, so the error
+    is SILENT: the matrix maps perfectly and key 1 reads as key #.
+    PARTIAL ANCHOR, 2026-08-31: the phone's ORIGINAL ribbon has its RED
+    conductor on PIN 7, not pin 1. This REFUTES the 2026-08-26 note calling the
+    red edge conductor "a pin 1 marker", which was an assumption from the usual
+    ribbon convention and not an observation. Read with the same left-to-right
+    as the stub, the original red sits at the OPPOSITE end from the stub's
+    BLACK, so red marks the COLUMN 1 line, the keys 1 / 4 / 7 / *. Anyone who
+    had reused the original ribbon and trusted "red is pin 1" would have
+    installed it reversed, and would have hit exactly the silent failure above.
+    IT DOES NOT FULLY CLOSE THE QUESTION: both cables were read with the same
+    unanchored left-to-right, so this fixes the two cables relative to EACH
+    OTHER without fixing either to the board.
+    TO CLOSE IT: with the stub seated, note which header pin the BLACK wire
+    sits on relative to a feature that survives the cable being unplugged, and
+    write that feature down by name.
+
+  for_loa_the_build:
+    keypad_end: JST ZH 7-way, ZHR-7 housing on SZH-002T contacts, or a bought
+                pre-crimped ZH stub of the kind already proven to work
+    caryatid_end: J11, 2x5 IDC at 2.54 mm
+    note: >-
+      Supersedes `consequence_for_the_build` below, which proposed clipping the
+      original ribbon and beeping from stripped ends. That plan was built on the
+      1.27 mm answer and on not owning a mating part. Both have changed: a ZH
+      stub mates, conducts and is already in hand.
+
+
 what_to_do:
   if_a_clean_4x3: >-
     Nothing. Wire the seven conductors to J11 and the pin map stands as written.
@@ -84,6 +264,20 @@ what_to_do:
 # unmeasured; see `the_measurement` above.
 # ---------------------------------------------------------------------------
 connector:
+  # -------------------------------------------------------------------------
+  # CONFLICT of 2026-08-31 RESOLVED THE SAME DAY, against this block.
+  #
+  # The seven coloured wires are a JST ZH 7-way STUB CABLE that Matt BOUGHT to
+  # test with. They are not the phone's cable. So this block is not describing
+  # the wrong object; it is describing the original correctly and reaching the
+  # wrong conclusion from it.
+  #
+  # 🔴 THE CONCLUSION BELOW IS REFUTED. `candidate: Molex Picoflex` and
+  # `derived_pitch_mm: 1.27` are WRONG. See `resolution_2026_08_31:` directly
+  # after this block. Everything from `derived_pitch_mm` down is kept only
+  # because evidence is append-only and because how it went wrong is the
+  # useful part. Do not quote it.
+  # -------------------------------------------------------------------------
   the_phone:
     model: Bittel HA41T-25            # 41 series, wall-mount hotel bathroom set
     board_silkscreen: "HA(41)T-25  KB  T1  2020.1.15"
@@ -178,7 +372,43 @@ evidence:
      CORROBORATES the pin map's assumption; it does not verify it, since 7
      conductors could still be wired otherwise"
 
-last_verified: 2026-08-26
+  - "2026-08-31: MATRIX MEASURED AND CONFIRMED. Plain 4x3, 7 conductors, 12
+     distinct pairs. Rows BLACK/RED/WHITE/YELLOW at 3 keys each, columns
+     BLUE/GREEN/ORANGE at 4 keys each. Closed resistance 10.6 to 17.5 ohm,
+     worst key 5 at 17.5 ohm against a 5000 ohm threshold. Meter in resistance
+     mode, keypad disconnected from the mainboard, line unplugged
+     (2026-08-31-keypad-matrix-beepout.txt)"
+  - "2026-08-31: THE CARBON-PAD PREMISE DID NOT HOLD. Every key is a metallic
+     closure in the 10-18 ohm range, almost certainly metal dome or tact,
+     consistent with a 2020-dated set. The continuity beeper this record warns
+     against would have worked. The warning is kept as written; it describes a
+     hazard, not this part (2026-08-31-keypad-matrix-beepout.txt)"
+  - "2026-08-31: THE ORIGINAL RIBBON'S RED CONDUCTOR IS ON PIN 7, NOT PIN 1, as
+     the phone shipped. Refutes the 2026-08-26 note reading it as a pin 1
+     marker, which was convention assumed rather than observed. Red therefore
+     marks the column 1 end. Partial anchor only: it fixes the two cables
+     relative to each other, not either to the board
+     (2026-08-31-keypad-matrix-beepout.txt)"
+  - "2026-08-31: CONNECTOR CONFIRMED as JST ZH, 1.5 mm, 7-way. A bought ZH stub
+     cable mates with the PX header AND carried the entire 12-key beep-out on
+     all seven conductors, which is only possible at the correct pitch. This
+     REFUTES the 2026-08-26 derivation of 1.27 mm and Molex Picoflex. That
+     derivation rested on a 9.0 mm reading that fits 1.27 mm as an overall
+     ribbon width (8.89) and 1.5 mm as a pin-centre span (9.00) equally well,
+     with the datum never recorded; the 11.5 mm housing width, which does
+     discriminate and points at ZH, had been set aside
+     (2026-08-31-keypad-matrix-beepout.txt)"
+  - "2026-08-31: CONFLICT on the connector, RAISED AND RESOLVED same day. The cable on the bench is seven
+     discrete coloured wires, crimped, BLACK at the edge, not the grey mass-
+     terminated ribbon with a red edge conductor recorded 2026-08-26. Mass
+     termination was the sole observation refuting JST, so the Picoflex
+     derivation is no longer supported. Provenance of the coloured harness
+     resolved: the coloured wires are a bought JST ZH test stub, not the phone's
+     cable. Consequence: the colour-to-function map is ephemeral and the
+     durable map is by header pin. Pin 1 is NOT yet anchored to a physical
+     feature (2026-08-31-keypad-matrix-beepout.txt)"
+
+last_verified: 2026-08-31
 
 notes: >-
   THIS RECORD EXISTS FOR THE SAME REASON carbon-capsule-DC-resistance DOES. The

@@ -1,0 +1,507 @@
+loa keypad matrix: bench sheet for the beep-out
+===============================================
+
+  Bench session 2026-08-31. BLANK SHEET, to be filled in at the meter.
+  Record for finding `loa-keypad-matrix`, section `the_measurement`.
+
+  Nothing below is a result yet. Every table is empty on purpose. Do not
+  transcribe from memory afterwards; write in it while probing.
+
+
+THE CABLE AS PRESENTED 2026-08-31
+---------------------------------
+  Seven DISCRETE COLOURED WIRES, connected at the far end to the keypad,
+  free at the near end. Order as seen at the keypad:
+
+      BLACK  RED  WHITE  YELLOW  ORANGE  GREEN  BLUE
+
+  USE THE COLOURS, NOT POSITION NUMBERS. Colour is unambiguous whichever way
+  round the connector is held; "pin 3" is not. Every entry below is keyed by
+  colour for that reason.
+
+  !! THIS CONTRADICTS THE RECORD. The 2026-08-26 evidence file describes a
+     GREY FLAT RIBBON, mass terminated, 7 conductors at 28 AWG, ONE RED
+     CONDUCTOR AT THE EDGE as the pin-1 marker. Discrete coloured wires are a
+     different cable: crimped, not mass terminated, and black is at the edge
+     rather than red. Resolve before the result is written to the record.
+     Candidates: a replacement harness, or a second connector in the same set.
+     The measurement below is valid either way PROVIDED the far end is on the
+     keypad, but what it is a measurement OF depends on the answer.
+
+  !! COLOUR CARRIES NO FUNCTION HERE. Do not assume black is ground or red is
+     power. A passive matrix has neither; all seven are row or column lines.
+     The sequence is not standard rainbow ribbon order, so it was chosen by
+     whoever made the harness and means nothing electrically.
+
+
+BEFORE PROBING
+--------------
+  [ ] Phone unplugged from the wall line. 48 V DC, ~90 V AC on ring.
+  [ ] Cable disconnected at the MAINBOARD end. Keypad end stays connected.
+      Still plugged in means measuring through the DTMF chip's pull-ups and
+      every reading is a phantom path.
+  [ ] Meter in RESISTANCE mode, autorange or 200 kohm.
+      DO NOT USE THE CONTINUITY BEEPER. Conductive rubber on carbon closes at
+      hundreds of ohms to a few kohm. A beeper triggering below ~50 ohm stays
+      silent on a healthy key and the wrong conclusion is "dead keypad".
+  [ ] Alligator-clip leads on both probes, so both hands are free to press.
+  [ ] If the free end is a socket housing, seat a header pin or a short piece
+      of solid-core wire in each socket to give the clip something to grip.
+      Do not pierce insulation.
+
+
+STEP 1. BASELINE, NOTHING PRESSED
+---------------------------------
+  All 21 pairs must read OPEN (> 1 Mohm). Any pair reading low with no key
+  down is two conductors shorted, and every map built after it is wrong.
+
+      pair                 reading      open?
+      ----                 -------      -----
+      BLK - RED            ..........   [ ]
+      BLK - WHT            ..........   [ ]
+      BLK - YEL            ..........   [ ]
+      BLK - ORG            ..........   [ ]
+      BLK - GRN            ..........   [ ]
+      BLK - BLU            ..........   [ ]
+      RED - WHT            ..........   [ ]
+      RED - YEL            ..........   [ ]
+      RED - ORG            ..........   [ ]
+      RED - GRN            ..........   [ ]
+      RED - BLU            ..........   [ ]
+      WHT - YEL            ..........   [ ]
+      WHT - ORG            ..........   [ ]
+      WHT - GRN            ..........   [ ]
+      WHT - BLU            ..........   [ ]
+      YEL - ORG            ..........   [ ]
+      YEL - GRN            ..........   [ ]
+      YEL - BLU            ..........   [ ]
+      ORG - GRN            ..........   [ ]
+      ORG - BLU            ..........   [ ]
+      GRN - BLU            ..........   [ ]
+
+
+STEP 2. FIND KEY 1, THE LONG WAY. ONCE.
+---------------------------------------
+  Hold key `1` down. Clip probe A to BLACK, sweep B across the other six.
+  No hit, move A to RED and sweep the remaining five. And so on. 21 probes
+  worst case, and only this once.
+
+      key 1 closes on:  .......... and ..........   at .......... ohm
+
+
+STEP 3. EXPLOIT THE GRID
+------------------------
+  Every remaining key shares a conductor with one already found. Key `2` is
+  in key `1`'s row, key `4` is in key `1`'s column. Clip A to one of key 1's
+  two conductors and sweep: a handful of probes each, not 21.
+
+  Faster still, three keys at a time: `1` `2` `3` share ONE row conductor.
+  `1` `4` `7` `*` share ONE column conductor. Confirm a group in one clip
+  position rather than key by key.
+
+
+STEP 4. THE TWELVE
+------------------
+  Record OHMS, not "closed". The worst key sets the requirement.
+
+      key    conductor A    conductor B    ohm closed
+      ---    -----------    -----------    ----------
+       1     ...........    ...........    ..........
+       2     ...........    ...........    ..........
+       3     ...........    ...........    ..........
+       4     ...........    ...........    ..........
+       5     ...........    ...........    ..........
+       6     ...........    ...........    ..........
+       7     ...........    ...........    ..........
+       8     ...........    ...........    ..........
+       9     ...........    ...........    ..........
+       *     ...........    ...........    ..........
+       0     ...........    ...........    ..........
+       #     ...........    ...........    ..........
+
+      WORST (highest) closed reading: .......... ohm  on key ......
+
+
+STEP 5. DIODE CHECK
+-------------------
+  On two or three keys, reverse the probes. A reading that changes with
+  polarity means diodes are fitted for rollover, which changes how firmware
+  scans the matrix. Confirm in the meter's diode-test mode: ~0.6 V one way,
+  OL the other.
+
+      key ...... forward .......... reverse ..........   differs? [ ]
+      key ...... forward .......... reverse ..........   differs? [ ]
+      diodes fitted?  [ ] no   [ ] yes
+
+
+ACCEPTANCE
+----------
+  WIRING, for the pin map to stand as written:
+    [ ] 7 conductors carrying signal, no more
+    [ ] 12 DISTINCT pairs, no duplicates
+    [ ] four conductors each appearing in exactly 3 keys   (the ROWS -> D0-D3)
+    [ ] three conductors each appearing in exactly 4 keys  (the COLS -> D4-D6)
+
+      rows, by colour:  .........................................
+      cols, by colour:  .........................................
+
+  CLOSED RESISTANCE, worst key:
+    < 5 kohm      comfortable. Seed internal pull-up ~40 kohm through J11's
+                  100 ohm series reads it without help.
+    5-20 kohm     marginal. Works, log it.
+    > 20 kohm     needs an external pull-down or a stronger drive.
+
+  A duplicate pair means it is not a plain 4x3. More than seven signal
+  conductors means it is not a simple matrix at all. Either outcome is a
+  result, not a failure; write it down and stop rather than forcing a map.
+
+
+NOTES
+-----
+
+
+
+
+===========================================================================
+SESSION LOG 2026-08-31, in progress
+===========================================================================
+
+PRECONDITIONS CONFIRMED BY MATT
+-------------------------------
+  [x] line unplugged
+  [x] keypad disconnected from the mainboard
+  [x] 7-way coloured harness connected at the keypad end
+
+FIRST THREE KEYS
+----------------
+      key    A        B        ohm closed
+      ---    -----    -----    ----------
+       1     BLK      BLU      15
+       2     BLK      GRN      15
+       3     BLK      ORG      15
+
+  All other BLK-to-colour pairs open, > 1 Mohm.
+
+WHAT THAT ESTABLISHES
+---------------------
+  BLACK is shared by keys 1, 2 and 3, which are one physical row. BLACK is
+  therefore a ROW conductor. BLU, GRN and ORG are three distinct COLUMN
+  conductors. RED, WHT and YEL are the three remaining rows.
+
+  Split so far, against the acceptance criterion:
+      rows (-> D0-D3)   BLK, and RED / WHT / YEL in some order
+      cols (-> D4-D6)   BLU, GRN, ORG
+
+  This is the 4x3 shape the pin map assumed. Not yet verified: the row order,
+  and that all 12 pairs are distinct.
+
+!! 15 OHM CONTRADICTS THE RECORD'S PREMISE
+------------------------------------------
+  `loa-keypad-matrix` warns at length that telephone keypads are conductive
+  rubber pills on carbon pads, closing at hundreds of ohms to a few kohm, and
+  that a continuity beeper triggering below ~50 ohm would stay silent on a
+  healthy key. That is NOT this keypad. 15 ohm is a metallic closure, almost
+  certainly a metal dome or tact switch, which is consistent with a 2020-dated
+  hotel set. The beeper would in fact have worked here.
+
+  The precaution was still correct to take: it cost one meter setting and it
+  was not knowable in advance. But the record should stop asserting the carbon
+  premise as though it described this part.
+
+  Consequence for the design, and it is a good one: 15 ohm against the Seed's
+  ~40 kohm internal pull-up, through J11's 100 ohm series, is far below the
+  5 kohm "comfortable" threshold. No external pull-down, no stronger drive.
+
+  Caveat to close: 15 ohm has not been corrected for lead and clip resistance.
+  Short the probes together and read it once. Immaterial to the verdict at this
+  margin, but it is the difference between a measured figure and a raw one.
+
+  Series diodes are ruled out on these three paths by the value alone. A diode
+  in series cannot read 15 ohm in resistance mode. Confirm on one key by
+  reversing the probes rather than assuming it generalises.
+
+PREDICTION, TO BE TESTED
+------------------------
+  The harness order is BLK RED WHT YEL ORG GRN BLU. The first four are the
+  rows and the last three the columns, and the columns came out reversed
+  relative to the keypad face (ORG = col 3, GRN = col 2, BLU = col 1), which
+  is what a connector read from the other side looks like. If the rows follow
+  the same tidy order:
+
+      row 1 = BLK    row 2 = RED    row 3 = WHT    row 4 = YEL
+      col 1 = BLU    col 2 = GRN    col 3 = ORG
+
+      key    predicted pair       confirmed?   ohm
+      ---    --------------       ----------   ---
+       1     BLK - BLU            [x] yes      15
+       2     BLK - GRN            [x] yes      15
+       3     BLK - ORG            [x] yes      15
+       4     RED - BLU            [ ]          ...
+       5     RED - GRN            [ ]          ...
+       6     RED - ORG            [ ]          ...
+       7     WHT - BLU            [ ]          ...
+       8     WHT - GRN            [ ]          ...
+       9     WHT - ORG            [ ]          ...
+       *     YEL - BLU            [ ]          ...
+       0     YEL - GRN            [ ]          ...
+       #     YEL - ORG            [ ]          ...
+
+  TEST KEY 4 AS RED-BLU FIRST. It is the single probe that decides whether the
+  prediction holds. If it closes, the remaining eight are one probe each. If
+  it does not, abandon the prediction and sweep RED / WHT / YEL against BLU
+  with key 4 held.
+
+STILL OWED
+----------
+  [ ] baseline sweep of the pairs among RED, WHT, YEL and against the three
+      columns, nothing pressed. BLK was cleared against everything; the other
+      six have not been cleared against each other. A short there would still
+      poison the map.
+  [ ] lead resistance, probes shorted
+  [ ] polarity check on one key
+  [ ] provenance of this harness: out of the phone, or made? Decides whether
+      the 2026-08-26 connector section is corrected or extended.
+
+---------------------------------------------------------------------------
+REMAINING NINE KEYS, as reported 2026-08-31
+---------------------------------------------------------------------------
+
+      key    predicted     reported          ohm     agrees?
+      ---    ----------    --------------    ----    -------
+       4     RED - BLU     red / blue        15.0    yes
+       5     RED - GRN     red / green       17.5    yes
+       6     RED - ORG     red / green (?)   16.0    NO, SEE BELOW
+       7     WHT - BLU     white / blue      16.0    yes
+       8     WHT - GRN     white / green     10.6    yes
+       9     WHT - ORG     white / orange    15.0    yes
+       *     YEL - BLU     yellow / blue     13.4    yes
+       0     YEL - GRN     yellow / green    14.0    yes
+       #     YEL - ORG     yellow / orange   15.0    yes
+
+!! KEY 6 IS UNRESOLVED. DO NOT TREAT THE MAP AS COMPLETE.
+--------------------------------------------------------
+  Key 6 was reported as RED / GREEN, which is the SAME PAIR already reported
+  for key 5. In a plain 4x3 all twelve pairs are distinct, so as written this
+  fails acceptance outright.
+
+  Two readings are possible and they are not equally likely, but the record
+  does not get to pick:
+
+  (a) TRANSCRIPTION SLIP for RED / ORANGE. Everything else fits the predicted
+      map exactly, and ORANGE is otherwise short of appearances: it would sit
+      at 3 keys where every other column has 4. RED-ORG is the one pair the
+      completed matrix requires and the one pair not yet reported.
+
+  (b) A GENUINE DUPLICATE, meaning GREEN and ORANGE are shorted somewhere, or
+      this is not a plain 4x3. Argues against itself: keys 5 and 6 reported
+      17.5 and 16.0 ohm, and the same closed pair probed twice should not
+      differ, though at this scale contact resistance could account for it.
+
+  RESOLVE WITH ONE PROBE: hold key 6, read RED to ORANGE.
+    closes at ~15 ohm  -> (a), slip. Map complete, acceptance met.
+    stays open         -> (b). Stop. Sweep key 6 against all pairs and treat
+                          the 4x3 assumption as refuted until it is re-earned.
+
+  This is also why the outstanding baseline sweep matters. GREEN and ORANGE
+  have never been checked against each other with nothing pressed, and that is
+  precisely the short reading (b) would require.
+
+MAP AS IT STANDS, PENDING KEY 6
+-------------------------------
+                col 1 BLU    col 2 GRN    col 3 ORG
+      row 1 BLK      1            2            3
+      row 2 RED      4            5           [6]
+      row 3 WHT      7            8            9
+      row 4 YEL      *            0            #
+
+  Appearance counts, ASSUMING key 6 resolves to RED-ORG:
+      BLK 3    RED 3    WHT 3    YEL 3       four rows at 3 keys each
+      BLU 4    GRN 4    ORG 4                three cols at 4 keys each
+  Which is the acceptance criterion met exactly, with 12 distinct pairs.
+
+CLOSED RESISTANCE
+-----------------
+  range     10.6 to 17.5 ohm across the eleven settled keys
+  WORST     17.5 ohm, key 5
+  verdict   comfortable by roughly two and a half orders of magnitude. The
+            threshold was 5 kohm. Nothing external is needed: no pull-down,
+            no stronger drive, no buffering. The Seed's internal pull-up
+            through J11's 100 ohm series reads this without help.
+  caveat    still not corrected for lead and clip resistance. Immaterial to
+            the verdict; do it anyway so the figure is measured, not raw.
+
+WIRING CONSEQUENCE, WORTH DECIDING BEFORE THE HARNESS IS MADE OFF
+-----------------------------------------------------------------
+  Harness order at the connector is BLK RED WHT YEL ORG GRN BLU. Rows are the
+  first four IN KEYPAD ORDER. Columns are the last three IN REVERSE: position
+  5 is ORG which is column 3, position 7 is BLU which is column 1.
+
+  So a straight pin-for-pin harness onto J11's D0-D6 gives rows D0-D3 in
+  natural order and columns D4-D6 REVERSED. Two ways to settle it, and it is
+  cheaper to decide now than to debug later:
+    - cross the three column wires in the harness, keeping firmware natural
+    - keep the harness straight and reverse the column index in the scan
+  Either is fine. Choosing neither, and discovering it when 1 reads as 3, is
+  the outcome to avoid.
+
+---------------------------------------------------------------------------
+KEY 6 RESOLVED, and the final map
+---------------------------------------------------------------------------
+
+  Key 6 re-probed as RED / ORANGE: 13.8 ohm. Reading (a), transcription slip.
+  The duplicate was never real. Map complete.
+
+      key    row       column     ohm
+      ---    -------   --------   ----
+       1     BLACK     BLUE       15.0
+       2     BLACK     GREEN      15.0
+       3     BLACK     ORANGE     15.0
+       4     RED       BLUE       15.0
+       5     RED       GREEN      17.5   <- worst
+       6     RED       ORANGE     13.8
+       7     WHITE     BLUE       16.0
+       8     WHITE     GREEN      10.6   <- best
+       9     WHITE     ORANGE     15.0
+       *     YELLOW    BLUE       13.4
+       0     YELLOW    GREEN      14.0
+       #     YELLOW    ORANGE     15.0
+
+  ACCEPTANCE, all four criteria:
+      [x] 7 conductors, no more
+      [x] 12 distinct pairs
+      [x] BLACK, RED, WHITE, YELLOW each in exactly 3 keys   -> rows, D0-D3
+      [x] BLUE, GREEN, ORANGE each in exactly 4 keys         -> cols, D4-D6
+      [x] worst closed 17.5 ohm against a 5000 ohm threshold
+
+  RESULT: a plain 4x3. loa's pin map stands as written. Nothing to rewire at
+  the keypad, no glue logic, no external pull-down, no stronger drive.
+
+WHAT WAS NOT DONE, and is now unlikely to be worth doing
+--------------------------------------------------------
+  - Full baseline sweep among RED / WHT / YEL and against the columns with
+    nothing pressed. Superseded in practice: twelve distinct pairs came out
+    clean, which a short between any two conductors would have prevented.
+    Not the same as having swept it. Recorded as inference.
+  - Lead and clip resistance. Figures above are raw. At a 5 kohm threshold and
+    a 17.5 ohm worst case it changes no conclusion.
+  - Polarity reversal for diodes. Ruled out by value instead: a series diode
+    cannot read 10-18 ohm in resistance mode. Strong inference, not a direct
+    observation, and logged as inference in the record.
+
+  None of the three would change the verdict. They are listed so that the
+  record does not read as though they were performed.
+
+---------------------------------------------------------------------------
+THE CONNECTOR CONFLICT, RESOLVED. And the 1.27 mm answer was wrong.
+---------------------------------------------------------------------------
+
+  PROVENANCE, answered: the seven coloured wires are a JST ZH 7-way STUB
+  CABLE, bought to test with. Not the phone's cable. So the 2026-08-26 block
+  describes the original correctly; what it got wrong is the conclusion.
+
+  IT MATES, AND IT CONDUCTED ON ALL SEVEN. The whole beep-out above was made
+  through that stub. Twelve distinct pairs, every conductor carrying, 10.6 to
+  17.5 ohm. That is the proof, and it is stronger than "it seemed to fit":
+
+      a 1.27 mm plug on a 1.5 mm header is 0.23 mm out per position
+      by position 7 it is 1.38 mm out, near a whole pitch
+      the outer contacts cannot make contact at all
+
+  Clean readings on all seven are only possible at the correct pitch. The
+  matrix measurement WAS the connector test, and neither of us noticed.
+
+WHY 1.27 mm SURVIVED AS LONG AS IT DID
+--------------------------------------
+  7-way connector, the two candidates:
+
+      part        pitch   pin1-pin7 span   ribbon width   housing approx
+      --------    -----   --------------   ------------   --------------
+      JST ZH      1.50          9.00           10.50           11.50
+      Picoflex    1.27          7.62            8.89            9.89
+
+      measured 2026-08-26:      9.0 "ribbon width"       11.5 housing
+
+  THE 9.0 FIGURE NEVER DISCRIMINATED. Read as overall ribbon width it gives
+  1.27 mm at a 1.2% fit. Read as pin-centre span it gives 1.50 mm EXACTLY.
+  One number, two readings, both landing on 9.0, and the datum, where the
+  ruler was actually laid, was never written down. The derivation then
+  presented 1.2% as though it excluded 1.5 mm. It never computed 1.5 mm under
+  the other reading.
+
+  Worse: the 11.5 mm housing width DOES discriminate. ZH fits it (10.5 mm of
+  pitch territory plus ~0.5 mm wall each side). Picoflex misses by 1.6 mm.
+  That figure was set aside as the inferior method, in favour of the one that
+  could not tell the two apart. The FIRST answer, "1.5 mm, JST ZH", derived
+  from the housing on 2026-08-26, was right and was argued away.
+
+  THE LESSON, and this record already half contained it. Filed under
+  `what_settled_it` is "Measure the thing whose dimension is defined by what
+  you want to know". That was followed and still produced the wrong answer.
+  9.0 mm is not a measurement. "9.0 mm, outer conductor edge to outer
+  conductor edge" is. RECORD THE DATUM, NOT ONLY THE NUMBER.
+
+TWO CONSEQUENCES THAT BITE LATER IF NOT WRITTEN DOWN NOW
+-------------------------------------------------------
+  1. THE COLOUR MAP IS EPHEMERAL. Black-red-white-yellow-orange-green-blue is
+     one vendor's rainbow order on a bought stub. It is not a property of the
+     keypad. Swap the cable and every colour in the map above means nothing.
+     The durable map is by header pin:
+
+         pin 1 -> row 1        pin 5 -> column 3
+         pin 2 -> row 2        pin 6 -> column 2
+         pin 3 -> row 3        pin 7 -> column 1
+         pin 4 -> row 4
+
+     Rows in keypad order, columns backwards.
+
+  2. !! PIN 1 IS NOT ANCHORED. The table above assumes the "left to right"
+     used when reading the wire colours begins at header pin 1. Nothing ties
+     that to a physical feature: not the PX silkscreen, not a housing key, not
+     a board edge. AND THE ERROR IS SILENT IF IT IS WRONG. Flipped, rows are
+     still rows and columns are still columns, the matrix still maps perfectly,
+     and key 1 reads as key #.
+
+     TO CLOSE: with the stub seated, note which header pin BLACK sits on
+     relative to something that survives unplugging the cable, and write that
+     feature down by name. One minute now, or an afternoon later.
+
+FOR THE BUILD
+-------------
+  keypad end     JST ZH 7-way. ZHR-7 housing on SZH-002T contacts, or another
+                 pre-crimped stub of the kind already proven to mate and carry
+  caryatid end   J11, 2x5 IDC at 2.54 mm
+  columns        cross them in the harness, or reverse the column index in the
+                 scan. Deliberately, once.
+
+  This supersedes the 2026-08-26 plan of clipping the original ribbon and
+  beeping from stripped ends. That was built on the 1.27 mm answer and on not
+  owning a mating part. Both have changed.
+
+---------------------------------------------------------------------------
+HOW THE PHONE SHIPPED: the original ribbon's red conductor is on PIN 7
+---------------------------------------------------------------------------
+
+  Matt, 2026-08-31. The original grey ribbon has its RED CONDUCTOR AT PIN 7,
+  not pin 1.
+
+  THIS REFUTES A LINE IN THE 2026-08-26 RECORD. That session wrote "one RED
+  CONDUCTOR at the edge (pin 1 marker)". The observation was that red is at an
+  edge, which is true. "Pin 1 marker" was the standard ribbon convention
+  assumed on top of it, and it is wrong for this cable. The convention was
+  never stated as an assumption, so it read as though it had been observed.
+
+  READ WITH THE SAME LEFT-TO-RIGHT as the ZH stub, the original red sits at
+  the opposite end from the stub's BLACK. So on the original cable:
+
+      red conductor  ->  pin 7  ->  COLUMN 1  ->  keys 1 / 4 / 7 / *
+
+  WHY IT MATTERS. Anyone reusing the original ribbon and trusting "red is pin
+  1" installs it reversed, and hits precisely the silent failure described
+  above: rows still read as rows, columns still as columns, the matrix maps
+  perfectly, and key 1 comes up as key #. This note is the difference between
+  that and a working harness.
+
+  IT DOES NOT FULLY CLOSE THE ANCHORING QUESTION. Both cables were read with
+  the same unanchored left-to-right, so this fixes the two cables relative to
+  EACH OTHER. Neither is yet fixed to the board. Still owed: which header pin
+  BLACK sits on, named against a physical feature that survives unplugging.
