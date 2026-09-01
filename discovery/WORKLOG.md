@@ -881,3 +881,52 @@ in mV rms at close-talk distance, which is the number `mic-gain-budget` rests
 on. And **beep out the keypad** to the template in `loa-keypad-matrix`: twelve
 key/pair/resistance rows, the conductor count, and whether any reading changes
 with probe polarity. Log the WORST closed resistance, not a typical one.
+
+## 2026-08-31 — loa keypad beeped out: matrix, connector and anchor all closed
+
+**Completed:** `loa-keypad-matrix` goes `unverified` → **`confirmed`**, and
+closes three separate questions in one bench session.
+
+- **The matrix is a plain 4×3.** Seven conductors, twelve distinct pairs, four
+  rows at three keys each and three columns at four. Closed resistance 10.6 to
+  17.5 Ω, worst key `5`, against a 5 kΩ threshold. Clears by two and a half
+  orders of magnitude: no pull-down, no stronger drive, no glue logic. loa's
+  pin map stands as written.
+- **The carbon-pad premise did not hold.** The record warns at length that a
+  continuity beeper would stay silent on a healthy key. Every key here is a
+  metallic closure near 15 Ω and the beeper would have worked. Warning kept
+  verbatim and annotated: it describes a hazard, not this part.
+- **The connector is JST ZH 1.5 mm**, refuting the 1.27 mm Molex Picoflex
+  derivation of 2026-08-26. The proof is not that a bought ZH stub fitted, it
+  is that the whole beep-out ran through it on all seven conductors, which a
+  wrong-pitch part cannot do.
+- **Pin 1 anchored** to the `PX` silkscreen, with the centring caveat closed by
+  observation and a consistency check that passes.
+- Evidence: `discovery/evidence/2026-08-31-keypad-matrix-beepout.txt`.
+- loa `docs/design/12-phone-build.md` regenerated from the record.
+
+**In flight:** nothing. The sheet is complete and no measurement is outstanding.
+
+**Open questions:**
+
+- **A decision, not a measurement: cross the columns in the harness or in
+  firmware.** Rows run straight through to D0–D3. Columns are inverted, and
+  reversing three things is swapping the outer two: cross header positions 5
+  and 7, leave 6. Or wire straight and reverse the column index in the scan.
+  Either is correct. Doing neither shows up as key `1` reading as key `3`.
+- Three checks were **not performed** and are logged as not performed rather
+  than assumed: the baseline sweep among the four non-black conductors, lead
+  and clip resistance, and a polarity reversal for diodes. None changes the
+  verdict at a 17.5 Ω worst case against a 5 kΩ threshold.
+- The **original ribbon is unexplained** and does not gate anything. Seven
+  conductors at 1.5 mm should measure ~10.5 mm overall, not the 9.0 mm
+  recorded. Either 9.0 was a centre span or "mass terminated" was mis-observed.
+
+**Why the wrong connector answer survived, worth keeping:** the 9.0 mm reading
+fits 1.27 mm as an overall ribbon width (8.89) and 1.5 mm as a pin-centre span
+(9.00) equally well, and the datum was never recorded. The 11.5 mm housing
+width does discriminate, points at ZH, and was set aside as the inferior
+method. The first answer was right and was argued away.
+
+**Next step:** decide the column crossing, then wire a ZH-to-J11 harness and
+record the choice under `for_loa_the_build` in `loa-keypad-matrix`.

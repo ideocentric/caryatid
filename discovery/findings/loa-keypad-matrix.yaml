@@ -230,6 +230,16 @@ resolution_2026_08_31:
     is on pin 7. If it turns up at the PX end instead, the two readings
     disagree and neither should be trusted.
 
+  numbering_convention_adopted: >-
+    MATT, 2026-08-31: "treating the PX side as 1 is likely how I will think
+    about it." ADOPTED. Position 1 is the PX-silkscreen end, counting away from
+    it. Every position in this record already uses that convention, so nothing
+    is renumbered; this fixes it as the project's convention so a later reader
+    does not re-derive it or silently invert it.
+    NOTE THIS IS NOT THE COLUMN DECISION. Numbering and the harness column
+    crossing are separate choices, and the second is still open. See
+    `for_loa_the_build.the_harness_now_fully_specified`.
+
   🔴 THE_MAP_ANCHORED_TO_THE_BOARD: >-
     THIS IS THE DURABLE FORM. Everything else in this record, colours included,
     is derived from it or is scaffolding. Positions count FROM THE `PX`
