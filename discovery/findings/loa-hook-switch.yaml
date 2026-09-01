@@ -12,7 +12,7 @@ source_ref: >-
   docs/decisions/0007-rc-and-schmitt-instead-of-the-ls18-p.md.
 resource: >-
   The off-hook switch in loa's Bittel HA41T-25, and caryatid's SW3 input
-status: in-progress    # POLARITY confirmed. CLOSED RESISTANCE still unmeasured to usable precision.
+status: conflict       # POLARITY CONTRADICTED 2026-08-31. Was briefly recorded confirmed; it is not.
 
 the_circuit_it_has_to_drive:
   # ADR 0007. This is the thing the switch is being measured AGAINST, and it is
@@ -65,7 +65,51 @@ measured_2026_08_31:
     does mean the failure analysis below describes the worst conceivable case
     rather than the likely one.
 
-  🔴 THE_POLARITY_IS_CONFIRMED_AND_IT_IS_THE_USEFUL_RESULT: >-
+  🔴 POLARITY_IS_IN_CONFLICT_AND_MUST_NOT_BE_STATED_AS_FACT: >-
+    RAISED 2026-08-31, within an hour of being recorded as confirmed. Two
+    statements from Matt on the same day, and they are opposites:
+
+      A, earlier: "the telephone spring switch is normally closed and when
+         pressed it's open." Handset down presses it.
+         => ON HOOK = OPEN, OFF HOOK = CLOSED.
+
+      B, later:  "When the hand set is down (on Hook), the phone switch is
+         engaged connecting the switch."
+         => ON HOOK = CLOSED, OFF HOOK = OPEN.
+
+    THE MEASUREMENTS SUPPORT A. Off hook read 27 kohm, conductive; on hook read
+    37 Mohm, effectively open. But those readings were withdrawn as unreliable
+    because of poor probe contact, and a probe that slipped on the on-hook
+    reading would produce exactly 37 Mohm from a genuinely CLOSED switch. So
+    the measurement leans toward A without settling it.
+
+    B MAY NOT BE A CONTRADICTION AT ALL. "Engaged" is ambiguous: it reads as
+    the MECHANICAL sense, the resting handset engaging the plunger, which is
+    true under BOTH A and B and says nothing about the circuit. "Connecting the
+    switch" then reads as electrical. If B meant only that the handset engages
+    the mechanism, A stands untouched. This is a wording question, not
+    necessarily a factual one, and it is being flagged rather than guessed.
+
+    A PART LINK WAS SUPPLIED, an Amazon listing for a generic telephone hook
+    switch, B0CP269PT2. NOT FETCHED: the request returned HTTP 500. It would
+    have been weak evidence regardless, since a visually similar aftermarket
+    part is not the part in this phone and marketplace listings rarely state
+    contact configuration reliably. It is recorded as a pointer, not a source.
+
+  🔴 WHY_THIS_IS_NOT_A_DETAIL: >-
+    THE FAIL-SAFE ARGUMENT INVERTS WITH IT. ADR 0007 chose the inverted output
+    because a broken lead reads as switch-open, which it assumed meant on-hook
+    and therefore silent.
+
+      IF A:  broken lead -> open -> ON HOOK  -> silent, mic bias off. SAFE.
+      IF B:  broken lead -> open -> OFF HOOK -> LIVE, MIC HOT. The exact
+             failure ADR 0007 says it chose this polarity to avoid.
+
+    Under B the ADR's stated rationale does not hold for loa and something has
+    to change: take the other contact set if the switch has one, invert in the
+    harness, or accept a broken lead bringing the instrument up live.
+
+  the_polarity_claim_that_was_briefly_recorded_confirmed: >-
     THE HOOK IS A TELEPHONE SPRING SWITCH, NORMALLY CLOSED. Pressed, it opens.
     The handset resting in the cradle is what presses it. Therefore:
 
@@ -147,9 +191,27 @@ the_next_measurement:
     redesigning anything: an optical interrupter (a phototransistor conducting
     at tens of kohm is exactly this shape), a Hall sensor, or a switch fitted in
     series with a resistor on the same board. Identify it before choosing a fix.
-  polarity_no_longer_needed: >-
-    ANSWERED 2026-08-31, and it answered in the design's favour. Normally
-    closed, pressed open by the resting handset. Do not re-measure it.
+  🔴 polarity_MUST_be_re-measured: >-
+    It was briefly recorded as settled and it is not. THE DECISIVE TEST, and it
+    takes ten seconds once the meter is on the contacts:
+      Cable off at both ends, probes clipped to the switch terminals, meter in
+      resistance. PRESS THE PLUNGER BY HAND, which is what the resting handset
+      does, and watch the meter. Note which state reads low. Pressed reading
+      low means B and the fail-safe inverts. Pressed reading open means A and
+      ADR 0007 stands.
+    Watch the meter through the transition rather than taking two static
+    readings, so a slipped probe shows up as noise instead of as an answer.
+
+  also_count_the_terminals: >-
+    HOW MANY TERMINALS DOES THE SWITCH HAVE? It decides whether B is a problem
+    or a non-event.
+      TWO  -> SPST. You get the polarity the switch gives you, and if it is B
+              the fix has to happen in the harness or the firmware.
+      THREE -> SPDT, common plus normally-open plus normally-closed. Then the
+              polarity is a WIRING CHOICE, not a constraint: pick the contact
+              that makes on-hook open, and ADR 0007's fail-safe holds for free.
+    Telephone hook switches are commonly SPDT because the phone itself needs
+    both senses. Check before treating B as a design problem.
 
 if_the_reading_is_real:
   # Only if the contacts genuinely measure tens of kohm. Do not act on these yet.
@@ -186,7 +248,15 @@ evidence:
      measured the hook would never register. The finite 37 Mohm on-hook, where
      open contacts should read OL, indicates circuitry in the path and that the
      switch itself was not what was measured"
-  - "2026-08-31: POLARITY CONFIRMED. The hook is a telephone spring switch,
+  - "2026-08-31: POLARITY IN CONFLICT, raised within the hour. Matt earlier:
+     'normally closed and when pressed it's open' (on hook OPEN). Matt later:
+     'when the hand set is down (on Hook), the phone switch is engaged
+     connecting the switch' (on hook CLOSED). Opposites. The withdrawn readings
+     lean toward the first. A supplied Amazon part link, B0CP269PT2, was not
+     fetched: HTTP 500, and it would be weak evidence regardless. NOT RESOLVED,
+     and the ADR 0007 fail-safe argument inverts depending on the answer"
+  - "2026-08-31: SUPERSEDED BY THE CONFLICT ABOVE, kept per append-only.
+     POLARITY CONFIRMED. The hook is a telephone spring switch,
      NORMALLY CLOSED, pressed open by the resting handset. So on-hook is OPEN
      and off-hook is CLOSED. This confirms the unstated assumption under ADR
      0007's fail-safe argument: a broken lead reads as open, reads as on-hook,

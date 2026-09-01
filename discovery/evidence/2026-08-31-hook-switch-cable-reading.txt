@@ -199,3 +199,85 @@ WHAT IS STILL WANTED, NARROWED TO ONE NUMBER
 
   DO NOT RE-MEASURE THE POLARITY. It is settled and it answered in the design's
   favour.
+
+===========================================================================
+POLARITY IN CONFLICT. Raised within the hour of being recorded confirmed.
+===========================================================================
+
+  Two statements from Matt, same day, and they are opposites:
+
+    A, earlier   "the telephone spring switch is normally closed and when
+                  pressed it's open."   Handset down presses it.
+                  => ON HOOK = OPEN,  OFF HOOK = CLOSED
+
+    B, later     "When the hand set is down (on Hook), the phone switch is
+                  engaged connecting the switch."
+                  => ON HOOK = CLOSED, OFF HOOK = OPEN
+
+  The section above this one recorded A as confirmed. THAT WAS PREMATURE and
+  it is withdrawn. Both are on the record; neither is fact.
+
+WHAT THE EVIDENCE LEANS TOWARD, WITHOUT SETTLING IT
+---------------------------------------------------
+  The measurements support A: off hook read 27 kohm (conductive), on hook read
+  37 Mohm (effectively open). But those readings were themselves withdrawn for
+  poor probe contact, and A PROBE THAT SLIPPED ON THE ON-HOOK READING WOULD
+  PRODUCE EXACTLY 37 Mohm FROM A CLOSED SWITCH. So the lean is real and it is
+  not proof.
+
+B MAY NOT BE A CONTRADICTION AT ALL
+-----------------------------------
+  "Engaged" is ambiguous, and the ambiguity is worth naming rather than
+  guessing past. It reads naturally as the MECHANICAL sense: the resting
+  handset engaging the plunger. That is true under BOTH A and B and says
+  nothing about the circuit. "Connecting the switch" then reads as electrical.
+
+  If B meant only that the handset engages the mechanism, A stands untouched
+  and there is no conflict. If B meant the contacts close, A is wrong. One
+  sentence from Matt settles which, and no measurement is needed for that half.
+
+THE PART LINK
+-------------
+  An Amazon listing for a generic telephone hook switch, B0CP269PT2, was
+  supplied. NOT FETCHED: the request returned HTTP 500.
+
+  It would have been weak evidence regardless. A visually similar aftermarket
+  part is not the part in this phone, and marketplace listings rarely state
+  contact configuration reliably. Recorded as a pointer, not as a source.
+
+WHY THIS IS NOT A DETAIL
+------------------------
+  THE FAIL-SAFE ARGUMENT INVERTS WITH IT. ADR 0007 chose the inverted output
+  because a broken lead reads as switch-open, which it assumed meant on-hook
+  and therefore silent:
+
+    IF A   broken lead -> open -> ON HOOK  -> silent, mic bias off.  SAFE
+    IF B   broken lead -> open -> OFF HOOK -> LIVE, MIC HOT
+
+  B is precisely the failure ADR 0007 states it chose this polarity to avoid.
+  Under B the ADR's rationale does not hold for loa and something must change.
+
+THE DECISIVE TEST, ten seconds once the meter is on the contacts
+----------------------------------------------------------------
+  Cable off at BOTH ends. Probes CLIPPED to the switch terminals. Meter in
+  resistance. PRESS THE PLUNGER BY HAND, which is what the resting handset
+  does, and WATCH THE METER THROUGH THE TRANSITION.
+
+      pressed reads LOW    -> B. The fail-safe inverts.
+      pressed reads OPEN   -> A. ADR 0007 stands as written.
+
+  Watch it through the transition rather than taking two static readings. A
+  slipped probe then shows up as noise instead of as an answer, which is
+  exactly how the first set of numbers went wrong.
+
+AND COUNT THE TERMINALS. It decides whether B is a problem or a non-event.
+--------------------------------------------------------------------------
+      TWO    SPST. You get the polarity the switch gives you. If it is B, the
+             fix has to happen in the harness or in firmware, and firmware
+             cannot fix the broken-lead case.
+      THREE  SPDT: common, normally-open, normally-closed. The polarity becomes
+             a WIRING CHOICE rather than a constraint. Pick the contact that
+             makes on-hook open and ADR 0007's fail-safe holds for free.
+
+  Telephone hook switches are commonly SPDT, because the set itself needs both
+  senses. CHECK THE TERMINAL COUNT BEFORE TREATING B AS A DESIGN PROBLEM.
