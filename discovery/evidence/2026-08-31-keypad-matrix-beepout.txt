@@ -505,3 +505,54 @@ HOW THE PHONE SHIPPED: the original ribbon's red conductor is on PIN 7
   the same unanchored left-to-right, so this fixes the two cables relative to
   EACH OTHER. Neither is yet fixed to the board. Still owed: which header pin
   BLACK sits on, named against a physical feature that survives unplugging.
+
+---------------------------------------------------------------------------
+PIN 1 ANCHORED. The map is now absolute.
+---------------------------------------------------------------------------
+
+  Matt, 2026-08-31: the BLACK end of the stub sits at the end of the header
+  NEAREST THE `PX` SILKSCREEN.
+
+  That is a board feature. It survives the cable being unplugged, it survives
+  the stub being lost, and it turns every position below from "relative to how
+  somebody was holding it" into absolute.
+
+      pos   toward PX     function    keys           stub colour
+      ---   ---------     --------    ------------   -----------
+       1    <- PX end     row 1       1  2  3        BLACK
+       2                  row 2       4  5  6        RED
+       3                  row 3       7  8  9        WHITE
+       4                  row 4       *  0  #        YELLOW
+       5                  column 3    3  6  9  #     ORANGE
+       6                  column 2    2  5  8  0     GREEN
+       7    far end       column 1    1  4  7  *     BLUE
+
+  Position 7, the far end, is where the ORIGINAL ribbon's RED conductor sits.
+  That is a second, independent confirmation available for ten seconds' work:
+  red must appear at the end AWAY from PX. If it shows up at the PX end, the
+  two readings disagree and neither should be trusted.
+
+  ONE CAVEAT ON THE ANCHOR. It assumes `PX` is printed off toward one end of
+  the header rather than centred above it. If it is centred, the anchor is
+  weaker than it reads and should be restated against a board edge or a
+  neighbouring component instead.
+
+THE HARNESS, NOW FULLY SPECIFIED
+--------------------------------
+  Header positions from the PX end, straight through to J11:
+
+      pos 1 -> D0  row 1          pos 5 -> D4  would give COLUMN 3
+      pos 2 -> D1  row 2          pos 6 -> D5  column 2
+      pos 3 -> D2  row 3          pos 7 -> D6  would give COLUMN 1
+      pos 4 -> D3  row 4
+
+  Rows are already right. Only the columns are inverted, and REVERSING THREE
+  THINGS IS SWAPPING THE OUTER TWO: cross positions 5 and 7, leave 6 where it
+  is. That gives D4 = column 1, D5 = column 2, D6 = column 3, and a scan with
+  no compensating index anywhere in firmware.
+
+  The alternative is a straight harness and a reversed column index in the
+  scan. Either is correct. Pick one, and record which here when picked.
+
+STATUS OF THIS SHEET: COMPLETE. Matrix confirmed, connector confirmed, pin 1
+anchored, harness specified. Nothing outstanding that gates loa's wiring.

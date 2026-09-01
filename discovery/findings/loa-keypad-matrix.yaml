@@ -214,32 +214,54 @@ resolution_2026_08_31:
     Rows run in keypad order, columns run BACKWARDS. See
     `result.wiring_consequence_columns_are_reversed`.
 
-  🔴 pin_1_IS_NOT_YET_ANCHORED: >-
-    THE PIN TABLE ABOVE IS UNVERIFIED AT ONE POINT and it is the point that
-    would waste a day. It assumes the "left to right" Matt used when reading
-    the wire colours starts at header pin 1. Nothing anchors that to a physical
-    feature: not the PX silkscreen, not a housing key, not a board edge.
-    Flipped, rows still read as rows and columns still as columns, so the error
-    is SILENT: the matrix maps perfectly and key 1 reads as key #.
-    PARTIAL ANCHOR, 2026-08-31: the phone's ORIGINAL ribbon has its RED
-    conductor on PIN 7, not pin 1. This REFUTES the 2026-08-26 note calling the
-    red edge conductor "a pin 1 marker", which was an assumption from the usual
-    ribbon convention and not an observation. Read with the same left-to-right
-    as the stub, the original red sits at the OPPOSITE end from the stub's
-    BLACK, so red marks the COLUMN 1 line, the keys 1 / 4 / 7 / *. Anyone who
-    had reused the original ribbon and trusted "red is pin 1" would have
-    installed it reversed, and would have hit exactly the silent failure above.
-    IT DOES NOT FULLY CLOSE THE QUESTION: both cables were read with the same
-    unanchored left-to-right, so this fixes the two cables relative to EACH
-    OTHER without fixing either to the board.
-    TO CLOSE IT: with the stub seated, note which header pin the BLACK wire
-    sits on relative to a feature that survives the cable being unplugged, and
-    write that feature down by name.
+  pin_1_anchored: >-
+    CLOSED 2026-08-31. THE BLACK END OF THE STUB SITS AT THE END OF THE HEADER
+    NEAREST THE `PX` SILKSCREEN. That is a feature of the board, it survives the
+    cable being unplugged, and it makes every position below absolute rather
+    than relative to how somebody happened to be holding the connector.
+
+    Why it needed closing, kept because the failure is not obvious: a reversed
+    connector is SILENT. Rows still read as rows and columns as columns, the
+    matrix maps perfectly, every key responds, and key 1 simply comes up as
+    key #. Nothing in the scan can detect it.
+
+    Independent cross-check, ten seconds, if confirmation is ever wanted: the
+    ORIGINAL ribbon's red conductor must sit at the end AWAY from PX, since red
+    is on pin 7. If it turns up at the PX end instead, the two readings
+    disagree and neither should be trusted.
+
+  🔴 THE_MAP_ANCHORED_TO_THE_BOARD: >-
+    THIS IS THE DURABLE FORM. Everything else in this record, colours included,
+    is derived from it or is scaffolding. Positions count FROM THE `PX`
+    SILKSCREEN END of the keypad header:
+
+      pos  toward PX     function    keys           stub colour
+      ---  ---------     --------    ------------   -----------
+       1   <- PX end     row 1       1  2  3        BLACK
+       2                 row 2       4  5  6        RED
+       3                 row 3       7  8  9        WHITE
+       4                 row 4       *  0  #        YELLOW
+       5                 column 3    3  6  9  #     ORANGE
+       6                 column 2    2  5  8  0     GREEN
+       7   far end       column 1    1  4  7  *     BLUE
+
+    The far end, position 7, is where the ORIGINAL ribbon's RED conductor sits.
 
   for_loa_the_build:
     keypad_end: JST ZH 7-way, ZHR-7 housing on SZH-002T contacts, or a bought
                 pre-crimped ZH stub of the kind already proven to work
     caryatid_end: J11, 2x5 IDC at 2.54 mm
+    the_harness_now_fully_specified: >-
+      Counting header positions from the PX end, straight through to J11:
+        pos 1 -> D0   row 1        pos 5 -> D4   would give COLUMN 3
+        pos 2 -> D1   row 2        pos 6 -> D5   column 2
+        pos 3 -> D2   row 3        pos 7 -> D6   would give COLUMN 1
+      Rows are already correct. Only the columns need attention, and REVERSING
+      THREE THINGS MEANS SWAPPING THE OUTER TWO: cross positions 5 and 7, leave
+      6 alone. That yields D4 = column 1, D5 = column 2, D6 = column 3 and a
+      scan that needs no compensating index. Alternatively wire it straight and
+      reverse the column index in firmware. One or the other, chosen once and
+      written down here when it is chosen.
     note: >-
       Supersedes `consequence_for_the_build` below, which proposed clipping the
       original ribbon and beeping from stripped ends. That plan was built on the
