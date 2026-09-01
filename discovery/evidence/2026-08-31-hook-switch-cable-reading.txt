@@ -1,0 +1,124 @@
+loa hook switch: a reading taken through the phone's own board
+==============================================================
+
+  Bench session 2026-08-31, Matt measuring. Same session as the keypad
+  beep-out; separate subject, separate record: `loa-hook-switch`.
+
+MEASURED
+--------
+  Probed: the CABLE running from the off-hook switch on the phone's LARGE
+  BOARD to a separate board. NOT the switch contacts.
+
+      off hook (handset lifted)    27 kohm
+      on hook  (handset resting)   37 Mohm
+
+WHAT IT HAS TO DRIVE
+--------------------
+  caryatid SW3, per ADR 0007:
+
+      3V3 --[10k pull-up]-- NODE --[10k series]-- 74HC14 in
+                              |                       |
+                            switch                  C to GND (1 uF, hook lever)
+                              |
+                             GND
+
+  A CMOS input draws no current, so nothing flows in the series 10k and the
+  node sits at a plain divider between the pull-up and the switch:
+
+      Vnode = 3.3 * Rsw / (10k + Rsw)
+
+      Rsw         Vnode
+      ---------   -------
+              0    0.00 V   ideal metal contact
+            100    0.03 V
+          1,000    0.30 V
+          3,200    0.80 V   edge of comfortable
+          4,350    1.00 V   edge of guaranteed
+         10,000    1.65 V
+         27,000    2.41 V   <- MEASURED
+     37,000,000    3.30 V   on hook, measured
+
+  74HC14 thresholds at 3V3. INTERPOLATED: the datasheet gives 2.0 / 4.5 / 6.0 V
+  and not 3.3 V.
+      VT+   typical ~1.7 V   worst case up to ~2.3 V
+      VT-   typical ~1.0 V   worst case down to ~0.7 V
+
+AS MEASURED, IT FAILS
+---------------------
+  2.41 V is above even the WORST-CASE VT+. The Schmitt input never leaves logic
+  high and the hook never registers as closed. Not marginal, not a debounce
+  question: about 8x too high.
+
+  It would present as a completely dead hook switch on an instrument where
+  everything else works, which is the kind of fault that gets blamed on
+  firmware for a day before anyone measures the input.
+
+  To pass, the switch must be under:
+      2.69 kohm   for 0.7 V, the guaranteed worst-case VT-
+      4.35 kohm   for 1.0 V, typical
+
+BUT THIS IS ALMOST CERTAINLY NOT THE SWITCH
+-------------------------------------------
+  Two things say the 27 kohm belongs to the phone's circuitry and not to a
+  pair of contacts:
+
+  1. A MECHANICAL HOOK LEVER IS METAL. Closed, it should read essentially
+     zero. Nothing about a lever and a contact produces 27 kohm.
+  2. ON HOOK READ 37 Mohm, NOT OPEN CIRCUIT. Genuinely open contacts read OL.
+     A finite tens-of-megohm figure is leakage through a semiconductor or
+     across a board. Something is in the path.
+
+  Probed through a cable into a separate board, the reading is the switch in
+  series or parallel with whatever that board puts across it.
+
+  THIS IS THE THIRD TIME THIS SHAPE HAS APPEARED IN THIS PROJECT:
+      - hot-melt glue on the handset capsule, hiding the DC resistance
+      - the continuity beeper on the keypad, which would have hidden a healthy
+        key behind silence
+      - and now a hook switch measured through the board it is wired to
+  Each time the instrument or the setup reported itself rather than the part.
+
+AND IT MAY NOT MATTER AT ALL
+----------------------------
+  LOA REPLACES THE PHONE'S MAINBOARD. Whatever network produced 27 kohm is
+  scrap. caryatid wires to the switch contacts directly, which is exactly how
+  the keypad was reached: at its own header, not through the mainboard. If the
+  contacts are metal, this closes at zero cost.
+
+NEXT MEASUREMENT
+----------------
+  THE SWITCH CONTACTS THEMSELVES. Cable disconnected at BOTH ends, probe the
+  switch terminals on the large board.
+
+      expect      near zero ohm off hook, OL on hook
+      that gives  clears acceptance by two orders of magnitude, record closes
+
+  IF IT STILL READS TENS OF KOHM it is not a plain mechanical switch. Check
+  what it is before redesigning anything: an optical interrupter is exactly
+  this shape, a phototransistor conducting at tens of kohm; so is a Hall
+  sensor; so is a plain switch with a resistor beside it on the same board.
+
+  ALSO RECORD WHICH WAY ROUND. Off hook is the handset LIFTED. Note whether
+  the contacts close on lift or on rest. ADR 0007's polarity argument depends
+  on it: switch-open must be the safe state, which for loa is on hook, silent,
+  mic bias off. Getting this backwards means a broken lead leaves the
+  instrument live with the mic hot, which is the outcome the ADR chose the
+  inverted polarity specifically to avoid.
+
+NOT A FIX YET, and listed only so it is not reinvented under pressure:
+  - raising the pull-up above 100 kohm would put 27 kohm under 0.7 V, but it
+    slows the RC and raises noise pickup on an unshielded panel lead, which is
+    the exact thing ADR 0007 chose the RC to suppress
+  - a plain microswitch on the hook lever makes the input metal again and is
+    cheaper and more robust than any of it
+  None of this is actionable until the contacts are measured.
+
+ALSO RECORDED THIS SESSION
+--------------------------
+  THE PHONE HAS FOUR BOARDS, which was not written down anywhere before:
+      1. keypad board, HA(41)T-25 KB T1, connector PX
+      2. large board, carries the off-hook switch
+      3. a separate board the off-hook cable runs to
+      4. a fourth, not yet characterised
+  Only the keypad and the hook switch are wanted. The rest is line circuit and
+  is replaced by caryatid.

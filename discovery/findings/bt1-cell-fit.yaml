@@ -177,7 +177,12 @@ evidence:
     shorter cell fitted later. For an instrument whose cell is fitted once and
     rarely removed that is a mild consequence. It is not zero.
 
-last_verified: 2026-08-23
+  - "2026-08-31: NOT RESOLVABLE YET. The BT1 module has not arrived, so the
+     conflict cannot be settled by measurement. This is a WAITING state, not an
+     unexamined one. Do not re-flag it at checkpoint as though it were
+     neglected; it reopens when the part is in hand"
+
+last_verified: 2026-08-31
 
 notes: >-
   RESOLVED 2026-08-23 BY THE STEP MODEL, AND THE ANSWER IS "IT FITS, UNDER
