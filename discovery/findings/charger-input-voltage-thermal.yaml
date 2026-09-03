@@ -1,0 +1,160 @@
+id: charger-input-voltage-thermal
+kind: other
+source_claim: >-
+  That the barrel input's "5-9 V" range is a range of equally good choices.
+  Every document states it as a bare range. None says which end to prefer or
+  why, so the obvious reading is that anything inside it is fine.
+source_ref: >-
+  docs/power-sheet.md, "The barrel input is specified 5-9 V" and "5-9 V, never
+  12 V"; docs/connectors.md J1, "5-9 V in"; docs/bringup.md consumables list as
+  first written, "DC adapter for J1, 5 to 9 V".
+resource: >-
+  U1, BQ24074RGT, and what supply voltage to feed J1 during bring-up and in
+  service
+status: in-progress    # arithmetic solid, thermal limit rests on an ESTIMATED theta-JA
+
+the_thing_that_was_missed: >-
+  THE BQ24074 IS A LINEAR CHARGER. It does not convert the input down, it burns
+  the difference between input and cell as heat in its own package. So the
+  input voltage is not a compatibility question with a wide safe band. It is
+  directly a power dissipation number, and the two ends of the stated range are
+  a factor of five apart.
+
+  The documents are not wrong. 5-9 V is genuinely the tolerated range, bounded
+  below by the 4.35 V the part needs at IN and above by the 10.2-10.8 V OVP
+  trip. What is missing is that the range describes what the part SURVIVES and
+  says nothing about what it should be GIVEN.
+
+arithmetic:
+  # P = (Vin_at_IC - Vbat) x Icharge,  Vin_at_IC = Vsupply - 0.4 V for D1.
+  # D1 forward drop from power-sheet.md. Charge current 1 A from values.md.
+  dissipation_watts_at_1A:
+    #  supply : [Vbat 3.0, Vbat 3.7, Vbat 4.2]
+    "5.0V": [1.60, 0.90, 0.40]
+    "6.0V": [2.60, 1.90, 1.40]
+    "7.5V": [4.10, 3.40, 2.90]
+    "9.0V": [5.60, 4.90, 4.40]
+  budget_watts: 1.2
+  budget_basis: >-
+    QFN-16-EP on 2-layer FR4 with the via array from values.md, taken at about
+    50 C/W, holding the junction to 85 C in a 25 C room. A 60 C rise at 50 C/W
+    is 1.2 W.
+  conclusion: >-
+    At 5 V mid-charge the part dissipates 0.90 W and sits inside budget, so it
+    charges at the full 1 A. At 9 V it dissipates 4.90 W, four times budget.
+
+what_actually_happens_at_9V: >-
+  NOT DAMAGE. The bq24074 thermally regulates: it folds the charge current back
+  to hold its own junction temperature. So a 9 V adapter gives a charger that
+  runs hot and charges slowly, not one that fails. Rough foldback is on the
+  order of 250 mA against the 1000 mA R3 sets, which turns a four hour charge
+  into most of a day.
+
+  🔴 THETA-JA IS AN ESTIMATE AND HAS NOT BEEN MEASURED on this board. The
+  245 mA figure is therefore NOT A CLAIM, it is an order of magnitude. What
+  does not depend on the estimate is the RATIO: 4.90 W against 0.90 W is 5.4x,
+  and no plausible theta-JA makes those two equivalent.
+
+the_recommendation_is_safe_either_way: >-
+  Worth stating plainly, because the record is `in-progress`: 5 V is never
+  worse than 9 V here. Lower input on a linear charger is strictly less heat,
+  down to the 4.35 V floor. So the recommendation does not wait on the
+  measurement; only the size of the effect does.
+
+  USE 5 V.
+
+but_9V_IS_fine_with_no_cell_fitted: >-
+  The dissipation is charge current times voltage difference, and with NO CELL
+  IN THE HOLDER there is no charge current. So bring-up Stages 2 and 3, which
+  are explicitly run with no cell, are indifferent to the supply voltage.
+
+  This matters because 9 V is BETTER for the series-resistor ladder, see below.
+  The thermal argument starts at Stage 4, when a cell goes in.
+
+the_ladder_interaction:
+  # Discovered while answering "what supply should I use", 2026-09-03. It is a
+  # genuine defect in docs/bringup.md as first written.
+  problem: >-
+    Stage 2's first rung is a 100 ohm series resistor. The charger needs 4.35 V
+    at IN, which is 4.75 V at J1 after D1. At a 5 V supply and a few mA of idle
+    draw, 100 ohm drops the board to about 4.50 V and THE CHARGER NEVER STARTS.
+    The runbook would have had the operator reading a dead VOUT at step 2.4 and
+    hunting a fault that was in the test rig.
+  the_table:
+    # supply, R, V at J1 at 5 mA idle, charger runs, dead-short current
+    - ["5V", 100, 4.50, false, "50 mA"]
+    - ["5V",  47, 4.76, true,  "106 mA"]
+    - ["5V",  10, 4.95, true,  "500 mA"]
+    - ["9V", 100, 8.50, true,  "90 mA"]
+    - ["9V",  47, 8.77, true,  "191 mA"]
+    - ["9V",  10, 8.95, true,  "900 mA"]
+  resolution: >-
+    Two ways out and both are recorded in the runbook. With a 9 V supply the
+    ladder works as written, because the headroom absorbs the drop and there is
+    no cell to heat anything. With only a 5 V supply, START AT 47 OHM: a dead
+    short is 106 mA, still harmless, and the board keeps 4.76 V.
+
+    Either way, step 2.1 is a SHORT DETECTOR and not a functional test. That
+    distinction was implicit in the runbook and is now explicit.
+
+j1_is_not_a_barrel_jack: >-
+  ANOTHER DEFECT IN THE RUNBOOK AS FIRST WRITTEN. Its consumables list said
+  "DC adapter for J1, 5 to 9 V, centre-positive barrel". J1 IS A JST-XH 2 WAY
+  HEADER. The barrel jack is panel-mounted on the instrument and wires back to
+  J1; the board has no barrel connector on it.
+
+  So bench power needs the adapter AND a way into a 2-way JST-XH: a pigtail
+  lead, or clips on J1's through-hole pins.
+
+  polarity: >-
+    J1.1 is the D1 anode, the centre pin of the panel jack, POSITIVE.
+    J1.2 is GND, the sleeve. Both are silkscreened on the board.
+  reverse_polarity_is_survivable: >-
+    D1 is in series, so reversed input BLOCKS rather than destroys. That is
+    protection worth knowing about and not worth relying on.
+
+current_requirement: >-
+  R2 is 1.2 kohm, giving a 1.29 A input limit per values.md. A supply that can
+  deliver 1.5 A or more at 5 V will never be the limiting element. For Stages 2
+  and 3, with no cell and no load, the draw is a few mA and almost anything
+  works. A 5 V 2 A USB supply covers both cases and is the easiest thing to
+  obtain, since 5 V is exactly what USB is.
+
+how_to_close_this_record: >-
+  AT STAGE 4, with a cell charging, measure:
+    - the actual charge current, against the 0.90 to 1.10 A band
+    - U1's case temperature after ten minutes at a steady state
+  At 5 V the current should sit in band and the case should be warm rather than
+  hot. That measures the real theta-JA in situ and turns the estimate above
+  into a figure. If the current is in band, the thermal question is closed for
+  5 V operation regardless of what theta-JA turns out to be.
+
+evidence:
+  - "2026-09-03: derived, not measured. Dissipation computed from documented
+     figures only: D1 forward drop 0.4 V and the 4.35 V IN minimum from
+     power-sheet.md, charge current 1 A from values.md. At 1 A the part burns
+     0.90 W from a 5 V supply and 4.90 W from a 9 V supply at a 3.7 V cell,
+     a ratio of 5.4. Thermal budget of ~1.2 W uses an ESTIMATED 50 C/W for a
+     QFN-16-EP on 2-layer FR4; that estimate is not measured and the foldback
+     figure that follows from it is an order of magnitude, not a claim"
+  - "2026-09-03: two defects found in docs/bringup.md as first written, both
+     while answering what supply to use. Its consumables list called J1 a
+     barrel jack when J1 is a JST-XH 2 way header and the barrel is panel-side.
+     And its 100 ohm first ladder rung drops a 5 V supply to ~4.50 V at J1,
+     below the 4.75 V the charger needs, so the charger would not have started
+     and the runbook would have sent the operator hunting a fault in the rig.
+     Both corrected"
+
+last_verified: 2026-09-03
+
+notes: >-
+  THE SHAPE HERE IS THE ONE THIS PROJECT KEEPS MEETING. A range was recorded
+  faithfully and the thing that made one end of it much better than the other
+  was never written down, because at capture time nobody was choosing a supply.
+  The keypad had "beep it out" with no threshold. The connector had 9.0 mm with
+  no datum. This had "5-9 V" with no preference.
+
+  A RANGE IS NOT A RECOMMENDATION. When a document states one, it is worth
+  asking whether the range is what the part tolerates or what it should be
+  given, because those are different documents and only one of them was
+  written.

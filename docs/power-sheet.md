@@ -20,6 +20,15 @@ default-to-maximum pin.
 **`ITERM` is deliberately left unconnected** on the '74 to select the default 10%
 termination. Put a no-connect flag on it so ERC knows it is intentional.
 
+**5 to 9 V is what the part tolerates, not a set of equally good choices. Feed
+it 5 V.** The bq24074 is a *linear* charger and burns the input-to-cell
+difference in its own package: at 1 A into a 3.7 V cell that is **0.90 W from a
+5 V supply and 4.90 W from a 9 V one**, against roughly 1.2 W of thermal budget
+for a QFN-16-EP on 2-layer FR4. Nothing is damaged at 9 V, because the part
+folds the charge current back to protect itself, but it runs hot and charges
+slowly. Derivation and the caveat on the estimated θJA are in
+[`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml).
+
 Two more numbers worth having: `IN` is rated to **28 V** absolute, but the '74's
 input over-voltage protection trips at **10.2–10.8 V** — which is where "5–9 V,
 never 12 V" comes from. And `CHG`/`PGOOD` sink at most **15 mA**.

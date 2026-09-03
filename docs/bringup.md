@@ -55,14 +55,53 @@ gap is recorded as untested rather than quietly counted as passed.
 current limit. It is not required to finish this runbook, and it is the single
 most useful thing to own the next time a board arrives.
 
+### Which supply
+
+**Use 5 V.** The stated 5 to 9 V range is what the part tolerates, not a set of
+equally good choices, and the two ends are a factor of five apart on heat.
+
+**The bq24074 is a linear charger.** It does not convert the input down, it
+burns the difference between input and cell in its own package:
+
+| supply | at the IC | cell 3.0 V | cell 3.7 V | cell 4.2 V |
+| --- | --- | --- | --- | --- |
+| **5.0 V** | 4.60 V | 1.60 W | **0.90 W** | 0.40 W |
+| 6.0 V | 5.60 V | 2.60 W | 1.90 W | 1.40 W |
+| 7.5 V | 7.10 V | 4.10 W | 3.40 W | 2.90 W |
+| 9.0 V | 8.60 V | 5.60 W | **4.90 W** | 4.40 W |
+
+A QFN-16-EP on 2-layer FR4 has roughly 1.2 W of budget holding the junction to
+a sane temperature. 5 V sits inside it and charges at the full 1 A. 9 V is four
+times over, and the part protects itself by folding the charge current back, so
+a 9 V adapter gives a hot charger and most of a day to fill a cell.
+
+**Nothing is damaged either way**, and 5 V is never worse than 9 V here, so the
+choice is safe to make before the measurement that confirms the size of it. See
+[`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml),
+which is `in-progress` because the thermal budget rests on an estimated θJA
+that Stage 4 will measure.
+
+**With no cell fitted there is no charge current and therefore no heat.** So
+Stages 2 and 3 are indifferent to supply voltage, and 9 V is actually *better*
+there because of the ladder. The thermal argument starts at Stage 4.
+
 ### Consumables and rigs you need
 
 Confirm you have these **before** starting. Several are not on any BOM, because
 they are test equipment rather than parts.
 
-- [ ] **DC adapter for J1**, 5 to 9 V, centre-positive barrel.
+- [ ] **A 5 V supply, 1.5 A or better.** A 5 V 2 A USB brick is ideal, because
+      5 V is exactly what USB is. **Use 5 V, not 9 V**, for the reason in
+      [Which supply](#which-supply) below.
       🔴 **Never 12 V.** The bq24074's input over-voltage protection trips at
-      10.2 to 10.8 V. See [power-sheet.md](power-sheet.md).
+      10.2 to 10.8 V.
+- [ ] 🔴 **A way into J1, which is NOT a barrel jack.** J1 is a **JST-XH 2 way
+      header**; the barrel jack is panel-mounted on the instrument and wires
+      back to it. You need a JST-XH 2 pigtail, or clips on J1's through-hole
+      pins. **J1.1 is positive** (D1 anode, the jack's centre pin), J1.2 is
+      GND. Both are silkscreened. D1 is in series, so reversed input blocks
+      rather than destroys, which is protection worth knowing and not worth
+      relying on.
 - [ ] **Series resistors for the power ladder**: one 100 Ω and one 10 Ω, both
       **1 W or better**. A 100 Ω at 9 V dissipates 0.81 W into a dead short.
 - [ ] **Test leads with clips.** Hand-held probes on a 0603 pad is how the loa
@@ -185,11 +224,24 @@ Wire the adapter to J1 **through a series resistor**, and measure the voltage
 **across the resistor**. Current is that drop divided by the resistance. This
 gives you both a limiter and an ammeter with the one instrument you have.
 
-| Step | Series R | Worst case at 9 V | What to look for |
-| --- | --- | --- | --- |
-| 2.1 | **100 Ω** | 90 mA into a dead short | drop should be small: a healthy idle board is a few mA, so expect well under 1 V |
-| 2.2 | **10 Ω** | 900 mA | drop of tens of mV; recompute the current and confirm it agrees with 2.1 |
-| 2.3 | **direct** | unlimited | proceed only if 2.1 and 2.2 both gave a sane, stable current |
+**Which resistor to start with depends on your supply**, and getting this wrong
+wastes an evening chasing a fault that is in the rig. The charger needs 4.35 V
+at `IN`, which is **4.75 V at J1** after D1's 0.4 V.
+
+| supply | first rung | V at J1 at idle | charger runs | dead short |
+| --- | --- | --- | --- | --- |
+| 9 V | **100 Ω** | 8.50 V | yes | 90 mA |
+| 5 V | 100 Ω | 4.50 V | 🔴 **no, too low** | 50 mA |
+| 5 V | **47 Ω** | 4.76 V | yes | 106 mA |
+
+**On 5 V, start at 47 Ω, not 100 Ω.** On 9 V, 100 Ω is fine and there is no
+cell to heat anything.
+
+| Step | Series R | What to look for |
+| --- | --- | --- |
+| 2.1 | **47 Ω** on 5 V, **100 Ω** on 9 V | 🔴 **This rung is a short detector, not a functional test.** You are asking "is the current sane", not "does it work". A healthy idle board is a few mA |
+| 2.2 | **10 Ω** | drop of tens of mV. Recompute the current, confirm it agrees with 2.1, and check `VOUT` here rather than at 2.1 |
+| 2.3 | **direct** | proceed only if 2.1 and 2.2 both gave a sane, stable current |
 
 🔴 **A large drop at step 2.1 means the board is drawing heavily. Stop.** At
 100 Ω the board is protected; that is the whole reason for starting there. Do
@@ -280,10 +332,12 @@ life.
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 4.6 | Barrel in, cell fitted, partially discharged | `/CHG` asserts at J4 |
+| 4.6 | 🔴 **Switch to a 5 V supply if you used 9 V for Stages 2 and 3.** This is where the thermal argument starts | |
+| 4.6b | Barrel in, cell fitted, partially discharged | `/CHG` asserts at J4 |
 | 4.7 | Measure charge current into the cell | **0.90 to 1.10 A** |
 | 4.8 | Watch `VBAT` over some minutes | rising |
 | 4.9 | Measure total input current | under the **1.29 A** input limit |
+| 4.10 | Feel U1 after ten minutes at steady state | warm, not hot. **This closes [`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml)**: a charge current in band with a merely warm case measures the θJA that record had to estimate |
 
 The 0.90 to 1.10 A band is wide **and that is not slop in the resistor**. R3 is
 887 Ω at 1%, but `KISET` spans 797 to 975 AΩ across the part's own tolerance, so
