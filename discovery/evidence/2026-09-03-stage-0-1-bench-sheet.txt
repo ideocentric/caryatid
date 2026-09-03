@@ -1,0 +1,252 @@
+caryatid batch 1: STAGE 0 and STAGE 1 bench sheet
+=================================================
+
+  Five boards, JLC order 2026-08-23, arrived 2026-09-01.
+  Runbook: docs/bringup.md. This is the working sheet, fill it in at the bench.
+  BLANK. Nothing below is a result yet.
+
+  NO POWER IS APPLIED IN EITHER OF THESE STAGES. The adapter stays unplugged
+  and the cells stay in the drawer until Stage 2.
+
+
+ON THE BENCH
+------------
+  [ ] multimeter, resistance + diode test
+  [ ] test leads WITH CLIPS. Do not hand-hold probes.
+  [ ] marker pen
+  [ ] good light and, if you have one, magnification
+  [ ] local/fab/board-top.png  and  caryatid-board.pdf  open on screen
+
+  NOT needed yet: adapter, cells, holders, screws, Seed, shunts, cables.
+
+
+FIRST: NUMBER THE BOARDS
+------------------------
+  Write 1 to 5 on the BOTTOM silkscreen of each board, somewhere nothing will
+  later cover. Every reading on this sheet is against that number.
+
+  Boards that are physically indistinguishable produce indistinguishable
+  results, and then a batch fault reads as a flaky board.
+
+  [ ] done
+
+
+===========================================================================
+STAGE 0: INVENTORY AND VISUAL
+===========================================================================
+
+0.1  COUNT
+     boards received: ......   expected 5
+
+0.2  PHOTOGRAPH
+     Both faces of each board, in focus, whole board in frame. Ten images.
+     Save to discovery/evidence/ as 2026-09-03-board-N-top.jpg / -bottom.jpg.
+
+        board  1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+     Do this BEFORE handling. A photograph of an undamaged board is only
+     available once.
+
+0.3  PART CENSUS, BY SWEEP BAND
+     127 placed parts. Sweep from the J1 end to the J15 end, band by band,
+     rather than hunting designators. Within a band the list runs top to
+     bottom as the board sits with J1 to your left.
+
+     Tick a band when every part in it is present. Note any absentee.
+
+     BAND 1  (41)  J1 end
+        C1    D1    J1    R4    R3    R2    U1    R1    C3    C2
+        J3    C9    R18   R14   J4    R15   R16   R5    R9    R17
+        R6    R8    R7    R10   FB1   U2    C6    C5    C4    L1
+        C19   R34   R35   C20   R36   R37   J11   C21   R38   R39
+        J6
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     BAND 2  (14)
+        A2    R42   A1    C7    R27   R28   R29   R30   R31   C18
+        J16   U3    J7    J8
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     BAND 3  (19)
+        R11   R12   R13   C8    C15   C17   C16   C14   R25   R26
+        R24   R41   R40   R23   R43   R32   R33   J19   J15
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     BAND 4  (15)
+        C12   C11   C10   C13   R22   R21   R20   R19   JP1   JP2
+        JP3   C24   R67   J9    R45
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     BAND 5  (10)
+        J13   R44   J5    JP4   JP5   JP6   C28   R68   R46   J10
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     BAND 6  (28)  J15 end
+        J12   R49   R47   J17   J18   J14   C30   R52   R51   R58
+        C22   C25   C23   R55   R56   R63   R57   U4    R61   R65
+        C27   R59   R60   C26   C29   R62   R54   R53
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     missing: ..................
+
+     R45 IS WORTH A SECOND LOOK. It sits in band 4 beside J9/J10 and it is the
+     one resistor on the board whose pads were stored at a half turn against
+     the footprint, fixed in the file on 2026-08-22. Harmless by geometry, but
+     it is the one part where file and reality were known to disagree.
+
+0.4  BT1 ABSENT.  It is self_fit and you solder it in Stage 4.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+0.5  JP1 to JP6 BARE, no shunts fitted yet.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+0.6  SOLDER BRIDGES, TOMBSTONES, SKEWED PARTS.
+     Look hardest at U1 (QFN-16, 0.5 mm pitch), U3 and U4, and the two 20-pin
+     Seed sockets. 64 of the 127 parts are 0603 resistors; a tombstone stands
+     visibly on end.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]     notes: ..................
+
+0.7  IC ORIENTATION vs local/fab/board-top.png.
+     U1 BQ24074 QFN-16-EP, U2 TPS61023 SOT-563, U3, U4.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+0.8  C7 POLARITY. The 100 uF electrolytic, band 2, near the Seed sockets.
+     The only polarised passive on the board.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+0.9  IDC PIN 1 AND JST POLARITY on J5 and J11.
+     sourcing.md flags these specifically: the footprints came from absonus,
+     which proves they FABRICATE, not that they are correct for this board.
+     Check the pin-1 marker against the schematic, not against absonus.
+        1 [ ]  2 [ ]  3 [ ]  4 [ ]  5 [ ]
+
+  GATE: record faults, do NOT fix anything yet. Finish the inventory on all
+  five first. The same defect on several boards is a batch fault and tells you
+  something that a quick fix would erase.
+
+
+===========================================================================
+STAGE 1: DEAD-BOARD ELECTRICAL
+===========================================================================
+
+  Meter in RESISTANCE. Still no power.
+
+  🔴 READ THIS BEFORE THE FIRST MEASUREMENT
+  -----------------------------------------
+  THE BULK CAPACITORS WILL FOOL YOU. C1, C2, C3, C4, C5, C6 are 10 to 22 uF
+  and C7 is 100 uF. The meter's own test current charges them, so a rail-to-
+  ground reading STARTS LOW AND CLIMBS. That looks exactly like a short.
+
+      WAIT FOR THE READING TO SETTLE. A real short sits at its value and does
+      not move. A capacitor climbs, and keeps climbing.
+
+      Between measurements, short the rail to ground briefly to discharge it,
+      or the next reading starts from wherever the last one left it.
+
+  PROBE AT CONNECTOR PINS, not at fine-pitch parts. Every rail reaches a
+  connector, and THE BOARD SILKSCREENS ALL 77 CONNECTOR PIN NAMES. Read the
+  board. Do not work from memory, and do not work from this sheet where the
+  board itself will tell you.
+
+
+1a   RAIL TO GROUND
+     -------------
+     Efficient order: probe every rail ONE WAY first (red on rail, black on
+     GND). A high settled reading is a pass and needs nothing more. ONLY where
+     it reads low do you reverse the probes, because that is the only case
+     where the answer matters.
+
+       low one way, high the other  -> a semiconductor junction. NORMAL.
+       low BOTH ways                -> 🔴 SHORT. Stop on that board.
+
+     rail      reach it at            b1        b2        b3        b4        b5
+     -------   -------------------    ------    ------    ------    ------    ------
+     VIN_DC    J1                     ......    ......    ......    ......    ......
+     VBAT      BT1 pads               ......    ......    ......    ......    ......
+     VOUT      J3, J4                 ......    ......    ......    ......    ......
+     +5V       J12 pin 1              ......    ......    ......    ......    ......
+     +3V3      J16 pin 2              ......    ......    ......    ......    ......
+     +3V3A     J9 pin 1, J10 pin 1    ......    ......    ......    ......    ......
+     +3V3D     J11 pin 1              ......    ......    ......    ......    ......
+
+     reversed, only where needed:
+     ....................................................................
+
+     🔴 GATE: any rail under ~10 ohm settled in BOTH polarities stops that
+     board. Do not power it. Find the bridge.
+
+
+1b   RAIL TO RAIL
+     ------------
+     A stray bridge between adjacent connector pins shows here and NOT in 1a,
+     because both ends are live rails and neither is ground.
+
+     pair                b1        b2        b3        b4        b5
+     ----------------    ------    ------    ------    ------    ------
+     +5V  <-> +3V3       ......    ......    ......    ......    ......
+     +3V3 <-> +3V3A      ......    ......    ......    ......    ......
+     +3V3A<-> +3V3D      ......    ......    ......    ......    ......
+     VOUT <-> +5V        ......    ......    ......    ......    ......
+
+     +3V3, +3V3A and +3V3D are SEPARATE NETS on this board and must not read
+     as one. If they do, that is either a bridge or a misunderstanding of the
+     board, and it is worth resolving before Stage 2 either way.
+
+
+1c   GROUND CONTINUITY
+     -----------------
+     AGND and DGND are one net here. Both should be continuous with the main
+     pour and with each other, near 0 ohm.
+
+     J5 pin 10 <-> J11 pin 10     b1 ......  b2 ......  b3 ......  b4 ......  b5 ......
+
+     An OPEN reading is as much a fault as a short: it means a pour or a via
+     did not do its job, and the ground stitching was one of the last things
+     done to this board.
+
+
+1d   D1 ORIENTATION
+     --------------
+     Diode test across D1, the SS34 in band 1.
+
+       forward   expect 0.2 to 0.4 V. A SCHOTTKY, LOWER than silicon's 0.6 V.
+                 A reading near 0.6 to 0.7 V means it is not the part you
+                 think it is.
+       reverse   open
+
+     b1 fwd ......  b2 fwd ......  b3 fwd ......  b4 fwd ......  b5 fwd ......
+
+     Reversed, D1 blocks the input instead of protecting it and the board
+     simply never powers. That failure is silent and looks like a dead board.
+
+
+1e   SEED SOCKET
+     -----------
+     A1 and A2, 20 pins each, 40 joints. This is where a bridge is most likely
+     and most expensive, because the part you would destroy plugs into it.
+
+     [ ] no adjacent pins bridged, A1        1 [ ] 2 [ ] 3 [ ] 4 [ ] 5 [ ]
+     [ ] no adjacent pins bridged, A2        1 [ ] 2 [ ] 3 [ ] 4 [ ] 5 [ ]
+     [ ] A1 row not shorted to A2 row        1 [ ] 2 [ ] 3 [ ] 4 [ ] 5 [ ]
+
+
+===========================================================================
+GATE OUT OF STAGE 1
+===========================================================================
+
+  ALL FIVE BOARDS PASS 1a THROUGH 1e BEFORE ANY BOARD IS POWERED.
+
+  This is the stage that finds a batch fault, and a batch fault found here
+  costs an evening. Found in Stage 2 it costs a bq24074, and found in Stage 7
+  it costs a Daisy Seed.
+
+  boards passing: ............................
+  boards held:    ............................   reason: ..................
+
+
+NOTES, and anything this sheet got wrong
+----------------------------------------
+  The runbook has never been run. Write down what was ambiguous, missing or
+  simply wrong, because Stage 9 repeats all of this four more times and the
+  corrections are worth more than the readings.
+
+
+
