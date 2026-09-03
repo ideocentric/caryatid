@@ -113,12 +113,64 @@ j1_is_not_a_barrel_jack: >-
     D1 is in series, so reversed input BLOCKS rather than destroys. That is
     protection worth knowing about and not worth relying on.
 
-current_requirement: >-
-  R2 is 1.2 kohm, giving a 1.29 A input limit per values.md. A supply that can
-  deliver 1.5 A or more at 5 V will never be the limiting element. For Stages 2
-  and 3, with no cell and no load, the draw is a few mA and almost anything
-  works. A 5 V 2 A USB supply covers both cases and is the easiest thing to
-  obtain, since 5 V is exactly what USB is.
+current_rating:
+  # Answered 2026-09-03. The first version of this block said "1.5 A or more
+  # will never be the limiting element", which is true about CURRENT and misses
+  # the reason the rating actually matters.
+  answer: >-
+    5 V at 3 A. Two amps is the working minimum. Anything at or below 1.29 A is
+    not enough to test the charger at all.
+
+  the_board_can_never_draw_more_than_1.29_A: >-
+    The bq24074 enforces its own input limit, IIN-MAX = KILIM / RILIM, and R2 is
+    1.2 kohm against KILIM 1550 AΩ. That is a HARD CEILING at 1.29 A: the chip
+    will not pull more from the input whatever is plugged in, and it prioritises
+    the system load and gives the remainder to charging. So on consumption alone
+    1.5 A would cover it.
+
+  🔴 but_you_size_it_for_VOLTAGE_not_CURRENT: >-
+    THE SAG BUDGET IS ABOUT 3 PERCENT AND THAT IS WHAT DECIDES THE RATING.
+
+    The charger needs 4.35 V at IN. D1 drops 0.4 V at low current and nearer
+    0.5 V at 1.3 A, so J1 must hold 4.75 to 4.85 V. From a nominal 5.00 V that
+    leaves 150 to 250 mV of sag before the charger stalls or drops out of
+    constant current.
+
+    A 5 V supply loaded near its rating routinely sags 3 to 8 percent. One
+    loafing at 40 percent of rating holds within 1 to 2 percent. So the reason
+    to buy 3 A is not that the board wants 3 A; it is that a supply at 43
+    percent load keeps its voltage up and one at 86 percent may not.
+
+  by_rating:
+    # rating, % loaded at 1.29 A, verdict
+    - ["1.0 A", "129%", "CANNOT reach full charge current. Stage 4.7 untestable"]
+    - ["1.5 A", "86%",  "tight. Likely to sag into the charger's dropout"]
+    - ["2.0 A", "65%",  "adequate. The working minimum"]
+    - ["3.0 A", "43%",  "comfortable. What to buy if choosing"]
+
+  🔴 usb_has_two_traps: >-
+    USB-A FROM A COMPUTER IS NOT ENOUGH. A USB 2.0 port gives 0.5 A and USB 3.0
+    gives 0.9 A, both under the 1.29 A the charger will try to take. The charge
+    test in Stage 4.7 cannot pass on one, and it will look like a charger fault.
+
+    USB-C WITHOUT CC RESISTORS GIVES NOTHING AT ALL. A compliant USB-C source
+    keeps VBUS off until it detects a sink presenting 5.1 kohm pull-downs on CC.
+    A bought USB-C-to-barrel adapter normally includes them; a hand-made cable
+    to bare wire will not, and the symptom is a dead supply rather than a weak
+    one.
+
+    SAFEST: a legacy USB-A charger rated 2.4 A or more, or a plain 5 V 3 A
+    barrel wall-wart. Both deliver 5 V with no negotiation.
+
+  measure_it_before_trusting_it: >-
+    Meter across J1 WITH THE BOARD CHARGING, not at the supply's own terminals
+    unloaded. Below 4.75 V and the charger will stall or fold back, and it will
+    look exactly like a board fault. This is a five second check that removes a
+    whole class of confusing Stage 4 results.
+
+  stages_2_and_3_need_almost_nothing: >-
+    No cell, no load, a few mA. Any 5 V source works for those. The rating only
+    matters from Stage 4, which is the same boundary as the thermal argument.
 
 how_to_close_this_record: >-
   AT STAGE 4, with a cell charging, measure:

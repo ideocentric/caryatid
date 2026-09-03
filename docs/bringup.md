@@ -85,14 +85,43 @@ that Stage 4 will measure.
 Stages 2 and 3 are indifferent to supply voltage, and 9 V is actually *better*
 there because of the ladder. The thermal argument starts at Stage 4.
 
+### And why 3 A, when the board caps itself at 1.29 A
+
+R2 is 1.2 kΩ, so the bq24074 enforces a **1.29 A hard ceiling** on its own
+input. The board cannot draw more whatever you plug in. On consumption alone
+1.5 A would do.
+
+**You size it for voltage, not current.** The charger needs 4.35 V at `IN` and
+D1 drops 0.4 to 0.5 V, so J1 must hold **4.75 to 4.85 V**. From a nominal 5.00 V
+that is only **150 to 250 mV of sag budget**, about 3%. A supply near its rating
+routinely sags 3 to 8%; one at 40% load holds within 1 to 2%.
+
+| rating | loaded at 1.29 A | |
+| --- | --- | --- |
+| 1.0 A | 129% | cannot reach full charge current, Stage 4.7 untestable |
+| 1.5 A | 86% | tight, likely to sag into dropout |
+| **2.0 A** | 65% | adequate, the working minimum |
+| **3.0 A** | 43% | comfortable, what to buy if choosing |
+
+**Measure it at J1 with the board charging**, not at the supply unloaded. Below
+4.75 V the charger stalls or folds back, and it looks exactly like a board
+fault.
+
 ### Consumables and rigs you need
 
 Confirm you have these **before** starting. Several are not on any BOM, because
 they are test equipment rather than parts.
 
-- [ ] **A 5 V supply, 1.5 A or better.** A 5 V 2 A USB brick is ideal, because
-      5 V is exactly what USB is. **Use 5 V, not 9 V**, for the reason in
-      [Which supply](#which-supply) below.
+- [ ] **A 5 V supply, 3 A. Two amps is the working minimum.** Not because the
+      board draws it: the bq24074 caps its own input at **1.29 A**. Because the
+      charger's sag budget is only about **3%**, and a supply loafing at 43% of
+      rating holds its voltage where one at 86% does not. **Use 5 V, not 9 V**,
+      per [Which supply](#which-supply).
+      🔴 **A computer's USB port will not do**: 0.5 A on USB 2.0, 0.9 A on
+      USB 3.0, both under 1.29 A. And a hand-made USB-C lead gives **nothing**,
+      because a compliant USB-C source keeps VBUS off until it sees 5.1 kΩ CC
+      pull-downs. A legacy USB-A charger at 2.4 A or a plain 5 V 3 A barrel
+      wall-wart both work with no negotiation.
       🔴 **Never 12 V.** The bq24074's input over-voltage protection trips at
       10.2 to 10.8 V.
 - [ ] 🔴 **A way into J1, which is NOT a barrel jack.** J1 is a **JST-XH 2 way
