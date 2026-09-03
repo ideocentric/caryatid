@@ -99,12 +99,39 @@ measured_2026_08_31:
     That is exactly the chain ADR 0007 wanted, and 12-phone-build.md's "switch
     closed is high" is correct as written.
 
-  the_spare_pole: >-
-    loa needs ONE pole. The second is a spare, fully isolated changeover that
-    follows the hook. There is nowhere to put it today, since ADR 0007 notes
-    the Seed map is fully allocated with D30 the only spare, so it is headroom
-    for a future revision rather than capacity now. Worth knowing it exists
-    before anyone assumes the hook is a single contact.
+  🔴 the_second_pole_HAS_A_HOME_AND_IT_IS_J14: >-
+    CORRECTION 2026-09-02. This block previously said the second pole was spare
+    with "nowhere to put it today, since the Seed map is fully allocated". THAT
+    WAS WRONG, and it was wrong in a way that would have changed the wiring: it
+    reasoned from GPIO availability when the second pole does not need a GPIO.
+
+    THE BOARD WAS DESIGNED AROUND A TWO-POLE HOOK SWITCH. docs/audio.md: "A
+    telephone hook switch has more than one pole. Use one for the logic, the
+    other to gate the bias. Then the current only flows off-hook, it costs no
+    GPIO, and it keeps working if the firmware hangs." The bias return leaves on
+    J14 (JST-XH 2), pairing with MIC_RTN on J18 pin 3.
+
+      pole 1 -> J8  -> SW3 -> D7        the logic
+      pole 2 -> J14 -> MIC_RTN          gates mic bias in hardware
+
+    SO SIX TERMINALS IS NOT A HAPPY ACCIDENT. It is what the platform expects.
+
+  whether_LOA_actually_uses_the_second_pole_is_OPEN: >-
+    IT DEPENDS ON THE ELECTRET'S BIAS CURRENT, which is unmeasured.
+    docs/mic-configurations.md: "Electret and dynamic builds tie MIC_RTN to
+    ground in the loom." By that rule loa links J14 to ground and the second
+    pole really is spare.
+
+    BUT THAT RULE WAS WRITTEN FOR A CARBON CAPSULE'S ALTERNATIVE. The
+    capture-checklist puts R52/R54 at 220 ohm each, 23-41 mA for the pair, "up
+    to 16% of the typical rail load". If loa's electret draws anything like
+    that continuously it is worth gating, and the pole to gate it with is
+    already in hand and already has a connector.
+
+    DO NOT DECIDE THIS FROM THE RULE OF THUMB. It is the same question as
+    `mic-gain-budget`, which is still `unverified`, and it wants the capsule's
+    actual bias draw measured. Until then J14 is a link to ground OR a wire to
+    the second pole, and which one is not yet established.
 
   superseded_conflict_statements: >-
     RAISED 2026-08-31, within an hour of being recorded as confirmed. Two
@@ -309,6 +336,13 @@ evidence:
      measured the hook would never register. The finite 37 Mohm on-hook, where
      open contacts should read OL, indicates circuitry in the path and that the
      switch itself was not what was measured"
+  - "2026-09-02: CORRECTION to the 2026-09-01 entry below. It called the second
+     pole spare with 'nowhere to put it', reasoning from GPIO availability. The
+     second pole needs no GPIO: caryatid provides J14 for it, and docs/audio.md
+     designs for exactly this, gating mic bias in hardware so the current flows
+     only off-hook and survives a firmware hang. Whether LOA uses it is open and
+     turns on the electret's actual bias draw, which is `mic-gain-budget`,
+     still unverified"
   - "2026-08-31: THE SWITCH HAS SIX TERMINALS, almost certainly DPDT, two
      changeover poles. THIS DISSOLVES THE POLARITY CONFLICT RATHER THAN
      RESOLVING IT: both of Matt's statements are true of different contact
@@ -339,7 +373,7 @@ evidence:
      off-hook switch, a separate board the hook cable runs to, and a fourth not
      yet characterised"
 
-last_verified: 2026-08-31
+last_verified: 2026-09-02
 
 notes: >-
   THIS RECORD EXISTS TO PUT A NUMBER ON A CARRIED ASSUMPTION, which is the
