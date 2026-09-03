@@ -128,10 +128,26 @@ measured_2026_08_31:
     that continuously it is worth gating, and the pole to gate it with is
     already in hand and already has a connector.
 
-    DO NOT DECIDE THIS FROM THE RULE OF THUMB. It is the same question as
-    `mic-gain-budget`, which is still `unverified`, and it wants the capsule's
-    actual bias draw measured. Until then J14 is a link to ground OR a wire to
-    the second pole, and which one is not yet established.
+    ANSWERED SAME DAY, from values.md, and the answer is DO NOT GATE IT.
+    The 23-41 mA figure belongs to the CARBON path, R52/R54 at 220 ohm. loa's
+    capsule is an ELECTRET (`loa-handset-capsule`, confirmed 2026-08-25), and
+    the electret path is R51/R53 at 2k2 from 3V3A with JP1/JP4 on 1-2:
+
+        1.5 mA per channel, 3.0 mA for the pair
+
+    That is not worth a pole, a wire and a failure mode. LOA LINKS J14 TO
+    GROUND, per mic-configurations.md's rule for electret builds, and the rule
+    of thumb turns out to be right here for a reason that had to be checked
+    rather than assumed.
+
+    SO THE SECOND POLE IS SPARE FOR LOA AFTER ALL. Note the difference from
+    what this record said on 2026-09-01: spare because the current does not
+    justify gating, NOT spare because there is nowhere to put it. The board has
+    a home for it at J14; loa declines it on a number.
+
+    NOT `mic-gain-budget`. That record is about GAIN, whether the board's x101
+    suits the capsule's output level, and it stays unverified. Bias current and
+    gain are different questions and only the first is settled here.
 
   superseded_conflict_statements: >-
     RAISED 2026-08-31, within an hour of being recorded as confirmed. Two
