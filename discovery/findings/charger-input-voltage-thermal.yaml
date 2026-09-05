@@ -181,6 +181,62 @@ how_to_close_this_record: >-
   into a figure. If the current is in band, the thermal question is closed for
   5 V operation regardless of what theta-JA turns out to be.
 
+bench_supply_in_hand:
+  # Sourced by Matt, recorded 2026-09-05 from the listings. Read from the
+  # product pages, NOT measured.
+  supply:
+    listing: "Amazon B0GF9GL6ZF"
+    stated: "AC 100-240V to DC 5V Converter Wall Adapter, 5 Volt 15W LED Power
+             Supply Adapter, 5.5mm x 2.1mm DC Plug"
+    volts: 5
+    amps: 3          # 15 W / 5 V, and the listing states 3 A
+    verdict: >-
+      EXACTLY THE RECOMMENDATION. 5 V at 3 A puts the board at 43% of the
+      supply's rating when the charger is at its 1.29 A ceiling, which is the
+      loafing margin the sag budget wanted.
+  panel_jack:
+    listing: "Amazon B091PS6XQ4"
+    stated: "Female DC Threaded Barrel Jack Panel Adapter 5.5mm x 2.1mm
+             Connector 18AWG Wire, Panel Mount Socket, 2 Pin Solder Type"
+    verdict: >-
+      MATES. 5.5 x 2.1 mm on both halves, so plug and jack agree. Panel mount
+      with a threaded barrel, which is what the instrument wants, and solder
+      terminals to get to J1.
+
+  🔴 two_things_the_listings_did_not_state: >-
+    NEITHER IS A PROBLEM. BOTH ARE UNVERIFIED, and both are settled by one
+    measurement on the supply's own plug before it is connected to anything.
+
+    1. CENTRE POLARITY IS NOT STATED. caryatid needs CENTRE POSITIVE: J1.1 is
+       D1's anode and the panel jack's centre pin. Nearly every 5.5 x 2.1 wall
+       adapter is centre positive and that is not the same as this one being.
+       D1 is in series, so reversed input BLOCKS rather than destroys, but the
+       symptom is a completely dead board during the exact stage where a dead
+       board is being investigated. Check it, do not reason about it.
+
+    2. "LED POWER SUPPLY" COULD IN PRINCIPLE MEAN A CONSTANT-CURRENT DRIVER,
+       which would be wrong for this. It almost certainly does not here: a unit
+       labelled by VOLTAGE with a wattage is a constant-voltage strip supply,
+       and constant-current drivers are labelled by their current instead. Still
+       worth confirming, and the same measurement confirms it.
+
+  the_one_check_that_does_both: >-
+    Meter on DC volts across the supply's plug, UNLOADED, before it goes
+    anywhere near the board.
+      reads a steady +5 V, centre pin positive  -> constant voltage, correct
+                                                   polarity. Both questions
+                                                   answered at once.
+      reads 5 V with the centre NEGATIVE        -> polarity is reversed. Do not
+                                                   connect; swap at the jack.
+      reads near zero or wanders                -> constant current driver.
+                                                   Wrong part, do not use it.
+
+  still_needed_to_reach_J1: >-
+    The jack is panel mount with solder terminals and J1 is a JST-XH 2 way
+    header. Something still has to bridge them: a JST-XH 2 pigtail soldered to
+    the jack, or clips onto J1's through-hole pins for bench work. The jack
+    came in a pack of eight, so one can be sacrificed to a permanent bench lead.
+
 evidence:
   - "2026-09-03: derived, not measured. Dissipation computed from documented
      figures only: D1 forward drop 0.4 V and the 4.35 V IN minimum from
