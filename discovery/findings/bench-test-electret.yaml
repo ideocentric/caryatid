@@ -1,0 +1,114 @@
+id: bench-test-electret
+kind: other
+source_claim: >-
+  That the electret bought for bench testing can be trusted as a known-good
+  reference when exercising caryatid's mic front end at bring-up Stage 8.
+source_ref: >-
+  Matt, 2026-09-05: "This is the electret I purchased for base testing",
+  Amazon B0FRLZLH2G. Reported as two terminals with red and black pigtails.
+resource: >-
+  The bench test electret capsule, against caryatid's mic front end
+  (R51/R53 2k2 bias from 3V3A, JP1/JP4, U4 at x101, J18)
+status: unverified     # not yet measured. It is the REFERENCE, so it goes first.
+
+what_is_known:
+  terminals: 2
+  leads: "red and black pigtails"
+  type_implied: >-
+    A BARE TWO-TERMINAL CAPSULE, which is the correct article. caryatid's front
+    end biases a capsule through R51/R53 at 2k2 from 3V3A and expects exactly
+    this. A three-or-more-pin breakout with its own amplifier would have been
+    the wrong part for this input and is not what arrived.
+  listing_not_read: >-
+    Amazon returned HTTP 500 on B0FRLZLH2G, twice. Sensitivity, impedance,
+    operating voltage and current draw are all UNREAD. Nothing about this part
+    is established beyond the terminal count and the lead colours, both of
+    which came from Matt looking at it.
+
+🔴 characterise_it_BEFORE_using_it_as_a_reference:
+  why: >-
+    THIS PART'S JOB IS TO TELL YOU WHETHER THE BOARD WORKS. An uncharacterised
+    reference cannot do that. If Stage 8h reads nothing, an unmeasured capsule
+    leaves three suspects: the board, the capsule, and the wiring. Measuring it
+    first removes one, and it costs one minute.
+
+    PROVE THE TEST ARTICLE, THEN USE IT TO PROVE THE BOARD. The order is not
+    optional and it is the same discipline as Stage 5, which proves the Daisy
+    Seed standalone before it goes near the socket.
+
+  the_measurement: >-
+    DC resistance across the two leads, BOTH POLARITIES, per the identification
+    procedure in docs/mic-configurations.md.
+  expect: >-
+    A finite kilohm reading that DIFFERS BY DIRECTION. A two-terminal electret
+    package has a JFET built in, and the asymmetry is the JFET. loa's handset
+    transmitter measured 1.75-1.77 kohm one way and 1.05-1.06 kohm reversed
+    (`loa-handset-capsule`, confirmed 2026-08-25), and this capsule should show
+    the same shape though not necessarily the same numbers.
+  what_it_settles:
+    - "That it is genuinely an electret and not something else in a similar can"
+    - >-
+      WHICH LEAD IS POSITIVE. Red is conventionally the drain, the positive
+      side that takes the bias, and black the source or ground. Convention is
+      not measurement. The polarity test says which is which, and an electret
+      wired backwards does not work.
+    - >-
+      A baseline reading, so that if it ever behaves oddly later you can tell
+      a changed capsule from a changed board.
+
+how_it_wires_for_the_test:
+  # From docs/mic-configurations.md and docs/connectors.md. J18 is JST-XH 3.
+  j18: >-
+    pin 1 is the LEFT input, pin 2 the RIGHT, pin 3 is MIC_RTN.
+    All three are silkscreened on the board; read the board.
+  capsule: >-
+    RED to the channel pin being tested, which carries the bias down from
+    R51 (left) or R53 (right). BLACK to J18 pin 3, MIC_RTN.
+  jumpers_for_electret_LEFT:
+    JP1: "1-2, bias through R51 2k2 from 3V3A"
+    JP2: "1-2, output coupling C25 through to AUDIO_IN_L"
+    JP3: "1-2, gain leg R58 1k, giving x101 or 40.1 dB"
+  jumpers_for_electret_RIGHT:
+    JP4: "1-2, bias through R53"
+    JP5: "1-2, output coupling C29"
+    JP6: "1-2, gain leg R62"
+  note: >-
+    A handset mic is mono and uses the left channel alone. For a BOARD test,
+    run the capsule on each channel in turn: the point is to exercise both
+    halves of U4, not to record anything.
+
+🔴 J14_MUST_BE_LINKED_OR_NOTHING_WORKS:
+  what: >-
+    MIC_RTN IS NOT GROUNDED ON THE BOARD. It leaves on J18 pin 3, pairs with
+    J14, and J14 is either a link to ground or a wire out to the hook switch's
+    second pole. THE BOARD SHIPS WITH NEITHER.
+  consequence: >-
+    With J14 open the capsule has NO RETURN PATH. The front end is an open
+    circuit, the capsule reads nothing, and it looks exactly like a dead U4, a
+    dead capsule or a wrong jumper. Three wrong suspects for a missing link.
+  do: >-
+    LINK J14 BEFORE ANY MIC TEST. For loa this is the permanent answer anyway:
+    the electret draws 1.5 mA per channel through the 2k2, 3 mA for the pair,
+    which is not worth gating, so J14 is a link to ground rather than a run to
+    the hook switch. See `loa-hook-switch`.
+  and_it_is_a_gap_in_the_runbook: >-
+    docs/bringup.md Stage 8h and 8i did not mention it. Corrected 2026-09-05.
+
+evidence:
+  - "2026-09-05: reported by Matt as TWO TERMINALS with red and black pigtails,
+     which makes it a bare capsule and the correct article for caryatid's mic
+     front end. The listing itself could not be read: Amazon returned HTTP 500
+     on B0FRLZLH2G. Sensitivity, impedance, operating voltage and current are
+     unread and no claim is made about any of them"
+
+last_verified: 2026-09-05
+
+notes: >-
+  THE POINT OF THIS RECORD IS THAT A REFERENCE NEEDS VERIFYING TOO. It is easy
+  to treat a bought part as known and the fabricated board as unknown, and then
+  read every disagreement as a board fault. The board has been through DRC,
+  netlist parity and a fab house. The capsule is an unbranded item off a
+  marketplace whose listing would not even load.
+
+  IT DOES NOT GATE ANYTHING BEFORE STAGE 8. Stages 0 through 7 do not involve
+  it, so it can be characterised at any point before the audio sweep.

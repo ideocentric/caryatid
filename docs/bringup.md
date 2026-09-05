@@ -527,6 +527,23 @@ Check all three individually, then together for white.
 
 Both channels are fitted on every board and jumper-selected.
 
+🔴 **Link J14 first, or the mic path cannot work.** `MIC_RTN` is not grounded on
+the board: it leaves on J18 pin 3, pairs with J14, and J14 is either a link to
+ground or a wire to the hook switch's second pole. **The board ships with
+neither.** With J14 open the capsule has no return path, reads nothing, and it
+looks exactly like a dead U4, a dead capsule or a wrong jumper. Three wrong
+suspects for a missing link.
+
+🔴 **Characterise the test capsule before you trust it.** DC resistance across
+its leads, both polarities, per [mic-configurations.md](mic-configurations.md).
+Expect a finite kΩ reading that differs by direction, which is the built-in
+JFET. That confirms it is an electret, tells you which lead is positive (red is
+conventionally the drain, and convention is not measurement), and removes one of
+three suspects if the audio test later reads nothing. See
+[`bench-test-electret`](../discovery/findings/bench-test-electret.yaml).
+**Prove the test article, then use it to prove the board**, exactly as Stage 5
+proves the Seed before it goes near the socket.
+
 - **Out, J17:** generate a tone in firmware, confirm L and R independently at the
   connector. Confirm they are not swapped and not summed.
 - **In, J18:** feed a known signal, confirm it arrives on the right channel.
