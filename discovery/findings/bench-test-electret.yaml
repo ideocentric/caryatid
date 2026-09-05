@@ -94,6 +94,40 @@ how_it_wires_for_the_test:
   and_it_is_a_gap_in_the_runbook: >-
     docs/bringup.md Stage 8h and 8i did not mention it. Corrected 2026-09-05.
 
+an_alternative_was_offered_and_is_not_needed:
+  # Matt, 2026-09-05: "I can get a different one as well", Amazon B01F5592EO.
+  candidate: >-
+    uxcell 8-pack, "Cylindrical Electret Condenser Microphone Pickup 85dB
+    Through Hole Mini Electret Condenser Mic with 2 Pins 10x7mm". This listing
+    DID load, unlike the other one.
+  verdict: DO NOT BUY IT. The capsule in hand is the better bench article.
+  why:
+    - >-
+      BOTH ARE BARE TWO-TERMINAL ELECTRETS. On the only axis that decides
+      whether the part is correct for this input, they are identical.
+    - >-
+      PIGTAILS BEAT THROUGH-HOLE PINS ON A BENCH. The one in hand can be
+      clipped or crimped to J18 as it is. The alternative has 2 pins and would
+      need leads soldered on before it could be used at all.
+    - >-
+      ITS ONE EXTRA SPEC IS NOT USABLE. "85dB" is quoted with no reference
+      condition. Electret sensitivity is normally given as dBV/Pa, typically
+      -38 to -46, so an unqualified 85 dB is more likely an SNR figure or
+      marketplace noise than a sensitivity. It looks like documentation and is
+      not.
+  the_deeper_reason: >-
+    🔴 THE DATASHEET BARELY MATTERS FOR THIS PART'S JOB. It is not there to
+    measure anything; it is there to answer "does the mic path carry a signal
+    at all". Any bare electret does that. Sensitivity would matter if this
+    capsule were setting the gain budget, and it is not: `mic-gain-budget`
+    concerns LOA'S HANDSET CAPSULE, and a bench capsule of different
+    sensitivity cannot settle it either way.
+
+    So the missing specs on the part in hand are not a gap to be closed by
+    buying a better documented one. They are irrelevant to the job, and the one
+    thing that IS relevant, the polarity and resistance, is measured in a
+    minute with the meter already on the bench.
+
 evidence:
   - "2026-09-05: reported by Matt as TWO TERMINALS with red and black pigtails,
      which makes it a bare capsule and the correct article for caryatid's mic
