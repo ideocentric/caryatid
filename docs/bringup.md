@@ -70,6 +70,47 @@ function. So current is either read off the bench supply or derived from a
 | **10 Ω** | 15 mA gives 150 mV | `mA = mV ÷ 10` |
 | **0.1 Ω** | 1.0 A gives 100 mV | `mA = mV × 10` |
 
+### The shunt measurement, drawn
+
+Current flows **through** the shunt. The meter sits **across** it and carries
+almost none. That is the whole idea, and it is the part that reads oddly the
+first time: the meter is in parallel with a resistor, not in series with the
+circuit.
+
+```mermaid
+flowchart LR
+    PSU["Bench supply<br/>5.00 V, CC<br/>limit 100 mA"]
+    A(("A"))
+    RS["R shunt<br/>10 ohm, 1 W"]
+    B(("B"))
+    LAMP["Switch lamp<br/>J3.3 + to J3.4 -<br/>ring LED, 3-6 V"]
+    DMM["Fluke 101<br/>DC millivolts<br/>reads V across A-B"]
+    CALC["mA = mV / 10<br/>expect roughly<br/>50 to 250 mV"]
+
+    PSU -->|"+"| A
+    A --> RS
+    RS --> B
+    B --> LAMP
+    LAMP -->|"back to -"| PSU
+
+    A -.->|"probe"| DMM
+    B -.->|"probe"| DMM
+    DMM -.-> CALC
+
+    classDef meter fill:#fff4e5,stroke:#e8710a,stroke-width:2px
+    classDef sense fill:#e8f0fe,stroke:#1a73e8,stroke-width:2px
+    class DMM,CALC meter
+    class RS sense
+```
+
+**The same topology measures anything small.** Swap the lamp for the board at
+J1 and you are reading quiescent current; the only thing that changes is the
+shunt value and the expected millivolts.
+
+🔴 **Do not put the Fluke where the shunt is.** It has no current ranges, so in
+series it is either an open circuit on volts or nothing at all. The resistor
+does the work; the meter only watches it.
+
 **Why 0.1 Ω for the big one and not something easier to read.** It sits in the
 input path and its drop comes out of the charger's headroom, which is only 150
 to 250 mV. At 1.05 A a 0.1 Ω drops 105 mV and leaves J1 near 4.90 V, above the
