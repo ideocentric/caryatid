@@ -14,6 +14,12 @@ THREE CHECKS BEFORE ANY CRIMPING. All three cost a part if wrong.
 
 CHECK 1: THE SWITCH LAMP MUST LIMIT ITS OWN CURRENT
 ---------------------------------------------------
+  ### PASSED 2026-09-06. Switch is 12 mm, LATCHING, 4 pins: two labelled +/-
+  ### for the ring LED, two unlabelled contacts reading 0.9 ohm latched in and
+  ### open when out, which is the normally-open sense J3 needs. Lamp marked
+  ### 3-6V and run at 5 V without damage. See discovery/findings/
+  ### panel-latch-switch.yaml. The original reasoning is kept below.
+
   J3.3 feeds the lamp from +5V through R5, and R5 IS A 0 OHM LINK. There is no
   current limiting on the board, by design: indicators.md specifies a 3-9 V
   rated lamp whose limiting is internal.
@@ -171,13 +177,20 @@ THE CABLES, IN THE ORDER THE RUNBOOK NEEDS THEM
     Check 1's open question, out of the boost test entirely. Do not introduce
     two unknowns at once.
 
-#3  J3 LATCH SWITCH        4-way        after Check 1 passes
+#3  J3 LATCH SWITCH        4-way        CHECK 1 PASSED, build it
     ------------------------------------------------------
-    J3.1  VOUT          switch common
-    J3.2  EN_SW         switch return
-    J3.3  +5V via R5    lamp anode
-    J3.4  GND           lamp cathode
-    Four wires: two to the switch contacts, two to the lamp.
+    J3.1  VOUT          RED      -> either UNLABELLED pin
+    J3.2  EN_SW         YELLOW   -> the other UNLABELLED pin
+    J3.3  +5V via R5    ORANGE   -> the pin labelled +
+    J3.4  GND           BLACK    -> the pin labelled -
+
+    The two switch pins are interchangeable: a plain SPST has no polarity. The
+    lamp pins are not.
+
+    THE SWITCH CARRIES MICROAMPS, NOT AMPS. It asserts the boost's enable
+    against R6's 100 kohm pulldown, about 42 uA at a 4.2 V cell. The boost does
+    the power switching on the board. So its 3 A rating is overkill and the
+    0.9 ohm contact resistance cannot matter. Do not run fat wire to it.
 
 #4  J4 CHARGE LED          4-way        NEEDED AT STAGE 4
     ------------------------------------------------------

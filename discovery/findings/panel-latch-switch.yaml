@@ -11,7 +11,77 @@ source_ref: >-
   is stated on the side of the switch".
 resource: >-
   The 12 mm illuminated latching pushbutton for the panel, against caryatid J3
-status: in-progress    # LAMP question answered. Switch ACTION and PINOUT are not.
+status: confirmed      # 2026-09-06. Compatible with J3. Lamp CURRENT still unmeasured, see below.
+
+measured_2026_09_06:
+  # Matt, with the switch in hand and the bench supply. Everything that was
+  # open on 2026-09-05 is now closed except the lamp CURRENT.
+  action: LATCHING. Confirmed by hand.
+  pins: 4
+  layout: >-
+    Two pins LABELLED + and -, which are the ring LED. Two UNLABELLED, which
+    are the switch contacts. The simplest and best of the possible
+    arrangements: a plain SPST, no NC contact to choose wrongly.
+  switch_contacts:
+    latched_in_ohm: 0.9
+    unlatched: open
+    therefore: >-
+      NORMALLY OPEN, closing when the button is latched in. THAT IS EXACTLY THE
+      SENSE J3 WANTS: the boost is off until the button is pressed in, so off
+      means genuinely off. Had it been the other way round the instrument would
+      have powered up with the button OUT.
+  lamp: >-
+    Run directly from the 5 V bench supply with no damage. That corroborates
+    the 3-6V marking empirically as well as by inference.
+  listing_specs_as_supplied_by_matt:
+    rating_switch: "3A / 250VAC"
+    ingress: IP65
+    body: oxidised aluminium
+    emitting_type: "Ring LED"
+    opening_diameter: "12 mm (the variant bought)"
+    lamp_voltage_options: "3/6/12/24/36/110/220 V, this unit marked 3-6V/W"
+
+  🔴 the_3A_rating_is_irrelevant_and_worth_understanding_why: >-
+    THIS SWITCH DOES NOT CARRY THE INSTRUMENT'S POWER. It asserts the boost's
+    enable and nothing else. J3.1 is VOUT and J3.2 is EN_SW, which sits on
+    R6, a 100 kohm pulldown, so the current through the closed contacts is
+
+        VOUT / 100k  =  about 42 uA at a 4.2 V cell
+
+    MICROAMPS, NOT AMPS. The boost does the actual power switching, on the
+    board, through L1. So the 3 A / 250 VAC rating is enormous overkill, the
+    0.9 ohm contact resistance is irrelevant, and any small switch would do.
+
+    Worth stating because the opposite assumption is the natural one, and it is
+    what makes people specify a heavy switch, run fat wire to the panel, and
+    worry about contact resistance that cannot matter. Contrast the HOOK
+    switch, where 0.9 ohm against a 10 kohm pull-up WOULD have mattered: see
+    `loa-hook-switch`, threshold 2.69 kohm.
+
+the_wiring_is_now_settled:
+  J3.1: "VOUT       -> either unlabelled pin. A plain SPST has no polarity"
+  J3.2: "EN_SW      -> the other unlabelled pin"
+  J3.3: "lamp anode -> the pin labelled +"
+  J3.4: "lamp cathode -> the pin labelled -"
+  note: >-
+    Build this as the four-way cable per the colour convention: red, yellow,
+    orange, black. Still make the BARE pins 1-2 link separately for bring-up
+    Stages 2 and 3, which keeps the lamp out of the boost test.
+
+still_open_but_NOT_a_compatibility_question:
+  lamp_current: >-
+    UNMEASURED. The switch works at 5 V; how much it draws is a separate
+    question and it is a BUDGET line, not a fit question.
+
+    values.md lists three unattributed items in the 5 V power budget and one is
+    "the switch lamp is unmeasured". capture-checklist.md has asked for a meter
+    in series since capture. The lamp is lit the whole time the instrument is
+    on, so it sits inside every row of the runtime table, including the 5.2 h
+    "loud, LEDs lit" figure.
+
+    THE SWITCH IS ALREADY ON THE BENCH SUPPLY. Putting the meter in series is
+    the difference between closing that line and leaving it a guess. Take 3 V
+    as well if convenient, which brackets the lamp as the rail sags.
 
 the_lamp_question_is_ANSWERED:
   reading: "3-6V, marked on the body of the switch"
@@ -36,7 +106,7 @@ the_lamp_question_is_ANSWERED:
     range rather than 56%. The brightness concern shrinks. NO ACTION, and the
     documents are not wrong, they describe a variant that was not bought.
 
-🔴 still_unknown_1_LATCHING_OR_MOMENTARY:
+superseded_still_unknown_1_LATCHING_OR_MOMENTARY:
   why_it_matters: >-
     THE BOARD REQUIRES LATCHING. R6 holds the boost's EN low, and the switch
     pulls EN high from VOUT through J3.1 to J3.2. That is what makes it a real
@@ -52,7 +122,7 @@ the_lamp_question_is_ANSWERED:
     is "reset" or "self-reset". The listing was not read: AliExpress redirected
     to a login endpoint and was not followed.
 
-🔴 still_unknown_2_THE_PINOUT:
+superseded_still_unknown_2_THE_PINOUT:
   why_it_matters: >-
     A 12 mm illuminated pushbutton is commonly 4 pins (2 switch, 2 lamp), 5 pins
     (SPDT: common, NO, NC, plus 2 lamp) or 6. Which is which is not guessable,
@@ -106,6 +176,14 @@ mounting:
     the phone's panel, still wants calipers across the flange.
 
 evidence:
+  - "2026-09-06: SWITCH CONFIRMED COMPATIBLE WITH J3. Latching, 4 pins, two
+     labelled +/- for the ring LED and two unlabelled for the contacts. The
+     contacts read 0.9 ohm latched in and open when out, so NORMALLY OPEN,
+     which is the sense J3 needs: the boost stays off until the button is
+     pressed in. Lamp run directly from the 5 V bench supply without damage.
+     Listing gives 3A/250VAC, IP65, oxidised aluminium, ring LED. That current
+     rating is irrelevant here: the switch carries only the boost's enable
+     through R6's 100 kohm pulldown, about 42 uA, not the instrument's power"
   - "2026-09-05: lamp rated 3-6V, read by Matt off the body of the switch. A
      voltage RANGE means internal current limiting, so J3's 0 ohm R5 is correct
      and 5.0 V sits inside the range. This CLOSES the lamp compatibility
@@ -120,11 +198,16 @@ evidence:
 last_verified: 2026-09-05
 
 notes: >-
-  ONE OF THE THREE CABLE CHECKS IS NOW GREEN. The other two, both about the
-  LEDs, are untouched: common anode on J4 and J12, and whether the charge LED's
-  green die is AlGaInP or InGaN.
+  CABLE CHECK 1 IS CLOSED and the J3 cable can be built. The other two are
+  untouched and both concern the LEDs: common anode on J4 and J12, and whether
+  the charge LED's green die is AlGaInP or InGaN.
 
-  IT DOES NOT BLOCK THE BENCH. J3 needs only a BARE LINK between pins 1 and 2
+  IT NEVER BLOCKED THE BENCH. J3 needs only a BARE LINK between pins 1 and 2
   for bring-up Stages 2 and 3, and that link deliberately leaves the lamp out
-  of the boost test. The full four-way switch cable is not needed until the
-  panel is built.
+  of the boost test.
+
+  WHAT THIS RECORD ACTUALLY CAUGHT is worth keeping. The lamp question was real:
+  R5 is a 0 ohm link and a bare LED there dies at 5 V. It resolved to a pass, and
+  it resolved because the answer was READ OFF THE PART rather than assumed from
+  the product category. The listing itself was never fetched, and the listing
+  would not have said which of seven lamp voltages this unit carries.
