@@ -363,9 +363,9 @@ life.
 | --- | --- | --- |
 | 4.6 | 🔴 **Switch to a 5 V supply if you used 9 V for Stages 2 and 3.** This is where the thermal argument starts | |
 | 4.6b | Barrel in, cell fitted, partially discharged | `/CHG` asserts at J4 |
-| 4.7 | Measure charge current into the cell | **0.90 to 1.10 A** |
+| 4.7 | Measure charge current, as input current at J1 through a **0.1 Ω** shunt. `mA = mV × 10` | **0.90 to 1.10 A**, so **90 to 110 mV** across the shunt |
 | 4.8 | Watch `VBAT` over some minutes | rising |
-| 4.9 | Measure total input current | under the **1.29 A** input limit |
+| 4.9 | Total input current, same shunt | under the **1.29 A** limit, so **under 129 mV** |
 | 4.10 | Feel U1 after ten minutes at steady state | warm, not hot. **This closes [`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml)**: a charge current in band with a merely warm case measures the θJA that record had to estimate |
 
 The 0.90 to 1.10 A band is wide **and that is not slop in the resistor**. R3 is
