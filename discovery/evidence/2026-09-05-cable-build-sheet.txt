@@ -1,0 +1,181 @@
+caryatid cable build sheet
+==========================
+
+  Written 2026-09-05. Pin assignments transcribed from docs/power-sheet.md,
+  docs/panel-io-sheet.md and docs/connectors.md.
+
+  🔴 THE BOARD SILKSCREENS ALL 77 CONNECTOR PINS. This sheet is for planning
+  and ordering. AT THE BENCH, READ THE BOARD, not this sheet.
+
+
+===========================================================================
+THREE CHECKS BEFORE ANY CRIMPING. All three cost a part if wrong.
+===========================================================================
+
+CHECK 1: THE SWITCH LAMP MUST LIMIT ITS OWN CURRENT
+---------------------------------------------------
+  J3.3 feeds the lamp from +5V through R5, and R5 IS A 0 OHM LINK. There is no
+  current limiting on the board, by design: indicators.md specifies a 3-9 V
+  rated lamp whose limiting is internal.
+
+  🔴 IF YOUR SWITCH HAS A BARE LED IN IT, connecting it to J3.3/J3.4 puts 5 V
+     across a diode with no resistor. The LED dies.
+
+  HOW TO CHECK, before wiring:
+    - the switch's own spec: a lamp rated as a VOLTAGE RANGE (3-9 V, 6-12 V,
+      12 V) is internally limited. One rated as a bare LED, or given a forward
+      voltage and current, is not.
+    - meter on diode test across the lamp terminals: an internally limited lamp
+      usually reads open or a high resistance, not a plain diode drop.
+    - if in doubt, series a resistor into J3.3 externally for the first test and
+      measure the current. indicators.md wants that reading anyway: it is the
+      only entry still marked UNKNOWN in the 5 V budget in values.md.
+
+  IF IT IS A BARE LED, that is not a disaster. R5's 0603 footprint exists
+  exactly so a different value can be dropped in. But find out BEFORE the
+  first power-up, not after.
+
+
+CHECK 2: THE CHARGE LED MUST BE COMMON ANODE, AND THE GREEN DIE MATTERS
+------------------------------------------------------------------------
+  J4.1 is VOUT and is the COMMON ANODE for both LEDs. Cathodes sink through
+  R9/R10 into the charger's open-drain outputs.
+
+  🔴 COMMON CATHODE WILL NOT WORK. Nothing on the board can be changed to make
+     it work.
+
+  🔴 AND THE GREEN DIE DECIDES WHETHER IT KEEPS WORKING. J4 runs from VOUT,
+     which is the CELL, roughly 4.2 V falling to ~3.0 V in use. Not a
+     regulated rail.
+
+       AlGaInP yellowish-green, Vf ~2.1 V   fine across the whole range
+       InGaN TRUE green,        Vf 3.0-3.2  DIMS AND GOES DARK as the cell
+                                            drains, and NO RESISTOR VALUE
+                                            FIXES IT
+
+     This is the same physics that stops the RGB being driven from 3V3. A
+     "nicer" bright green LED is the wrong part here, and it will look fine on
+     a full cell and fail late in a set.
+
+  BEST PART: a red/green COMMON-ANODE BICOLOUR, three terminals, landing on
+  J4 pins 1-3 with pin 4 unused. It gives amber while charging and green when
+  done, out of one lens, read without a legend.
+
+     /CHG    /PGOOD   colour   meaning
+     ------  -------  -------  --------------------------------
+     high-Z  high-Z   off      on battery, no charger
+     low     low      amber    charging
+     high-Z  low      green    external power, charge complete
+     low     high-Z   red      anomalous, should not occur
+
+
+CHECK 3: THE RGB MUST BE COMMON ANODE
+-------------------------------------
+  J12.1 is +5V and is the common anode. D26/D27/D29 SINK through 510R red,
+  300R green, 300R blue. Writing the GPIO LOW lights the channel.
+
+  🔴 COMMON CATHODE WILL NOT WORK.
+  🔴 AND IT CANNOT BE RUN FROM 3V3. Green and blue have forward voltages around
+     3.0-3.1 V against an output-high of about 3.15 V. They will not light and
+     no resistor value fixes it. That is why the anode is on 5 V.
+
+  HOW TO CHECK: diode test from the common pin to each of the other three. A
+  common ANODE conducts with the RED probe on the common pin. A common CATHODE
+  conducts with the BLACK probe on it.
+
+
+===========================================================================
+THE CABLES, IN THE ORDER THE RUNBOOK NEEDS THEM
+===========================================================================
+
+  Housings are JST-XH at 2.50 mm unless noted.
+
+#1  J1 POWER IN            2-way        NEEDED AT STAGE 2
+    ------------------------------------------------------
+    J1.1  positive, D1 anode, the barrel jack's CENTRE pin
+    J1.2  GND, the sleeve
+    Other end: the 5.5 x 2.1 panel jack. Sacrifice one of the eight.
+    Measure the supply's polarity UNLOADED before this lead is ever plugged in.
+
+#2  J3 BOOST ENABLE LINK   2 wires      NEEDED AT STAGE 3
+    ------------------------------------------------------
+    🔴 MAKE A BARE LINK FIRST, NOT THE FULL SWITCH CABLE.
+    Just J3.1 to J3.2, nothing else connected.
+
+    WHY: Stage 2 needs the 5 V rail DEAD to pass, and Stage 3 needs it live.
+    A bare link makes that a deliberate act. And it keeps the lamp, which is
+    Check 1's open question, out of the boost test entirely. Do not introduce
+    two unknowns at once.
+
+#3  J3 LATCH SWITCH        4-way        after Check 1 passes
+    ------------------------------------------------------
+    J3.1  VOUT          switch common
+    J3.2  EN_SW         switch return
+    J3.3  +5V via R5    lamp anode
+    J3.4  GND           lamp cathode
+    Four wires: two to the switch contacts, two to the lamp.
+
+#4  J4 CHARGE LED          4-way        NEEDED AT STAGE 4
+    ------------------------------------------------------
+    J4.1  VOUT   common anode, both dies
+    J4.2  R9  1k -> /CHG     red cathode
+    J4.3  R10 1k -> /PGOOD   green cathode
+    J4.4  GND    unused with a bicolour
+    No resistor in the cable. R9 and R10 are on the board.
+
+#5  J12 RGB STATUS         4-way        Stage 8g
+    ------------------------------------------------------
+    J12.1  +5V           common anode
+    J12.2  red cathode   through 510R to D26
+    J12.3  green cathode through 300R to D27
+    J12.4  blue cathode  through 300R to D29
+    No resistors in the cable.
+
+#6  J14 MIC RETURN LINK    2-way        Stage 8h, BEFORE any mic test
+    ------------------------------------------------------
+    A SHORTING LINK. MIC_RTN is not grounded on the board and J14 ships open.
+    Without this the capsule has no return path and reads nothing, which looks
+    exactly like a dead U4.
+    For loa this is permanent: the electret draws 3 mA for the pair, which is
+    not worth gating with the hook switch's second pole.
+
+#7  J18 AUDIO IN / MIC     3-way        Stage 8h
+    ------------------------------------------------------
+    J18.1  LEFT input
+    J18.2  RIGHT input
+    J18.3  MIC_RTN         NOT ground
+    Electret: RED to pin 1 or 2, BLACK to pin 3.
+    Jumpers for electret left: JP1, JP2, JP3 all on 1-2. Right: JP4, JP5, JP6.
+
+#8  J17 AUDIO OUT          3-way        Stage 8h
+    ------------------------------------------------------
+    L, R, GND, out to panel jacks.
+
+#9  J8 HOOK SWITCH         2-way        loa build
+    ------------------------------------------------------
+    To the hook switch's COMMON and NC, so on-hook is OPEN and a broken lead
+    reads as on-hook and silent. See loa-hook-switch: the switch has six
+    terminals and the contacts are not yet identified.
+
+#10 J11 KEYPAD             IDC 2x5      loa build
+    ------------------------------------------------------
+    To a JST ZH 7-way at the keypad end. Rows straight through to D0-D3.
+    🔴 CROSS HEADER POSITIONS 5 AND 7, LEAVE 6, or reverse the column index in
+    firmware. Reversing three things is swapping the outer two. Doing neither
+    shows up as key 1 reading as key 3. See loa-keypad-matrix.
+
+    STILL FOR FULL PLATFORM COVERAGE: J5 (IDC 2x5, analogue bus), J6, J7
+    (2-way switches), J9 (3-way soft pot), J10 (2-way FSR), J13 (JST-SH 4,
+    buy a Qwiic lead rather than crimping 1.0 mm by hand), J15 and J19 (6-way),
+    J16 (2x4 header).
+
+
+===========================================================================
+NOTES
+===========================================================================
+
+  Nothing here is verified against parts in hand. The three checks above are
+  the verification, and none has been done.
+
+
+
