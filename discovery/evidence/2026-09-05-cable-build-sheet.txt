@@ -85,6 +85,70 @@ CHECK 3: THE RGB MUST BE COMMON ANODE
 
 
 ===========================================================================
+WIRE COLOUR CONVENTION. Set it once, before the first cable.
+===========================================================================
+
+  PROPOSED 2026-09-05, not yet agreed. Matt has pre-crimped pigtails AND a
+  crimp tool, so colours are a CHOICE here rather than something inherited.
+
+  WHY IT IS WORTH FIVE MINUTES: the loa keypad harness taught that colours on a
+  BOUGHT cable mean nothing and are ephemeral, so the durable map had to be by
+  header position. On a cable you make yourself the opposite is available:
+  colour can carry meaning, and then the cable documents itself at the panel
+  where no document will be.
+
+    J1    1 +VE            RED      2 GND            BLACK
+    J3    1 VOUT           RED      2 EN_SW          YELLOW
+          3 lamp anode     ORANGE   4 lamp cathode   BLACK
+    J4    1 VOUT anode     WHITE    2 /CHG cathode   RED
+          3 /PGOOD cathode GREEN    4 GND            BLACK
+    J12   1 +5V anode      WHITE    2 red cathode    RED
+          3 green cathode  GREEN    4 blue cathode   BLUE
+    J17   1 L              WHITE    2 R              RED     3 GND   BLACK
+    J18   1 L              WHITE    2 R              RED     3 MIC_RTN  GREEN
+
+  TWO DELIBERATE DEPARTURES FROM "RED IS POSITIVE":
+
+  1. ON THE LED CABLES THE COMMON ANODE IS WHITE, NOT RED, so that the CATHODE
+     COLOURS CAN MATCH THE DIES. At a panel, a red wire going to the red die is
+     worth more than a red wire meaning "supply", because the supply pin is the
+     one you can always identify anyway: it is the odd one out.
+
+  2. 🔴 J18 PIN 3 IS GREEN AND MUST NEVER BE BLACK. MIC_RTN IS NOT A GROUND.
+     connectors.md already had to correct this exact error in its own table,
+     where J18 pin 3 was listed as GND. A black wire there re-creates the
+     mistake in copper, and invites the next person to tie it to the nearest
+     ground point by reflex. It is the whole reason J14 exists.
+
+  NOT YET PROMOTED TO A DOC. If this convention is wanted platform-wide it
+  belongs in docs/ or an ADR rather than in a dated bench file. Say so and it
+  moves.
+
+
+===========================================================================
+CRIMPING AND VERIFYING
+===========================================================================
+
+  RE-PIN RATHER THAN RE-MAKE. JST-XH contacts have a small retention lance. A
+  fine pick or a jeweller's screwdriver against it releases the contact from
+  the housing, so a pigtail that arrived in the wrong order is re-ordered in a
+  minute instead of cut off and redone.
+
+  🔴 BEEP OUT EVERY CABLE BEFORE IT IS PLUGGED IN. Continuity from each far-end
+  conductor to the housing position it is supposed to occupy. Every cable,
+  every time, including bought pigtails.
+
+  This is not caution for its own sake. A mis-pinned J1 lead puts the supply
+  somewhere it does not belong, on a board that has never been powered, at the
+  exact moment you are trying to establish whether the board is sound. The
+  whole value of Stage 1 is destroyed by an unverified power cable.
+
+  LABEL EACH CABLE at the connector end with its J number. Five 4-way JST-XH
+  cables are indistinguishable in a drawer, and J3, J4 and J12 are all 4-way
+  with completely different jobs.
+
+
+===========================================================================
 THE CABLES, IN THE ORDER THE RUNBOOK NEEDS THEM
 ===========================================================================
 
