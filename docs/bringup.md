@@ -46,14 +46,35 @@ gap is recorded as untested rather than quietly counted as passed.
 | Audio noise floor and THD | You will know audio *works*, not how well |
 | I2C and SPI signal integrity | Works or does not; no margin measurement |
 
-| Cannot be checked without a current-limited supply | Mitigation used here |
-| --- | --- |
-| Safe first power-up into an unknown board | The series-resistor ladder in [Stage 2](#stage-2-first-power) |
-| Precise quiescent current | Inferred from the drop across a known resistor |
+**The scope table stands. The current-limit problem is closed.** A Jesverty
+0-30 V 0-5 A bench supply with selectable CC/OCP arrived 2026-09-06, so
+[Stage 2](#stage-2-first-power) sets a real current limit rather than
+approximating one with a resistor. What each reading was taken with is recorded
+in [`bench-instruments`](../discovery/findings/bench-instruments.yaml).
 
-**One purchase would change both columns**: a bench supply with an adjustable
-current limit. It is not required to finish this runbook, and it is the single
-most useful thing to own the next time a board arrives.
+### Measuring current with no ammeter
+
+**The Fluke 101 has no current ranges at all.** Not a limited range, an absent
+function. So current is either read off the bench supply or derived from a
+**shunt voltage**: a known resistor in series, millivolts across it, Ohm's law.
+
+**The supply reads amps well and milliamps badly**, and the work divides on that:
+
+| current | how | why |
+| --- | --- | --- |
+| **around 1 A**, charge and input | **the supply's display** | well inside its accuracy on a 5 A range, and nothing goes in series |
+| **tens of mA**, lamp and quiescent | **10 Ω shunt, Fluke on DC mV** | a 5 A supply's error at 15 mA is comparable to the quantity itself. The Fluke reads 150 mV at 0.1 mV resolution, which is not close |
+
+| shunt | at the expected current | conversion |
+| --- | --- | --- |
+| **10 Ω** | 15 mA gives 150 mV | `mA = mV ÷ 10` |
+| **0.1 Ω** | 1.0 A gives 100 mV | `mA = mV × 10` |
+
+**Why 0.1 Ω for the big one and not something easier to read.** It sits in the
+input path and its drop comes out of the charger's headroom, which is only 150
+to 250 mV. At 1.05 A a 0.1 Ω drops 105 mV and leaves J1 near 4.90 V, above the
+4.75 V floor. A 1 Ω would drop a volt, stop the charger, and give you a careful
+measurement of a charger that is not charging.
 
 ### Which supply
 
@@ -82,8 +103,9 @@ which is `in-progress` because the thermal budget rests on an estimated θJA
 that Stage 4 will measure.
 
 **With no cell fitted there is no charge current and therefore no heat.** So
-Stages 2 and 3 are indifferent to supply voltage, and 9 V is actually *better*
-there because of the ladder. The thermal argument starts at Stage 4.
+Stages 2 and 3 are indifferent to supply voltage. The thermal argument starts at
+Stage 4, and with a bench supply the answer is simply to leave it at 5.00 V
+throughout.
 
 ### And why 3 A, when the board caps itself at 1.29 A
 
@@ -131,8 +153,10 @@ they are test equipment rather than parts.
       GND. Both are silkscreened. D1 is in series, so reversed input blocks
       rather than destroys, which is protection worth knowing and not worth
       relying on.
-- [ ] **Series resistors for the power ladder**: one 100 Ω and one 10 Ω, both
-      **1 W or better**. A 100 Ω at 9 V dissipates 0.81 W into a dead short.
+- [ ] **The bench supply**, set to 5.00 V, limit 100 mA, **CC selected not OCP**.
+- [ ] **Two shunt resistors**, 1 W or better: **10 Ω** for the mA range and
+      **0.1 Ω** for the ~1 A charge current. **Not** made redundant by the
+      supply, see [Measuring current](#measuring-current-with-no-ammeter).
 - [ ] **Test leads with clips.** Hand-held probes on a 0603 pad is how the loa
       hook switch produced 27 kΩ from a piece of metal. Clip everything.
 - [ ] **Jumper wire** to bridge J3 for the boost enable, and to make temporary
@@ -243,38 +267,23 @@ board's result separately, because this is the stage that reveals a batch fault.
 
 **Board 1 only. No cell. No Seed. No shunts.**
 
-The board has never had voltage on it. With no current-limited supply, the
-protection comes from a **series-resistor ladder**: start with enough resistance
-that a dead short is harmless, and step down only once the current proves sane.
+**Set the supply to 5.00 V, the current limit to 100 mA, and select CC rather
+than OCP.** Switch on and read the front panel.
 
-### The ladder
+| what the supply shows | means |
+| --- | --- |
+| 5.00 V holding, a few mA, **CV** lit | healthy idle board, go on |
+| voltage collapsed, current pinned at **100 mA**, **CC** lit | 🔴 **short.** Switch off and find it before anything else |
 
-Wire the adapter to J1 **through a series resistor**, and measure the voltage
-**across the resistor**. Current is that drop divided by the resistance. This
-gives you both a limiter and an ammeter with the one instrument you have.
+**CC and not OCP, deliberately.** Constant current holds the board *powered* at
+a safe current, so a fault can be probed while it is still misbehaving. OCP
+trips off and tells you only that something is wrong. Keep OCP for a known-good
+circuit left unattended, such as a charging cell.
 
-**Which resistor to start with depends on your supply**, and getting this wrong
-wastes an evening chasing a fault that is in the rig. The charger needs 4.35 V
-at `IN`, which is **4.75 V at J1** after D1's 0.4 V.
-
-| supply | first rung | V at J1 at idle | charger runs | dead short |
-| --- | --- | --- | --- | --- |
-| 9 V | **100 Ω** | 8.50 V | yes | 90 mA |
-| 5 V | 100 Ω | 4.50 V | 🔴 **no, too low** | 50 mA |
-| 5 V | **47 Ω** | 4.76 V | yes | 106 mA |
-
-**On 5 V, start at 47 Ω, not 100 Ω.** On 9 V, 100 Ω is fine and there is no
-cell to heat anything.
-
-| Step | Series R | What to look for |
-| --- | --- | --- |
-| 2.1 | **47 Ω** on 5 V, **100 Ω** on 9 V | 🔴 **This rung is a short detector, not a functional test.** You are asking "is the current sane", not "does it work". A healthy idle board is a few mA |
-| 2.2 | **10 Ω** | drop of tens of mV. Recompute the current, confirm it agrees with 2.1, and check `VOUT` here rather than at 2.1 |
-| 2.3 | **direct** | proceed only if 2.1 and 2.2 both gave a sane, stable current |
-
-🔴 **A large drop at step 2.1 means the board is drawing heavily. Stop.** At
-100 Ω the board is protected; that is the whole reason for starting there. Do
-not "try it direct to see."
+**100 mA is chosen to be obviously wrong for this board.** A healthy caryatid
+here draws a few mA, with no cell, no Seed and the boost disabled, so the limit
+sits an order of magnitude above normal and well below damaging. If the supply
+will not set that low, that is a fault in the supply, not a reason to raise it.
 
 ### What should happen
 
@@ -311,7 +320,7 @@ boost, and the next stage is where you find out which.
 | 3.2 | Measure `+5V` at J12 pin 1 | **4.954 V nominal**, acceptable **4.744 to 5.168 V** |
 | 3.3 | Measure `+5V` at J15, J16, J19 | same value, within meter resolution |
 | 3.4 | Measure across FB1 | a few tens of mV at most; a large drop means the bead is wrong or the load is high |
-| 3.5 | Re-measure input current via the ladder | risen, but modest with no load |
+| 3.5 | Re-check the supply's current reading | risen, but modest with no load |
 | 3.6 | Feel U2 and L1 | warm is acceptable, hot is not |
 
 The 4.744 to 5.168 V band is the divider tolerance from
@@ -361,11 +370,11 @@ life.
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 4.6 | 🔴 **Switch to a 5 V supply if you used 9 V for Stages 2 and 3.** This is where the thermal argument starts | |
+| 4.6 | 🔴 **Raise the current limit to 1.5 A, supply still at 5.00 V.** The charger needs far more than 100 mA, and this is where the thermal argument starts | |
 | 4.6b | Barrel in, cell fitted, partially discharged | `/CHG` asserts at J4 |
-| 4.7 | Measure charge current, as input current at J1 through a **0.1 Ω** shunt. `mA = mV × 10` | **0.90 to 1.10 A**, so **90 to 110 mV** across the shunt |
+| 4.7 | Charge current, off the supply's display | **0.90 to 1.10 A**. Cross-check with the 0.1 Ω if it reads marginal |
 | 4.8 | Watch `VBAT` over some minutes | rising |
-| 4.9 | Total input current, same shunt | under the **1.29 A** limit, so **under 129 mV** |
+| 4.9 | Total input current, supply display | under the **1.29 A** input limit |
 | 4.10 | Feel U1 after ten minutes at steady state | warm, not hot. **This closes [`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml)**: a charge current in band with a merely warm case measures the θJA that record had to estimate |
 
 The 0.90 to 1.10 A band is wide **and that is not slop in the resistor**. R3 is
@@ -435,7 +444,7 @@ insert a Seed into it.
 | # | Do | Expect |
 | --- | --- | --- |
 | 7.1 | Power down completely. Insert the Seed, watching orientation | seats fully |
-| 7.2 | Power up through the **10 Ω** series resistor, not direct | current rises to a sane figure |
+| 7.2 | Power up with the limit raised to **500 mA**, still in CC | current rises to a sane figure, CV stays lit |
 | 7.3 | Measure `+3V3` and `+3V3A` | both now present |
 | 7.4 | Flash `panel_readout` | runs |
 | 7.5 | Open USB serial | readings once per second |

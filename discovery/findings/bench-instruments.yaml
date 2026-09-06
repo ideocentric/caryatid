@@ -1,0 +1,106 @@
+id: bench-instruments
+kind: other
+source_claim: >-
+  Implicit in every measurement this project records: that the reader knows what
+  the reading was taken with, and therefore what it can and cannot support. No
+  record has ever said. `loa-keypad-matrix` carries resistances, `loa-hook-switch`
+  carries a withdrawn pair of them, `bt1-cell-fit` carries a length, and none
+  names an instrument.
+source_ref: >-
+  discovery/findings/*.yaml, none of which names an instrument; docs/bringup.md,
+  which assumed an ammeter at steps 4.7 and 4.9 that does not exist.
+resource: The bench instruments used for every measurement in this project
+status: confirmed
+
+instruments:
+  multimeter:
+    model: Fluke 101
+    in_hand_since: before this project
+    🔴 has_NO_current_ranges: >-
+      NONE. Not a limitation of a range, an absence of the function. The 101 is
+      the model in Fluke's line specifically without current measurement.
+      EVERY CURRENT FIGURE IN THIS PROJECT IS THEREFORE A SHUNT VOLTAGE, or
+      comes off the bench supply's own display.
+    good_at: >-
+      Millivolts. It resolves 0.1 mV on the 600 mV range, which is what makes
+      the shunt method work well rather than merely work.
+    used_for: DC volts, resistance, diode test, continuity
+
+  bench_supply:
+    model: Jesverty, 0-30 V, 0-5 A
+    ordered: 2026-09-06
+    selected_because:
+      - >-
+        0-5 A AND NOT 0-10 A. The work sits at the bottom of the range, a
+        100 mA limit and a 0.90-1.10 A charge current, and halving the span
+        roughly doubles the relative accuracy there. The 10 A sibling was
+        rejected for exactly this: a bigger number that is worse for the job.
+      - >-
+        SELECTABLE CC / OCP. Constant current holds the board powered at a safe
+        current so a fault can be probed while it is misbehaving. OCP trips off,
+        which tells you only that something is wrong, which is where the
+        resistor ladder already was.
+      - Encoder knob with coarse and fine, for dialling a low limit precisely.
+    topology: switching
+    topology_is_acceptable_here: >-
+      There is no scope to see the noise, and the instrument runs from a battery
+      and its own boost in service, so switching noise touches only bench
+      measurements not yet being made. One second-order caveat: a switching
+      supply's output capacitor dumps into a fault before CC can act, which
+      slightly reduces the protection at first power-up. Milliseconds, and far
+      better than no limit.
+    NOT_YET_VERIFIED: >-
+      Current set resolution, accuracy specification and minimum settable
+      current limit. The Amazon listing's spec table could not be read; only
+      the title was retrieved. Check these against the manual on arrival, and
+      record them here.
+
+  shunts:
+    - {value: "10 ohm", for: "lamp, quiescent, any current in the mA range"}
+    - {value: "0.1 ohm", for: "charge and input current, around 1 A"}
+  🔴 the_shunts_are_not_made_redundant_by_the_supply: >-
+    THE SUPPLY READS AMPS WELL AND MILLIAMPS BADLY, and the division matters.
+
+      around 1 A   READ IT OFF THE SUPPLY. On a 5 A range this is well inside
+                   the instrument's accuracy, and it needs nothing in series.
+      tens of mA   USE THE 10 OHM SHUNT. A typical bench supply spec at 15 mA
+                   on a 5 A range gives an error comparable to the whole
+                   quantity being measured. The Fluke across 10 ohm reads
+                   150 mV at 0.1 mV resolution, which is not close.
+
+    So the switch lamp measurement, the quiescent current and every small
+    reading stay on the shunt. The charge current moves to the supply's display
+    with the 0.1 ohm available as a cross-check.
+
+  service_supply_is_separate: >-
+    The 5 V 3 A wall adapter and the 5.5 x 2.1 panel jack stay: they are what
+    the INSTRUMENT runs from through J1, not what the bench measures with. The
+    bench supply replaces them only for bring-up. See
+    `charger-input-voltage-thermal`.
+
+what_this_record_is_for: >-
+  PROVENANCE. A resistance means something different taken with clipped leads on
+  a cleaned terminal than taken with hand-held probes through hot-melt glue, and
+  this project has already been burned by exactly that twice: the capsule read
+  high through glue, and the hook switch read 27 kohm through an awkward
+  contact. Both readings were withdrawn.
+
+  Naming the instrument is half of citing the source. The other half, what was
+  probed and how, belongs in the evidence file for the measurement.
+
+evidence:
+  - "2026-09-06: bench supply ordered, Jesverty 0-30 V 0-5 A with selectable
+     CC/OCP and an encoder with coarse and fine adjustment, arriving same day.
+     Chosen over the 0-10 A sibling because the work sits at the bottom of the
+     range. Set resolution, accuracy and minimum settable limit are NOT yet
+     verified: the listing's spec table could not be retrieved"
+  - "2026-09-06: the Fluke 101 confirmed to have NO current ranges, by Matt.
+     This is why docs/bringup.md steps 4.7 and 4.9 were rewritten as shunt
+     voltages rather than ammeter readings"
+
+last_verified: 2026-09-06
+
+notes: >-
+  ON ARRIVAL, three things go in the record and one goes in the runbook:
+  set resolution, accuracy spec, minimum settable current limit; and Stage 2
+  becomes a CC setpoint rather than a resistor ladder.
