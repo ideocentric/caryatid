@@ -1,0 +1,130 @@
+id: panel-latch-switch
+kind: other
+source_claim: >-
+  That the latching switch bought for the panel is compatible with J3, whose
+  lamp leg feeds +5V through R5 with R5 fitted as a 0 ohm link and therefore
+  provides NO current limiting of its own.
+source_ref: >-
+  docs/power-sheet.md "Latch switch J3" and "R5 is a 0 Ohm link because the
+  3-9 V lamp limits its own current"; docs/indicators.md "1. Switch lamp";
+  Matt 2026-09-05, AliExpress 3256802323373047, "12mm white light 3-6V is what
+  is stated on the side of the switch".
+resource: >-
+  The 12 mm illuminated latching pushbutton for the panel, against caryatid J3
+status: in-progress    # LAMP question answered. Switch ACTION and PINOUT are not.
+
+the_lamp_question_is_ANSWERED:
+  reading: "3-6V, marked on the body of the switch"
+  verdict: 🔴 PASS. Wire it to J3.3 / J3.4 with R5 left as the 0 ohm link.
+  why: >-
+    A LAMP RATED AS A VOLTAGE RANGE IS INTERNALLY LIMITED. That is what the
+    range means: the part contains its own resistor or driver and takes any
+    voltage across the span. A bare LED cannot be given a range, it is given a
+    forward voltage and a current.
+
+    5.0 V sits inside 3-6 V, so the +5V rail through a 0 ohm R5 is exactly the
+    intended arrangement and nothing needs changing.
+
+  variance_from_the_documents_and_why_it_does_not_matter: >-
+    indicators.md and power-sheet.md both describe a 3-9 V variant. THIS SWITCH
+    IS 3-6 V. That is a different part, and it is FINE, and it is slightly
+    BETTER at this rail rather than worse.
+
+    indicators.md worried that 5.0 V would run the lamp below the ~6 V it was
+    judged against, "roughly 75% of the current, which the eye reads as around
+    85% as bright". Against a 6 V top rather than a 9 V one, 5 V is 83% of the
+    range rather than 56%. The brightness concern shrinks. NO ACTION, and the
+    documents are not wrong, they describe a variant that was not bought.
+
+🔴 still_unknown_1_LATCHING_OR_MOMENTARY:
+  why_it_matters: >-
+    THE BOARD REQUIRES LATCHING. R6 holds the boost's EN low, and the switch
+    pulls EN high from VOUT through J3.1 to J3.2. That is what makes it a real
+    power switch: press once and the instrument stays on.
+
+    A MOMENTARY SWITCH POWERS THE BOARD ONLY WHILE HELD DOWN. It would work
+    perfectly on the bench for as long as a finger is on it, which is exactly
+    long enough to pass every test and fail as an instrument.
+  the_test: >-
+    PRESS IT. Latching clicks and STAYS IN, and clicks out on a second press.
+    Momentary springs back. No meter needed and it takes a second.
+    Listings call latching "self-locking", "maintained" or "on/off"; momentary
+    is "reset" or "self-reset". The listing was not read: AliExpress redirected
+    to a login endpoint and was not followed.
+
+🔴 still_unknown_2_THE_PINOUT:
+  why_it_matters: >-
+    A 12 mm illuminated pushbutton is commonly 4 pins (2 switch, 2 lamp), 5 pins
+    (SPDT: common, NO, NC, plus 2 lamp) or 6. Which is which is not guessable,
+    and J3 wants exactly two of the switch pins and exactly two lamp pins.
+  the_test: >-
+    Beep it out, the same way the hook switch is being beeped out, and the same
+    lesson applies: NAME THE TERMINALS, NOT THE SWITCH.
+  the_discriminator: >-
+    THE SWITCH CONTACTS READ ABOUT 0 OHM IN ONE STATE. THE LAMP PAIR NEVER
+    DOES. An internally limited lamp has a resistor or driver in series, so it
+    will not show a clean diode drop and will never short. That separates the
+    two functions in one sweep without any assumption about pin order.
+  which_switch_pins_j3_wants: >-
+    If it is SPDT, take COMMON and NORMALLY OPEN, so that the boost is off
+    until the button is latched in. NC would power the instrument when the
+    button is OUT, which is backwards.
+  lamp_polarity: >-
+    An LED lamp is polarised. J3.3 is the ANODE side (+5V through R5) and J3.4
+    the CATHODE (GND). Backwards it simply will not light; with an internal
+    series resistor there is no damage at 5 V. Identify it by applying the
+    bench supply across the lamp pair and seeing which way round it lights.
+
+the_measurement_that_closes_a_DOCUMENTED_unknown:
+  # This needs NO BOARD. Supply, meter, switch. It can be done today.
+  what: >-
+    Meter in SERIES with the lamp, on the 5 V bench supply. Record the current.
+  why_it_is_worth_doing_now: >-
+    values.md lists three unattributed items in the 5 V power budget, and one of
+    them is "THE SWITCH LAMP IS UNMEASURED". capture-checklist.md has been
+    asking for a meter in series at both voltages since capture. This reading
+    lands directly in that table and closes one of the three.
+
+    It also feeds the runtime table, since the lamp is lit the entire time the
+    instrument is on. At 350 mA "loud, LEDs lit" the runtime is 5.2 hours, and
+    the lamp is currently a guess inside that number.
+  also_record: >-
+    The current at 3 V as well if convenient, since capture-checklist asks for
+    both ends. It brackets what the lamp does as the rail moves.
+
+mounting:
+  stated: "12 mm"
+  🔴 what_that_figure_IS: >-
+    12 mm is the MOUNTING HOLE diameter, which is how this class of switch is
+    designated. IT IS NOT THE BEZEL DIAMETER, which is larger, typically
+    14-15 mm on a 12 mm switch.
+  consequence_for_loa: >-
+    loa docs/design/12-phone-build.md carries "the latching switch (bezel
+    diameter still to measure)" under panel positions still to take. THIS
+    PARTIALLY ANSWERS IT: the hole is 12 mm, which is what gets drilled. The
+    bezel diameter, which is what decides whether it clears its neighbours on
+    the phone's panel, still wants calipers across the flange.
+
+evidence:
+  - "2026-09-05: lamp rated 3-6V, read by Matt off the body of the switch. A
+     voltage RANGE means internal current limiting, so J3's 0 ohm R5 is correct
+     and 5.0 V sits inside the range. This CLOSES the lamp compatibility
+     question. The documents describe a 3-9 V variant; this is a different part
+     and is slightly better at 5 V, since 5 V is 83% of a 6 V top against 56%
+     of a 9 V one"
+  - "2026-09-05: the listing was NOT read. AliExpress 3256802323373047
+     redirected to a login endpoint, which was not followed. Switch action
+     (latching vs momentary), pin count and pinout are therefore unestablished
+     and are not inferred from the product category"
+
+last_verified: 2026-09-05
+
+notes: >-
+  ONE OF THE THREE CABLE CHECKS IS NOW GREEN. The other two, both about the
+  LEDs, are untouched: common anode on J4 and J12, and whether the charge LED's
+  green die is AlGaInP or InGaN.
+
+  IT DOES NOT BLOCK THE BENCH. J3 needs only a BARE LINK between pins 1 and 2
+  for bring-up Stages 2 and 3, and that link deliberately leaves the lamp out
+  of the boost test. The full four-way switch cable is not needed until the
+  panel is built.
