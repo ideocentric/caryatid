@@ -297,14 +297,39 @@ the Seed before it goes near the socket.
 
 ## A9. Board identity
 
+🔴 **The 1-5 mark is silkscreened on the breakaway rail, so it is destroyed the
+moment you depanel.** It is permanent ink on a part of the board that is
+designed to be thrown away, which is worse than a sticker: a sticker looks
+temporary and this looks trustworthy right up until the rail snaps off.
+
 | # | Do | Pass |
 | --- | --- | --- |
-| A9.1 | Confirm each board's mark 1-5 is **permanent**, not a sticker or wet ink | survives handling and solvent |
-| A9.2 | If not permanent, add your own in marker on the bottom silkscreen | five distinguishable boards |
+| A9.1 | **Transfer the number onto the board proper**, in marker on the bottom silkscreen, away from any pad | five boards identified independently of their rails |
+| A9.2 | Photograph each board **with its rail and mark still attached and legible** | the photo is the record tying board N to that rail |
+| A9.3 | Only then consider depanelling | see below |
 
-The order specified `mark_on_pcb: "Remove Mark"`, so JLC's own order number is
-*not* on the PCB and whatever marks these is something else. **Boards that
-become indistinguishable halfway through turn a batch fault into a flaky board.**
+`mark_on_pcb: "Remove Mark"` in the order means JLC's *order number* is not
+printed, and `depanel_and_edge_rail_before_delivery: false` means the rails came
+attached. So the rail is JLC's, the 1-5 on it is the only thing distinguishing
+five otherwise identical boards, and it is on the disposable part.
+
+**Boards that become indistinguishable halfway through turn a batch fault into a
+flaky board.** A9.1 costs a minute and removes that entirely.
+
+### When to depanel, and how
+
+**Keep the rails through Phases B and C.** They protect the edges, and they give
+you something to hold that is not the board.
+
+**Depanel before Phase E only if a rail obstructs a connector you need**, and
+before any enclosure fit check, since the rails are not part of the 150 × 90 mm
+outline the BUD case and the phone shell were measured against.
+
+🔴 **Cut, do not snap.** Flush cutters or a depanel tool, working along the
+tabs. Snapping by hand flexes the board, and this board carries 64 0603
+resistors and a QFN-16 whose joints do not enjoy being flexed. The damage from a
+hand-snapped panel shows up later as an intermittent, which is the most
+expensive kind of fault to find on a board you have already declared good.
 
 ---
 
@@ -320,7 +345,7 @@ batch fault while it still costs an evening rather than a Daisy Seed.
 | # | Do | Pass |
 | --- | --- | --- |
 | B1.1 | Count the boards | 5 |
-| B1.2 | Photograph both faces, in focus, whole board | filed in `discovery/evidence/` |
+| B1.2 | Photograph both faces, in focus, whole board, **rail and its 1-5 mark legible** | filed in `discovery/evidence/`. This photo is what ties board N to its rail once the rail is gone |
 | B1.3 | Part census by sweep band, below | 127 present |
 | B1.4 | **BT1 absent** | absent, it is `self_fit` |
 | B1.5 | **JP1-JP6 bare**, no shunts fitted | bare |

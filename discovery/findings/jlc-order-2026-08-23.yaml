@@ -158,6 +158,14 @@ evidence:
      a 2026-08-22 RESUME HERE listing 'Order' as an outstanding action,
      nine days after the order was placed and until the boards were on
      the bench"
+  - "2026-09-07: THE BOARD IDENTITY IS ON THE DISPOSABLE PART. The 1-5 marks
+     distinguishing the five boards are silkscreened on the BREAKAWAY RAIL,
+     which follows from two settings in this order: mark_on_pcb Remove Mark,
+     so JLC's order number is not on the PCB, and
+     depanel_and_edge_rail_before_delivery false, so the rails arrived
+     attached. Consequence: depanelling destroys the only thing telling five
+     otherwise identical boards apart. docs/bringup.md A9 now transfers the
+     number to the board proper and photographs the rail before it is cut"
 open_questions:
   - id: min-via-hole-mismatch
     severity: resolved

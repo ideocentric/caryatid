@@ -1,0 +1,281 @@
+caryatid bring-up tally sheet
+====================================================================================================
+
+  GENERATED 2026-09-07 from docs/bringup.md by tools/gen_bringup_sheet.py.
+  BLANK. Nothing below is a result yet.
+
+  DO NOT EDIT THE RUNBOOK TO RECORD A READING, and do not hand-edit this
+  sheet's structure. Fix the runbook, regenerate, and the two stay in step.
+
+  Board: ............   Operator: ............   Started: ............
+
+  Instruments (per discovery/findings/bench-instruments.yaml):
+    meter  Fluke 101, NO current ranges. Current is a shunt voltage.
+    supply Jesverty 0-30 V 0-5 A, CC/OCP selectable.
+    shunts 10 ohm for mA, 0.1 ohm for ~1 A.
+
+
+====================================================================================================
+PHASE A: PREPARATION
+scope: bench
+====================================================================================================
+
+  A5. Rigs to build
+  -----------------
+
+    A5.1    Bus breakout. IDC 2×5 ribbon, 2×5 socket one end, 10-pin 0.1 inch header the other,
+            pressed into a breadboard
+            expect: seats in the breadboard, all 10 conductors beep through
+            reading: ......................
+
+    A5.2    Analogue injector. 10 kΩ pot on the breadboard, ends to 3V3A and AGND from the
+            breakout, wiper on a flying lead
+            expect: pot sweeps 0 V to 3V3 measured at the wiper
+            reading: ......................
+
+    A5.3    Ground stick. A jumper from breadboard GND, for pulling digital lines down one at a
+            time
+            expect: beeps to GND
+            reading: ......................
+
+    A5.4    Loopback wires. One short jumper each for UART and SPI
+            expect: beep through
+            reading: ......................
+
+  A6. Cables to build
+  -------------------
+
+    A6.1    J1 power in, 2-way
+            expect: 1 positive to supply +, 2 GND / C1
+            reading: ......................
+
+    A6.2    J3 bare link, 2 wires
+            expect: J3.1 to J3.2 only, nothing else / C2
+            reading: ......................
+
+    A6.3    J3 latch switch, 4-way
+            expect: 1,2 to the unlabelled pins; 3 to +, 4 to - / panel
+            reading: ......................
+
+    A6.4    J4 charge LED, 4-way
+            expect: 1 anode, 2 /CHG cathode, 3 /PGOOD cathode / C4
+            reading: ......................
+
+    A6.5    J12 RGB, 4-way
+            expect: 1 anode +5V, 2 red, 3 green, 4 blue cathodes / E7
+            reading: ......................
+
+    A6.6    J14 shorting link, 2-way
+            expect: pins bridged / E8, before any mic test
+            reading: ......................
+
+    A6.7    J18 mic, 3-way
+            expect: electret red to pin 1 or 2, black to pin 3 / E8
+            reading: ......................
+
+    A6.8    J17 audio out, 3-way
+            expect: L, R, GND to jacks or headphones / E8
+            reading: ......................
+
+    A6.9    J8 hook switch, 2-way
+            expect: to the hook switch COM and NC / loa build
+            reading: ......................
+
+    A6.10   J11 keypad, IDC 2×5
+            expect: to JST ZH 7-way. !! cross positions 5 and 7 / loa build
+            reading: ......................
+
+  A7. Component checks, before they reach a panel
+  -----------------------------------------------
+
+    A7.1    Switch lamp limits its own current. J3.3 feeds +5V through R5, and R5 is a 0 Ω link
+            expect: a lamp rated as a voltage range is internally limited. OK PASSED: 12 mm
+                    latching, marked 3-6 V, 4 pins, contacts 0.9 Ω latched and open out, ran at
+                    5 V undamaged. See panel-latch-switch
+            reading: ......................
+
+    A7.2    Charge LED is common anode
+            expect: diode test: a common anode conducts with the red probe on the common pin
+            reading: ......................
+
+    A7.3    Charge LED green die is AlGaInP, not InGaN
+            expect: !! J4 runs from VOUT, the cell falling to 3.0 V. AlGaInP at ~2.1 V is fine;
+                    InGaN true green at 3.0-3.2 V dims and goes dark as the cell drains and no
+                    resistor fixes it
+            reading: ......................
+
+    A7.4    RGB is common anode
+            expect: same diode test. !! It cannot run from 3V3: green and blue Vf is above the
+                    output-high level
+            reading: ......................
+
+    A7.5    Test electret characterised
+            expect: DC resistance both ways, a finite kΩ that differs by direction, which is the
+                    built-in JFET. Tells you which lead is positive. See bench-test-electret
+            reading: ......................
+
+    A7.6    Switch lamp current
+            expect: 10 Ω shunt at 5 V. Closes one of three unattributed lines in the 5 V budget
+                    in values.md
+            reading: ......................
+
+  A9. Board identity
+  ------------------
+
+    A9.1    Transfer the number onto the board proper, in marker on the bottom silkscreen, away
+            from any pad
+            expect: five boards identified independently of their rails
+            reading: ......................
+
+    A9.2    Photograph each board with its rail and mark still attached and legible
+            expect: the photo is the record tying board N to that rail
+            reading: ......................
+
+    A9.3    Only then consider depanelling
+            expect: see below
+            reading: ......................
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE B: DEAD BOARD
+scope: all five boards
+====================================================================================================
+
+  B1. Inventory and visual
+  ------------------------
+
+    B1.1    Count the boards
+            expect: 5
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.2    Photograph both faces, in focus, whole board, rail and its 1-5 mark legible
+            expect: filed in discovery/evidence/. This photo is what ties board N to its rail
+                    once the rail is gone
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.3    Part census by sweep band, below
+            expect: 127 present
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.4    BT1 absent
+            expect: absent, it is self_fit
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.5    JP1-JP6 bare, no shunts fitted
+            expect: bare
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.6    Solder bridges, tombstones, skewed parts
+            expect: none
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.7    U1 QFN-16, U2 SOT-563, U3, U4 orientation vs local/fab/board-top.png
+            expect: pin 1 as drawn
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.8    C7 polarity, the 100 µF electrolytic
+            expect: band to the marked pin
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.9    IDC pin-1 and JST polarity on J5 and J11
+            expect: as drawn. sourcing.md flags these: the footprints came from absonus, which
+                    proves they fabricate, not that they are right
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B2. Rail to ground
+  ------------------
+
+    B2.1    VIN_DC
+            expect: J1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.2    VBAT
+            expect: BT1 pads
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.3    VOUT
+            expect: J3, J4
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.4    +5V
+            expect: J12 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.5    +3V3
+            expect: J16 pin 2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.6    +3V3A
+            expect: J9 pin 1, J10 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.7    +3V3D
+            expect: J11 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B3. Rail to rail
+  ----------------
+
+    B3.1    +5V to +3V3
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.2    +3V3 to +3V3A
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.3    +3V3A to +3V3D
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.4    VOUT to +5V
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B4. Ground continuity
+  ---------------------
+
+    B4.1    J5 pin 10 to J11 pin 10
+            expect: near 0 Ω
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B5. D1 orientation
+  ------------------
+
+    B5.1    Diode test across D1 forward
+            expect: 0.2 to 0.4 V. A Schottky, lower than silicon's 0.6 V. Near 0.6-0.7 V means
+                    it is not the part you think
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B5.2    Reverse
+            expect: open
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B6. Seed socket
+  ---------------
+
+    B6.1    No adjacent pins bridged, A1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.2    No adjacent pins bridged, A2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.3    A1 row not shorted to A2 row
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+WHAT WAS NOT TESTED. Fill this in, do not leave it blank.
+====================================================================================================
+
+  Ripple, switching, inrush, debounce timing and audio quality are out of
+  reach with this kit. Anything else you skipped goes here, so the record
+  does not read as though it passed.
+
+  ..............................................................................
+  ..............................................................................
+
