@@ -1,0 +1,623 @@
+caryatid bring-up tally sheet
+====================================================================================================
+
+  GENERATED 2026-09-06 from docs/bringup.md by tools/gen_bringup_sheet.py.
+  BLANK. Nothing below is a result yet.
+
+  DO NOT EDIT THE RUNBOOK TO RECORD A READING, and do not hand-edit this
+  sheet's structure. Fix the runbook, regenerate, and the two stay in step.
+
+  Board: ............   Operator: ............   Started: ............
+
+  Instruments (per discovery/findings/bench-instruments.yaml):
+    meter  Fluke 101, NO current ranges. Current is a shunt voltage.
+    supply Jesverty 0-30 V 0-5 A, CC/OCP selectable.
+    shunts 10 ohm for mA, 0.1 ohm for ~1 A.
+
+
+====================================================================================================
+PHASE A: PREPARATION
+scope: bench
+====================================================================================================
+
+  A5. Rigs to build
+  -----------------
+
+    A5.1    Bus breakout. IDC 2×5 ribbon, 2×5 socket one end, 10-pin 0.1 inch header the other,
+            pressed into a breadboard
+            expect: seats in the breadboard, all 10 conductors beep through
+            reading: ......................
+
+    A5.2    Analogue injector. 10 kΩ pot on the breadboard, ends to 3V3A and AGND from the
+            breakout, wiper on a flying lead
+            expect: pot sweeps 0 V to 3V3 measured at the wiper
+            reading: ......................
+
+    A5.3    Ground stick. A jumper from breadboard GND, for pulling digital lines down one at a
+            time
+            expect: beeps to GND
+            reading: ......................
+
+    A5.4    Loopback wires. One short jumper each for UART and SPI
+            expect: beep through
+            reading: ......................
+
+  A6. Cables to build
+  -------------------
+
+    A6.1    J1 power in, 2-way
+            expect: 1 positive to supply +, 2 GND / C1
+            reading: ......................
+
+    A6.2    J3 bare link, 2 wires
+            expect: J3.1 to J3.2 only, nothing else / C2
+            reading: ......................
+
+    A6.3    J3 latch switch, 4-way
+            expect: 1,2 to the unlabelled pins; 3 to +, 4 to - / panel
+            reading: ......................
+
+    A6.4    J4 charge LED, 4-way
+            expect: 1 anode, 2 /CHG cathode, 3 /PGOOD cathode / C4
+            reading: ......................
+
+    A6.5    J12 RGB, 4-way
+            expect: 1 anode +5V, 2 red, 3 green, 4 blue cathodes / E7
+            reading: ......................
+
+    A6.6    J14 shorting link, 2-way
+            expect: pins bridged / E8, before any mic test
+            reading: ......................
+
+    A6.7    J18 mic, 3-way
+            expect: electret red to pin 1 or 2, black to pin 3 / E8
+            reading: ......................
+
+    A6.8    J17 audio out, 3-way
+            expect: L, R, GND to jacks or headphones / E8
+            reading: ......................
+
+    A6.9    J8 hook switch, 2-way
+            expect: to the hook switch COM and NC / loa build
+            reading: ......................
+
+    A6.10   J11 keypad, IDC 2×5
+            expect: to JST ZH 7-way. !! cross positions 5 and 7 / loa build
+            reading: ......................
+
+  A7. Component checks, before they reach a panel
+  -----------------------------------------------
+
+    A7.1    Switch lamp limits its own current. J3.3 feeds +5V through R5, and R5 is a 0 Ω link
+            expect: a lamp rated as a voltage range is internally limited. OK PASSED: 12 mm
+                    latching, marked 3-6 V, 4 pins, contacts 0.9 Ω latched and open out, ran at
+                    5 V undamaged. See panel-latch-switch
+            reading: ......................
+
+    A7.2    Charge LED is common anode
+            expect: diode test: a common anode conducts with the red probe on the common pin
+            reading: ......................
+
+    A7.3    Charge LED green die is AlGaInP, not InGaN
+            expect: !! J4 runs from VOUT, the cell falling to 3.0 V. AlGaInP at ~2.1 V is fine;
+                    InGaN true green at 3.0-3.2 V dims and goes dark as the cell drains and no
+                    resistor fixes it
+            reading: ......................
+
+    A7.4    RGB is common anode
+            expect: same diode test. !! It cannot run from 3V3: green and blue Vf is above the
+                    output-high level
+            reading: ......................
+
+    A7.5    Test electret characterised
+            expect: DC resistance both ways, a finite kΩ that differs by direction, which is the
+                    built-in JFET. Tells you which lead is positive. See bench-test-electret
+            reading: ......................
+
+    A7.6    Switch lamp current
+            expect: 10 Ω shunt at 5 V. Closes one of three unattributed lines in the 5 V budget
+                    in values.md
+            reading: ......................
+
+  A9. Board identity
+  ------------------
+
+    A9.1    Confirm each board's mark 1-5 is permanent, not a sticker or wet ink
+            expect: survives handling and solvent
+            reading: ......................
+
+    A9.2    If not permanent, add your own in marker on the bottom silkscreen
+            expect: five distinguishable boards
+            reading: ......................
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE B: DEAD BOARD
+scope: all five boards
+====================================================================================================
+
+  B1. Inventory and visual
+  ------------------------
+
+    B1.1    Count the boards
+            expect: 5
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.2    Photograph both faces, in focus, whole board
+            expect: filed in discovery/evidence/
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.3    Part census by sweep band, below
+            expect: 127 present
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.4    BT1 absent
+            expect: absent, it is self_fit
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.5    JP1-JP6 bare, no shunts fitted
+            expect: bare
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.6    Solder bridges, tombstones, skewed parts
+            expect: none
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.7    U1 QFN-16, U2 SOT-563, U3, U4 orientation vs local/fab/board-top.png
+            expect: pin 1 as drawn
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.8    C7 polarity, the 100 µF electrolytic
+            expect: band to the marked pin
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.9    IDC pin-1 and JST polarity on J5 and J11
+            expect: as drawn. sourcing.md flags these: the footprints came from absonus, which
+                    proves they fabricate, not that they are right
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B2. Rail to ground
+  ------------------
+
+    B2.1    VIN_DC
+            expect: J1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.2    VBAT
+            expect: BT1 pads
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.3    VOUT
+            expect: J3, J4
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.4    +5V
+            expect: J12 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.5    +3V3
+            expect: J16 pin 2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.6    +3V3A
+            expect: J9 pin 1, J10 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.7    +3V3D
+            expect: J11 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B3. Rail to rail
+  ----------------
+
+    B3.1    +5V to +3V3
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.2    +3V3 to +3V3A
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.3    +3V3A to +3V3D
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.4    VOUT to +5V
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B4. Ground continuity
+  ---------------------
+
+    B4.1    J5 pin 10 to J11 pin 10
+            expect: near 0 Ω
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B5. D1 orientation
+  ------------------
+
+    B5.1    Diode test across D1 forward
+            expect: 0.2 to 0.4 V. A Schottky, lower than silicon's 0.6 V. Near 0.6-0.7 V means
+                    it is not the part you think
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B5.2    Reverse
+            expect: open
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B6. Seed socket
+  ---------------
+
+    B6.1    No adjacent pins bridged, A1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.2    No adjacent pins bridged, A2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.3    A1 row not shorted to A2 row
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE C: POWER
+scope: board 1
+====================================================================================================
+
+  C1. First power
+  ---------------
+
+    C1.1    Supply current at idle
+            expect: a few mA, CV lit
+            b1 ........
+
+    C1.2    VOUT at J3 or J4
+            expect: present, stable, below the input, around 4.4 to 4.5 V
+            b1 ........
+
+    C1.3    /PGOOD at J4
+            expect: asserted
+            b1 ........
+
+    C1.4    +5V at J12 pin 1
+            expect: !! dead, and that is correct
+            b1 ........
+
+    C1.5    Board temperature by hand
+            expect: nothing warm. A warm QFN with no load is a fault
+            b1 ........
+
+  C2. The boost
+  -------------
+
+    C2.1    Fit the J3 bare link (A6.2), pins 1 to 2
+            b1 ........
+
+    C2.2    +5V at J12 pin 1
+            expect: 4.954 V nominal, accept 4.744 to 5.168 V
+            b1 ........
+
+    C2.3    +5V at J15, J16, J19
+            expect: same, within meter resolution
+            b1 ........
+
+    C2.4    Across FB1
+            expect: tens of mV at most
+            b1 ........
+
+    C2.5    Supply current
+            expect: risen, modest with no load
+            b1 ........
+
+    C2.6    U2 and L1 by hand
+            expect: warm acceptable, hot is not
+            b1 ........
+
+  C3. BT1 and the cell
+  --------------------
+
+    C3.1    Solder BT1, then repeat B2.2 for VBAT
+            expect: no short. You just added two joints to a rail a cell will drive
+            b1 ........
+
+    C3.2    Cell open-circuit voltage before fitting
+            expect: 3.0 to 4.2 V, note it
+            b1 ........
+
+    C3.3    Seat the cell, watching orientation
+            expect: seats without forcing. Fit confirmed 2026-09-01
+            b1 ........
+
+    C3.4    VBAT at the holder
+            expect: matches C3.2
+            b1 ........
+
+    C3.5    Supply out, check VOUT
+            expect: alive, running from the cell
+            b1 ........
+
+    C3.6    J3 link on, check +5V
+            expect: inside the band, now boosted from the cell
+            b1 ........
+
+  C4. Charging
+  ------------
+
+    C4.1    !! Raise the supply limit to 1.5 A, still 5.00 V
+            expect: the charger needs far more than 100 mA
+            b1 ........
+
+    C4.2    Supply in, cell fitted, partially discharged
+            expect: /CHG asserts at J4
+            b1 ........
+
+    C4.3    Charge current, off the supply display
+            expect: 0.90 to 1.10 A. Cross-check with the 0.1 Ω if marginal
+            b1 ........
+
+    C4.4    VBAT over some minutes
+            expect: rising
+            b1 ........
+
+    C4.5    Total input current
+            expect: under the 1.29 A input limit
+            b1 ........
+
+    C4.6    U1 case after ten minutes steady
+            expect: warm, not hot. Closes charger-input-voltage-thermal
+            b1 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE D: THE SEED
+scope: board 1
+====================================================================================================
+
+  D1. The Seed, on its own
+  ------------------------
+
+    D1.1    Install the ARM toolchain, build libDaisy
+            expect: builds clean
+            b1 ........
+
+    D1.2    Flash the stock blink example over USB
+            expect: LED blinks
+            b1 ........
+
+    D1.3    Flash something using StartLog and print
+            expect: text over USB serial
+            b1 ........
+
+    D1.4    Build firmware/examples/panel_readout.cpp
+            expect: compiles, not yet run
+            b1 ........
+
+  D2. The socket, Seed still out
+  ------------------------------
+
+    D2.1    The pin feeding the Seed its input power
+            expect: +5V, inside the band
+            b1 ........
+
+    D2.2    Every ground pin
+            expect: 0 Ω to ground
+            b1 ........
+
+    D2.3    3v3A, socket pin 21
+            expect: !! absent, and that is correct
+            b1 ........
+
+    D2.4    Any other pin against ground
+            expect: no rail where a GPIO belongs
+            b1 ........
+
+  D3. Seed in, first boot
+  -----------------------
+
+    D3.1    Power down fully. Insert the Seed, watching orientation
+            expect: seats fully
+            b1 ........
+
+    D3.2    Power up with the limit at 500 mA, still CC
+            expect: sane current, CV stays lit
+            b1 ........
+
+    D3.3    +3V3 and +3V3A
+            expect: both now present
+            b1 ........
+
+    D3.4    Flash panel_readout
+            expect: runs
+            b1 ........
+
+    D3.5    Open USB serial
+            expect: readings once per second
+            b1 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE E: FUNCTIONAL SWEEP
+scope: board 1
+====================================================================================================
+
+  E1. Analogue bus, J5
+  --------------------
+
+    E1.1    Bus breakout on J5, pot wiper to each channel in turn
+            expect: each reads 0 V to 3V3 as swept
+            b1 ........
+
+    E1.2    Sweep one channel and watch all eight
+            expect: !! only the expected channel moves. This is what catches a swapped pair
+            b1 ........
+
+  E2. Dedicated analogue, J9 and J10
+  ----------------------------------
+
+    E2.1    Read A4 and A5 with nothing plugged in
+            expect: a defined low value, not floating. An open reading means a pulldown is
+                    missing
+            b1 ........
+
+    E2.2    Inject with the pot on each
+            expect: tracks
+            b1 ........
+
+  E3. Battery gauge, A10
+  ----------------------
+
+    E3.1    Compare reported value against VBAT at the holder
+            expect: pin reads half the cell, 100 k/100 k, firmware reports the doubled figure
+            b1 ........
+
+  E4. Charge status, A11
+  ----------------------
+
+    E4.1    Produce each reachable state
+            expect: level within ~100 mV
+            b1 ........
+
+    E4.2    Decode
+            expect: by nearest level, not thresholds. Minimum separation 330 mV, 409 ADC counts
+                    against noise of a few
+            b1 ........
+
+  E5. Digital bus, J11
+  --------------------
+
+    E5.1    Ground each line in turn with the ground stick
+            expect: the expected bit changes, and only that bit
+            b1 ........
+
+    E5.2    Optionally plug in the loa keypad through the ZH harness
+            expect: a confirmed 4×3 exercises the bus as the instrument will. See
+                    loa-keypad-matrix
+            b1 ........
+
+  E6. Switches, J6 J7 J8
+  ----------------------
+
+    E6.1    Short J6, J7, J8 in turn
+            expect: the right bit moves, high when closed
+            b1 ........
+
+  E7. RGB status, J12
+  -------------------
+
+    E7.1    Drive each channel low in turn
+            expect: red through 510 Ω, green and blue through 300 Ω
+            b1 ........
+
+    E7.2    All three together
+            expect: white
+            b1 ........
+
+  E8. Audio, J17 and J18
+  ----------------------
+
+    E8.1    Fit the J14 link (A6.6)
+            b1 ........
+
+    E8.2    Tone out on J17, L and R independently
+            expect: not swapped, not summed
+            b1 ........
+
+    E8.3    Known signal into J18
+            expect: arrives on the right channel
+            b1 ........
+
+    E8.4    Electret on J18, per A7.5
+            expect: audible, both channels in turn
+            b1 ........
+
+  E9. Mic configurations, JP1 to JP6
+  ----------------------------------
+
+    E9.1    Electret left: JP1, JP2, JP3 on 1-2
+            expect: bias through R51 2k2, 1.5 mA
+            b1 ........
+
+    E9.2    Electret right: JP4, JP5, JP6 on 1-2
+            expect: bias through R53
+            b1 ........
+
+    E9.3    Each remaining documented configuration
+            expect: as mic-configurations.md states
+            b1 ........
+
+  E10. Comms A, J13 and J19
+  -------------------------
+
+    E10.1   I2C on J13 with a Qwiic device
+            expect: device enumerates
+            b1 ........
+
+    E10.2   UART loopback on J19, D11 to D12
+            expect: sent bytes return
+            b1 ........
+
+  E11. Comms B, J15
+  -----------------
+
+    E11.1   UART loopback on J15, D13 to D14
+            expect: sent bytes return
+            b1 ........
+
+  E12. Expansion, J16
+  -------------------
+
+    E12.1   SPI loopback, D10 MOSI to D9 MISO
+            expect: written bytes read back
+            b1 ........
+
+    E12.2   +5V, +3V3, two grounds present
+            expect: as connectors.md
+            b1 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE F: THE BATCH
+scope: boards 2 to 5
+====================================================================================================
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+PHASE G: RECORDING
+scope: 
+====================================================================================================
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+WHAT WAS NOT TESTED. Fill this in, do not leave it blank.
+====================================================================================================
+
+  Ripple, switching, inrush, debounce timing and audio quality are out of
+  reach with this kit. Anything else you skipped goes here, so the record
+  does not read as though it passed.
+
+  ..............................................................................
+  ..............................................................................
+

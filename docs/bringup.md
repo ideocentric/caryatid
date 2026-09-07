@@ -3,60 +3,83 @@
 **How to prove a fabricated caryatid board works, from the antistatic bag to a
 Daisy Seed running `panel_readout`.**
 
-Written 2026-09-02, for the first batch: five boards, JLCPCB order of
-2026-08-23, ENIG, Economic assembly top side, arrived 2026-09-01.
+First batch: five boards, JLCPCB order of 2026-08-23, ENIG, Economic assembly
+top side, arrived 2026-09-01. Nothing in this repository has ever been powered.
+**Every number below is predicted from the schematic and the design documents,
+and none of it has been seen on hardware.** That is what running this is for.
 
-Nothing in this repository has ever been powered. Every number below is
-**predicted** from the schematic and the design documents, and none of it has
-been seen on an instrument. That is the point of running it.
+> **A platform artifact, not a loa document.** Four more boards and every future
+> batch use it. Keep instrument-specific steps out.
 
-> **This runbook is a platform artifact, not a loa document.** Four more boards
-> and every future batch use it. Keep instrument-specific steps out of it.
+## How to use this
+
+**This file is the reference and is never filled in.** Readings go on a dated
+sheet generated from it:
+
+```sh
+python3 tools/gen_bringup_sheet.py            # writes today's blank sheet
+python3 tools/gen_bringup_sheet.py --phase B  # just one phase
+```
+
+The sheet lands in `discovery/evidence/` with a dated filename. **Revise this
+file, regenerate the sheet.** That is the whole reason the sheet is generated
+rather than hand-written: the two used to drift apart every time the runbook
+changed, and they did.
+
+Each phase declares a **scope** line, which the generator reads to decide
+whether a step gets one column or five.
 
 ---
 
-## Before you start
+# Phase A: Preparation
 
-### The five rules
+> **Scope:** bench
 
-1. **Never power a rail you have not proved is not shorted.** Stage 1 exists
-   entirely for this, and it is the stage with no glamour and the highest value.
-2. **Every pass criterion is a number.** "Looks right" is not a result. If a
-   step does not tell you what value to expect, it is not finished being
-   written; say so rather than improvising a threshold at the bench.
+Nothing here touches a board.
+
+## A1. The five rules
+
+1. **Never power a rail you have not proved is not shorted.** Phase B exists
+   entirely for this, and it is the phase with no glamour and the highest value.
+2. **Every pass criterion is a number.** "Looks right" is not a result. A step
+   that does not say what to expect is not finished being written; say so rather
+   than inventing a threshold at the bench.
 3. **Record as you go, per board.** A runbook with no record is a runbook you
-   run twice. See [Recording](#recording).
-4. **Stop at the first red gate.** Do not press on to see whether the next
-   thing also fails. On this board the failure modes are cumulative: a shorted
-   rail that survives one stage destroys a part in the next.
+   run twice.
+4. **Stop at the first red gate.** Do not press on to see whether the next thing
+   also fails. The failure modes here are cumulative: a shorted rail that
+   survives one phase destroys a part in the next.
 5. **One board all the way before the other four.** You are proving the runbook
    as much as the hardware, and debugging five boards at once is debugging none.
 
-### What you have, and what it costs you
+## A2. Instruments, and what they cannot reach
 
-You have **a multimeter and nothing else**. That is enough to complete this
-runbook, and there are things it cannot reach. They are listed here so that a
-gap is recorded as untested rather than quietly counted as passed.
+Recorded in [`bench-instruments`](../discovery/findings/bench-instruments.yaml),
+which is what every reading in this project should be traceable to.
 
-| Cannot be checked without a scope | Consequence |
+| instrument | |
 | --- | --- |
-| Boost switching node and ripple | U2 could be running badly and still read 5.0 V DC |
+| **Fluke 101** | DC volts, resistance, diode, continuity. 🔴 **No current ranges at all.** Excellent at millivolts: 0.1 mV on the 600 mV range |
+| **Jesverty 0-30 V 0-5 A** | Selectable CC/OCP, encoder with coarse and fine. Arrived 2026-09-06 |
+| **10 Ω and 0.1 Ω shunts** | 1 W or better. How current gets measured |
+
+**What no amount of care reaches, with this kit:**
+
+| out of reach | consequence |
+| --- | --- |
+| Boost switching node and ripple | U2 could run badly and still read 5.0 V DC |
 | Inrush and start-up transient | A marginal soft-start shows only as an occasional failure to come up |
-| RC debounce timing on the 74HC14 | ADR 0007's 24 ms figure stays unverified; firmware may need tuning |
+| RC debounce timing on the 74HC14 | ADR 0007's 24 ms stays unverified; firmware may need tuning |
 | Audio noise floor and THD | You will know audio *works*, not how well |
 | I2C and SPI signal integrity | Works or does not; no margin measurement |
 
-**The scope table stands. The current-limit problem is closed.** A Jesverty
-0-30 V 0-5 A bench supply with selectable CC/OCP arrived 2026-09-06, so
-[Stage 2](#stage-2-first-power) sets a real current limit rather than
-approximating one with a resistor. What each reading was taken with is recorded
-in [`bench-instruments`](../discovery/findings/bench-instruments.yaml).
+**Record these as untested, never as passed.** A record that omits them reads as
+though they were checked.
 
-### Measuring current with no ammeter
+## A3. Measuring current with no ammeter
 
-**The Fluke 101 has no current ranges at all.** Not a limited range, an absent
-function. So current is either read off the bench supply or derived from a
-**shunt voltage**: a known resistor in series, millivolts across it, Ohm's law.
+Current is either read off the supply or derived from a **shunt voltage**: a
+known resistor in series, millivolts across it, Ohm's law.
 
 **The supply reads amps well and milliamps badly**, and the work divides on that:
 
@@ -70,12 +93,10 @@ function. So current is either read off the bench supply or derived from a
 | **10 Ω** | 15 mA gives 150 mV | `mA = mV ÷ 10` |
 | **0.1 Ω** | 1.0 A gives 100 mV | `mA = mV × 10` |
 
-### The shunt measurement, drawn
-
 Current flows **through** the shunt. The meter sits **across** it and carries
-almost none. That is the whole idea, and it is the part that reads oddly the
-first time: the meter is in parallel with a resistor, not in series with the
-circuit.
+almost none. That reads oddly the first time, because the instinct with an
+ammeter is to break the circuit and insert it; here you insert a resistor and
+watch it from the side.
 
 ```mermaid
 flowchart LR
@@ -83,15 +104,15 @@ flowchart LR
     A(("A"))
     RS["R shunt<br/>10 ohm, 1 W"]
     B(("B"))
-    LAMP["Switch lamp<br/>J3.3 + to J3.4 -<br/>ring LED, 3-6 V"]
+    LOAD["Load under test<br/>e.g. switch lamp<br/>J3.3 + to J3.4 -"]
     DMM["Fluke 101<br/>DC millivolts<br/>reads V across A-B"]
-    CALC["mA = mV / 10<br/>expect roughly<br/>50 to 250 mV"]
+    CALC["mA = mV / 10<br/>with the 10 ohm"]
 
     PSU -->|"+"| A
     A --> RS
     RS --> B
-    B --> LAMP
-    LAMP -->|"back to -"| PSU
+    B --> LOAD
+    LOAD -->|"back to -"| PSU
 
     A -.->|"probe"| DMM
     B -.->|"probe"| DMM
@@ -103,13 +124,9 @@ flowchart LR
     class RS sense
 ```
 
-**The same topology measures anything small.** Swap the lamp for the board at
-J1 and you are reading quiescent current; the only thing that changes is the
-shunt value and the expected millivolts.
-
-🔴 **Do not put the Fluke where the shunt is.** It has no current ranges, so in
-series it is either an open circuit on volts or nothing at all. The resistor
-does the work; the meter only watches it.
+🔴 **Do not put the Fluke where the shunt is.** With no current ranges it is an
+open circuit on volts, not a reading. The resistor does the work; the meter
+only watches it.
 
 **Why 0.1 Ω for the big one and not something easier to read.** It sits in the
 input path and its drop comes out of the charger's headroom, which is only 150
@@ -117,419 +134,494 @@ to 250 mV. At 1.05 A a 0.1 Ω drops 105 mV and leaves J1 near 4.90 V, above the
 4.75 V floor. A 1 Ω would drop a volt, stop the charger, and give you a careful
 measurement of a charger that is not charging.
 
-### Which supply
+## A4. The supply, and why 5 V
 
-**Use 5 V.** The stated 5 to 9 V range is what the part tolerates, not a set of
-equally good choices, and the two ends are a factor of five apart on heat.
+**Set 5.00 V and leave it there for the whole runbook.**
 
-**The bq24074 is a linear charger.** It does not convert the input down, it
-burns the difference between input and cell in its own package:
+The stated 5 to 9 V input range is what the part tolerates, not a set of equally
+good choices. **The bq24074 is a linear charger**: it burns the difference
+between input and cell in its own package.
 
 | supply | at the IC | cell 3.0 V | cell 3.7 V | cell 4.2 V |
 | --- | --- | --- | --- | --- |
 | **5.0 V** | 4.60 V | 1.60 W | **0.90 W** | 0.40 W |
-| 6.0 V | 5.60 V | 2.60 W | 1.90 W | 1.40 W |
-| 7.5 V | 7.10 V | 4.10 W | 3.40 W | 2.90 W |
 | 9.0 V | 8.60 V | 5.60 W | **4.90 W** | 4.40 W |
 
-A QFN-16-EP on 2-layer FR4 has roughly 1.2 W of budget holding the junction to
-a sane temperature. 5 V sits inside it and charges at the full 1 A. 9 V is four
-times over, and the part protects itself by folding the charge current back, so
-a 9 V adapter gives a hot charger and most of a day to fill a cell.
+A QFN-16-EP on 2-layer FR4 has roughly 1.2 W of budget. 5 V sits inside it and
+charges at the full 1 A; 9 V is four times over, and the part protects itself by
+folding the charge current back. Nothing is damaged, but you get a hot charger
+and most of a day to fill a cell. Derivation and the caveat on the estimated θJA
+are in
+[`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml).
 
-**Nothing is damaged either way**, and 5 V is never worse than 9 V here, so the
-choice is safe to make before the measurement that confirms the size of it. See
-[`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml),
-which is `in-progress` because the thermal budget rests on an estimated θJA
-that Stage 4 will measure.
+With no cell fitted there is no charge current and therefore no heat, so Phases
+B and C are indifferent to it. Leaving the supply at 5.00 V throughout is simply
+one less thing to remember at C3.
 
-**With no cell fitted there is no charge current and therefore no heat.** So
-Stages 2 and 3 are indifferent to supply voltage. The thermal argument starts at
-Stage 4, and with a bench supply the answer is simply to leave it at 5.00 V
-throughout.
+**The service supply is a different thing and stays.** A 5 V 3 A wall adapter and
+a 5.5 × 2.1 mm panel jack are what the *instrument* runs from through J1. The
+bench supply replaces them only for bring-up.
 
-### And why 3 A, when the board caps itself at 1.29 A
+## A5. Rigs to build
 
-R2 is 1.2 kΩ, so the bq24074 enforces a **1.29 A hard ceiling** on its own
-input. The board cannot draw more whatever you plug in. On consumption alone
-1.5 A would do.
+**One thing is worth building, and it serves two connectors.**
 
-**You size it for voltage, not current.** The charger needs 4.35 V at `IN` and
-D1 drops 0.4 to 0.5 V, so J1 must hold **4.75 to 4.85 V**. From a nominal 5.00 V
-that is only **150 to 250 mV of sag budget**, about 3%. A supply near its rating
-routinely sags 3 to 8%; one at 40% load holds within 1 to 2%.
-
-| rating | loaded at 1.29 A | |
+| # | Build | Pass |
 | --- | --- | --- |
-| 1.0 A | 129% | cannot reach full charge current, Stage 4.7 untestable |
-| 1.5 A | 86% | tight, likely to sag into dropout |
-| **2.0 A** | 65% | adequate, the working minimum |
-| **3.0 A** | 43% | comfortable, what to buy if choosing |
+| A5.1 | **Bus breakout.** IDC 2×5 ribbon, 2×5 socket one end, 10-pin 0.1 inch header the other, pressed into a breadboard | seats in the breadboard, all 10 conductors beep through |
+| A5.2 | **Analogue injector.** 10 kΩ pot on the breadboard, ends to `3V3A` and `AGND` from the breakout, wiper on a flying lead | pot sweeps 0 V to 3V3 measured at the wiper |
+| A5.3 | **Ground stick.** A jumper from breadboard GND, for pulling digital lines down one at a time | beeps to GND |
+| A5.4 | **Loopback wires.** One short jumper each for UART and SPI | beep through |
 
-**Measure it at J1 with the board charging**, not at the supply unloaded. Below
-4.75 V the charger stalls or folds back, and it looks exactly like a board
-fault.
+**J5 and J11 are both IDC 2×5, so one breakout serves both.** The pinouts differ
+completely; the adapter does not care and you read the pins differently. This is
+the single highest-value rig and it is reusable for absonus and baby borg.
 
-### Consumables and rigs you need
+**A pot rather than fixed dividers**, because sweeping it catches a stuck or
+noisy ADC that three static points would pass.
 
-Confirm you have these **before** starting. Several are not on any BOM, because
-they are test equipment rather than parts.
+**Two connectors test themselves and need no hardware.** A loopback costs one
+wire and exercises the whole path:
 
-- [ ] **A 5 V supply, 3 A. Two amps is the working minimum.** Not because the
-      board draws it: the bq24074 caps its own input at **1.29 A**. Because the
-      charger's sag budget is only about **3%**, and a supply loafing at 43% of
-      rating holds its voltage where one at 86% does not. **Use 5 V, not 9 V**,
-      per [Which supply](#which-supply).
-      🔴 **A computer's USB port will not do**: 0.5 A on USB 2.0, 0.9 A on
-      USB 3.0, both under 1.29 A. And a hand-made USB-C lead gives **nothing**,
-      because a compliant USB-C source keeps VBUS off until it sees 5.1 kΩ CC
-      pull-downs. A legacy USB-A charger at 2.4 A or a plain 5 V 3 A barrel
-      wall-wart both work with no negotiation.
-      🔴 **Never 12 V.** The bq24074's input over-voltage protection trips at
-      10.2 to 10.8 V.
-- [ ] 🔴 **A way into J1, which is NOT a barrel jack.** J1 is a **JST-XH 2 way
-      header**; the barrel jack is panel-mounted on the instrument and wires
-      back to it. You need a JST-XH 2 pigtail, or clips on J1's through-hole
-      pins. **J1.1 is positive** (D1 anode, the jack's centre pin), J1.2 is
-      GND. Both are silkscreened. D1 is in series, so reversed input blocks
-      rather than destroys, which is protection worth knowing and not worth
-      relying on.
-- [ ] **The bench supply**, set to 5.00 V, limit 100 mA, **CC selected not OCP**.
-- [ ] **Two shunt resistors**, 1 W or better: **10 Ω** for the mA range and
-      **0.1 Ω** for the ~1 A charge current. **Not** made redundant by the
-      supply, see [Measuring current](#measuring-current-with-no-ammeter).
-- [ ] **Test leads with clips.** Hand-held probes on a 0603 pad is how the loa
-      hook switch produced 27 kΩ from a piece of metal. Clip everything.
-- [ ] **Jumper wire** to bridge J3 for the boost enable, and to make temporary
-      links at J14.
-- [ ] **6 shunts per board** for JP1 to JP6 (Sullins SPC02SYAN, in hand).
-- [ ] **BT1 holders and M3 screws.** Holders in hand; **screws are still
-      unsourced**, see [`bt1-cell-fit`](../discovery/findings/bt1-cell-fit.yaml).
-      Stage 4 is blocked until they arrive, and every earlier stage is not.
-- [ ] **A protected 18650**, in hand.
-- [ ] **A Daisy Seed**, in hand.
-- [ ] 🔴 **Mating cables for the connectors.** This is the one likely to stop
-      you. Full platform coverage means plugging into **JST-XH 2, 3, 4 and 6
-      way, JST-SH 4 way, and IDC 2×5**. If these are not in hand, Stages 1
-      through 7 still run in full and [Stage 8](#stage-8-functional-sweep)
-      is where you stall. Check now, not on the day.
+- **UART** on J19 (`D11`/`D12`) and J15 (`D13`/`D14`): TX to RX, firmware sends
+  and expects to receive.
+- **SPI** on J16: MOSI (`D10`) to MISO (`D9`), firmware writes and reads back.
 
-### Numbering the boards
+**Bought, not built:** a common-anode RGB LED for J12, headphones or a powered
+speaker for J17, the electret for J18, and optionally a Qwiic device for J13,
+which is the only honest test of it as real I2C.
 
-Write **1 to 5** on each board in marker before you touch anything else, on the
-bottom silkscreen where nothing will cover it. Every reading below is recorded
-against that number. Boards that are physically indistinguishable become
-indistinguishable results, and a batch fault then looks like a flaky board.
+## A6. Cables to build
 
----
+Pin assignments from [power-sheet.md](power-sheet.md),
+[panel-io-sheet.md](panel-io-sheet.md) and [connectors.md](connectors.md).
+🔴 **The board silkscreens all 77 connector pins. At the bench, read the board.**
 
-## Stage 0: Inventory and visual
+### Wire colour convention
 
-**All five boards. No power. No meter.**
+Colours on a *bought* harness mean nothing, which is why the loa keypad map had
+to be by header position. On a cable you make, the opposite is available: colour
+carries meaning and the cable documents itself at the panel.
+
+| | 1 | 2 | 3 | 4 |
+| --- | --- | --- | --- | --- |
+| **J1** | +ve **red** | GND **black** | | |
+| **J3** | VOUT **red** | EN_SW **yellow** | lamp anode **orange** | lamp cathode **black** |
+| **J4** | anode **white** | /CHG **red** | /PGOOD **green** | GND **black** |
+| **J12** | +5V **white** | red **red** | green **green** | blue **blue** |
+| **J17** | L **white** | R **red** | GND **black** | |
+| **J18** | L **white** | R **red** | MIC_RTN **green** | |
+
+Two deliberate departures from red-is-positive:
+
+**The LED cables put the common anode on white**, so the cathode colours can
+match the dies. At a panel, a red wire going to the red die is worth more than a
+red wire meaning "supply", because the supply pin is the one you can always
+identify anyway: it is the odd one out.
+
+🔴 **J18 pin 3 is green and must never be black.** `MIC_RTN` is not a ground.
+`connectors.md` already had to correct this exact error in its own table. A
+black wire there re-creates the mistake in copper and invites the next person to
+tie it to the nearest ground by reflex. It is the whole reason J14 exists.
+
+### The cables
+
+| # | Cable | Wiring | Needed by |
+| --- | --- | --- | --- |
+| A6.1 | **J1 power in**, 2-way | 1 positive to supply +, 2 GND | **C1** |
+| A6.2 | **J3 bare link**, 2 wires | J3.1 to J3.2 only, nothing else | **C2** |
+| A6.3 | **J3 latch switch**, 4-way | 1,2 to the unlabelled pins; 3 to `+`, 4 to `-` | panel |
+| A6.4 | **J4 charge LED**, 4-way | 1 anode, 2 /CHG cathode, 3 /PGOOD cathode | **C4** |
+| A6.5 | **J12 RGB**, 4-way | 1 anode +5V, 2 red, 3 green, 4 blue cathodes | E7 |
+| A6.6 | **J14 shorting link**, 2-way | pins bridged | **E8, before any mic test** |
+| A6.7 | **J18 mic**, 3-way | electret red to pin 1 or 2, black to pin 3 | E8 |
+| A6.8 | **J17 audio out**, 3-way | L, R, GND to jacks or headphones | E8 |
+| A6.9 | **J8 hook switch**, 2-way | to the hook switch COM and NC | loa build |
+| A6.10 | **J11 keypad**, IDC 2×5 | to JST ZH 7-way. 🔴 **cross positions 5 and 7** | loa build |
+
+**Make A6.2 before A6.3.** Phase C1 passes on the 5 V rail being *dead* and C2
+needs it live, so a bare link makes that a deliberate act and keeps the lamp out
+of the boost test. Two unknowns at once is how a bench evening disappears.
+
+**No resistors go in any cable.** R5, R9, R10 and the RGB's 510/300/300 are all
+on the board.
+
+### Crimping and verifying
+
+**Re-pin rather than re-make.** JST-XH contacts have a small retention lance; a
+fine pick releases the contact, so a pigtail in the wrong order is fixed in a
+minute rather than cut off.
+
+🔴 **Beep out every cable before it is plugged in.** Every cable, every time,
+bought pigtails included. A mis-pinned J1 lead puts the supply somewhere it does
+not belong, on a board that has never been powered, at the exact moment you are
+establishing whether the board is sound. An unverified power cable destroys the
+whole value of Phase B.
+
+**Label each cable with its J number.** J3, J4 and J12 are all 4-way JST-XH with
+completely different jobs and are indistinguishable in a drawer.
+
+## A7. Component checks, before they reach a panel
+
+Each of these costs a part if it is wrong, and none is recoverable after.
+
+| # | Check | Pass |
+| --- | --- | --- |
+| A7.1 | **Switch lamp limits its own current.** J3.3 feeds +5V through R5, and R5 is a **0 Ω link** | a lamp rated as a *voltage range* is internally limited. ✅ **PASSED**: 12 mm latching, marked 3-6 V, 4 pins, contacts 0.9 Ω latched and open out, ran at 5 V undamaged. See [`panel-latch-switch`](../discovery/findings/panel-latch-switch.yaml) |
+| A7.2 | **Charge LED is common anode** | diode test: a common anode conducts with the **red** probe on the common pin |
+| A7.3 | **Charge LED green die is AlGaInP, not InGaN** | 🔴 J4 runs from `VOUT`, the cell falling to 3.0 V. AlGaInP at ~2.1 V is fine; **InGaN true green at 3.0-3.2 V dims and goes dark as the cell drains** and no resistor fixes it |
+| A7.4 | **RGB is common anode** | same diode test. 🔴 It cannot run from 3V3: green and blue Vf is above the output-high level |
+| A7.5 | **Test electret characterised** | DC resistance both ways, a finite kΩ that **differs by direction**, which is the built-in JFET. Tells you which lead is positive. See [`bench-test-electret`](../discovery/findings/bench-test-electret.yaml) |
+| A7.6 | **Switch lamp current** | 10 Ω shunt at 5 V. Closes one of three unattributed lines in the 5 V budget in [values.md](values.md) |
+
+**A7.5 first, before it is trusted.** Its job is to tell you whether the board
+works, and an unmeasured reference cannot. If E8 reads nothing there are three
+suspects: board, capsule, wiring. Measuring it removes one for a minute's work.
+**Prove the test article, then use it to prove the board**, exactly as D1 proves
+the Seed before it goes near the socket.
+
+## A8. Consumables
+
+- [ ] Bench supply, **5.00 V, limit 100 mA, CC not OCP**
+- [ ] Fluke 101, **clip leads**. Hand-held probes on a pad is how the hook switch
+      produced 27 kΩ from a piece of metal
+- [ ] 10 Ω and 0.1 Ω shunts, 1 W or better
+- [ ] 6 shunts per board for JP1-JP6 (Sullins SPC02SYAN, in hand)
+- [ ] **BT1 holders and M3 screws.** Holders in hand; **screws still unsourced**,
+      see [`bt1-cell-fit`](../discovery/findings/bt1-cell-fit.yaml). Blocks **C3
+      only**
+- [ ] A protected 18650, in hand. Fit confirmed 2026-09-01
+- [ ] A Daisy Seed, in hand
+- [ ] 🔴 **Mating cables**: JST-XH 2, 3, 4 and 6 way, JST-SH 4 way, IDC 2×5.
+      Phases A to D run without them; **Phase E is where you stall**
+
+## A9. Board identity
 
 | # | Do | Pass |
 | --- | --- | --- |
-| 0.1 | Count the boards | 5 |
-| 0.2 | Photograph both faces of each board, in focus, whole-board | 10 images filed under `discovery/evidence/` |
-| 0.3 | Compare the populated set against `local/fab/bom.csv` and `cpl.csv` | 92 placed parts present |
-| 0.4 | Confirm **BT1 is absent** | absent, it is `self_fit` |
-| 0.5 | Confirm **JP1 to JP6 are bare headers**, no shunts fitted | bare |
-| 0.6 | Look for solder bridges, tombstoned 0603s, missing parts | none |
-| 0.7 | Check **U1 (QFN-16) and U2 (SOT-563) orientation** against the fab images | pin 1 as drawn |
-| 0.8 | Check **C7 polarity**, the 100 µF electrolytic | band to the marked pin |
-| 0.9 | Check **IDC pin-1 and JST polarity on J5 and J11** | as `sourcing.md` warns, these came from absonus and were flagged as worth re-checking rather than assuming |
+| A9.1 | Confirm each board's mark 1-5 is **permanent**, not a sticker or wet ink | survives handling and solvent |
+| A9.2 | If not permanent, add your own in marker on the bottom silkscreen | five distinguishable boards |
 
-**Gate:** any board failing 0.3 to 0.9 is set aside and recorded. Do not "fix"
-anything yet; note it and finish the inventory first, because the same defect on
-several boards is a batch fault and tells you something a single fix would hide.
+The order specified `mark_on_pcb: "Remove Mark"`, so JLC's own order number is
+*not* on the PCB and whatever marks these is something else. **Boards that
+become indistinguishable halfway through turn a batch fault into a flaky board.**
 
 ---
 
-## Stage 1: Dead-board electrical
+# Phase B: Dead board
 
-**All five boards. No power. This is the stage that protects every later one.**
+> **Scope:** all five boards
 
-Meter in resistance. Probe at connector pins rather than at fine-pitch parts:
-every rail reaches a connector, which is what [connectors.md](connectors.md) is
-for. Do not restate pinouts from memory; read them from
-[pinmap.md](pinmap.md), which is generated from the frozen
-[`pins.yaml`](pins.yaml).
+No power. The phase that protects every later one, and the one that reveals a
+batch fault while it still costs an evening rather than a Daisy Seed.
 
-### 1a. Rail-to-ground shorts
+## B1. Inventory and visual
 
-For each rail, measure to GND. **Expect high resistance in at least one probe
-polarity.** Semiconductor junctions make these readings polarity-dependent and
-often non-linear, so a low reading one way round is not automatically a fault;
-a low reading **both** ways round on a power rail is.
-
-| Rail | Reach it at | Red flag |
+| # | Do | Pass |
 | --- | --- | --- |
-| `VIN_DC` | J1 | low both ways |
-| `VBAT` | BT1 pads | low both ways |
-| `VOUT` | J3, J4 | low both ways |
-| `+5V` | J12 pin 1, J15, J16, J19 | low both ways |
-| `+3V3` | J15, J16, J19 | low both ways |
-| `+3V3A` | J5 outer pin, J9, J10 | low both ways |
-| `+3V3D` | J11 | low both ways |
+| B1.1 | Count the boards | 5 |
+| B1.2 | Photograph both faces, in focus, whole board | filed in `discovery/evidence/` |
+| B1.3 | Part census by sweep band, below | 127 present |
+| B1.4 | **BT1 absent** | absent, it is `self_fit` |
+| B1.5 | **JP1-JP6 bare**, no shunts fitted | bare |
+| B1.6 | Solder bridges, tombstones, skewed parts | none |
+| B1.7 | **U1 QFN-16, U2 SOT-563, U3, U4 orientation** vs `local/fab/board-top.png` | pin 1 as drawn |
+| B1.8 | **C7 polarity**, the 100 µF electrolytic | band to the marked pin |
+| B1.9 | **IDC pin-1 and JST polarity on J5 and J11** | as drawn. `sourcing.md` flags these: the footprints came from absonus, which proves they *fabricate*, not that they are right |
 
-**Gate: any rail reading under ~10 Ω to ground in both polarities stops that
-board.** Do not power it. Find the bridge first.
+**Photograph before handling.** A photo of an undamaged board is available once.
 
-### 1b. Rail-to-rail isolation
+### The sweep bands
 
-Check that the rails are not shorted **to each other**, which a stray bridge
-between adjacent connector pins produces and which 1a will not catch: `+5V` to
-`+3V3`, `+3V3` to `+3V3A`, `+3V3A` to `+3V3D`, `VOUT` to `+5V`.
+127 parts, generated from `local/fab/cpl.csv`. Sweep from the J1 end to the J15
+end band by band rather than hunting designators.
 
-### 1c. Ground continuity
+| band | n | parts |
+| --- | --- | --- |
+| **1** J1 end | 41 | C1 D1 J1 R4 R3 R2 U1 R1 C3 C2 J3 C9 R18 R14 J4 R15 R16 R5 R9 R17 R6 R8 R7 R10 FB1 U2 C6 C5 C4 L1 C19 R34 R35 C20 R36 R37 J11 C21 R38 R39 J6 |
+| **2** | 14 | A2 R42 A1 C7 R27 R28 R29 R30 R31 C18 J16 U3 J7 J8 |
+| **3** | 19 | R11 R12 R13 C8 C15 C17 C16 C14 R25 R26 R24 R41 R40 R23 R43 R32 R33 J19 J15 |
+| **4** | 15 | C12 C11 C10 C13 R22 R21 R20 R19 JP1 JP2 JP3 C24 R67 J9 **R45** |
+| **5** | 10 | J13 R44 J5 JP4 JP5 JP6 C28 R68 R46 J10 |
+| **6** J15 end | 28 | J12 R49 R47 J17 J18 J14 C30 R52 R51 R58 C22 C25 C23 R55 R56 R63 R57 U4 R61 R65 C27 R59 R60 C26 C29 R62 R54 R53 |
 
-`AGND` and `DGND` should be continuous with the main ground pour and with each
-other, near 0 Ω. They are one net on this board; if they read open, something is
-wrong with the pour or with the probe.
+**R45 earns a second look.** Band 4, beside J9/J10. It is the one part where the
+file and reality were known to disagree, a half-turn pad rotation fixed
+2026-08-22. Harmless by geometry, worth a glance in the flesh.
 
-### 1d. D1 orientation
+🔴 **Gate: record faults, fix nothing yet.** Finish all five first. The same
+defect on several boards is a batch fault, and a quick fix erases the evidence.
 
-Diode test across D1 (SS34, SMA). Forward roughly **0.2 to 0.4 V**, a Schottky,
-lower than the 0.6 V of a silicon diode. Open the other way. Reversed, D1
-blocks the input rather than protecting it, and the board simply never powers.
+## B2. Rail to ground
 
-### 1e. Seed socket sanity
+Meter in resistance, probing at connector pins rather than fine-pitch parts.
 
-At A1 and A2, check adjacent pins are not bridged, and confirm the socket rows
-are not shorted to each other. Twenty pins each, 100 SMT joints on the board:
-this is where a bridge is most likely and most expensive.
+🔴 **The bulk capacitors will fool you.** C1-C6 are 10 to 22 µF and C7 is 100 µF.
+The meter's test current charges them, so a rail-to-ground reading **starts low
+and climbs**. That looks exactly like a short. **A real short sits at its value
+and does not move; a capacitor climbs.** Discharge the rail between readings or
+the next one starts where the last stopped.
 
-**Gate: all five boards pass 1a to 1e before any board is powered.** Record each
-board's result separately, because this is the stage that reveals a batch fault.
+**Probe one polarity first** (red on rail, black on GND). A high settled reading
+is a pass and needs nothing more. Reverse **only** where it reads low.
+
+- low one way, high the other → a semiconductor junction. **Normal.**
+- low **both** ways → 🔴 short.
+
+| # | Rail | Reach it at |
+| --- | --- | --- |
+| B2.1 | `VIN_DC` | J1 |
+| B2.2 | `VBAT` | BT1 pads |
+| B2.3 | `VOUT` | J3, J4 |
+| B2.4 | `+5V` | J12 pin 1 |
+| B2.5 | `+3V3` | J16 pin 2 |
+| B2.6 | `+3V3A` | J9 pin 1, J10 pin 1 |
+| B2.7 | `+3V3D` | J11 pin 1 |
+
+🔴 **Gate: any rail under ~10 Ω settled in both polarities stops that board.**
+
+## B3. Rail to rail
+
+A bridge between adjacent connector pins shows here and not in B2, because both
+ends are live rails and neither is ground.
+
+| # | Pair |
+| --- | --- |
+| B3.1 | `+5V` to `+3V3` |
+| B3.2 | `+3V3` to `+3V3A` |
+| B3.3 | `+3V3A` to `+3V3D` |
+| B3.4 | `VOUT` to `+5V` |
+
+`+3V3`, `+3V3A` and `+3V3D` are **separate nets** and must not read as one.
+
+## B4. Ground continuity
+
+| # | Do | Pass |
+| --- | --- | --- |
+| B4.1 | J5 pin 10 to J11 pin 10 | near 0 Ω |
+
+`AGND` and `DGND` are one net here. **An open reading is as much a fault as a
+short**: the ground stitching was one of the last things done to this board.
+
+## B5. D1 orientation
+
+| # | Do | Pass |
+| --- | --- | --- |
+| B5.1 | Diode test across D1 forward | **0.2 to 0.4 V.** A Schottky, *lower* than silicon's 0.6 V. Near 0.6-0.7 V means it is not the part you think |
+| B5.2 | Reverse | open |
+
+Reversed, D1 blocks the input instead of protecting it and the board never
+powers. That failure is silent and looks like a dead board.
+
+## B6. Seed socket
+
+40 joints across A1 and A2. Where a bridge is most likely and most expensive,
+because the part you would destroy plugs into it.
+
+| # | Do |
+| --- | --- |
+| B6.1 | No adjacent pins bridged, A1 |
+| B6.2 | No adjacent pins bridged, A2 |
+| B6.3 | A1 row not shorted to A2 row |
+
+🔴 **Gate: all five boards pass B1 to B6 before any board is powered.**
 
 ---
 
-## Stage 2: First power
+# Phase C: Power
 
-**Board 1 only. No cell. No Seed. No shunts.**
+> **Scope:** board 1
 
-**Set the supply to 5.00 V, the current limit to 100 mA, and select CC rather
-than OCP.** Switch on and read the front panel.
+## C1. First power
+
+No cell. No Seed. No shunts fitted.
+
+**Set 5.00 V, limit 100 mA, CC not OCP.** Switch on and read the front panel.
 
 | what the supply shows | means |
 | --- | --- |
-| 5.00 V holding, a few mA, **CV** lit | healthy idle board, go on |
-| voltage collapsed, current pinned at **100 mA**, **CC** lit | 🔴 **short.** Switch off and find it before anything else |
+| 5.00 V holding, a few mA, **CV** lit | healthy idle board |
+| voltage collapsed, current pinned at 100 mA, **CC** lit | 🔴 **short.** Switch off, find it |
 
 **CC and not OCP, deliberately.** Constant current holds the board *powered* at
-a safe current, so a fault can be probed while it is still misbehaving. OCP
-trips off and tells you only that something is wrong. Keep OCP for a known-good
-circuit left unattended, such as a charging cell.
+a safe current so a fault can be probed while it misbehaves. OCP trips off and
+tells you only that something is wrong. Keep OCP for a known-good circuit left
+unattended, such as a charging cell.
 
 **100 mA is chosen to be obviously wrong for this board.** A healthy caryatid
-here draws a few mA, with no cell, no Seed and the boost disabled, so the limit
-sits an order of magnitude above normal and well below damaging. If the supply
-will not set that low, that is a fault in the supply, not a reason to raise it.
-
-### What should happen
-
-With the barrel in and **no cell fitted**, the bq24074 runs in supplement mode
-and brings `VOUT` up from the input.
+here draws a few mA. If the supply will not set that low, that is a fault in the
+supply, not a reason to raise it.
 
 | # | Measure | Expect |
 | --- | --- | --- |
-| 2.4 | `VOUT`, at J3 or J4 | present and stable, below the input, in the region of 4.4 to 4.5 V |
-| 2.5 | `/PGOOD` at J4 | asserted, meaning external power is present |
-| 2.6 | `+5V` rail at J12 pin 1 | 🔴 **dead, and that is correct.** See below |
-| 2.7 | Board temperature by hand | nothing warm. A warm QFN with no load is a fault |
+| C1.1 | Supply current at idle | a few mA, **CV** lit |
+| C1.2 | `VOUT` at J3 or J4 | present, stable, below the input, around 4.4 to 4.5 V |
+| C1.3 | `/PGOOD` at J4 | asserted |
+| C1.4 | `+5V` at J12 pin 1 | 🔴 **dead, and that is correct** |
+| C1.5 | Board temperature by hand | nothing warm. A warm QFN with no load is a fault |
 
-### 2.6 is the step people fail
+### C1.4 is the step people fail
 
 **The 5 V rail is supposed to be dead here.** The latching panel switch asserts
-the boost's enable, and R6 is a 100 kΩ pulldown holding it off. With no switch
-fitted, U2 never starts. A dead 5 V rail at this stage is the design working.
+the boost's enable and R6 is a 100 kΩ pulldown holding it off. With no switch
+fitted, U2 never starts. **A dead 5 V rail at this stage is the design working**,
+and it looks exactly like a dead boost. C2 is where you find out which.
 
-This is written as its own step because a dead rail looks exactly like a dead
-boost, and the next stage is where you find out which.
+## C2. The boost
 
-**Gate:** `VOUT` present, `/PGOOD` asserted, `+5V` absent, nothing warm.
-
----
-
-## Stage 3: The boost
-
-**Board 1. Still no cell, still no Seed.**
+Still no cell, still no Seed.
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 3.1 | Jumper J3 to assert the boost enable. Pin roles are in [connectors.md](connectors.md): the switch closes `OUT` onto the EN return | |
-| 3.2 | Measure `+5V` at J12 pin 1 | **4.954 V nominal**, acceptable **4.744 to 5.168 V** |
-| 3.3 | Measure `+5V` at J15, J16, J19 | same value, within meter resolution |
-| 3.4 | Measure across FB1 | a few tens of mV at most; a large drop means the bead is wrong or the load is high |
-| 3.5 | Re-check the supply's current reading | risen, but modest with no load |
-| 3.6 | Feel U2 and L1 | warm is acceptable, hot is not |
+| C2.1 | Fit the **J3 bare link** (A6.2), pins 1 to 2 | |
+| C2.2 | `+5V` at J12 pin 1 | **4.954 V nominal**, accept **4.744 to 5.168 V** |
+| C2.3 | `+5V` at J15, J16, J19 | same, within meter resolution |
+| C2.4 | Across FB1 | tens of mV at most |
+| C2.5 | Supply current | risen, modest with no load |
+| C2.6 | U2 and L1 by hand | warm acceptable, hot is not |
 
-The 4.744 to 5.168 V band is the divider tolerance from
-[values.md](values.md), R7 348 kΩ and R8 47.5 kΩ against the TPS61023 feedback
-reference. **A reading inside that band is a pass even if it is not 5.00 V.**
-Reading 4.95 and "correcting" it is how a good board gets modified into a bad
-one.
+The band is the divider tolerance from [values.md](values.md), R7 348 kΩ and R8
+47.5 kΩ. **A reading inside it is a pass even if it is not 5.00 V.** Reading 4.95
+and "correcting" it is how a good board becomes a bad one.
 
-🔴 **Not verified at this stage, and it must be recorded as such:** ripple,
-switching frequency and load transient response. The DC value being right does
-not establish that U2 is switching cleanly. Mark it untested.
+🔴 **Not verified here and must be recorded as such:** ripple, switching
+frequency, load transient. DC being right does not establish that U2 switches
+cleanly.
 
-**Gate:** `+5V` inside the band, at every connector that carries it, nothing hot.
+## C3. BT1 and the cell
 
----
+🔴 **Blocked until the M3 screws arrive.** Nothing else is.
 
-## Stage 4: BT1, the charger and the cell
-
-**Blocked until the M3 screws arrive.** Everything before and after this stage
-runs without them; only this one waits.
-
-### 4a. Fit the holder
-
-BT1 is `self_fit`: two through-hole joints, `VBAT` and `GND`, plus two M3 bolt
-holes at 55.610 mm. **Fit it last of all the parts**, per `self-fit.csv`: it is
-the tallest thing on the board and it spans 72.9 mm, so it obstructs everything
-underneath it once fitted.
-
-After soldering, **repeat Stage 1a for `VBAT`**. You have just added two joints
-to a rail that a cell will shortly be asked to drive.
-
-### 4b. The cell
+BT1 is `self_fit`: two through-hole joints, `VBAT` and `GND`, plus two M3 holes
+at 55.610 mm. **Fit it last of all parts** per `self-fit.csv`: tallest thing on
+the board, spans 72.9 mm, obstructs everything under it once fitted.
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 4.1 | Measure the cell's open-circuit voltage before fitting | 3.0 to 4.2 V, and note it |
-| 4.2 | Seat the cell, watching the orientation against the holder marking | seats without forcing |
-| 4.3 | Measure `VBAT` at the holder | matches 4.1 |
-| 4.4 | With the barrel **out**, check `VOUT` | alive, running from the cell |
-| 4.5 | Jumper J3 and check `+5V` | inside the band, now boosted from the cell rather than from the barrel |
+| C3.1 | Solder BT1, then **repeat B2.2 for `VBAT`** | no short. You just added two joints to a rail a cell will drive |
+| C3.2 | Cell open-circuit voltage before fitting | 3.0 to 4.2 V, note it |
+| C3.3 | Seat the cell, watching orientation | seats without forcing. Fit confirmed 2026-09-01 |
+| C3.4 | `VBAT` at the holder | matches C3.2 |
+| C3.5 | Supply **out**, check `VOUT` | alive, running from the cell |
+| C3.6 | J3 link on, check `+5V` | inside the band, now boosted from the cell |
 
-**4.5 is the real test of the instrument's power architecture**: it is the first
-time the board has run on battery alone, which is how it will spend most of its
-life.
+**C3.6 is the real test of the power architecture**: the first time the board has
+run on battery alone, which is how it will spend its life.
 
-### 4c. Charging
+## C4. Charging
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 4.6 | 🔴 **Raise the current limit to 1.5 A, supply still at 5.00 V.** The charger needs far more than 100 mA, and this is where the thermal argument starts | |
-| 4.6b | Barrel in, cell fitted, partially discharged | `/CHG` asserts at J4 |
-| 4.7 | Charge current, off the supply's display | **0.90 to 1.10 A**. Cross-check with the 0.1 Ω if it reads marginal |
-| 4.8 | Watch `VBAT` over some minutes | rising |
-| 4.9 | Total input current, supply display | under the **1.29 A** input limit |
-| 4.10 | Feel U1 after ten minutes at steady state | warm, not hot. **This closes [`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml)**: a charge current in band with a merely warm case measures the θJA that record had to estimate |
+| C4.1 | 🔴 **Raise the supply limit to 1.5 A**, still 5.00 V | the charger needs far more than 100 mA |
+| C4.2 | Supply in, cell fitted, partially discharged | `/CHG` asserts at J4 |
+| C4.3 | Charge current, off the supply display | **0.90 to 1.10 A**. Cross-check with the 0.1 Ω if marginal |
+| C4.4 | `VBAT` over some minutes | rising |
+| C4.5 | Total input current | under the **1.29 A** input limit |
+| C4.6 | U1 case after ten minutes steady | warm, not hot. **Closes [`charger-input-voltage-thermal`](../discovery/findings/charger-input-voltage-thermal.yaml)** |
 
 The 0.90 to 1.10 A band is wide **and that is not slop in the resistor**. R3 is
-887 Ω at 1%, but `KISET` spans 797 to 975 AΩ across the part's own tolerance, so
-the spread is the bq24074's, not yours. See [values.md](values.md).
+887 Ω at 1%, but `KISET` spans 797 to 975 AΩ, so the spread is the bq24074's.
 
 🔴 **Do not leave a charging cell unattended on a board being brought up for the
-first time.** Everything about the charge path is unproven until this stage
-completes.
-
-**Gate:** charge current in band, `/CHG` correct, `VBAT` rising, nothing hot.
+first time.** Everything about the charge path is unproven until C4 completes.
 
 ---
 
-## Stage 5: The Seed, on its own
+# Phase D: The Seed
 
-**Independent of the board. Do it whenever; it must be done before Stage 7.**
+> **Scope:** board 1
 
-Your toolchain is not set up, so this stage separates two things that will
-otherwise be confused: *a board fault* and *a toolchain fault*. Prove the Seed
-works before it goes anywhere near the socket.
+## D1. The Seed, on its own
+
+**Independent of the board. Do it whenever, before D3.** This separates a *board*
+fault from a *toolchain* fault, which are indistinguishable from the far side of
+a socket.
 
 | # | Do | Pass |
 | --- | --- | --- |
-| 5.1 | Install the ARM toolchain and build libDaisy | libDaisy builds clean |
-| 5.2 | Build and flash the stock libDaisy blink example over USB | LED blinks |
-| 5.3 | Flash something that uses `StartLog` and prints | text arrives over USB serial |
-| 5.4 | Build `firmware/examples/panel_readout.cpp` against libDaisy | **compiles**, not yet run |
+| D1.1 | Install the ARM toolchain, build libDaisy | builds clean |
+| D1.2 | Flash the stock blink example over USB | LED blinks |
+| D1.3 | Flash something using `StartLog` and print | text over USB serial |
+| D1.4 | Build `firmware/examples/panel_readout.cpp` | **compiles**, not yet run |
 
-**5.4 has never been done.** `firmware/README.md` says the code is a stub that
-has never been on hardware. Expect to fix build errors here, and treat that as
-expected work rather than as a discovery about the board.
+**D1.4 has never been done.** `firmware/README.md` says the code is a stub that
+has never been on hardware. Expect build errors, and treat them as expected work
+rather than as a discovery about the board.
 
-**Gate:** a Seed you trust, and a binary that builds.
+## D2. The socket, Seed still out
 
----
-
-## Stage 6: The socket, Seed still out
-
-**Board 1, powered, Seed NOT inserted. The last chance to catch a fault before
-risking a Seed in it.**
-
-Read the expected pin roles from [seed-sheet.md](seed-sheet.md); do not work
-from memory or from a Seed pinout card.
+Powered, Seed **not** inserted. The last chance to catch a fault before risking a
+Seed in it. Pin roles from [seed-sheet.md](seed-sheet.md), not from memory.
 
 | # | Measure at the socket | Expect |
 | --- | --- | --- |
-| 6.1 | The pin that feeds the Seed its input power | `+5V`, inside the band |
-| 6.2 | Every ground pin | 0 Ω to ground |
-| 6.3 | `3v3A`, socket pin 21 | 🔴 **absent, and that is correct.** See below |
-| 6.4 | Any other pin, against ground | no rail where a GPIO belongs |
+| D2.1 | The pin feeding the Seed its input power | `+5V`, inside the band |
+| D2.2 | Every ground pin | 0 Ω to ground |
+| D2.3 | `3v3A`, socket pin 21 | 🔴 **absent, and that is correct** |
+| D2.4 | Any other pin against ground | no rail where a GPIO belongs |
 
-### 6.3 is the counterpart of 2.6
+### D2.3 is the counterpart of C1.4
 
-**`+3V3A` originates at the Seed, not on the board.** It leaves the Seed on pin
-21 and feeds the J5 pot tops, J9 and J10. With the Seed out, `+3V3A` is dead and
-so is `+3V3`. If you measure 3V3 anywhere with the Seed out, something is
-feeding it that should not be, and that is a fault worth chasing before you
-insert a Seed into it.
+**`+3V3A` originates at the Seed, not on the board.** It leaves on pin 21 and
+feeds the J5 pot tops, J9 and J10. With the Seed out, `+3V3A` and `+3V3` are
+dead. **If you measure 3V3 anywhere with the Seed out, something is feeding it
+that should not be**, and that is worth chasing before inserting a Seed into it.
 
-**Gate:** 5 V present where 5 V belongs, no voltage where none belongs.
-
----
-
-## Stage 7: Seed in the board
+## D3. Seed in, first boot
 
 | # | Do | Expect |
 | --- | --- | --- |
-| 7.1 | Power down completely. Insert the Seed, watching orientation | seats fully |
-| 7.2 | Power up with the limit raised to **500 mA**, still in CC | current rises to a sane figure, CV stays lit |
-| 7.3 | Measure `+3V3` and `+3V3A` | both now present |
-| 7.4 | Flash `panel_readout` | runs |
-| 7.5 | Open USB serial | readings once per second |
+| D3.1 | Power down fully. Insert the Seed, watching orientation | seats fully |
+| D3.2 | Power up with the limit at **500 mA**, still CC | sane current, **CV** stays lit |
+| D3.3 | `+3V3` and `+3V3A` | both now present |
+| D3.4 | Flash `panel_readout` | runs |
+| D3.5 | Open USB serial | readings once per second |
 
-**Gate:** the board talks. Everything after this is coverage rather than
+🔴 **Gate: the board talks.** Everything after this is coverage rather than
 survival.
 
 ---
 
-## Stage 8: Functional sweep
+# Phase E: Functional sweep
 
-**Full platform coverage: every connector and every subsystem, including the
-ones loa will never use.** A fault in an unused corner is still a fault, and
-absonus or baby borg will find it later at much greater cost.
+> **Scope:** board 1
 
-Needs mating cables. See the consumables list.
+Full platform coverage, including what loa will never use. A fault in an unused
+corner is still a fault, and absonus or baby borg will find it later at much
+greater cost. **Needs the rigs from A5 and the cables from A6.**
 
-### 8a. Analogue bus, J5
+## E1. Analogue bus, J5
 
-`A0`–`A3` then `A6`–`A9`, **not** `A0..A7`. `A4` and `A5` are not on the bus.
-Each wiper has 1 kΩ/100 nF board-side.
+`A0`-`A3` then `A6`-`A9`, **not** `A0..A7`. `A4` and `A5` are not on the bus.
+1 kΩ/100 nF per wiper, board side.
 
-Feed each channel a known voltage, ideally 0 V, half rail and full rail, and
-confirm `panel_readout` reports it. **Sweep them one at a time and confirm only
-the expected channel moves**, which is what catches a swapped pair. A pot per
-channel is convenient; a resistor divider on a jumper wire is sufficient.
+| # | Do | Expect |
+| --- | --- | --- |
+| E1.1 | Bus breakout on J5, pot wiper to each channel in turn | each reads 0 V to 3V3 as swept |
+| E1.2 | Sweep one channel and watch all eight | 🔴 **only the expected channel moves.** This is what catches a swapped pair |
 
-### 8b. Dedicated analogue, J9 and J10
+## E2. Dedicated analogue, J9 and J10
 
-`A5` soft pot with a 3 kΩ pulldown, `A4` FSR with a 10 kΩ pulldown. **With
-nothing plugged in, both should read a defined low value rather than floating.**
-That is what the pulldowns are for, and an open reading means one is missing.
+`A5` soft pot, 3 kΩ pulldown. `A4` FSR, 10 kΩ pulldown.
 
-### 8c. Battery gauge, A10
+| # | Do | Expect |
+| --- | --- | --- |
+| E2.1 | Read A4 and A5 with **nothing plugged in** | a defined low value, not floating. An open reading means a pulldown is missing |
+| E2.2 | Inject with the pot on each | tracks |
 
-Compare the reported value against `VBAT` measured at the holder.
-**Expect the pin to read half the cell voltage**, the 100 k/100 k divider, and
-the firmware to report the doubled figure. A factor-of-two error here is the
-easiest bug on the board to write and the hardest to notice.
+## E3. Battery gauge, A10
 
-### 8d. Charge status, A11
+| # | Do | Expect |
+| --- | --- | --- |
+| E3.1 | Compare reported value against `VBAT` at the holder | **pin reads half the cell**, 100 k/100 k, firmware reports the doubled figure |
 
-Four levels, and you can produce three of them. From
-[indicators.md](indicators.md):
+A factor-of-two error here is the easiest bug on the board to write and the
+hardest to notice.
+
+## E4. Charge status, A11
+
+Four levels, from [indicators.md](indicators.md). You can produce three by
+pulling the supply in and out at different states of charge.
 
 | `/CHG` | `/PGOOD` | State | Level |
 | --- | --- | --- | --- |
@@ -538,128 +630,137 @@ Four levels, and you can produce three of them. From
 | low | high-Z | charging | **1.650 V** |
 | low | low | charging, external present | **1.320 V** |
 
-Produce them by pulling the barrel in and out with the cell at different states
-of charge. **Decode by nearest level, not by thresholds.** Minimum separation is
-330 mV, which is 409 ADC counts against noise of a few.
+| # | Do | Expect |
+| --- | --- | --- |
+| E4.1 | Produce each reachable state | level within ~100 mV |
+| E4.2 | Decode | **by nearest level, not thresholds.** Minimum separation 330 mV, 409 ADC counts against noise of a few |
 
-### 8e. Digital bus, J11
+## E5. Digital bus, J11
 
-`D0`–`D6`, 100 Ω series each. Ground each line in turn and confirm the expected
-bit changes and **only** that bit. This is the bus loa's keypad uses, and
-[`loa-keypad-matrix`](../discovery/findings/loa-keypad-matrix.yaml) is confirmed,
-so a real keypad is available as a test article if you want one.
+`D0`-`D6`, 100 Ω series each.
 
-### 8f. Switches, J6 J7 J8
+| # | Do | Expect |
+| --- | --- | --- |
+| E5.1 | Ground each line in turn with the ground stick | the expected bit changes, and **only** that bit |
+| E5.2 | Optionally plug in the loa keypad through the ZH harness | a confirmed 4×3 exercises the bus as the instrument will. See [`loa-keypad-matrix`](../discovery/findings/loa-keypad-matrix.yaml) |
+
+## E6. Switches, J6 J7 J8
 
 🔴 **Two traps, both documented and both easy to trip.**
 
 - **They read inverted.** The 74HC14 is an inverter, so the GPIO is **high when
-  the switch is closed**. A switch that reads "backwards" is correct.
+  the switch is closed**. A switch that reads backwards is correct.
 - **SW1 and SW2 cross.** SW1 is on `D14`, SW2 is on `D13`. Not a typo.
 
-Short each of J6, J7 and J8 in turn and confirm the right bit moves.
+| # | Do | Expect |
+| --- | --- | --- |
+| E6.1 | Short J6, J7, J8 in turn | the right bit moves, high when closed |
 
 🔴 Debounce timing is **not verified** by this and cannot be with a meter.
-ADR 0007's 24 ms for a 1 µF hook lever stays a calculation.
 
-### 8g. RGB status, J12
+## E7. RGB status, J12
 
 **Common anode to 5 V, GPIOs sinking. Writing low lights it.** Pin 1 is `+5V`,
 not ground and not 3V3.
 
-Drive each channel low in turn: red through 510 Ω, green and blue through 300 Ω.
-**Green and blue will not light from a 3V3 GPIO driven high**; their forward
-voltage is above the output-high level. That is why the scheme sinks.
+| # | Do | Expect |
+| --- | --- | --- |
+| E7.1 | Drive each channel low in turn | red through 510 Ω, green and blue through 300 Ω |
+| E7.2 | All three together | white |
 
-Check all three individually, then together for white.
+🔴 **Firmware: internal pull-up and pull-down must stay disabled on D26, D27,
+D29.** They sit at the full 5 V whenever their LED is off, and `DS12556` Table 9
+note 4 says a pin above 4 V needs both pulls disabled. Push-pull or open-drain,
+no pull, nothing else.
 
-### 8h. Audio, J17 and J18
-
-Both channels are fitted on every board and jumper-selected.
+## E8. Audio, J17 and J18
 
 🔴 **Link J14 first, or the mic path cannot work.** `MIC_RTN` is not grounded on
-the board: it leaves on J18 pin 3, pairs with J14, and J14 is either a link to
-ground or a wire to the hook switch's second pole. **The board ships with
-neither.** With J14 open the capsule has no return path, reads nothing, and it
-looks exactly like a dead U4, a dead capsule or a wrong jumper. Three wrong
-suspects for a missing link.
+the board: it leaves on J18 pin 3, pairs with J14, and **the board ships with
+neither a link nor a wire**. With J14 open the capsule has no return path, reads
+nothing, and it looks exactly like a dead U4, a dead capsule or a wrong jumper.
+Three wrong suspects for a missing link.
 
-🔴 **Characterise the test capsule before you trust it.** DC resistance across
-its leads, both polarities, per [mic-configurations.md](mic-configurations.md).
-Expect a finite kΩ reading that differs by direction, which is the built-in
-JFET. That confirms it is an electret, tells you which lead is positive (red is
-conventionally the drain, and convention is not measurement), and removes one of
-three suspects if the audio test later reads nothing. See
-[`bench-test-electret`](../discovery/findings/bench-test-electret.yaml).
-**Prove the test article, then use it to prove the board**, exactly as Stage 5
-proves the Seed before it goes near the socket.
+| # | Do | Expect |
+| --- | --- | --- |
+| E8.1 | Fit the J14 link (A6.6) | |
+| E8.2 | Tone out on J17, L and R independently | not swapped, not summed |
+| E8.3 | Known signal into J18 | arrives on the right channel |
+| E8.4 | Electret on J18, per A7.5 | audible, both channels in turn |
 
-- **Out, J17:** generate a tone in firmware, confirm L and R independently at the
-  connector. Confirm they are not swapped and not summed.
-- **In, J18:** feed a known signal, confirm it arrives on the right channel.
-  Remember pin 3 is **`MIC_RTN`, not ground.**
+## E9. Mic configurations, JP1 to JP6
 
-### 8i. Mic configurations, JP1 to JP6
+Six shunts, exactly one bias path connected at a time. Work through
+[mic-configurations.md](mic-configurations.md).
 
-Six shunts, and exactly one bias path connected at a time. Work through
-[mic-configurations.md](mic-configurations.md) and confirm each selection does
-what that document says.
+| # | Do | Expect |
+| --- | --- | --- |
+| E9.1 | Electret left: JP1, JP2, JP3 on `1-2` | bias through R51 2k2, **1.5 mA** |
+| E9.2 | Electret right: JP4, JP5, JP6 on `1-2` | bias through R53 |
+| E9.3 | Each remaining documented configuration | as `mic-configurations.md` states |
 
-For an **electret**, JP1 and JP4 on `1-2` gives bias through R51/R53 at 2k2,
-**1.5 mA per channel** per [values.md](values.md).
+## E10. Comms A, J13 and J19
 
-### 8j. Comms A, J13 and J19
+Protocol-agnostic per ADR 0003. **Alternates: pick one per port and it must
+match `cfg.comms_a` in firmware.**
 
-Port A is protocol-agnostic per ADR 0003. Test it as I2C with a Qwiic or
-STEMMA-QT device on J13, and as UART on J19. **These are alternates: pick one
-per port and it must match what firmware is configured for**, which
-`panel_readout` sets in `cfg.comms_a`.
+| # | Do | Expect |
+| --- | --- | --- |
+| E10.1 | I2C on J13 with a Qwiic device | device enumerates |
+| E10.2 | UART loopback on J19, D11 to D12 | sent bytes return |
 
-### 8k. Comms B, J15
+## E11. Comms B, J15
 
-`D13` and `D14`. 🔴 **These are the same pins as SW1 and SW2.** J6/J7 and J15 are
-mutually exclusive, which is why the hook switch is on SW3. Testing this means
+| # | Do | Expect |
+| --- | --- | --- |
+| E11.1 | UART loopback on J15, D13 to D14 | sent bytes return |
+
+🔴 **`D13`/`D14` are the same pins as SW1 and SW2.** J6/J7 and J15 are mutually
+exclusive, which is why the hook switch is on SW3. Testing this means
 disconnecting the switches.
 
-### 8l. Expansion, J16
+## E12. Expansion, J16
 
-SPI1 on `D8` SCLK, `D9` MISO, `D10` MOSI, `D30` CS, plus 5 V, 3V3 and two
-grounds. `D30` is the only spare pin on the board and it is brought out here.
+| # | Do | Expect |
+| --- | --- | --- |
+| E12.1 | SPI loopback, D10 MOSI to D9 MISO | written bytes read back |
+| E12.2 | `+5V`, `+3V3`, two grounds present | as [connectors.md](connectors.md) |
 
----
-
-## Stage 9: The other four boards
-
-Once board 1 is through Stage 8 and the runbook has been corrected by
-contact with reality:
-
-1. Stage 1 is already done on all five.
-2. Take each remaining board through **Stages 2, 3, 6 and 7**: power, boost,
-   socket, boot. That proves it is alive.
-3. Run **Stage 8 only on the subsystems each board will actually use**, unless a
-   board is destined to be a spare, in which case Stage 7 is a reasonable stop.
-
-**Fix the runbook before running it four more times.** Anything that was wrong,
-ambiguous or missing on board 1 gets corrected here, not remembered.
+`D30` is the only spare pin on the board and it is brought out here as CS.
 
 ---
 
-## Recording
+# Phase F: The batch
 
-**One findings record per board**, `discovery/findings/board-<n>.yaml`, using
-the schema in the global methodology plus a `stages` block. Status is
-`in-progress` while the board is partway through, and only `confirmed` once
-every stage attempted has passed.
+> **Scope:** boards 2 to 5
 
-Evidence goes to `discovery/evidence/` with dated filenames, including the
-Stage 0 photographs.
+1. Phase B is already done on all five.
+2. Take each remaining board through **C1, C2, D2, D3**: power, boost, socket,
+   boot. That proves it is alive.
+3. Run **Phase E only on the subsystems that board will use**, unless it is
+   destined to be a spare, where D3 is a reasonable stop.
 
-Three things to record that are easy to skip:
+🔴 **Fix the runbook before running it four more times.** Anything wrong,
+ambiguous or missing on board 1 gets corrected here, not remembered. Then
+regenerate the sheets.
 
-- **The actual numbers, not "pass".** 4.98 V is a fact; "5 V rail OK" is not.
-  The band is wide and the middle of it tells you more than the edges.
+---
+
+# Phase G: Recording
+
+**One findings record per board**, `discovery/findings/board-<n>.yaml`, using the
+global schema plus a `phases` block. `in-progress` while partway through;
+`confirmed` only once every phase attempted has passed.
+
+Evidence to `discovery/evidence/` with dated filenames, including the B1.2
+photographs.
+
+Three things easy to skip:
+
+- **The actual numbers, not "pass".** 4.98 V is a fact; "5 V rail OK" is not. The
+  bands are wide and the middle tells you more than the edges.
 - **What was NOT tested**, explicitly. Ripple, switching, debounce timing and
-  audio quality are all out of reach with a multimeter, and a record that omits
-  them reads as though they passed.
-- **Anything the runbook got wrong.** This document has never been run. Its
-  first pass is as much a test of itself as of the board.
+  audio quality are all out of reach here, and a record that omits them reads as
+  though they passed.
+- **Anything this runbook got wrong.** Its first pass is as much a test of itself
+  as of the board.

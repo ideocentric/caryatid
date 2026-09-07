@@ -1,3 +1,13 @@
+###########################################################################
+# SUPERSEDED 2026-09-06. This was a hand-written sheet, and hand-written
+# sheets drifted from the runbook every time it changed. Sheets are now
+# GENERATED: docs/bringup.md is the single reference and
+# tools/gen_bringup_sheet.py emits a dated blank from it.
+#
+# Kept, not deleted: it was never filled in, so nothing is lost, and the
+# reasoning it carries was folded into the runbook rather than discarded.
+###########################################################################
+
 caryatid batch 1: STAGE 0 and STAGE 1 bench sheet
 =================================================
 
