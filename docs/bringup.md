@@ -297,39 +297,38 @@ the Seed before it goes near the socket.
 
 ## A9. Board identity
 
-🔴 **The 1-5 mark is silkscreened on the breakaway rail, so it is destroyed the
-moment you depanel.** It is permanent ink on a part of the board that is
-designed to be thrown away, which is worse than a sticker: a sticker looks
-temporary and this looks trustworthy right up until the rail snaps off.
+**The boards arrive numbered, and that is enough for this runbook.** The 1-5
+mark and a QR code are silkscreened on the breakaway rails: two 5 mm rails on
+the long edges, so the delivered part is 150 × 100 mm around the usual
+150 × 90 mm board.
+
+**The rails have no reason to come off during bring-up.** They are coplanar with
+the board and obstruct no connector, so every phase here runs with them
+attached. Depanelling belongs to enclosure fitting, which is after the test
+campaign. **The mark therefore survives exactly as long as it is needed**, and
+`mark_on_pcb: "Remove Mark"` plus
+`depanel_and_edge_rail_before_delivery: false` turn out to have produced a
+sensible arrangement rather than a trap.
 
 | # | Do | Pass |
 | --- | --- | --- |
-| A9.1 | **Transfer the number onto the board proper**, in marker on the bottom silkscreen, away from any pad | five boards identified independently of their rails |
-| A9.2 | Photograph each board **with its rail and mark still attached and legible** | the photo is the record tying board N to that rail |
-| A9.3 | Only then consider depanelling | see below |
+| A9.1 | Optional, ten seconds each: copy the number onto the board proper in marker, bottom silkscreen, clear of any pad | the number survives depanelling |
 
-`mark_on_pcb: "Remove Mark"` in the order means JLC's *order number* is not
-printed, and `depanel_and_edge_rail_before_delivery: false` means the rails came
-attached. So the rail is JLC's, the 1-5 on it is the only thing distinguishing
-five otherwise identical boards, and it is on the disposable part.
+**A9.1 buys one thing, and it is the drawer rather than the bench.** Five boards
+and one or two instruments means three or four sit unused for months. A record
+saying *board 3 had a marginal boost reading* is worth nothing if you cannot
+tell which board is 3 when you pick one up next year. If you do not care about
+that, skip it: nothing in this runbook depends on it.
 
-**Boards that become indistinguishable halfway through turn a batch fault into a
-flaky board.** A9.1 costs a minute and removes that entirely.
+### Depanelling, when you get there
 
-### When to depanel, and how
+🔴 **Cut, do not snap.** Flush cutters or a depanel tool, working along the tabs.
+Snapping by hand flexes the board, and this one carries 64 0603 resistors and a
+QFN-16 whose joints do not enjoy being flexed. That damage surfaces later as an
+intermittent on a board you have already declared good, which is the most
+expensive kind of fault to chase.
 
-**Keep the rails through Phases B and C.** They protect the edges, and they give
-you something to hold that is not the board.
-
-**Depanel before Phase E only if a rail obstructs a connector you need**, and
-before any enclosure fit check, since the rails are not part of the 150 × 90 mm
-outline the BUD case and the phone shell were measured against.
-
-🔴 **Cut, do not snap.** Flush cutters or a depanel tool, working along the
-tabs. Snapping by hand flexes the board, and this board carries 64 0603
-resistors and a QFN-16 whose joints do not enjoy being flexed. The damage from a
-hand-snapped panel shows up later as an intermittent, which is the most
-expensive kind of fault to find on a board you have already declared good.
+This is worth care independently of any marking question.
 
 ---
 

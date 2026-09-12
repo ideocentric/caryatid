@@ -166,6 +166,18 @@ evidence:
      attached. Consequence: depanelling destroys the only thing telling five
      otherwise identical boards apart. docs/bringup.md A9 now transfers the
      number to the board proper and photographs the rail before it is cut"
+  - "2026-09-07: the rails MEASURED. Two 5 mm breakaway rails on the LONG
+     edges, so the delivered part is 150 x 100 mm around the 150 x 90 mm
+     board. One rail carries a QR code and the board number. Being on the long
+     edges and coplanar with the board, they obstruct no connector"
+  - "2026-09-07: CORRECTING THE ENTRY ABOVE, which called the rail-mounted
+     number a problem because depanelling destroys it. Matt pushed back and is
+     right: the number matters only during the test campaign, and the rails
+     have no reason to come off until a board goes into an enclosure, which is
+     after it. The mark outlives its own need. The residual case is the DRAWER,
+     three or four boards sitting unused for months where a per-board record is
+     useless without a legible number, and that is worth ten seconds of marker
+     rather than a gated step. docs/bringup.md A9 demoted accordingly"
 open_questions:
   - id: min-via-hole-mismatch
     severity: resolved

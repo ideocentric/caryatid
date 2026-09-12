@@ -122,17 +122,9 @@ scope: bench
   A9. Board identity
   ------------------
 
-    A9.1    Transfer the number onto the board proper, in marker on the bottom silkscreen, away
-            from any pad
-            expect: five boards identified independently of their rails
-            reading: ......................
-
-    A9.2    Photograph each board with its rail and mark still attached and legible
-            expect: the photo is the record tying board N to that rail
-            reading: ......................
-
-    A9.3    Only then consider depanelling
-            expect: see below
+    A9.1    Optional, ten seconds each: copy the number onto the board proper in marker, bottom
+            silkscreen, clear of any pad
+            expect: the number survives depanelling
             reading: ......................
 
   NOTES / what this phase got wrong:
