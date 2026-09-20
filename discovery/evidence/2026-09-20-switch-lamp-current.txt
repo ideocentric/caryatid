@@ -74,3 +74,25 @@ CONFIRMS A PREDICTION IN indicators.md
   IT IS a plain series resistor, and the ratio is 28.5/39.9 = 71%.
   The estimate was right and slightly optimistic. The brightness
   conclusion stands: no action, and no board change.
+
+================================================================
+ADDENDUM, same day: THE LEAD RESISTANCE CAVEAT IS CLOSED
+================================================================
+  Probes shorted on the Fluke 101. LEAD RESISTANCE READS 0.0 OHM.
+
+  That is a BOUND, not a zero. The 101's lowest ohms range resolves
+  0.1 ohm, so a 0.0 display means the leads are under ~0.05 ohm.
+  Against the 10.2 ohm shunt that is at most 0.5%, comfortably inside
+  every other term in the chain.
+
+  => THE SHUNT IS 10.2 OHM, NOT A LEAD-INFLATED 10.0.
+     NO FIGURE ABOVE CHANGES. 28.5 mA at 5.00 V stands as recorded.
+
+  What is now the least certain term is the SHUNT VALUE ITSELF, and
+  not because of the leads. 10.2 ohm was read at the very bottom of a
+  600 ohm range, where the "+ N digits" term of the meter's ohms
+  accuracy spec dominates the percentage term. That is a few percent
+  at worst, it bounds nothing that matters for a budget line, and it
+  is recorded here so the figure is not later trusted beyond it.
+  Check the 101's ohms spec into bench-instruments.yaml if anything
+  ever needs this better than a few percent.

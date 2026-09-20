@@ -978,10 +978,15 @@ the voltage the load actually saw, but never quote the setpoint.
 
 **Open questions:**
 
-- **Lead resistance was not subtracted.** The 10.2 Ω shunt was measured 2-wire
-  and clip leads run 0.1–0.3 Ω, so the true shunt may be nearer 10.0 Ω and every
-  current may read up to **2% low**: 28.5 mA could be as much as 29.1. Logged as
-  not performed rather than assumed. It changes no conclusion.
+- ✅ **Lead resistance: closed the same day, and it was worth the ten seconds.**
+  Raised as an open question because clip leads usually run 0.1–0.3 Ω, which
+  against the 10.2 Ω shunt would have put every current **2% low**. Probes
+  shorted, the Fluke reads **0.0 Ω**, which is a bound rather than a zero: the
+  101 resolves 0.1 Ω, so the leads are under ~0.05 Ω, at most 0.5%. **The shunt
+  is 10.2 Ω and not a lead-inflated 10.0, so no figure changes and 28.5 mA
+  stands.** The least certain term is now the shunt value itself, read at the
+  bottom of a 600 Ω range where the meter's "+ N digits" term dominates. A few
+  percent, which bounds nothing a budget line cares about.
 - The 6.00 V figure of 39.9 mA is **extrapolated**, not measured. It is the top
   of the part's marking and only feeds the brightness comparison.
 - **`docs/status.md` still has a RESUME block dated 2026-09-01** that predates

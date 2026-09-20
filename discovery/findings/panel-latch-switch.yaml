@@ -74,6 +74,7 @@ measured_2026_09_20_THE_LAMP_CURRENT_IS_CLOSED:
   # in CC with a 100 mA limit. NO BOARD. Evidence file:
   # discovery/evidence/2026-09-20-switch-lamp-current.txt
   headline: "28.5 mA at 5.00 V across the lamp. 5.6 mA at 3.00 V."
+  # Lead resistance measured at 0.0 ohm the same day: no correction needed.
 
   readings:
     - {supply: "3.00 V", shunt_mV: 51.5, current_mA: 5.05,  lamp_V: 2.949}
@@ -120,12 +121,24 @@ measured_2026_09_20_THE_LAMP_CURRENT_IS_CLOSED:
     the part tolerating 5 V, and it does. It qualifies what the phrase
     "internally limited" was taken to promise.
 
-  provenance_caveat: >-
-    The 10.2 ohm shunt was measured 2-WIRE and the LEAD RESISTANCE WAS NOT
-    SUBTRACTED. Clip leads are typically 0.1-0.3 ohm, so the true shunt may
-    be nearer 10.0 ohm and every current above may read up to ~2% LOW: 28.5
-    could be as much as 29.1. NOT CORRECTED, because it changes no
-    conclusion. Subtract the leads if this is ever needed better than 2%.
+  provenance_caveat_CLOSED_same_day: >-
+    ✅ LEAD RESISTANCE MEASURED: probes shorted, the Fluke reads 0.0 ohm.
+    That is a BOUND, not a zero: the 101 resolves 0.1 ohm on its lowest
+    range, so the leads are under ~0.05 ohm, at most 0.5% of the 10.2 ohm
+    shunt. THE SHUNT IS 10.2 OHM AND NOT A LEAD-INFLATED 10.0, so NO FIGURE
+    ABOVE CHANGES and 28.5 mA at 5.00 V stands as recorded.
+
+    It was raised because clip leads usually run 0.1-0.3 ohm, which would
+    have put the currents ~2% low. Measuring it took ten seconds and was
+    worth it: an unmeasured 2% would otherwise have sat in the record next
+    to a figure quoted to three significant figures.
+
+    WHAT IS NOW THE LEAST CERTAIN TERM is the shunt value itself, and not
+    because of the leads: 10.2 ohm was read at the bottom of a 600 ohm
+    range, where the "+ N digits" term of the meter's ohms accuracy spec
+    dominates the percentage term. A few percent at worst, which bounds
+    nothing that matters for a budget line. Put the 101's ohms spec into
+    `bench-instruments` if this is ever needed better than that.
 
   it_confirms_a_prediction_in_indicators_md: >-
     indicators.md said, conditionally, "if the limiting is a plain series
@@ -245,6 +258,13 @@ mounting:
     the phone's panel, still wants calipers across the flange.
 
 evidence:
+  - "2026-09-20: LEAD RESISTANCE MEASURED at 0.0 ohm with the probes shorted,
+     closing the provenance caveat raised in the entry below on the same day.
+     A bound rather than a zero: the Fluke 101 resolves 0.1 ohm, so the leads
+     are under ~0.05 ohm, at most 0.5% of the 10.2 ohm shunt. The shunt is
+     therefore 10.2 ohm and not a lead-inflated 10.0, and NO MEASURED FIGURE
+     CHANGES: 28.5 mA at 5.00 V stands
+     (discovery/evidence/2026-09-20-switch-lamp-current.txt, addendum)"
   - "2026-09-20: LAMP CURRENT MEASURED, closing bringup A7.6 and one of the
      three unattributed lines in the 5 V budget. 28.5 mA at 5.00 V across the
      lamp, 5.6 mA at 3.00 V. 10.2 ohm shunt, Fluke 101 on DC mV, Jesverty
