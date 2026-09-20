@@ -31,10 +31,14 @@ down it; do not skip ahead to the fun part.
       common anode confirmed, Vf 2.0–2.2 V red and 3.0–3.2 V green/blue. Start
       at 510 Ω red, 300 Ω green and blue, then **tune green down by eye** —
       equal current is not equal brightness.
-- [ ] **Measure the switch bezel diameter** (Ø12 / 16 / 19). It is the only
-      mechanical number still missing — the DC jack, audio jacks and LED bezel
-      are specified in [sourcing.md](sourcing.md), and the lamp's electrical
-      side was settled by it being a 3–9 V variant.
+- [ ] **Measure the switch bezel diameter.** Ø12 is the *mounting hole*, and the
+      bezel flange is larger, typically 14–15 mm on a 12 mm switch. It is the
+      only mechanical number still missing: the DC jack, audio jacks and LED
+      bezel are specified in [sourcing.md](sourcing.md), and the lamp's
+      electrical side is fully closed. ✅ The part is a **3–6 V** variant, not
+      the 3–9 V one these documents were written against, and its current was
+      measured 2026-09-20 at **28.5 mA at 5.00 V** with internal limiting by a
+      plain ~87.5 Ω series resistor.
 - [ ] **No jack footprints on the board.** Every panel part is panel-mounted and
       arrives on a JST — J1 for DC in, J17 and J18 for audio. See
       [connectors.md](connectors.md).

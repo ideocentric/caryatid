@@ -25,18 +25,40 @@ hardware. That is the whole argument.
 **5.0 V** boost rail. The switch asserts the boost's EN; the boost comes up; the
 lamp lights. Off means genuinely off, with no firmware in the loop.
 
-The lamp is a **3–9 V rated variant, so its current limiting is internal**:
-`R_LED` is a 0 Ω link. Keep the 0603 footprint so a different switch can be
-dropped in without a board change.
+The lamp's **current limiting is internal**, so `R_LED` is a 0 Ω link. Keep the
+0603 footprint so a different switch can be dropped in without a board change,
+and because fitting a real resistor there is how this lamp gets dimmed if it is
+ever wanted dimmer.
 
-At 5.0 V it runs below the 4×AA (~6 V) reference the brightness was judged
-against — if the limiting is a plain series resistor, roughly 75% of the
-current, which the eye reads as around 85% as bright. Almost certainly
-indistinguishable, and comfortably inside a range the lamp already sees on
-depleted NiMH. **Worth a meter in series at both voltages before committing the
-panel**, since it is two minutes now against a board spin later. **That reading
-is also the switch lamp's line in the 5 V budget**, which is currently the only
-entry marked unknown — see the line-item table in [values.md](values.md).
+**Measured 2026-09-20**, and the part in hand is marked **3–6 V**, not the 3–9 V
+variant this section was originally written against:
+
+| Across the lamp | Current |
+| --- | --- |
+| 3.00 V | 5.6 mA |
+| **5.00 V, the rail in service** | **28.5 mA** |
+| 6.00 V, top of the marking | 39.9 mA *(extrapolated)* |
+
+🔴 **The internal limiting is a plain series resistor, not a current source**:
+three points fit Vf ~2.51 V with ~87.5 Ω to within 1%. A voltage-*range* marking
+means the part tolerates the range, **not** that the current is constant over
+it. Here it tracks the rail almost 8:1 end to end, which is why the budget
+figure is quoted against a rail voltage.
+
+**The brightness question is settled, and this section's own prediction was
+right.** It said, conditionally, that a plain series resistor would give
+"roughly 75% of the current" at 5 V against the 4×AA (~6 V) reference the
+brightness was judged by. It is a plain series resistor and the real ratio is
+28.5 / 39.9 = **71%**, which the eye reads as around 89% as bright. Almost
+certainly indistinguishable, and comfortably inside a range the lamp already
+sees on depleted NiMH. **No action, and no board change.**
+
+**That reading is also the switch lamp's line in the 5 V budget**, where it was
+the largest of three entries marked unknown and is now closed. It is the
+**largest indicator load on the rail**, ahead of the RGB with all three dies
+lit, and unlike the RGB it is lit whenever the instrument is on. See the
+line-item table in [values.md](values.md) and
+[`panel-latch-switch`](../discovery/findings/panel-latch-switch.yaml).
 
 **2. Charge LED — charge state, hardware only.** Driven directly from the
 bq24074's open-drain `/CHG` and `/PGOOD` off the OUT rail, via J4. **This is the

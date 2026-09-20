@@ -126,7 +126,7 @@ FB1 pin 2 is the source, the ferrite's output side.
 | — all three | | white, deliberately unassigned | 18.9 mA |
 | **Mic bias L** | R52 | 220 Ω, **only when JP1 is on `2-3` (carbon)** | **11–21 mA** |
 | **Mic bias R** | R54 | 220 Ω, **only when JP4 is on `2-3` (carbon)** | **11–21 mA** |
-| **Switch lamp** | R5 | 0 Ω link; lamp limits internally, **unmeasured** | **unknown** |
+| **Switch lamp** | R5 | 0 Ω link; internal limiting is a **plain ~87.5 Ω series resistor**, Vf ~2.51 V, **measured 2026-09-20** | **28.5 mA** |
 | Mic bias, electret L | R51 | 2k2 from 3V3A, JP1 on `1-2` | 1.5 mA |
 | Mic bias, electret R | R53 | 2k2 from 3V3A, JP4 on `1-2` | 1.5 mA |
 | Comms A module | J19-1 | external, no allowance stated | unknown |
@@ -143,15 +143,23 @@ codec, QSPI flash and analogue LDO**, none of which are separately sourced, and
 the same table reaches 730 mA at 125 °C. Treat 100 mA as a floor for the MCU
 core, not as the module's consumption.
 
-Three entries are genuinely open, and they are the reason the tally cannot yet
-be reconciled against the 250 mA "typical" row:
+Two entries are still open, and they are the reason the tally cannot yet be
+reconciled against the 250 mA "typical" row. **The switch lamp was the third and
+is now closed**; the tally below it reaches ~141 mA in electret mode and
+~163–183 mA in carbon, so the lamp lands **inside** the existing scenario
+estimates rather than on top of them, and **the runtime table is unchanged**:
 
 - **The mic bias pair is the largest unresolved item — up to 41 mA together**,
   which is 16% of the typical scenario. 220 Ω is a low bias value, and
   [audio.md](audio.md) still lists *measure the handset capsule* as open: the
   capsule type sets where it sits and therefore the current.
-- **The switch lamp is unmeasured.** [capture-checklist.md](capture-checklist.md)
-  already asks for a meter in series at both voltages; that reading lands here.
+- ✅ **The switch lamp is measured: 28.5 mA at 5.00 V**, 5.6 mA at 3.00 V,
+  2026-09-20. It is the **largest indicator load on the rail**, ahead of the RGB
+  with all three dies lit, and unlike the RGB it is lit the whole time the
+  instrument is on. 🔴 Its internal limiting is a **plain series resistor, not a
+  current source**, so the current tracks the rail almost 8:1 across the part's
+  3–6 V marking and this figure is only meaningful quoted against 5.0 V. See
+  [`panel-latch-switch`](../discovery/findings/panel-latch-switch.yaml).
 - **The three connector 5 V pins have no stated allowance.** The 600 mA "with a
   radio" row implicitly reserves headroom for them, but nothing attributes it.
 
@@ -239,8 +247,13 @@ Series resistors are **510 Ω red, 300 Ω green and blue** for ~5 mA each from t
 a single common value fails. Expect green's to rise on tuning, since equal
 current is not equal brightness. Full working in [sourcing.md](sourcing.md).
 
-**Switch lamp** — 3–9 V rated, current limiting internal, so `R_LED` is a 0 Ω
-link on a 0603 footprint. See [indicators.md](indicators.md).
+**Switch lamp.** The part in hand is marked **3–6 V** (not the 3–9 V variant
+these documents were written against), current limiting internal, so `R_LED` is
+a 0 Ω link on a 0603 footprint. Measured 2026-09-20: **28.5 mA at 5.00 V**, and
+the limiting is a plain ~87.5 Ω series resistor with Vf ~2.51 V. Keep the 0603
+footprint: fitting a real resistor there is how the lamp gets dimmed without a
+board change, ~100 Ω taking it to roughly 13 mA. See
+[indicators.md](indicators.md).
 
 ## Analogue front ends
 

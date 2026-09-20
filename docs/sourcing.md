@@ -509,15 +509,17 @@ long one, so the pattern still clears the walls.
 | DC jack | **DC-099**, 5.5 × 2.1, 30 V / 10 A, threaded | ~8 mm — confirm |
 | Audio jacks | 3.5 mm stereo, panel mount | ~6 mm — confirm |
 | LED bezel | 5 mm LED, black plastic, snap-in, **12.5 mm long** | **8 mm** |
-| Illuminated latching switch | 3–9 V lamp, latching | **Ø12 / 16 / 19 — the one still unknown** |
+| Illuminated latching switch | **3–6 V lamp** (the part in hand), latching, **28.5 mA at 5 V** | **Ø12 hole; bezel still to measure** |
 | Board standoffs | M3 kit | — |
 | 10 kΩ NTC `103AT-2` | **or** a fixed 10 kΩ if the pack has no thermistor — TS cannot float | — |
 | JST-XH housings and crimps, 2 / 3 / 4 / 6 way | one crimp tool covers all four | — |
 
-**The switch bezel diameter is the only outstanding mechanical number.** Its
-electrical side has been settled since the lamp turned out to be a 3–9 V variant
-with internal limiting, so `R_LED` is a 0 Ω link; measuring the lamp current at
-5 V against 6 V is a brightness sanity-check, not a gate on anything.
+**The switch bezel diameter is the only outstanding mechanical number**, and
+12 mm is the *mounting hole*, not the bezel. Its electrical side is fully
+settled: the part in hand is a **3–6 V** lamp with internal limiting, so `R_LED`
+is a 0 Ω link, and the current was measured on 2026-09-20 at **28.5 mA at
+5.00 V**. The brightness sanity-check against 6 V was run and passed. See
+[`panel-latch-switch`](../discovery/findings/panel-latch-switch.yaml).
 
 **Board clearance**, for sizing standoffs and the shell cavity:
 

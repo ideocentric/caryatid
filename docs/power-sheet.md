@@ -151,7 +151,8 @@ an unprotected charger input.
 | — | R6 100 kΩ from `EN_SW` to `GND` |
 
 The lamp runs from the **switched** 5 V rail, so it follows the boost and needs
-no firmware. R5 is a 0 Ω link because the 3–9 V lamp limits its own current;
+no firmware. R5 is a 0 Ω link because the lamp limits its own current, through
+a plain ~87.5 Ω internal series resistor, drawing a measured **28.5 mA at 5 V**;
 the footprint stays so a different switch can drop in.
 
 ### Boost U2

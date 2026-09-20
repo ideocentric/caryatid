@@ -11,7 +11,7 @@ source_ref: >-
   is stated on the side of the switch".
 resource: >-
   The 12 mm illuminated latching pushbutton for the panel, against caryatid J3
-status: confirmed      # 2026-09-06. Compatible with J3. Lamp CURRENT still unmeasured, see below.
+status: confirmed      # 2026-09-20. Compatible with J3, and the lamp current is now MEASURED.
 
 measured_2026_09_06:
   # Matt, with the switch in hand and the bench supply. Everything that was
@@ -33,6 +33,7 @@ measured_2026_09_06:
   lamp: >-
     Run directly from the 5 V bench supply with no damage. That corroborates
     the 3-6V marking empirically as well as by inference.
+    CURRENT MEASURED 2026-09-20, see `measured_2026_09_20` below.
   listing_specs_as_supplied_by_matt:
     rating_switch: "3A / 250VAC"
     ingress: IP65
@@ -68,20 +69,84 @@ the_wiring_is_now_settled:
     orange, black. Still make the BARE pins 1-2 link separately for bring-up
     Stages 2 and 3, which keeps the lamp out of the boost test.
 
-still_open_but_NOT_a_compatibility_question:
-  lamp_current: >-
-    UNMEASURED. The switch works at 5 V; how much it draws is a separate
-    question and it is a BUDGET line, not a fit question.
+measured_2026_09_20_THE_LAMP_CURRENT_IS_CLOSED:
+  # Matt, at the bench. 10.2 ohm shunt, Fluke 101 on DC mV, Jesverty supply
+  # in CC with a 100 mA limit. NO BOARD. Evidence file:
+  # discovery/evidence/2026-09-20-switch-lamp-current.txt
+  headline: "28.5 mA at 5.00 V across the lamp. 5.6 mA at 3.00 V."
 
-    values.md lists three unattributed items in the 5 V power budget and one is
-    "the switch lamp is unmeasured". capture-checklist.md has asked for a meter
-    in series since capture. The lamp is lit the whole time the instrument is
-    on, so it sits inside every row of the runtime table, including the 5.2 h
-    "loud, LEDs lit" figure.
+  readings:
+    - {supply: "3.00 V", shunt_mV: 51.5, current_mA: 5.05,  lamp_V: 2.949}
+    - {supply: "5.00 V", shunt_mV: 257.9, current_mA: 25.28, lamp_V: 4.742}
+    - {supply: "5.29 V", shunt_mV: 290.5, current_mA: 28.48, lamp_V: 5.000, note: "IN SERVICE"}
 
-    THE SWITCH IS ALREADY ON THE BENCH SUPPLY. Putting the meter in series is
-    the difference between closing that line and leaving it a guess. Take 3 V
-    as well if convenient, which brackets the lamp as the rail sags.
+  🔴 why_there_are_three_readings_and_not_two: >-
+    THE SHUNT DROP IS NOT NEGLIGIBLE AT THIS CURRENT, and the first pass
+    assumed it would be. At 25 mA a 10.2 ohm shunt drops 258 mV, so the
+    reading taken at a 5.00 V SETPOINT had only 4.74 V on the lamp. That is
+    an 11% error on the quantity wanted, not the 3% that was predicted from
+    an assumed 15 mA.
+
+    The third reading sets the supply to 5.29 V so that the drop leaves
+    exactly 5.00 V on the lamp. THAT is the in-service figure, because R5 is
+    a 0 ohm link and the lamp sees the full rail with nothing in the way.
+
+    GENERAL LESSON FOR THIS RUNBOOK: with a series shunt you are measuring at
+    a load voltage you did not set. Either add the drop back into the
+    setpoint, or record the voltage the load actually saw. Do not quote the
+    setpoint.
+
+  what_the_three_points_show: >-
+    THEY FIT A STRAIGHT LINE. The "internal limiting" that a voltage-range
+    marking implies is A PLAIN SERIES RESISTOR, not a constant-current driver:
+
+        Vf ~ 2.51 V,  R_series ~ 87.5 ohm
+
+    Model against measurement: 5.06 vs 5.05, 25.54 vs 25.28, 28.19 vs 28.48.
+    Within 1% across the span, and the residual is the LED's own Vf rising
+    with current, which is what a real diode does.
+
+  🔴 consequence_the_current_is_NOT_held_across_the_range: >-
+    A voltage RANGE marking means the part tolerates the range. It does NOT
+    mean the current is constant over it. Through a series resistor the
+    current tracks the rail almost 8:1 end to end:
+
+        3.00 V  ->   5.6 mA
+        5.00 V  ->  28.5 mA   (measured)
+        6.00 V  ->  39.9 mA   (extrapolated, top of the marking)
+
+    SO THE BUDGET LINE IS ONLY MEANINGFUL QUOTED AGAINST A RAIL VOLTAGE.
+    This does not weaken the 2026-09-05 compatibility pass, which turned on
+    the part tolerating 5 V, and it does. It qualifies what the phrase
+    "internally limited" was taken to promise.
+
+  provenance_caveat: >-
+    The 10.2 ohm shunt was measured 2-WIRE and the LEAD RESISTANCE WAS NOT
+    SUBTRACTED. Clip leads are typically 0.1-0.3 ohm, so the true shunt may
+    be nearer 10.0 ohm and every current above may read up to ~2% LOW: 28.5
+    could be as much as 29.1. NOT CORRECTED, because it changes no
+    conclusion. Subtract the leads if this is ever needed better than 2%.
+
+  it_confirms_a_prediction_in_indicators_md: >-
+    indicators.md said, conditionally, "if the limiting is a plain series
+    resistor, roughly 75% of the current, which the eye reads as around 85%
+    as bright", comparing 5 V against a 6 V 4xAA reference. IT IS a plain
+    series resistor, and the real ratio is 28.5/39.9 = 71%. The estimate was
+    right and slightly optimistic, and the brightness conclusion stands.
+
+  where_it_lands_in_the_budget: >-
+    28.5 mA makes the lamp THE LARGEST INDICATOR LOAD on the 5 V rail, ahead
+    of the RGB with all three dies lit at 18.9 mA, and unlike the RGB it is
+    lit the whole time the instrument is on.
+
+    IT DOES NOT ADD TO THE RUNTIME TABLE. The 150/250/350 mA scenario rows
+    are top-down estimates, not a tally, and values.md says so. The tally
+    with the lamp in it reaches ~141 mA in electret mode and ~163-183 mA in
+    carbon, against a 250 mA typical row, so 28.5 mA lands INSIDE the
+    existing headroom rather than on top of it. Runtime figures unchanged.
+
+    Two of the three unattributed lines remain: the mic bias pair, and the
+    three connector 5 V pins.
 
 the_lamp_question_is_ANSWERED:
   reading: "3-6V, marked on the body of the switch"
@@ -96,7 +161,9 @@ the_lamp_question_is_ANSWERED:
     intended arrangement and nothing needs changing.
 
   variance_from_the_documents_and_why_it_does_not_matter: >-
-    indicators.md and power-sheet.md both describe a 3-9 V variant. THIS SWITCH
+    indicators.md and power-sheet.md both describe a 3-9 V variant.
+    ✅ BOTH CORRECTED 2026-09-20, along with values.md, sourcing.md and
+    capture-checklist.md, when the current measurement landed. THIS SWITCH
     IS 3-6 V. That is a different part, and it is FINE, and it is slightly
     BETTER at this rail rather than worse.
 
@@ -145,8 +212,10 @@ superseded_still_unknown_2_THE_PINOUT:
     series resistor there is no damage at 5 V. Identify it by applying the
     bench supply across the lamp pair and seeing which way round it lights.
 
-the_measurement_that_closes_a_DOCUMENTED_unknown:
-  # This needs NO BOARD. Supply, meter, switch. It can be done today.
+superseded_the_measurement_that_closes_a_DOCUMENTED_unknown:
+  # ✅ DONE 2026-09-20. Kept because it states WHY the reading was worth
+  # taking, and the answer is in `measured_2026_09_20...` above.
+  # It needed NO BOARD. Supply, meter, switch. It was done in ten minutes.
   what: >-
     Meter in SERIES with the lamp, on the 5 V bench supply. Record the current.
   why_it_is_worth_doing_now: >-
@@ -176,6 +245,17 @@ mounting:
     the phone's panel, still wants calipers across the flange.
 
 evidence:
+  - "2026-09-20: LAMP CURRENT MEASURED, closing bringup A7.6 and one of the
+     three unattributed lines in the 5 V budget. 28.5 mA at 5.00 V across the
+     lamp, 5.6 mA at 3.00 V. 10.2 ohm shunt, Fluke 101 on DC mV, Jesverty
+     supply in CC at a 100 mA limit, no board. Three points fit Vf 2.51 V with
+     an 87.5 ohm series resistor within 1%, so the internal limiting is a
+     PLAIN RESISTOR and the current is not held across the 3-6 V marking.
+     The shunt drop is not negligible at this current: the reading taken at a
+     5.00 V setpoint had only 4.74 V on the lamp, hence a third reading at a
+     5.29 V setpoint. Shunt measured 2-wire with leads not subtracted, so the
+     figures may read up to 2% low
+     (discovery/evidence/2026-09-20-switch-lamp-current.txt)"
   - "2026-09-06: SWITCH CONFIRMED COMPATIBLE WITH J3. Latching, 4 pins, two
      labelled +/- for the ring LED and two unlabelled for the contacts. The
      contacts read 0.9 ohm latched in and open when out, so NORMALLY OPEN,
@@ -195,7 +275,7 @@ evidence:
      (latching vs momentary), pin count and pinout are therefore unestablished
      and are not inferred from the product category"
 
-last_verified: 2026-09-05
+last_verified: 2026-09-20
 
 notes: >-
   CABLE CHECK 1 IS CLOSED and the J3 cable can be built. The other two are

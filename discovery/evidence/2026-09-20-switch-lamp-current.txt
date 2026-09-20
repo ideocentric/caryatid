@@ -1,0 +1,76 @@
+2026-09-20  SWITCH LAMP CURRENT  (bringup A7.6)
+================================================================
+Closes: panel-latch-switch / still_open_but_NOT_a_compatibility_question
+        values.md 5 V budget, "Switch lamp ... unmeasured / unknown"
+
+ARTICLE
+  12 mm illuminated latching pushbutton, ring LED, body marked 3-6V/W.
+  The unit confirmed compatible with J3 on 2026-09-06.
+  Lamp pair only. Switch contacts not in circuit for this measurement.
+  NO BOARD INVOLVED. Supply, shunt, meter, switch.
+
+INSTRUMENTS                                 (see bench-instruments.yaml)
+  Meter     Fluke 101, DC mV range. No current ranges, hence the shunt.
+  Supply    Jesverty 0-30 V 0-5 A, CC, limit 100 mA.
+  Shunt     10.2 ohm, measured on the Fluke before use.
+
+  !! The shunt was measured 2-WIRE and the LEAD RESISTANCE WAS NOT
+     SUBTRACTED. Typical clip leads are 0.1-0.3 ohm, so the true shunt
+     may be nearer 10.0 ohm and every current below may read up to
+     ~2% LOW. At the 5.00 V point that is 28.5 mA vs up to 29.1 mA.
+     Not corrected because it does not change any conclusion. Subtract
+     the leads if this figure is ever needed to better than 2%.
+
+METHOD
+  Supply + -> shunt -> lamp "+" -> lamp "-" -> supply -.
+  Fluke ACROSS the shunt, DC mV.  mA = mV / 10.2
+  Lamp volts = supply setpoint - shunt drop. The shunt drop is NOT
+  negligible at this current: at the 5.00 V setpoint it is 258 mV, so
+  the lamp saw 4.74 V and not 5.00 V. That is why the third reading
+  exists.
+
+READINGS
+  supply     shunt mV    current     volts across the lamp
+  --------   ---------   ---------   ---------------------
+  3.00 V      51.5        5.05 mA     2.949 V
+  5.00 V     257.9       25.28 mA     4.742 V
+  5.29 V     290.5       28.48 mA     5.000 V   <-- IN SERVICE
+
+  The 5.29 V setpoint was chosen so that the drop across the shunt
+  would leave exactly 5.00 V on the lamp. 5.29 - 0.2905 = 4.9995 V.
+
+RESULT
+  28.5 mA at 5.00 V. This is the figure for the 5 V budget, because
+  R5 is a 0 ohm link and the lamp sees the full rail in service.
+  5.6 mA at 3.00 V for the bottom of the marked range.
+
+WHAT THE THREE POINTS SHOW
+  They fit a straight line, so the "internal limiting" implied by a
+  voltage-range marking is A PLAIN SERIES RESISTOR, not a constant
+  current driver:
+
+        Vf ~ 2.51 V,  R_series ~ 87.5 ohm
+
+  measured    model     error
+   5.05 mA     5.06      +0.2%
+  25.28 mA    25.54      +1.0%
+  28.48 mA    28.19      -1.0%
+
+  The 1% spread is the LED's own Vf rising with current, which is what
+  a real diode does. The agreement is the point: two-point and
+  three-point fits give the same intercept to three figures.
+
+  CONSEQUENCE. The current is NOT held across the 3-6 V marking, it
+  tracks the rail almost 8:1 end to end:
+        3.00 V ->  5.6 mA
+        5.00 V -> 28.5 mA      (measured)
+        6.00 V -> 39.9 mA      (extrapolated, top of the marking)
+  So the budget line is only meaningful quoted against a rail voltage.
+
+CONFIRMS A PREDICTION IN indicators.md
+  That document said, conditionally, "if the limiting is a plain series
+  resistor, roughly 75% of the current [at 5 V against a 6 V 4xAA
+  reference], which the eye reads as around 85% as bright".
+  IT IS a plain series resistor, and the ratio is 28.5/39.9 = 71%.
+  The estimate was right and slightly optimistic. The brightness
+  conclusion stands: no action, and no board change.

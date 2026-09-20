@@ -930,3 +930,66 @@ method. The first answer was right and was argued away.
 
 **Next step:** decide the column crossing, then wire a ZH-to-J11 harness and
 record the choice under `for_loa_the_build` in `loa-keypad-matrix`.
+
+## 2026-09-20: switch lamp current measured, and the shunt drop that nearly ate it
+
+**Completed:**
+
+- **Bringup A7.6 passed: the switch lamp draws 28.5 mA at 5.00 V**, 5.6 mA at
+  3.00 V. 10.2 Ω shunt, Fluke 101 on DC mV, Jesverty supply in CC at a 100 mA
+  limit, no board involved. This **closes one of the three unattributed lines
+  in the 5 V budget**, leaving the mic bias pair and the three connector 5 V
+  pins. Evidence in `2026-09-20-switch-lamp-current.txt`, record updated in
+  `panel-latch-switch`.
+- **The internal limiting is a plain ~87.5 Ω series resistor, Vf ~2.51 V**, not
+  a constant-current driver. Three points fit that model within 1%, the
+  residual being the LED's own Vf rising with current. ⇒ **A voltage-range
+  marking means the part tolerates the range, not that the current is held
+  across it.** Here it tracks the rail almost 8:1 from 3 V to 6 V, so the budget
+  line is only meaningful quoted against a rail voltage. That qualifies what
+  "internally limited" was taken to promise on 2026-09-05; it does not weaken
+  the compatibility pass, which turned on the part tolerating 5 V, and it does.
+- **It does not move the runtime table.** 28.5 mA makes the lamp the largest
+  indicator load on the rail, ahead of the RGB with all three dies lit, and it
+  is lit whenever the instrument is on. But the 150/250/350 mA scenario rows are
+  top-down estimates, not a tally: with the lamp in it the tally reaches ~141 mA
+  in electret mode and ~163–183 mA in carbon against a 250 mA typical row, so
+  the lamp lands **inside** the existing headroom. Runtime figures unchanged.
+- **`indicators.md` predicted this correctly and the prediction is now closed.**
+  It said, conditionally, that a plain series resistor would give "roughly 75%
+  of the current" at 5 V against the 6 V 4×AA reference. It is a plain series
+  resistor and the real ratio is 71%. No action, no board change.
+- **Five documents corrected off the ledger**, all of which described a 3–9 V
+  lamp: `values.md`, `indicators.md`, `sourcing.md`, `power-sheet.md`,
+  `capture-checklist.md`. The part in hand is 3–6 V. That discrepancy was
+  recorded on 2026-09-06 as "no action"; it became worth fixing once the
+  measurement was being written into the same paragraphs.
+
+**🔴 The lesson, and it is a runbook change:** **the shunt drop is not
+negligible, and the load never sees the setpoint.** The first reading was taken
+at a 5.00 V setpoint, where 258 mV across the shunt left only **4.74 V** on the
+lamp, reading **11% low**. It was caught by the numbers not fitting, then fixed
+by setting the supply to 5.29 V so the drop left exactly 5.00 V. `bringup.md`
+A3 now carries this as a standing warning beside the "do not put the Fluke where
+the shunt is" one: add the drop back into the setpoint and re-read, or record
+the voltage the load actually saw, but never quote the setpoint.
+
+**In flight:** nothing. No board was powered; this was a component check.
+
+**Open questions:**
+
+- **Lead resistance was not subtracted.** The 10.2 Ω shunt was measured 2-wire
+  and clip leads run 0.1–0.3 Ω, so the true shunt may be nearer 10.0 Ω and every
+  current may read up to **2% low**: 28.5 mA could be as much as 29.1. Logged as
+  not performed rather than assumed. It changes no conclusion.
+- The 6.00 V figure of 39.9 mA is **extrapolated**, not measured. It is the top
+  of the part's marking and only feeds the brightness comparison.
+- **`docs/status.md` still has a RESUME block dated 2026-09-01** that predates
+  every component check in Phase A. It is not wrong, but it is drifting, and
+  this file has been burned by exactly that before.
+
+**Next step:** the remaining A7 component checks, which are the two LED
+questions: **A7.2/A7.4** common anode on J4 and J12 by diode test, and **A7.3**
+whether the charge LED's green die is AlGaInP or InGaN, which matters because J4
+runs from `VOUT` down to 3.0 V. Then **A7.5**, characterising the test electret
+before it is trusted to prove anything else.

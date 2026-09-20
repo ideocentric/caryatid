@@ -128,6 +128,14 @@ flowchart LR
 open circuit on volts, not a reading. The resistor does the work; the meter
 only watches it.
 
+🔴 **Add the shunt drop back into the setpoint.** The load does not see the
+voltage you dialled in, it sees that minus the drop across the shunt, and at
+tens of milliamps through 10 Ω that is hundreds of millivolts. The switch lamp
+measurement found this the hard way on 2026-09-20: a 5.00 V setpoint put 4.74 V
+on the lamp and read **11% low**. Either set the supply to `V_wanted + drop` and
+re-read (one iteration converges), or record the voltage the load actually saw.
+**Never quote the setpoint as the load voltage.**
+
 **Why 0.1 Ω for the big one and not something easier to read.** It sits in the
 input path and its drop comes out of the charger's headroom, which is only 150
 to 250 mV. At 1.05 A a 0.1 Ω drops 105 mV and leaves J1 near 4.90 V, above the
@@ -272,7 +280,7 @@ Each of these costs a part if it is wrong, and none is recoverable after.
 | A7.3 | **Charge LED green die is AlGaInP, not InGaN** | 🔴 J4 runs from `VOUT`, the cell falling to 3.0 V. AlGaInP at ~2.1 V is fine; **InGaN true green at 3.0-3.2 V dims and goes dark as the cell drains** and no resistor fixes it |
 | A7.4 | **RGB is common anode** | same diode test. 🔴 It cannot run from 3V3: green and blue Vf is above the output-high level |
 | A7.5 | **Test electret characterised** | DC resistance both ways, a finite kΩ that **differs by direction**, which is the built-in JFET. Tells you which lead is positive. See [`bench-test-electret`](../discovery/findings/bench-test-electret.yaml) |
-| A7.6 | **Switch lamp current** | 10 Ω shunt at 5 V. Closes one of three unattributed lines in the 5 V budget in [values.md](values.md) |
+| A7.6 | **Switch lamp current** | ✅ **PASSED 2026-09-20: 28.5 mA at 5.00 V**, 5.6 mA at 3.00 V, on a 10.2 Ω shunt. Closed one of three unattributed lines in the 5 V budget in [values.md](values.md). 🔴 **Set the supply to 5.29 V, not 5.00 V**: the shunt drops 290 mV at this current, so a 5.00 V setpoint measures the lamp at 4.74 V and reads 11% low. See [`panel-latch-switch`](../discovery/findings/panel-latch-switch.yaml) |
 
 **A7.5 first, before it is trusted.** Its job is to tell you whether the board
 works, and an unmeasured reference cannot. If E8 reads nothing there are three
