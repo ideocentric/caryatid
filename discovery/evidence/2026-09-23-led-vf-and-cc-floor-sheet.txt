@@ -1,0 +1,236 @@
+###########################################################################
+# HAND-WRITTEN, DELIBERATELY, AND HERE IS WHY.
+#
+# The 2026-09-03 sheet carries a banner: hand-written sheets drifted from
+# the runbook every time it changed, so sheets are now GENERATED from
+# docs/bringup.md by tools/gen_bringup_sheet.py.
+#
+# THAT LESSON IS ABOUT SHEETS THAT DUPLICATE THE RUNBOOK. Neither test
+# below is a runbook stage. Test 1 characterises the BENCH SUPPLY and
+# belongs to `bench-instruments`. Test 2 resolves a claim that was
+# WITHDRAWN on 2026-09-23 and which gates nothing. There is no upstream
+# for either to drift from.
+#
+# This is a ONE-OFF DIAGNOSTIC. Fill it in, fold the numbers into the
+# records, and it becomes evidence rather than a maintained document.
+# Do NOT let it grow into a parallel runbook.
+###########################################################################
+
+LED FORWARD VOLTAGE AT RATED CURRENT, AND THE SUPPLY'S CC FLOOR
+================================================================
+
+  2026-09-23. BLANK. Nothing below is a result yet.
+
+  NO BOARD IS INVOLVED. Nothing is powered but the part under test.
+
+WHY THESE TWO TESTS EXIST
+-------------------------
+  TEST 1. A green die measured 2.54-2.59 V with the supply in CC at a set
+  2 mA. The same die measured 2.454 V at 2.57 mA under constant voltage.
+  VOLTAGE WENT UP AS CURRENT WENT DOWN, which a diode cannot do. Read
+  against the curve those CV points draw, 2.54-2.59 V corresponds to
+  somewhere between 4 and 10 mA depending on series resistance, i.e. TWO
+  TO FIVE TIMES what the supply was displaying.
+
+  `bench-instruments` has carried the supply's MINIMUM SETTABLE CURRENT
+  LIMIT as NOT_YET_VERIFIED since it arrived, and a 0-5 A instrument asked
+  to hold 2 mA is regulating at 0.04% of full scale. This test closes that.
+  IT MATTERS MORE THAN TEST 2: it bears on every current-controlled
+  measurement this project will ever take.
+
+  The competing explanation is a DIFFERENT UNIT from the 100-piece bag,
+  where +/-0.13 V is unremarkable. The two are not exclusive.
+
+  TEST 2. Both bags are labelled 3.0-3.2 V green. On 2026-09-22 a claim
+  was written that the measured forward voltages disproved that, and it
+  was WITHDRAWN on 2026-09-23: it extrapolated a log-only diode fit from
+  low-current points out to 20 mA, omitting the series resistance that
+  dominates there. Low-current readings CANNOT separate the two
+  chemistries. 20 mA, the label's own condition, can.
+
+  🔴 NOTHING GATES ON TEST 2. J12 runs from 5 V with headroom either way,
+  and J4 was settled FUNCTIONALLY by measuring its operating point
+  (0.77 mA at a 3.00 V supply, green lights). This is closing a loose
+  claim, not qualifying a part.
+
+
+ON THE BENCH
+------------
+  [ ] Fluke 101: DC V, DC mV, resistance
+  [ ] test leads WITH CLIPS. Do not hand-hold probes.
+  [ ] bench supply
+  [ ] 10.2 ohm shunt           (Test 1)
+  [ ] 120 ohm resistor         (Test 2)
+  [ ] the RGB LED, 4 pin, common anode
+  [ ] the J4 red/green bicolour, 3 pin, common anode
+  [ ] marker pen. MARK THE LEDS YOU USE.
+
+
+🔴 MARK THE PARTS FIRST
+-----------------------
+  There are 100 RGBs in the bag. The whole reason Test 1 is ambiguous is
+  that nobody can say whether the CC and CV readings came from the same
+  physical LED.
+
+  Mark the two you use, and use THOSE for everything below.
+
+  [ ] RGB marked ............  mark used: ..............
+  [ ] bicolour marked .......  mark used: ..............
+
+
+THE LADDER, USED BY BOTH TESTS
+-------------------------------
+  Build it once. Only the TOP component and the SUPPLY MODE change.
+
+        supply +
+           │
+        ───A───              <-- node A
+           │
+       ┌───────┐
+       │  TOP  │             10.2 ohm for Test 1
+       │       │             120 ohm  for Test 2
+       └───────┘
+           │
+        ───B───              <-- node B
+           │
+       ┌───────┐
+       │  LED  │             ANODE AT THE TOP
+       │       │
+       └───────┘
+           │
+        ───C───              <-- node C
+           │
+        supply −
+
+
+🔴 THE WIRING DETAIL THAT WOULD QUIETLY RUIN EVERY READING
+-----------------------------------------------------------
+  BOTH PARTS ARE COMMON ANODE. The common pin goes UP to node B. The die
+  being tested puts its own cathode DOWN to node C.
+
+  LEAVE EVERY OTHER CATHODE COMPLETELY DISCONNECTED.
+
+      RGB, 4 pin        node B ---- COMMON ANODE
+                        node C ---- green cathode
+                        float  ---- red cathode     <-- NOT connected
+                        float  ---- blue cathode    <-- NOT connected
+
+      bicolour, 3 pin   node B ---- COMMON ANODE
+                        node C ---- green cathode
+                        float  ---- red cathode     <-- NOT connected
+
+  If a second cathode is also tied to node C, that die lights too and
+  SPLITS THE CURRENT. Your "20 mA into green" becomes something else with
+  NO VISIBLE SIGN THAT ANYTHING IS WRONG. This is the failure that looks
+  like a result.
+
+
+===========================================================================
+TEST 1: IS THE SUPPLY HONEST AT 2 mA?
+===========================================================================
+
+  TOP component: the 10.2 ohm shunt.
+  SUPPLY: CC mode, set 2 mA, voltage limit 5 V.
+  LED: the RGB green (the one that produced the anomaly).
+
+  1R  Re-read the shunt, out of circuit, clips not fingers.
+      Recorded 2026-09-20 as 10.2 ohm.
+                                            shunt = ............ ohm
+
+  1A  Fluke on DC mV, probes A to B, across the shunt.
+                                            reading = ............ mV
+                                     real current = mV / shunt
+                                                  = ............ mA
+
+  1B  Fluke on DC V, probes B to C, across the LED.
+                                            Vf = ............ V
+
+  VERDICT on 1A
+  -------------
+      ~20 mV      supply is HONEST at 2 mA
+                  => the 2.54-2.59 V discrepancy is UNIT VARIATION
+
+      50-100 mV   SUPPLY IS DELIVERING 5-10 mA WHILE DISPLAYING 2
+                  => a permanent constraint. Record the floor in
+                     `bench-instruments` and stop setting CC below it.
+
+      other       ............................................
+
+  CROSS-CHECK using 1B
+  --------------------
+      With the REAL current from 1A, does the pair (current, Vf) sit on
+      the curve drawn by the two CV points, 2.322 V at 0.69 mA and
+      2.454 V at 2.57 mA?
+
+      [ ] yes  -> one LED explains everything; the supply is the culprit
+      [ ] no   -> a different unit is involved as well
+
+  IF IT READS ~20 mV, KEEP GOING ANYWAY. Walk the CC setpoint up
+  (5, 10, 20 mA) reading the shunt each time, and note where display and
+  shunt start to agree. THAT number is the supply's usable floor and it
+  is what belongs in the record.
+
+      set  5 mA -> shunt ...... mV -> real ...... mA
+      set 10 mA -> shunt ...... mV -> real ...... mA
+      set 20 mA -> shunt ...... mV -> real ...... mA
+
+
+===========================================================================
+TEST 2: GREEN FORWARD VOLTAGE AT THE LABEL'S OWN CONDITION
+===========================================================================
+
+  TOP component: the 120 ohm resistor.
+  SUPPLY: CV mode, 5.00 V, current limit 50 mA.
+
+  THIS METHOD DOES NOT CARE WHETHER CC IS HONEST. The resistor sets the
+  current and the drop across it tells you what you actually got. That is
+  the whole reason for using it rather than CC.
+
+  2R  Measure the 120 ohm OUT OF CIRCUIT, clips not fingers.
+                                            R = ............ ohm
+
+  --- RGB GREEN ---------------------------------------------------------
+
+  2A  Fluke DC V, probes B to C, across the die.
+                                            Vf = ............ V
+  2B  Fluke DC V, probes A to B, across the resistor.
+                                         drop = ............ V
+                                      current = drop / R
+                                              = ............ mA
+
+  --- BICOLOUR GREEN ----------------------------------------------------
+
+  2C  Fluke DC V, probes B to C, across the die.
+                                            Vf = ............ V
+  2D  Fluke DC V, probes A to B, across the resistor.
+                                         drop = ............ V
+                                      current = drop / R
+                                              = ............ mA
+
+  VERDICT, per die
+  ----------------
+      3.0-3.2 V    LABEL IS RIGHT. The die is InGaN. The 2026-09-23
+                   correction stands and nothing further is needed.
+
+      ~2.5-2.7 V   LABEL IS WRONG. The die is AlGaInP. The 2026-09-22
+                   claim was right for the wrong reason, which is NOT the
+                   same as having been right: the reasoning that produced
+                   it was invalid either way and stays withdrawn.
+
+      other        ............................................
+
+  SANITY: the current from 2B/2D should land somewhere in 16-21 mA. If it
+  is far outside that, something is wrong with the rig before the reading
+  means anything. A common cause is a second cathode not left floating.
+
+
+===========================================================================
+WHEN IT IS FILLED IN
+===========================================================================
+  Test 1 -> `bench-instruments`, closing minimum_settable_current_limit,
+            and a note on the supply's usable CC floor.
+  Test 2 -> `j12-rgb-led` and `j4-charge-led`, resolving the chemistry
+            question that both records currently carry as open.
+
+  NEITHER changes any verdict about either LED. Both parts have already
+  passed on every axis that gates anything.
