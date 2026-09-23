@@ -1,0 +1,116 @@
+2026-09-22  J4 CHARGE LED: CHEMISTRY, POLARITY, AND FLAT-CELL BEHAVIOUR
+========================================================================
+Closes: bringup A7.2 and A7.3
+        sourcing.md "Its specification is UNVERIFIED"
+        datasheets.md "Bicolour LED B01CFZMO3I ... UNVERIFIED"
+        status.md "The J4 bicolour LED is UNVERIFIED"
+
+ARTICLE
+  Red/green common-anode bicolour 5 mm LED, Amazon B01CFZMO3I, for J4.
+  NO BOARD INVOLVED. Supply, resistor, meter.
+
+  !! THIS MEASUREMENT IS THE ONLY INFORMATION THAT EXISTS ABOUT THIS
+     PART. The listing was never readable, so nothing was ever quoted
+     from the vendor: not the forward voltages, not the package, not
+     the pinout. Every figure below is measured.
+
+INSTRUMENTS                                 (see bench-instruments.yaml)
+  Meter    Fluke 101, DC V and diode test
+  Supply   Jesverty, 5.00 V then 3.00 V
+  R        nominal 1k, MEASURED 990 ohm, used at that value
+
+A7.2  COMMON ANODE
+------------------
+  Diode test. RED PROBE ON THE COMMON PIN conducts to both other pins.
+  => COMMON ANODE. PASS. This is what the board needs; a common cathode
+     would have required a high-side switch.
+
+  🔴 A SECOND RESULT HIDES IN THIS ONE. The diode test LIT THE GREEN
+     DIE. A handheld's diode test supplies only ~2.4 V open circuit, so
+     it CANNOT light a 3.0-3.2 V InGaN green. That it worked at all is
+     independent proof the green is a low-Vf die, arrived at before any
+     voltage was read. Two methods, same answer.
+
+A7.3  FORWARD VOLTAGES, AND THE CHEMISTRY QUESTION
+---------------------------------------------------
+  Rig:  supply --> 990 ohm --> LED --> 0 V,  Fluke across the LED.
+
+  supply    green Vf    green I     red Vf    red I
+  -------   --------    --------    ------    -------
+  5.00 V     2.322 V    2.71 mA     1.862 V   3.17 mA
+  3.00 V     2.234 V    0.77 mA     1.810 V   1.20 mA
+
+  >>> GREEN IS AlGaInP. PASS.
+
+  2.322 V is nowhere near InGaN true green at 3.0-3.2 V: 0.7 V of
+  separation. The reading is if anything biased LOW, since vendor Vf
+  figures are quoted at 20 mA and this is 2.7 mA, and scaling up would
+  not approach 3.0 V.
+
+  Both dies shift 120-160 mV per decade of current, which is ordinary
+  diode behaviour. Nothing anomalous in either.
+
+  WHY THIS WAS THE WHOLE QUESTION: J4 hangs on VOUT, the cell, roughly
+  4.2 V falling to 3.0 V, not a regulated rail. sourcing.md put it
+  plainly: "if this bicolour uses the same die as the RGB it is the
+  wrong part for J4, however good it looks on the bench at full
+  charge." It does not. The part survives.
+
+THE FLAT-CELL ACCEPTANCE TEST
+------------------------------
+  Green lights at 3.00 V, drawing 0.77 mA. PASS.
+  Predicted 0.68 mA from the 5 V forward voltage; the real Vf falls at
+  lower current, leaving more across the resistor. Reality is slightly
+  better than the prediction.
+
+  ⚠️ STILL A VISUAL JUDGEMENT OUTSTANDING: whether 0.77 mA is actually
+     READABLE on a flat cell. The meter proves conduction, not
+     legibility, and the requirement is that the charge state can be
+     SEEN. Not yet confirmed by eye.
+
+ON THE BOARD, with R9/R10 at 1 kohm from VOUT
+----------------------------------------------
+  cell      red        green
+  4.2 V     2.33 mA    1.86 mA
+  3.0 V     1.19 mA    0.77 mA
+
+  CORRECTION TO indicators.md: it says "1 kohm from 4.2 V through
+  ~2.1 V is 2.1 mA per die". With the measured 2.322 V it is 1.88 mA,
+  about 10% optimistic. The amber total of 4.2 mA survives by accident,
+  since red's surplus covers green's shortfall.
+
+🔴 NEW: THE AMBER DRIFTS TOWARD RED AS THE CELL DRAINS
+-------------------------------------------------------
+  cell      red : green
+  4.2 V        1.25
+  3.0 V        1.55        <-- 24% more red-dominated
+
+  Green's higher forward voltage eats proportionally more of a
+  SHRINKING headroom, so green fades 2.4x across the cell's life while
+  red fades only 2.0x.
+
+  TWO CONSEQUENCES, NEITHER PREVIOUSLY WRITTEN DOWN:
+
+  1. TUNING R9/R10 AT FULL CHARGE DOES NOT HOLD AT FLAT CELL.
+     indicators.md anticipated trimming the balance but treated it as
+     one fixed adjustment. It is not fixed, it MOVES with state of
+     charge. Trim at mid-cell, not on a freshly charged pack.
+
+  2. RESISTORS CANNOT FULLY FIX IT. The drift is driven by the Vf
+     DIFFERENCE against a FALLING RAIL, not by the resistor ratio. R9
+     and R10 can centre the balance; they cannot stop it moving.
+
+  IT THREATENS NOTHING. Amber going more orange as the battery empties
+  is harmless and arguably reads correctly. Recorded so it is not later
+  discovered and mistaken for a fault.
+
+  The trim direction is also now quantified rather than guessed: red
+  draws 24% more current than green through equal resistors, ON TOP OF
+  red being the brighter die per milliamp. R9 wants RAISING, around
+  1.2k to equalise current, and further by eye since equal current is
+  not equal brightness.
+
+NOT YET DONE ON THIS PART
+--------------------------
+  DIFFUSED. Both dies lit together should give ONE AMBER LENS, not a
+  red dot beside a green dot. Visual, not electrical, and untested.

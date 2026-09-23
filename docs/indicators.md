@@ -98,13 +98,30 @@ matches the *off means fine* logic the RGB already uses.
 > and no resistor value fixes it. This is the same physics that stops the RGB
 > being driven from 3V3, one rail down.
 
-Current is unchanged: 1 kΩ from 4.2 V through ~2.1 V is 2.1 mA per die, 4.2 mA
-in amber, and each status pin sinks only its own — well inside the 15 mA limit.
+Current, with the dies now **measured** rather than assumed at ~2.1 V:
 
-**Expect to trim the balance.** Red is usually brighter than green at equal
-current, so amber can read orange-red. R9 and R10 are separate resistors for
-exactly that, the same way the RGB already anticipates green rising toward a
-kilohm.
+| Cell | Red | Green | Amber total |
+| --- | --- | --- | --- |
+| 4.2 V, full | 2.33 mA | 1.88 mA | 4.2 mA |
+| 3.0 V, flat | 1.19 mA | 0.77 mA | 2.0 mA |
+
+Each status pin sinks only its own, well inside the 15 mA limit. *(This section
+read "2.1 mA per die" until 2026-09-22, derived from an assumed 2.1 V green. The
+real green is 2.322 V, making it 1.88 mA. The 4.2 mA amber total survived the
+correction by accident, since red's surplus covers green's shortfall.)*
+
+**Expect to trim the balance**, and the direction is now measured: **red draws
+24% more current than green** through equal resistors, on top of being the
+brighter die per milliamp. R9 and R10 are separate resistors for exactly that.
+
+🔴 **But the balance is not a fixed adjustment, it moves with state of charge.**
+Green's higher forward voltage eats proportionally more of a shrinking headroom,
+so green fades 2.4× across the cell's life while red fades 2.0×, and the amber
+drifts toward red: a current ratio of 1.25 on a full cell against **1.55 on a
+flat one**. Trim at mid-cell rather than on a freshly charged pack. Resistors can
+centre this; they cannot stop it moving, because it is driven by the Vf
+difference against a falling rail. Harmless, and arguably it reads correctly, but
+it should not be rediscovered later and mistaken for a fault. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml).
 
 Part choice and its open question are in [sourcing.md](sourcing.md).
 

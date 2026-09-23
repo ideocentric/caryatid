@@ -27,10 +27,21 @@ down it; do not skip ahead to the fun part.
       Standard, same as the boost. The Economic assembly split holds. Library
       type is unpublished for both; assume Extended and a ~$3 setup fee each,
       which JLC prices when the BOM goes up.
-- [x] ~~Measure the RGB forward voltages and confirm common anode.~~ **Done** —
-      common anode confirmed, Vf 2.0–2.2 V red and 3.0–3.2 V green/blue. Start
-      at 510 Ω red, 300 Ω green and blue, then **tune green down by eye** —
-      equal current is not equal brightness.
+- [ ] **Measure the RGB forward voltages and confirm common anode.**
+      🔴 **This item was ticked "Done" until 2026-09-22 and it had not been
+      done.** The figures recorded against it, common anode and Vf 2.0-2.2 V red
+      with 3.0-3.2 V green/blue, are **the vendor's specification**, quoted as
+      such in [sourcing.md](sourcing.md) under "Specification from the vendor".
+      Reading a listing is not measuring a part, and the checkbox said
+      *Measure*. Untick and do it: it is **A7.4** in
+      [bringup.md](bringup.md), the diode test plus forward voltages.
+      ⚠️ A handheld's diode test supplies only ~2.4 V, so a 3.0-3.2 V green or
+      blue die reads **OL even when it is good and correctly oriented**. Use the
+      bench supply through a series resistor, not the diode test alone. (The J4
+      bicolour was measurable on diode test only because its green turned out to
+      be 2.322 V. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml).)
+      Starting resistors stay 510 Ω red, 300 Ω green and blue, then **tune green
+      down by eye**, since equal current is not equal brightness.
 - [ ] **Measure the switch bezel diameter.** Ø12 is the *mounting hole*, and the
       bezel flange is larger, typically 14–15 mm on a 12 mm switch. It is the
       only mechanical number still missing: the DC jack, audio jacks and LED

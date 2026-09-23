@@ -200,10 +200,13 @@ terminals onto pins 1–3, pin 4 unused. The state table and the reasoning are i
 **Candidate:** Amazon `B01CFZMO3I`, listed as diffused —
 <https://www.amazon.com/Diffused-Lighting-Electronics-Components-Emitting/dp/B01CFZMO3I>
 
-> **Its specification is UNVERIFIED.** The listing could not be read
-> automatically, so nothing here is quoted from the vendor — not the forward
-> voltages, not the package, not the pinout. Everything below is a requirement
-> the part must be *shown* to meet, not a claim about this one.
+> ✅ **MEASURED 2026-09-22, and it passes.** Green **2.322 V**, red **1.862 V**,
+> **common anode**, and the green still lights at a 3.00 V supply. The listing
+> was never readable, so nothing here was ever quoted from the vendor and
+> nothing ever can be: **this measurement is the only information about the
+> part**, and [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml) is now its source. The requirements below
+> stand as written; item 4, the diffusion check, is the one still outstanding
+> and it is visual rather than electrical.
 
 **The green die is the whole question**, because J4 hangs on `VOUT` — the cell,
 about **4.2 V falling to 3.0 V**, not a regulated rail.
@@ -214,9 +217,11 @@ about **4.2 V falling to 3.0 V**, not a regulated rail.
 | InGaN, true green | 3.0–3.2 V | **dims, then dies as the cell drains** |
 
 That is the identical failure that stopped the RGB being driven from 3V3, one
-rail further down. The RGB part was confirmed at 3.0–3.2 V green; **if this
-bicolour uses the same die it is the wrong part for J4**, however good it looks
-on the bench at full charge.
+rail further down. The RGB is specified at 3.0–3.2 V green; **if this bicolour
+had used the same die it would have been the wrong part for J4**, however good
+it looked on the bench at full charge. ✅ **It does not.** Measured at
+**2.322 V**, which is AlGaInP with 0.7 V of separation from InGaN, and it draws
+0.77 mA at a 3.00 V supply rather than going dark.
 
 Before committing:
 
@@ -231,8 +236,16 @@ Before committing:
    precisely the failure mode: it goes dark when the battery is low, which is
    when you most want to see the charger working.
 
-Then trim R9 and R10 by eye — red usually swamps green at equal current, so
-amber tends to read orange-red.
+Then trim R9 and R10 by eye. Red does swamp green: **measured, red draws 24%
+more current than green through equal resistors**, on top of being the brighter
+die per milliamp. R9 wants raising, around 1.2k to equalise current, further by
+eye after that.
+
+🔴 **The trim is not a single fixed adjustment.** The balance **moves with state
+of charge**: green's higher Vf eats proportionally more of a shrinking headroom,
+so the red-to-green current ratio goes from 1.25 on a full cell to 1.55 on a
+flat one. **Trim at mid-cell, not on a freshly charged pack**, and note that
+resistors can centre the balance but cannot stop it moving. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml).
 
 ## Still to source
 

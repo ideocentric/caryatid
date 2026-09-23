@@ -1069,3 +1069,74 @@ sit beside is what made it look like it required that part.
 
 **Next step:** A7.2, A7.3 and A7.4, the three LED checks, all diode-test work on
 the bench. Then A7.5.
+
+## 2026-09-22: J4 bicolour verified, and a ticked box that had not been done
+
+**Completed:**
+
+- **A7.2 and A7.3 both pass. The J4 bicolour is verified**, closing an
+  `UNVERIFIED` carried in three documents since sourcing. Common anode confirmed
+  by diode test; green **Vf 2.322 V** at 5 V and **2.234 V** at 3 V, red 1.862
+  and 1.810. New ledger record `j4-charge-led`, since neither LED had one.
+- **The green die is AlGaInP**, 0.7 V clear of the InGaN true green at 3.0-3.2 V
+  that would have disqualified it. This was the whole question, because J4 hangs
+  on `VOUT` and not a regulated rail. **It still lights at a 3.00 V supply**, at
+  0.77 mA, which is the flat-cell acceptance test `sourcing.md` asked for.
+- **A second, independent confirmation came free.** The diode test *lit the green
+  die*. A handheld supplies only ~2.4 V on that range and cannot light a 3.0 V
+  InGaN part, so A7.2 corroborated A7.3 before any voltage was read.
+- 🔴 **This measurement is the only information that exists about the part.** The
+  Amazon listing was never readable, so nothing was ever quoted from the vendor:
+  not the forward voltages, not the package, not the pinout. `datasheets.md` now
+  says the question was closed by measurement because that was the only way it
+  could be closed.
+
+**🔴 New finding, which nothing in the documents anticipated: the amber drifts
+toward red as the cell drains.** Green's higher forward voltage eats
+proportionally more of a shrinking headroom, so green fades 2.4× across the
+cell's life while red fades 2.0×, and the red-to-green current ratio goes from
+**1.25 on a full cell to 1.55 on a flat one**. Two consequences: the R9/R10 trim
+is **not a fixed adjustment**, so trim at mid-cell rather than on a freshly
+charged pack; and **resistors cannot fully fix it**, because it is driven by the
+Vf difference against a falling rail, not by the resistor ratio. Harmless, and
+arguably it reads correctly. Recorded so it is not rediscovered as a fault. It
+was only visible because the part was measured at **both ends** of the rail,
+which is exactly what `sourcing.md` asked for: "Test it at 3.0 V, not 4.2 V."
+
+**🔴 A ticked checkbox that had not been done.** `capture-checklist.md` carried
+*"[x] ~~Measure the RGB forward voltages and confirm common anode.~~ **Done**"*
+with Vf figures against it. Those figures are **the vendor's specification**,
+quoted as such in `sourcing.md` under "Specification from the vendor". Reading a
+listing is not measuring a part, and the checkbox said *Measure*. **Unticked**,
+with the reason written in, and A7.4 stands as genuinely outstanding. This is
+the same failure the project keeps catching: a vendor claim hardening into a
+measured fact through repetition, here through a tick.
+
+**A trap in A7.4 itself, recorded before anyone hits it:** a handheld's diode
+test supplies only ~2.4 V, so the RGB's **3.0-3.2 V green and blue dies will read
+OL even when good and correctly oriented**. A7.2 and A7.4 both say "diode test",
+and followed literally that produces "green is dead". Use the bench supply
+through a series resistor. The J4 part was measurable on diode test only because
+its green turned out to be 2.322 V.
+
+**Corrections off the ledger:** `indicators.md` said "2.1 mA per die" from an
+assumed 2.1 V green; measured it is **1.88 mA**, ~10% optimistic, and the 4.2 mA
+amber total survived by accident since red's surplus covers green's shortfall.
+`sourcing.md`, `status.md` and `datasheets.md` all carried the part as
+unverified.
+
+**In flight:** nothing. No board was powered.
+
+**Open questions:**
+
+- **Diffused is untested on the J4 part**, and it is a *visual* check, not an
+  electrical one. Both dies lit together must give one amber lens, not a red dot
+  beside a green dot.
+- **Legibility at 3.0 V is also unjudged.** The meter proves 0.77 mA flows; it
+  does not prove the LED can be *read* on a flat cell, which is the actual
+  requirement.
+- **A7.4, the RGB, is not started**, and its checkbox is now correctly unticked.
+- **A7.5, the bench reference electret, is still untouched.**
+
+**Next step:** A7.4 on the four-pin RGB, using the supply rather than the diode
+test, then the two visual checks on the J4 part. Then A7.5.

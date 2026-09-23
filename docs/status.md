@@ -348,10 +348,11 @@ From [capture-checklist.md](capture-checklist.md) and [sourcing.md](sourcing.md)
   wicks paste in and traps expanding gas. Now **two** vias, mask-tented on both
   faces, with the EP mask opening moved clear of them. `tools/fix_ep_thermal.py`.
 - **Extended-part loading fee** on `C5339083`, the cell holder.
-- **The J4 bicolour LED is UNVERIFIED** — Amazon `B01CFZMO3I`. The green die
-  decides whether it works: J4 hangs on `VOUT`, which falls to ~3.0 V, so an
-  InGaN green at 3.0–3.2 V goes dark exactly when the charge indicator matters.
-  Test it at 3.0 V, not 4.2. See [sourcing.md](sourcing.md).
+- ✅ **The J4 bicolour LED is VERIFIED**, 2026-09-22, Amazon `B01CFZMO3I`. The
+  green die decided whether it works, and it is **AlGaInP at 2.322 V**, not the
+  InGaN true green that would have gone dark as the cell drained. Common anode
+  confirmed, and it still lights at a 3.00 V supply. One **visual** check is
+  outstanding: that the lens is diffused enough to mix amber. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml) and [sourcing.md](sourcing.md).
 - **Parts still to source** — see the table in sourcing.md.
 - **Datasheets** are gathered in `local/datasheets/`, gitignored. Index and
   links in [datasheets.md](datasheets.md).

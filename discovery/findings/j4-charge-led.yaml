@@ -1,0 +1,126 @@
+id: j4-charge-led
+kind: other
+source_claim: >-
+  That the red/green bicolour bought for J4 is the right part: common anode,
+  diffused, and carrying a green die that still lights when the cell has fallen
+  to 3.0 V. sourcing.md called it a CANDIDATE and said outright "Its
+  specification is UNVERIFIED ... nothing here is quoted from the vendor, not
+  the forward voltages, not the package, not the pinout."
+source_ref: >-
+  docs/sourcing.md "The charge LED - J4"; docs/datasheets.md "Bicolour LED
+  B01CFZMO3I ... UNVERIFIED"; docs/status.md "The J4 bicolour LED is
+  UNVERIFIED"; docs/indicators.md "2. Charge LED"; docs/bringup.md A7.2, A7.3.
+resource: "The red/green bicolour LED for J4, Amazon B01CFZMO3I"
+status: confirmed     # 2026-09-22, on every electrical axis. One VISUAL check is outstanding.
+
+🔴 this_record_is_the_only_information_about_this_part: >-
+  THE LISTING WAS NEVER READABLE. sourcing.md was explicit that nothing had been
+  quoted from the vendor: not the forward voltages, not the package, not the
+  pinout. So unlike the RGB, which at least has a vendor specification, this part
+  had NOTHING behind it until it was measured. Every figure here is measured.
+
+measured_2026_09_22:
+  # Fluke 101, Jesverty supply, a nominal 1k resistor MEASURED at 990 ohm.
+  # No board. Evidence: discovery/evidence/2026-09-22-j4-bicolour-led.txt
+  rig: "supply -> 990 ohm -> LED -> 0 V, Fluke across the LED"
+
+  a7_2_common_anode:
+    result: "PASS. Diode test, red probe on the common pin conducts to both others."
+    🔴 the_second_result_hidden_in_it: >-
+      THE DIODE TEST LIT THE GREEN DIE. A handheld supplies only ~2.4 V open
+      circuit on diode test, so it CANNOT light a 3.0-3.2 V InGaN green. That it
+      worked at all is independent proof of a low-Vf die, arrived at before any
+      voltage was read. The chemistry has two confirmations, not one.
+
+  a7_3_forward_voltages:
+    at_5V: {green_Vf: 2.322, green_mA: 2.71, red_Vf: 1.862, red_mA: 3.17}
+    at_3V: {green_Vf: 2.234, green_mA: 0.77, red_Vf: 1.810, red_mA: 1.20}
+    verdict: "🔴 GREEN IS AlGaInP. PASS."
+    why_unambiguous: >-
+      2.322 V against InGaN true green at 3.0-3.2 V is 0.7 V of separation. The
+      reading is biased LOW if anything, since vendor Vf figures are quoted at
+      20 mA and this is 2.7 mA; scaling up would not approach 3.0 V. Both dies
+      shift 120-160 mV per decade of current, ordinary diode behaviour.
+    what_it_was_guarding_against: >-
+      J4 hangs on VOUT, the cell, 4.2 V falling to 3.0 V, not a regulated rail.
+      sourcing.md: "if this bicolour uses the same die as the RGB it is the
+      wrong part for J4, however good it looks on the bench at full charge."
+      It does not. The part survives.
+
+  flat_cell_acceptance:
+    result: "PASS. Green lights at 3.00 V, drawing 0.77 mA."
+    note: >-
+      Predicted 0.68 mA from the 5 V forward voltage. The real Vf falls at lower
+      current, leaving more across the resistor, so reality beat the prediction.
+
+  on_the_board_with_R9_R10_at_1k_from_VOUT:
+    cell_4v2: {red_mA: 2.33, green_mA: 1.86}
+    cell_3v0: {red_mA: 1.19, green_mA: 0.77}
+
+🔴 the_amber_drifts_toward_red_as_the_cell_drains:
+  # NEW. Nothing in the documents anticipated this.
+  ratio_red_to_green:
+    at_4v2: 1.25
+    at_3v0: 1.55
+  mechanism: >-
+    Green's HIGHER forward voltage eats proportionally more of a SHRINKING
+    headroom. Green fades 2.4x across the cell's life; red fades only 2.0x. The
+    current ratio shifts 24% toward red.
+  consequence_1_the_trim_is_not_a_fixed_adjustment: >-
+    indicators.md anticipated trimming R9/R10 by eye but treated it as ONE fixed
+    adjustment. IT MOVES WITH STATE OF CHARGE. Trim at mid-cell rather than on a
+    freshly charged pack, or the balance is wrong for most of the discharge.
+  consequence_2_resistors_cannot_fully_fix_it: >-
+    The drift is driven by the Vf DIFFERENCE against a FALLING RAIL, not by the
+    resistor ratio. R9 and R10 can CENTRE the balance. They cannot stop it
+    moving.
+  severity: >-
+    HARMLESS. Amber going more orange as the battery empties arguably reads
+    correctly. Recorded so it is not later discovered and mistaken for a fault.
+  the_trim_direction_is_now_quantified: >-
+    Red draws 24% more current than green through equal resistors, ON TOP OF red
+    being the brighter die per milliamp. R9 wants RAISING, around 1.2k to
+    equalise current, and further by eye since equal current is not equal
+    brightness.
+
+corrections_to_the_documents:
+  indicators_md: >-
+    "1 kohm from 4.2 V through ~2.1 V is 2.1 mA per die" is ~10% optimistic.
+    With the measured 2.322 V it is 1.88 mA. The amber total of 4.2 mA survives
+    by accident, since red's surplus covers green's shortfall.
+
+still_open:
+  🔴 diffused: >-
+    UNTESTED, and it is a VISUAL check not an electrical one. Both dies lit
+    together must give ONE AMBER LENS. A water-clear part shows a red dot beside
+    a green dot, which nobody reads as a state across a stage. sourcing.md lists
+    it as a requirement the part must be SHOWN to meet.
+  legibility_at_3V: >-
+    The meter proves 0.77 mA flows. IT DOES NOT PROVE THE LED CAN BE READ. The
+    requirement is that the charge state can be SEEN on a flat cell, which is a
+    judgement by eye and has not been made.
+
+evidence:
+  - "2026-09-22: A7.2 and A7.3 BOTH PASS. Common anode confirmed by diode test
+     with the red probe on the common pin. Green Vf 2.322 V at 2.71 mA and
+     2.234 V at 0.77 mA, so the die is AlGaInP and not the InGaN true green at
+     3.0-3.2 V that would have disqualified the part; red 1.862 V and 1.810 V.
+     Green still lights at a 3.00 V supply, which is the flat-cell acceptance
+     test. Independently corroborated by the diode test having lit the green die
+     at all, which a ~2.4 V source cannot do to an InGaN die. Measured with a
+     nominal 1k resistor read at 990 ohm, no board
+     (2026-09-22-j4-bicolour-led.txt)"
+
+last_verified: 2026-09-22
+
+notes: >-
+  WHAT THIS RECORD CAUGHT IS THAT THERE WAS NOTHING TO CATCH. The part passes on
+  every axis that was in doubt. That is worth stating plainly, because the value
+  of the check was never in finding a fault: it was that J4 hangs on an
+  UNREGULATED falling rail, the failure mode is INVISIBLE at full charge, and the
+  only moment it would have shown up is a flat battery in service.
+
+  The drift finding came free, out of four readings taken for another purpose.
+  It was only visible because the part was measured at BOTH ENDS of the rail
+  rather than once at a convenient voltage, which is what sourcing.md asked for:
+  "Test it at 3.0 V, not 4.2 V."
