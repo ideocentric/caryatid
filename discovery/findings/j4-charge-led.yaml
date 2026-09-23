@@ -11,7 +11,7 @@ source_ref: >-
   B01CFZMO3I ... UNVERIFIED"; docs/status.md "The J4 bicolour LED is
   UNVERIFIED"; docs/indicators.md "2. Charge LED"; docs/bringup.md A7.2, A7.3.
 resource: "The red/green bicolour LED for J4, Amazon B01CFZMO3I"
-status: conflict      # 2026-09-23. The FUNCTIONAL pass holds. The CHEMISTRY claim is withdrawn: the bag label contradicts it.
+status: confirmed     # 2026-09-23. PASSES on every axis that gates anything. Its green's chemistry is UNMEASURED and gates nothing.
 
 🔴 this_record_is_the_only_information_about_this_part: >-
   THE LISTING WAS NEVER READABLE. sourcing.md was explicit that nothing had been
@@ -132,15 +132,29 @@ measured_2026_09_22:
     measurement, and it reached the ledger and five documents as confirmed fact
     before anyone read the bag.
 
-  how_to_settle_it:
-    - >-
-      LOOK AT IT. AlGaInP green is distinctly YELLOWISH-green; InGaN is a vivid
-      pure green. The eye separates them instantly and it costs nothing.
-    - >-
-      MEASURE AT 20 mA, the vendor's own condition, which removes the argument.
-      Supply in CC at 20 mA straight into the die, no resistor, read Vf across
-      it. Inside both parts' ratings. 3.0-3.2 V means the label is right;
-      ~2.5 V means the label is wrong.
+  the_conflict_is_resolved_even_though_THIS_die_was_not_retested: >-
+    ✅ STATUS RETURNED TO `confirmed` 2026-09-23. The conflict was between MY
+    CLAIM and the bag label, and my claim is now dead on independent evidence:
+    the RGB's green, carrying the same 3.0-3.2 V label, was measured at rated
+    current and came back at 2.844 V at 18.15 mA, an InGaN die. The method that
+    produced the AlGaInP claim is disproved, so no competing account remains.
+    See [[j12-rgb-led]].
+
+    ⚠️ THIS PART'S OWN GREEN WAS NOT RE-MEASURED AT 20 mA. Its chemistry is
+    UNMEASURED, not established, and that is recorded as a gap rather than
+    resolved by analogy with a different part.
+
+  🔴 and_it_does_not_matter_which_is_the_whole_point: >-
+    A7.3 was PASSED FUNCTIONALLY, by measuring J4's actual circuit at the
+    cell's end of life: 0.77 mA at a 3.00 V supply, green lit. No chemistry
+    claim is needed for that and none is made. The runbook step has been
+    rewritten to ask the functional question directly.
+
+  if_it_is_ever_worth_settling: >-
+    CV at 5.00 V through a measured ~120 ohm resistor, Fluke across the die,
+    current read off the resistor's drop. 🔴 NOT IN CC: the supply's CC carries
+    a +3.53 mA offset, see [[bench-instruments]]. Looking at it also helps,
+    since AlGaInP green is distinctly YELLOWISH and InGaN a vivid pure green.
 
 corrections_to_the_documents:
   indicators_md: >-
@@ -160,6 +174,14 @@ still_open:
     judgement by eye and has not been made.
 
 evidence:
+  - "2026-09-23: CONFLICT RESOLVED, status back to `confirmed`. The competing
+     account was my own AlGaInP claim and it is dead on independent evidence:
+     the RGB green, carrying the same 3.0-3.2 V bag label, measured 2.844 V at
+     18.15 mA at rated current, an InGaN die, disproving the method that
+     produced the claim. THIS part's green was NOT re-measured and its chemistry
+     stays UNMEASURED rather than inferred by analogy. It gates nothing: A7.3
+     passed functionally at 0.77 mA on a 3.00 V supply
+     (2026-09-23-cc-floor-and-green-vf.txt, [[j12-rgb-led]])"
   - "2026-09-23: DIFFUSED CONFIRMED by eye, closing the fourth and last of
      sourcing.md's requirements for this part and the only one a meter could not
      settle. The bag label was also read: 1.8 V red, 3.0-3.2 V green"

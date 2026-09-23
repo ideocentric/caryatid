@@ -158,11 +158,23 @@ Those numbers confirm why 3V3 drive was never going to work: green and blue want
 Common anode on the 5.0 V rail, cathodes through resistors to the GPIOs, which
 sink. Allowing ~0.35 V of output-low drop:
 
-| Channel | Vf | R | Resulting current |
-| --- | --- | --- | --- |
-| Red | 2.0–2.2 V | **510 Ω** | 4.80 – 5.20 mA |
-| Green | 3.0–3.2 V | **300 Ω** | 4.83 – 5.50 mA |
-| Blue | 3.0–3.2 V | **300 Ω** | 4.83 – 5.50 mA |
+| Channel | Vf **at 20 mA** | Vf **at its own operating point** | R | Current |
+| --- | --- | --- | --- | --- |
+| Red | 2.0–2.2 V | ~1.99 V | **510 Ω** | **5.2 mA** |
+| Green | 3.0–3.2 V | ~2.62 V | **300 Ω** | **6.8 mA** |
+| Blue | 3.0–3.2 V | ~2.71 V | **300 Ω** | **6.4 mA** |
+
+🔴 **The two Vf columns are the whole point, and the table used to have only the
+first.** A forward voltage quoted at 20 mA is not the forward voltage at 5 or
+7 mA, and these channels run at the latter. The middle column is measured,
+2026-09-23, at the current each channel actually converges to. Because Vf and I
+determine each other, getting this right means **iterating**, not substituting.
+
+*(This table read 4.80-5.20 and 4.83-5.50 mA until 2026-09-23, computed from the
+20 mA figures. It was low on green and blue by about 25%. `values.md` carried a
+different set, 5.9/6.7/6.3, which was right on green and blue and high on red,
+and right only because omitting the GPIO's 0.35 V sink drop cancelled the same
+Vf error. Neither document was right about all three.)* See [`j12-rgb-led`](../discovery/findings/j12-rgb-led.yaml).
 
 Note the red resistor is nearly double the other two for the *same* current —
 that is the whole reason a common value fails.

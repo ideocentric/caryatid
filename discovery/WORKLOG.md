@@ -1214,3 +1214,87 @@ with it.** That is the durable lesson, and it caught two documents and me.
 
 **Next step:** A7.5, which is the last A7 item and the one the runbook says to do
 first, since it is the reference everything in Stage 8 leans on.
+
+## 2026-09-23 (evening): the supply was lying, the label was right, and one mistake explains everything
+
+**Completed:**
+
+- 🔴 **The bench supply's CC is offset by +3.53 mA with unity gain.** Set 2 / 5 /
+  10 mA delivers **5.98 / 8.53 / 13.53 mA**, and the 5-to-10 pair gives a slope
+  of **exactly 1.000**. Two permanent consequences: **it cannot deliver below
+  ~3.5 mA in CC whatever you set**, and **a wanted current must be set 3.5 mA
+  low**. The floor is soft, not sharp: the 2 mA point ran +0.45 mA high and
+  wandered 5.2-6.8 mA. This closes the `minimum settable current limit` item
+  that `bench-instruments` has carried since the supply arrived.
+- **That explains the anomaly that started it.** The green read 2.54-2.59 V at a
+  *set* 2 mA against 2.454 V at 2.57 mA under CV: voltage up as current down,
+  which a diode cannot do. **It was never at 2 mA, it was at about 6.** One LED,
+  no unit variation, nothing wrong with either reading.
+- **The green chemistry is settled at rated current: Vf 2.844 V at 18.15 mA**,
+  extrapolating to ~2.87 V at 20 mA. An AlGaInP green would read 2.50-2.65 V
+  here. **It is InGaN and the bag label is right** to within about 0.13 V.
+- **The meter's ohms gain error is now a figure, not a bound: ~1.1% low across
+  two ranges**, from three parts landing within **0.18% of each other**. It is
+  the tightness that is the evidence. Implies the 10.2 Ω shunt is nearer 10.31
+  and every current derived from it is ~1.1% low: the switch lamp becomes
+  28.2 mA rather than 28.5. Inside the few percent already recorded, so nothing
+  moves, but the caveat is closed.
+
+**The scorecard on my own claim, at 20 mA:**
+
+| | |
+| --- | --- |
+| 2026-09-22 claim | 2.66 V, **wrong, 0.21 V low** |
+| measured | **~2.87 V** |
+| bag label | 3.0-3.2 V, ~0.13 V high |
+
+The withdrawal was correct. The claim was wrong in method *and* in number, and
+the kernel it contained, that the label is slightly optimistic, is a **third**
+the size claimed and changes nothing.
+
+⚠️ **Even the corrected fit was optimistic.** Six points predicted 2.894 V at
+this current against a measured 2.844, a **50 mV** miss where every earlier
+point landed within 8 mV. The curve flattens at the top more than the model
+expects. **Extrapolation remains the weak step even after the missing physics is
+put back**, which is the second time in two days it has been the thing that
+failed.
+
+**🔴 One mistake explains all of it.** `values.md`'s 3V3 table, both documents'
+RGB current tables, and my withdrawn claim are the *same error*: **a forward
+voltage used at a current other than the one it was quoted at.** Vf is not a
+constant, and a datasheet figure carries its test current with it.
+
+That also **resolves the `values.md` / `sourcing.md` disagreement** flagged
+yesterday. Recomputed from measured Vf at the current each channel actually
+converges to:
+
+| die | measured | `values.md` | `sourcing.md` |
+| --- | --- | --- | --- |
+| red | ~5.2 mA | 5.9 ✗ | 4.80-5.20 ✅ |
+| green | ~6.8 mA | 6.7 ✅ | 4.83-5.50 ✗ |
+| blue | ~6.4 mA | 6.3 ✅ | 4.83-5.50 ✗ |
+
+**Neither document is right about all three.** `values.md` is right on green and
+blue *by cancellation*, having omitted the 0.35 V sink drop as well, and high on
+red. `sourcing.md` is right on red and low on the other two. Being right for the
+wrong reason is not being right. Both tables corrected, and `sourcing.md` now
+carries two Vf columns so the distinction cannot be lost again.
+
+**J4 returns to `confirmed`.** The conflict was between my claim and the label;
+my claim is dead on independent evidence. ⚠️ **That part's own green was not
+re-measured**, so its chemistry stays *unmeasured* rather than inferred by
+analogy from a different part. It gates nothing: A7.3 passed functionally.
+
+**In flight:** nothing. No board powered.
+
+**Open questions:**
+
+- **The J4 green's chemistry is unmeasured** and deliberately not inferred.
+- The supply's **set resolution and published accuracy** are still unread; only
+  the listing title was ever retrieved.
+- **Legibility of the J4 green at 3.0 V** remains a judgement by eye, not made.
+- **A7.5, the bench reference electret, is still untouched** and is now the only
+  outstanding A7 item.
+
+**Next step:** A7.5. Note the new constraint when planning it: **use CV with a
+measured series resistor, not CC**, for any current below about 20 mA.

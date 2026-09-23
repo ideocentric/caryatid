@@ -1,0 +1,131 @@
+2026-09-23  SUPPLY CC FLOOR, AND GREEN Vf AT RATED CURRENT
+============================================================
+  Results for the sheet 2026-09-23-led-vf-and-cc-floor-sheet.txt.
+  NO BOARD. Fluke 101, Jesverty supply, RGB green die.
+  Every ladder reading verified by A-B + B-C = A-C before use.
+
+TEST 1: THE SUPPLY'S CC IS OFFSET, NOT SCALED
+==============================================
+  10.2 ohm shunt in series with the RGB green. Supply in CC.
+
+  set      A-B mV    real mA     excess
+  ------   -------   ---------   ------
+  2 mA      61        5.98       +3.98
+  5 mA      87        8.53       +3.53
+  10 mA    138       13.53       +3.53
+
+  >>> real = set + 3.53 mA.  UNITY GAIN, FIXED OFFSET.
+
+  The 5 and 10 mA pair gives a slope of EXACTLY 1.000, which kills the
+  competing offset-plus-gain model. Two consequences, both permanent:
+
+  🔴 THE SUPPLY CANNOT DELIVER LESS THAN ~3.5 mA IN CC, whatever is set.
+     That is the floor bench-instruments has wanted since the supply
+     arrived. It is a property of the instrument, not a resolution limit.
+
+  🔴 TO GET A CURRENT, SET IT 3.5 mA LOW. 20 mA wanted -> set 16.5.
+
+  The 2 mA point runs +0.45 mA above the model, and the current was
+  visibly wandering 5.2-6.8 mA there. Regulation is WORSE at the bottom
+  as well as offset, so the floor is soft rather than sharp.
+
+  WHAT THIS EXPLAINS. On 2026-09-22 the same die read 2.54-2.59 V with
+  the supply set to 2 mA, against 2.454 V at 2.57 mA under constant
+  voltage: voltage UP as current DOWN, which a diode cannot do. It was
+  never at 2 mA. It was at about 6 mA. ONE LED, NO UNIT VARIATION, and
+  nothing wrong with either reading. The supply was lying.
+
+TEST 2: GREEN FORWARD VOLTAGE AT RATED CURRENT
+===============================================
+  118.7 ohm measured, supply in CV at 5.00 V, limit 50 mA.
+  CV confirmed held: A-C read 5.002 V.
+
+      A-B   2.154 V   ->  18.15 mA
+      B-C   2.844 V   <-- THE ANSWER
+      A-C   5.002 V
+
+  >>> Vf = 2.844 V at 18.15 mA,  extrapolating to ~2.87 V at 20 mA.
+
+  VERDICT: INGaN, A HIGH-Vf DIE. An AlGaInP green would read 2.50-2.65 V
+  here. It does not.
+
+  THE SCORECARD, at 20 mA:
+      2026-09-22 claim      2.66 V      wrong, 0.21 V low
+      MEASURED              ~2.87 V
+      bag label             3.0-3.2 V   ~0.13 V high, ordinary binning
+
+  THE LABEL IS RIGHT FOR ENGINEERING PURPOSES. The withdrawal on
+  2026-09-23 was correct. The original claim was wrong in method AND in
+  number, and the small kernel it contained, that the label is slightly
+  optimistic, is a third of the size claimed and does not change anything.
+
+  ⚠️ EVEN THE CORRECTED FIT WAS OPTIMISTIC. The six-point fit predicted
+  2.894 V at this current against a measured 2.844, a 50 mV miss, where
+  every earlier point landed within 8 mV. The curve flattens at the top
+  more than the model expects. EXTRAPOLATION REMAINS THE WEAK STEP even
+  when the missing physics has been put back.
+
+  WHY LOW-CURRENT READINGS COULD NEVER HAVE SETTLED THIS: the same die
+  reads 2.52 V at 4 mA, which sits squarely in the AlGaInP band while
+  belonging to a part heading for 2.87 V.
+
+THE SEVEN-POINT CURVE
+=====================
+      mA       Vf        source
+      0.69     2.322     CV, 990 ohm
+      2.57     2.454     CV, 990 ohm
+      4.06     2.520     CV, 118.7 ohm at 3 V
+      5.98     2.594     CC set 2 mA
+      8.53     2.673     CC set 5 mA
+     13.53     2.784     CC set 10 mA
+     18.15     2.844     CV, 118.7 ohm at 5 V
+
+  Fitted V = V0 + a.ln(I) + I.Rs over a 26x current range:
+      series resistance ~17 ohm, ideality ~3.2, residuals within 10 mV
+      below 14 mA and 50 mV at the top.
+
+🔴 THIS RESOLVES THE values.md / sourcing.md DISAGREEMENT
+=========================================================
+  Both documents give per-die currents for J12 and they disagree. The
+  cause is now clear: BOTH USED THE LABEL'S 20 mA Vf AT A ~6 mA
+  OPERATING POINT. values.md then omitted the GPIO's 0.35 V sink drop,
+  and on green and blue that second error CANCELLED the first.
+
+  Recomputed from measured forward voltages at the current each channel
+  actually converges to, with the 0.35 V sink drop included:
+
+      die     measured-based   values.md   sourcing.md
+      red        ~5.2 mA        5.9  ✗      4.80-5.20  ✓
+      green      ~6.8 mA        6.7  ✓      4.83-5.50  ✗
+      blue       ~6.4 mA        6.3  ✓      4.83-5.50  ✗
+
+  NEITHER DOCUMENT IS RIGHT ABOUT ALL THREE. values.md is right on green
+  and blue by cancellation and high on red; sourcing.md is right on red
+  and low on the other two.
+
+  values.md's TOTALS survive well: amber 12.0 mA measured against 12.6
+  stated, all three 18.4 against 18.9. Within 3-5%.
+
+  THE CORRECT METHOD, and the durable point: USE THE FORWARD VOLTAGE AT
+  THE CURRENT THE CIRCUIT ACTUALLY CONVERGES TO, which means iterating,
+  because Vf and I determine each other. A datasheet Vf carries its test
+  current with it and is not a constant.
+
+BY-PRODUCT: THE METER'S OHMS GAIN ERROR IS NOW A FIGURE
+=======================================================
+      part            nominal   reads    low by     range
+      2k2, 1% stated  2200      2174     1.18%      6 k
+      1k              1000       990     1.00%      6 k
+      120              120       118.7   1.08%      600
+
+  ~1.1% LOW, AND ACROSS TWO RANGES, so it is a gain error rather than
+  anything range-specific. IT IS THE TIGHTNESS THAT IS THE EVIDENCE:
+  three independent parts landing within 0.18% of each other is not what
+  random parts do, whatever their tolerance.
+
+  CONSEQUENCE, and it closes a caveat open since the switch lamp: the
+  10.2 ohm shunt was read on the 600 ohm range, so its true value is
+  nearer 10.31 ohm and EVERY CURRENT DERIVED FROM IT THIS SESSION IS
+  ~1.1% LOW. Switch lamp 28.2 mA rather than 28.5; CC offset 3.49 rather
+  than 3.53. All inside the few percent already recorded. NOTHING MOVES,
+  but the caveat is now a number instead of a bound.

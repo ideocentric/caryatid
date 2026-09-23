@@ -121,9 +121,9 @@ FB1 pin 2 is the source, the ferrite's output side.
 | Load | Ref | Basis | Current |
 | --- | --- | --- | --- |
 | **Daisy Seed** | A2-39 | **derived, see below** | **~100 mA MCU alone** |
-| RGB status | J12-1 | R40 510 Ω red, R41/R42 300 Ω green/blue, common anode | 5.9 / 6.7 / 6.3 mA per die |
-| — worst assigned state | | amber (red+green) | **12.6 mA** |
-| — all three | | white, deliberately unassigned | 18.9 mA |
+| RGB status | J12-1 | R40 510 Ω red, R41/R42 300 Ω green/blue, common anode. **Measured 2026-09-23** | **5.2 / 6.8 / 6.4 mA** per die |
+| ↳ worst assigned state | | amber (red+green) | **12.0 mA** |
+| ↳ all three | | white, deliberately unassigned | 18.4 mA |
 | **Mic bias L** | R52 | 220 Ω, **only when JP1 is on `2-3` (carbon)** | **11–21 mA** |
 | **Mic bias R** | R54 | 220 Ω, **only when JP4 is on `2-3` (carbon)** | **11–21 mA** |
 | **Switch lamp** | R5 | 0 Ω link; internal limiting is a **plain ~87.5 Ω series resistor**, Vf ~2.51 V, **measured 2026-09-20** | **28.5 mA** |

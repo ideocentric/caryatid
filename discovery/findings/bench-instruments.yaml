@@ -24,11 +24,36 @@ instruments:
     good_at: >-
       Millivolts. It resolves 0.1 mV on the 600 mV range, which is what makes
       the shunt method work well rather than merely work.
+    🔴 ohms_gain_error_QUANTIFIED_2026_09_23: >-
+      THE METER READS ~1.1% LOW ON RESISTANCE, ACROSS AT LEAST TWO RANGES.
+
+          part             nominal   reads    low by    range
+          2k2, 1% stated   2200      2174     1.18%     6 k
+          1k               1000       990     1.00%     6 k
+          120               120       118.7   1.08%     600
+
+      🔴 IT IS THE TIGHTNESS THAT IS THE EVIDENCE, NOT THE DEVIATION. Three
+      independent parts landing within 0.18% of each other is not what random
+      parts do, whatever their tolerance band. And it spans the 600 ohm and
+      6 k ranges, so it is a GAIN error rather than anything range-specific.
+
+      CONSEQUENCE, closing a caveat open since the switch lamp: the 10.2 ohm
+      shunt was read on the 600 ohm range, so its true value is nearer
+      10.31 ohm and EVERY CURRENT DERIVED FROM IT IS ~1.1% LOW. Switch lamp
+      28.2 mA rather than 28.5; the CC offset 3.49 rather than 3.53. All
+      inside the few percent already recorded. NOTHING MOVES, but the caveat
+      is now a number instead of a bound.
+
+      ⚠️ STILL NOT A CALIBRATION. Three parts of unstated tolerance at three
+      points. It is a consistent observation, not a correction factor, and it
+      should not be applied silently to readings.
+
     ohms_accuracy_first_actual_check_2026_09_22: >-
       A 1% 2k2 resistor READ 2174 OHM. A 1% part is 2178-2222, so the meter
       reads somewhere between 0.2% and 2.2% LOW on the 6.000 k range. That is
       the first time the ohms function has been checked against a known part
-      in this project rather than trusted.
+      in this project rather than trusted. SUPERSEDED by the three-point
+      result above, which tightens it to ~1.1%.
 
       LEAD RESISTANCE DOES NOT EXPLAIN IT: leads ADD, pushing a reading high,
       and they measured 0.0 ohm the same week (under ~0.05 ohm, the display
@@ -72,11 +97,47 @@ instruments:
       supply's output capacitor dumps into a fault before CC can act, which
       slightly reduces the protection at first power-up. Milliseconds, and far
       better than no limit.
-    NOT_YET_VERIFIED: >-
-      Current set resolution, accuracy specification and minimum settable
-      current limit. The Amazon listing's spec table could not be read; only
-      the title was retrieved. Check these against the manual on arrival, and
-      record them here.
+    🔴 CC_IS_OFFSET_measured_2026_09_23: >-
+      real = set + 3.53 mA.  UNITY GAIN, FIXED OFFSET.
+
+          set  2 mA -> 5.98 mA delivered   (+3.98)
+          set  5 mA -> 8.53 mA delivered   (+3.53)
+          set 10 mA -> 13.53 mA delivered  (+3.53)
+
+      The 5 and 10 mA pair gives a slope of EXACTLY 1.000, which kills any
+      gain-error model. Measured with the 10.2 ohm shunt and the Fluke on
+      DC mV, every reading verified by A-B + B-C = A-C.
+
+      🔴 TWO PERMANENT CONSEQUENCES:
+        1. THE SUPPLY CANNOT DELIVER LESS THAN ~3.5 mA IN CC, whatever is
+           set. That is the minimum-current answer, and it is a property of
+           the instrument rather than a resolution limit.
+        2. TO GET A CURRENT, SET IT 3.5 mA LOW. Want 20 mA, set 16.5.
+
+      The floor is SOFT, not sharp: the 2 mA point ran +0.45 mA above the
+      model and the current visibly wandered 5.2-6.8 mA there. Regulation
+      is worse at the bottom as well as offset.
+
+      ⚠️ PREFER CV WITH A MEASURED SERIES RESISTOR over CC for any small
+      current. The resistor sets the current and its drop reports what you
+      actually got, so the supply is only asked to be a stable voltage and
+      its current circuitry never enters the measurement.
+
+      WHAT IT EXPLAINS: a green die read 2.54-2.59 V at a set 2 mA against
+      2.454 V at 2.57 mA under CV. Voltage up as current down, which a
+      diode cannot do. It was never at 2 mA, it was at about 6 mA.
+
+    voltage_display_reads_slightly_low: >-
+      2.62 V displayed against 2.64-2.67 V on the Fluke across the same two
+      nodes, 2026-09-23. Only 20-50 mV, and at the bottom of a 0-30 V range.
+      Treat the supply's displays as convenience, the Fluke as the instrument.
+
+    STILL_NOT_VERIFIED: >-
+      Current SET RESOLUTION and the published accuracy specification. The
+      Amazon listing's spec table could not be read and only the title was
+      retrieved; the manual has not been checked. The CC offset above was
+      measured rather than read, and supersedes the need for the minimum
+      settable current limit.
 
   shunts:
     - {value: "10 ohm", for: "lamp, quiescent, any current in the mA range"}
@@ -112,6 +173,21 @@ what_this_record_is_for: >-
   probed and how, belongs in the evidence file for the measurement.
 
 evidence:
+  - "2026-09-23: THE SUPPLY'S CC IS OFFSET BY +3.53 mA WITH UNITY GAIN.
+     Set 2 / 5 / 10 mA delivers 5.98 / 8.53 / 13.53 mA measured on the 10.2 ohm
+     shunt; the 5-to-10 pair gives a slope of exactly 1.000. So the minimum
+     deliverable CC current is about 3.5 mA whatever is set, and a wanted
+     current must be set 3.5 mA low. The floor is soft: the 2 mA point ran
+     +0.45 mA high and wandered 5.2-6.8 mA. This explains a green die reading
+     2.54-2.59 V at a set 2 mA when CV said 2.454 V at 2.57 mA: it was never at
+     2 mA. Also: the supply's voltage display reads 20-50 mV low against the
+     Fluke (2026-09-23-cc-floor-and-green-vf.txt)"
+  - "2026-09-23: OHMS GAIN ERROR QUANTIFIED at ~1.1% LOW across two ranges,
+     from three parts: 2k2 reads 2174 (1.18%), 1k reads 990 (1.00%), 120 reads
+     118.7 (1.08%). The tightness is the evidence rather than the deviation.
+     Tightens the 2026-09-22 bound of 0.2-2.2%. Implies the 10.2 ohm shunt is
+     nearer 10.31 and every current derived from it is ~1.1% low; nothing
+     recorded moves (2026-09-23-cc-floor-and-green-vf.txt)"
   - "2026-09-22: FIRST ACTUAL CHECK OF THE OHMS FUNCTION against a known part.
      A 1% 2k2 read 2174 ohm, bounding the meter to 0.2-2.2% low on the 6 k
      range. Not a calibration: one part at one point, and it cannot separate
@@ -127,7 +203,7 @@ evidence:
      This is why docs/bringup.md steps 4.7 and 4.9 were rewritten as shunt
      voltages rather than ammeter readings"
 
-last_verified: 2026-09-22
+last_verified: 2026-09-23
 
 notes: >-
   ON ARRIVAL, three things go in the record and one goes in the runbook:

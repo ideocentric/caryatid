@@ -66,9 +66,35 @@ measured_2026_09_23:
     flatter curve, which is precisely why a log-only fit works there and fails
     on the other two. A CHECK THAT ONLY PASSES ON THE CASE THAT WAS NEVER IN
     DOUBT IS NOT A CHECK.
-  how_to_settle_it_if_it_is_ever_worth_settling: >-
-    MEASURE AT 20 mA, the label's own condition. Supply in CC at 20 mA straight
-    into the die, no resistor, read Vf. No model and no extrapolation.
+  ✅ SETTLED_2026_09_23_AT_RATED_CURRENT:
+    measured: "Vf = 2.844 V at 18.15 mA, extrapolating to ~2.87 V at 20 mA"
+    method: >-
+      CV at 5.00 V through a measured 118.7 ohm, Fluke across the die, current
+      read from the resistor's drop. CV confirmed held, A-C read 5.002 V.
+      NOT done in CC, deliberately: the supply's CC carries a +3.53 mA offset.
+      See [[bench-instruments]].
+    verdict: "🔴 InGaN, A HIGH-Vf DIE. An AlGaInP green would read 2.50-2.65 V here. It does not."
+    scorecard_at_20_mA:
+      claim_2026_09_22: "2.66 V     WRONG, 0.21 V low"
+      measured:         "~2.87 V"
+      bag_label:        "3.0-3.2 V  ~0.13 V high, ordinary binning"
+    assessment: >-
+      THE LABEL IS RIGHT FOR ENGINEERING PURPOSES and the withdrawal was
+      correct. The original claim was wrong in METHOD and in NUMBER, and the
+      small kernel it contained, that the label is slightly optimistic, is a
+      THIRD of the size claimed and changes nothing.
+    ⚠️ even_the_corrected_fit_was_optimistic: >-
+      The six-point fit predicted 2.894 V at this current against a measured
+      2.844: a 50 mV miss, where every earlier point landed within 8 mV. The
+      curve flattens at the top more than the model expects. EXTRAPOLATION
+      REMAINS THE WEAK STEP even after the missing physics is put back.
+    why_low_current_could_never_have_settled_it: >-
+      The same die reads 2.52 V at 4 mA, which sits squarely in the AlGaInP
+      band while belonging to a part heading for 2.87 V.
+    the_curve: >-
+      Seven points over a 26x current range, 0.69 to 18.15 mA, fitted
+      V = V0 + a.ln(I) + I.Rs: series resistance ~17 ohm, ideality ~3.2,
+      residuals within 10 mV below 14 mA and 50 mV at the top.
   why_it_does_not_matter_here: >-
     J12 runs from the 5 V rail with headroom either way. It mattered for J4,
     which hangs on VOUT, and there it was settled by measuring the operating
@@ -107,15 +133,39 @@ the_board_currents_survive: >-
   artefact of the same bad extrapolation. WITHDRAWN. With the label's forward
   voltages, values.md's existing 5.9 / 6.7 / 6.3 mA per die stand.
 
-⚠️ values_md_and_sourcing_md_disagree_and_did_before_any_of_this:
-  values_md:   "5.9 / 6.7 / 6.3 mA     low-end Vf, NO sink drop"
-  sourcing_md: "4.80-5.20 / 4.83-5.50  mid Vf, WITH a 0.35 V sink drop"
-  assessment: >-
-    Both are defensible arithmetic. They differ on whether to allow for the
-    GPIO's output-low drop. Neither is wrong and the project should pick one.
-    NOT RESOLVED, flagged.
+✅ the_values_md_vs_sourcing_md_disagreement_RESOLVED_2026_09_23:
+  the_cause: >-
+    🔴 BOTH USED THE LABEL'S 20 mA Vf AT A ~6 mA OPERATING POINT. values.md
+    then ALSO omitted the GPIO's 0.35 V sink drop, and on green and blue that
+    second error CANCELLED the first.
+  recomputed_from_measured_Vf_at_the_convergent_current:
+    red:   {measured_based: "~5.2 mA", values_md: "5.9 WRONG", sourcing_md: "4.80-5.20 RIGHT"}
+    green: {measured_based: "~6.8 mA", values_md: "6.7 RIGHT", sourcing_md: "4.83-5.50 WRONG"}
+    blue:  {measured_based: "~6.4 mA", values_md: "6.3 RIGHT", sourcing_md: "4.83-5.50 WRONG"}
+  🔴 neither_document_is_right_about_all_three: >-
+    values.md is right on green and blue BY CANCELLATION and high on red;
+    sourcing.md is right on red and low on the other two. BEING RIGHT FOR THE
+    WRONG REASON IS NOT BEING RIGHT, and it is why both needed checking.
+  the_totals_survive: >-
+    values.md's amber 12.6 mA against 12.0 measured, and all-three 18.9 against
+    18.4. Within 3-5%, so nothing downstream of the totals moves.
+  🔴 the_correct_method_and_the_durable_point: >-
+    USE THE FORWARD VOLTAGE AT THE CURRENT THE CIRCUIT ACTUALLY CONVERGES TO,
+    which means ITERATING, because Vf and I determine each other. A datasheet
+    Vf carries its test current with it and is not a constant. THAT SINGLE
+    MISTAKE produced the 3V3 error, both documents' current tables, and the
+    withdrawn 2026-09-22 claim.
 
 evidence:
+  - "2026-09-23: GREEN CHEMISTRY SETTLED AT RATED CURRENT. Vf 2.844 V at
+     18.15 mA, from CV at 5.00 V through a measured 118.7 ohm with the current
+     read off the resistor drop; CV confirmed held at A-C 5.002 V. Extrapolates
+     to ~2.87 V at 20 mA against an AlGaInP expectation of 2.50-2.65, so the die
+     is InGaN and the bag label is right to within ~0.13 V. The 2026-09-22 claim
+     of 2.66 V was 0.21 V low. Even the corrected six-point fit over-predicted
+     this point by 50 mV where earlier points landed within 8. Also resolves the
+     values.md / sourcing.md current disagreement: both used a 20 mA Vf at a
+     6 mA operating point (2026-09-23-cc-floor-and-green-vf.txt)"
   - "2026-09-23: A7.4 PASSES. Common anode confirmed by diode test with the red
      probe on the common pin conducting to the other three; DIFFUSED confirmed by
      eye. Forward voltages at 5 V: red 1.932, green 2.454, blue 2.607, at
