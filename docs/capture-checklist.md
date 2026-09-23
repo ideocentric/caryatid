@@ -27,9 +27,13 @@ down it; do not skip ahead to the fun part.
       Standard, same as the boost. The Economic assembly split holds. Library
       type is unpublished for both; assume Extended and a ~$3 setup fee each,
       which JLC prices when the BOM goes up.
-- [ ] **Measure the RGB forward voltages and confirm common anode.**
-      🔴 **This item was ticked "Done" until 2026-09-22 and it had not been
-      done.** The figures recorded against it, common anode and Vf 2.0-2.2 V red
+- [x] ~~Measure the RGB forward voltages and confirm common anode.~~ ✅ **Done
+      properly 2026-09-23**: common anode and diffused both confirmed by hand,
+      Vf 1.932 / 2.454 / 2.607 V at 5 V through 990 Ω. **The vendor was right**,
+      which is the least interesting outcome and exactly why it had to be
+      checked rather than assumed. See [`j12-rgb-led`](../discovery/findings/j12-rgb-led.yaml).
+      🔴 **This item had previously been ticked "Done" since before 2026-09-22
+      without having been done.** The figures recorded against it, common anode and Vf 2.0-2.2 V red
       with 3.0-3.2 V green/blue, are **the vendor's specification**, quoted as
       such in [sourcing.md](sourcing.md) under "Specification from the vendor".
       Reading a listing is not measuring a part, and the checkbox said

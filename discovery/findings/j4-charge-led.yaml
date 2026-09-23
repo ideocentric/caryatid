@@ -11,7 +11,7 @@ source_ref: >-
   B01CFZMO3I ... UNVERIFIED"; docs/status.md "The J4 bicolour LED is
   UNVERIFIED"; docs/indicators.md "2. Charge LED"; docs/bringup.md A7.2, A7.3.
 resource: "The red/green bicolour LED for J4, Amazon B01CFZMO3I"
-status: confirmed     # 2026-09-22, on every electrical axis. One VISUAL check is outstanding.
+status: conflict      # 2026-09-23. The FUNCTIONAL pass holds. The CHEMISTRY claim is withdrawn: the bag label contradicts it.
 
 🔴 this_record_is_the_only_information_about_this_part: >-
   THE LISTING WAS NEVER READABLE. sourcing.md was explicit that nothing had been
@@ -35,12 +35,16 @@ measured_2026_09_22:
   a7_3_forward_voltages:
     at_5V: {green_Vf: 2.322, green_mA: 2.71, red_Vf: 1.862, red_mA: 3.17}
     at_3V: {green_Vf: 2.234, green_mA: 0.77, red_Vf: 1.810, red_mA: 1.20}
-    verdict: "🔴 GREEN IS AlGaInP. PASS."
-    why_unambiguous: >-
-      2.322 V against InGaN true green at 3.0-3.2 V is 0.7 V of separation. The
-      reading is biased LOW if anything, since vendor Vf figures are quoted at
-      20 mA and this is 2.7 mA; scaling up would not approach 3.0 V. Both dies
-      shift 120-160 mV per decade of current, ordinary diode behaviour.
+    verdict: "⚠️ WITHDRAWN 2026-09-23. See `chemistry_claim_withdrawn` below. The FUNCTIONAL pass is unaffected."
+    why_unambiguous_WAS_WRONG: >-
+      The original reasoning read: "2.322 V against InGaN true green at 3.0-3.2 V
+      is 0.7 V of separation. The reading is biased LOW if anything, since vendor
+      Vf figures are quoted at 20 mA and this is 2.7 mA; scaling up would not
+      approach 3.0 V."
+
+      🔴 THE LAST CLAUSE IS FALSE. Scaling up DOES approach 3.0 V once series
+      resistance is included, and the extrapolation that said otherwise omitted
+      it. See `chemistry_claim_withdrawn`.
     what_it_was_guarding_against: >-
       J4 hangs on VOUT, the cell, 4.2 V falling to 3.0 V, not a regulated rail.
       sourcing.md: "if this bicolour uses the same die as the RGB it is the
@@ -83,6 +87,61 @@ measured_2026_09_22:
     equalise current, and further by eye since equal current is not equal
     brightness.
 
+🔴 chemistry_claim_withdrawn_2026_09_23:
+  what_was_claimed: "The green die is AlGaInP, 0.7 V clear of InGaN."
+  what_contradicts_it: >-
+    THE BAG LABEL. Matt read it 2026-09-23: this part is marked 1.8 V red and
+    3.0-3.2 V green, and the RGB alongside it is marked 2.0-2.2 V red with
+    3.0-3.2 V green and blue. Both greens are labelled as high-Vf dies.
+
+  why_the_measurement_did_not_disprove_the_label: >-
+    THE EXTRAPOLATION WAS INVALID. A logarithmic diode curve was fitted to two
+    LOW-current points, 0.77 mA and 2.71 mA, and projected 8x out to the
+    vendor's 20 mA condition. THAT MODEL OMITS SERIES RESISTANCE, which for an
+    InGaN die is 10-30 ohm and dominates the forward voltage at 20 mA while
+    being invisible at 2 mA.
+
+    Restore 20 ohm and 2.322 V at 2.71 mA is ENTIRELY CONSISTENT with 3.0-3.2 V
+    at 20 mA. The label is probably right.
+
+  🔴 and_the_stated_validation_was_also_wrong: >-
+    The original reasoning argued that red landing inside the vendor's band
+    validated the method. IT VALIDATES IT FOR RED ONLY. Red is AlGaInP with low
+    series resistance and a flatter curve, which is precisely why a log-only fit
+    worked there and failed on green. A check that only works on the case that
+    was never in doubt is not a check.
+
+  what_is_STILL_TRUE_and_why_the_part_still_passes: >-
+    🔴 A7.3's PASS NEVER DEPENDED ON THE CHEMISTRY. The chemistry was a PROXY
+    for the real question, and the real question was measured directly:
+
+        green lights at a 3.00 V supply through 990 ohm, drawing 0.77 mA,
+        Vf 2.234 V
+
+    That is J4's circuit at the cell's end of life, at the operating point, with
+    no extrapolation and no model. Whatever the die is made of, IT LIGHTS WHEN
+    THE BATTERY IS FLAT, which is the entire requirement.
+
+    The amber-drift finding is unaffected for the same reason: it was computed
+    from readings at the real operating currents.
+
+  the_lesson: >-
+    A DIRECTLY MEASURED OPERATING POINT SURVIVED; AN INFERRED MATERIAL PROPERTY
+    DID NOT. The functional test was cheap, exact and answered the question that
+    was actually being asked. The chemistry claim was an inference dressed as a
+    measurement, and it reached the ledger and five documents as confirmed fact
+    before anyone read the bag.
+
+  how_to_settle_it:
+    - >-
+      LOOK AT IT. AlGaInP green is distinctly YELLOWISH-green; InGaN is a vivid
+      pure green. The eye separates them instantly and it costs nothing.
+    - >-
+      MEASURE AT 20 mA, the vendor's own condition, which removes the argument.
+      Supply in CC at 20 mA straight into the die, no resistor, read Vf across
+      it. Inside both parts' ratings. 3.0-3.2 V means the label is right;
+      ~2.5 V means the label is wrong.
+
 corrections_to_the_documents:
   indicators_md: >-
     "1 kohm from 4.2 V through ~2.1 V is 2.1 mA per die" is ~10% optimistic.
@@ -90,17 +149,32 @@ corrections_to_the_documents:
     by accident, since red's surplus covers green's shortfall.
 
 still_open:
-  🔴 diffused: >-
-    UNTESTED, and it is a VISUAL check not an electrical one. Both dies lit
-    together must give ONE AMBER LENS. A water-clear part shows a red dot beside
-    a green dot, which nobody reads as a state across a stage. sourcing.md lists
-    it as a requirement the part must be SHOWN to meet.
+  ✅ diffused_CLOSED_2026_09_23: >-
+    PASS. Matt, by eye: the part is DIFFUSED. That was the fourth and last of
+    sourcing.md's requirements, and the only one that could not be settled with
+    a meter. A water-clear part would have shown a red dot beside a green dot,
+    which nobody reads as a state across a stage.
   legibility_at_3V: >-
     The meter proves 0.77 mA flows. IT DOES NOT PROVE THE LED CAN BE READ. The
     requirement is that the charge state can be SEEN on a flat cell, which is a
     judgement by eye and has not been made.
 
 evidence:
+  - "2026-09-23: DIFFUSED CONFIRMED by eye, closing the fourth and last of
+     sourcing.md's requirements for this part and the only one a meter could not
+     settle. The bag label was also read: 1.8 V red, 3.0-3.2 V green"
+  - "2026-09-23: CHEMISTRY CLAIM WITHDRAWN, functional pass unaffected. The bag
+     label reads 1.8 V red and 3.0-3.2 V green for this part, contradicting the
+     AlGaInP conclusion drawn on 2026-09-22. That conclusion rested on
+     extrapolating a log-only diode fit from two low-current points out to
+     20 mA, which omits the 10-30 ohm series resistance that dominates an InGaN
+     die at that current; with it restored, 2.322 V at 2.71 mA is consistent
+     with the label. The claim that red matching the vendor band validated the
+     method was also wrong: it validates it for red alone, red being the low-Rs
+     case that was never in doubt. A7.3 STILL PASSES because it was measured
+     directly at the operating point, 0.77 mA at a 3.00 V supply, rather than
+     inferred from chemistry. Status set to `conflict` pending a reading at
+     20 mA, the vendor's own condition"
   - "2026-09-22: A7.2 and A7.3 BOTH PASS. Common anode confirmed by diode test
      with the red probe on the common pin. Green Vf 2.322 V at 2.71 mA and
      2.234 V at 0.77 mA, so the die is AlGaInP and not the InGaN true green at
@@ -111,7 +185,7 @@ evidence:
      nominal 1k resistor read at 990 ohm, no board
      (2026-09-22-j4-bicolour-led.txt)"
 
-last_verified: 2026-09-22
+last_verified: 2026-09-23
 
 notes: >-
   WHAT THIS RECORD CAUGHT IS THAT THERE WAS NOTHING TO CATCH. The part passes on

@@ -140,7 +140,7 @@ Two cautions about the Seed documents:
 | Part | Why it matters | Status |
 | --- | --- | --- |
 | MPD **BH-18650-PC** holder | 21.31 mm height sets the enclosure stack; rated for protected cells | drawing cited in [sourcing.md](sourcing.md); **no file** |
-| RGB LED `B01C19ENFK` | forward voltages 3.0–3.2 V green and blue, the reason it needs 5 V | vendor specification quoted; **no datasheet** |
+| RGB LED `B01C19ENFK` | forward voltages 3.0–3.2 V green and blue, the reason it needs 5 V | vendor spec, **no datasheet**. ✅ **Bag label read and part measured 2026-09-23**; label agrees with the spec. See [`j12-rgb-led`](../discovery/findings/j12-rgb-led.yaml) |
 | Bicolour LED `B01CFZMO3I` | the green die decides whether J4 works at all | ✅ **MEASURED 2026-09-22**, still no datasheet. Green 2.322 V, red 1.862 V, common anode. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml) |
 
 The last one *was* the open question, not merely a missing file: J4 hangs on

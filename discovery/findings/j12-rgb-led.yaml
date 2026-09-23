@@ -1,0 +1,143 @@
+id: j12-rgb-led
+kind: other
+source_claim: >-
+  That the 5 mm 4-pin RGB for J12 is common anode and diffused, with forward
+  voltages of 2.0-2.2 V red and 3.0-3.2 V green and blue. docs/sourcing.md
+  states this under the heading "Confirmed common anode. Specification from the
+  vendor", and docs/capture-checklist.md carried it as a TICKED item reading
+  "Measure the RGB forward voltages and confirm common anode. Done".
+source_ref: >-
+  docs/sourcing.md "The RGB LED"; docs/capture-checklist.md; docs/datasheets.md
+  "RGB LED B01C19ENFK ... vendor specification quoted, no datasheet";
+  docs/values.md "changed: the RGB cannot be driven from a 3V3 GPIO";
+  docs/bringup.md A7.4.
+resource: "The 5 mm 4-pin common-anode RGB LED for J12"
+status: confirmed     # 2026-09-23. Common anode and diffused both MEASURED. See the open Vf question, which does not affect the verdict.
+
+🔴 the_checkbox_that_had_not_been_done: >-
+  capture-checklist.md carried "[x] ~~Measure the RGB forward voltages and
+  confirm common anode.~~ Done" with figures against it. THOSE FIGURES ARE THE
+  VENDOR'S SPECIFICATION, quoted as such in sourcing.md under "Specification
+  from the vendor". Reading a listing is not measuring a part, and the checkbox
+  said MEASURE.
+
+  It was unticked 2026-09-22 and the work done 2026-09-23. The vendor was right,
+  which is the least interesting possible outcome and exactly why it had to be
+  checked rather than assumed: nobody could have said so beforehand.
+
+which_listing_it_came_from_is_NOT_established_and_does_NOT_matter: >-
+  sourcing.md records CHANZON B01C19ENFK as the reference and then says "get the
+  diffused version ... available diffused from AliExpress at the same
+  specification". So the part in hand may be either, and "at the same
+  specification" was an unverified assumption.
+
+  ✅ THE BAG LABEL SETTLES IT WITHOUT SETTLING THE LISTING. It reads R 2.0-2.2 V
+  and G/B 3.0-3.2 V, which is the spec the repo already recorded. Whichever
+  listing supplied the part, the recorded figures describe what is in hand.
+
+measured_2026_09_23:
+  # Fluke 101, Jesverty supply, nominal 1k resistor measured at 990 ohm. No board.
+  # Evidence: discovery/evidence/2026-09-23-j12-rgb-led.txt
+  a7_4_common_anode: "PASS. Diode test, red probe on the common pin, conducts to the other three."
+  diffused: "PASS, by eye. Both this and the J4 bicolour are diffused."
+  forward_voltages:
+    at_5V: {red: 1.932, green: 2.454, blue: 2.607, mA: [3.10, 2.57, 2.42]}
+    at_3V: {red: 1.849, green: 2.322, blue: 2.529, mA: [1.16, 0.69, 0.48]}
+  sanity_check: >-
+    red < green < blue, which is the bandgap ordering by photon energy. A
+    transposed or mis-probed set would not come out in that order.
+
+🔴 the_readings_do_NOT_contradict_the_3_0_to_3_2_V_label:
+  # This record was briefly used to argue that they did. That argument is
+  # withdrawn. It is kept because the error is instructive.
+  what_was_claimed: >-
+    That green and blue measured ~0.4 V below the vendor's 3.0-3.2 V band once
+    extrapolated to the label's 20 mA condition, and therefore the spec was
+    wrong.
+  why_it_was_wrong: >-
+    THE EXTRAPOLATION FITTED A LOGARITHMIC DIODE CURVE TO TWO LOW-CURRENT POINTS
+    AND PROJECTED IT 8x. A log-only fit OMITS SERIES RESISTANCE. An InGaN green
+    or blue die carries 10-30 ohm of it, contributing a LINEAR IR term that
+    dominates at 20 mA and is invisible at 2 mA. Restore 20 ohm and 2.454 V at
+    2.57 mA is entirely consistent with 3.0-3.2 V at 20 mA.
+  🔴 and_the_stated_validation_was_wrong_too: >-
+    The argument ran: red landed inside the vendor band, so the method is sound.
+    IT IS SOUND FOR RED ONLY. Red is AlGaInP with low series resistance and a
+    flatter curve, which is precisely why a log-only fit works there and fails
+    on the other two. A CHECK THAT ONLY PASSES ON THE CASE THAT WAS NEVER IN
+    DOUBT IS NOT A CHECK.
+  how_to_settle_it_if_it_is_ever_worth_settling: >-
+    MEASURE AT 20 mA, the label's own condition. Supply in CC at 20 mA straight
+    into the die, no resistor, read Vf. No model and no extrapolation.
+  why_it_does_not_matter_here: >-
+    J12 runs from the 5 V rail with headroom either way. It mattered for J4,
+    which hangs on VOUT, and there it was settled by measuring the operating
+    point directly rather than by inferring a material. See [[j4-charge-led]].
+
+🔴 what_the_readings_DO_show_a_real_defect_in_values_md:
+  where: 'values.md, "changed: the RGB cannot be driven from a 3V3 GPIO"'
+  the_defect: >-
+    IT USES A 20 mA FORWARD VOLTAGE AT A MILLIAMP OPERATING POINT. The table
+    takes green at ~3.0 V and blue at ~3.1 V, the rated figures, and computes
+    headroom against a 3.15 V GPIO output-high, getting +0.15 V and +0.05 V and
+    concluding 0.45 mA and 0.15 mA, "invisible ... and no resistor value fixes
+    it".
+
+    At the 1-3 mA such a circuit would actually run, green measures 2.3-2.45 V,
+    not 3.0. This is THE SAME ERROR as the withdrawn extrapolation above,
+    pointing the other way.
+  reworked_at_the_real_operating_point:
+    green: "headroom ~0.85 V -> about 2.2 mA"
+    blue:  "headroom ~0.65 V -> about 1.7 mA"
+    verdict: >-
+      Dim, but NOT invisible, and 100-150 ohm would give 4-5 mA. The claim that
+      no resistor value fixes it is false.
+  🔴 the_DECISION_still_stands_and_should_not_be_revisited: >-
+    5 V common anode with the GPIOs SINKING is better regardless: an STM32 sinks
+    harder than it sources, the 5 V rail is stiffer than a pin's output-high,
+    and the currents are properly defined. The 3V3 route would have worked with
+    far less margin.
+
+    WHAT IS WRONG IS THE STATED REASON, which is written as physics rather than
+    as a property of one part at one current. If the LED is ever swapped,
+    someone will rely on it.
+
+the_board_currents_survive: >-
+  A claim that green and blue would run ~30% over their design current was an
+  artefact of the same bad extrapolation. WITHDRAWN. With the label's forward
+  voltages, values.md's existing 5.9 / 6.7 / 6.3 mA per die stand.
+
+⚠️ values_md_and_sourcing_md_disagree_and_did_before_any_of_this:
+  values_md:   "5.9 / 6.7 / 6.3 mA     low-end Vf, NO sink drop"
+  sourcing_md: "4.80-5.20 / 4.83-5.50  mid Vf, WITH a 0.35 V sink drop"
+  assessment: >-
+    Both are defensible arithmetic. They differ on whether to allow for the
+    GPIO's output-low drop. Neither is wrong and the project should pick one.
+    NOT RESOLVED, flagged.
+
+evidence:
+  - "2026-09-23: A7.4 PASSES. Common anode confirmed by diode test with the red
+     probe on the common pin conducting to the other three; DIFFUSED confirmed by
+     eye. Forward voltages at 5 V: red 1.932, green 2.454, blue 2.607, at
+     3.10/2.57/2.42 mA through a measured 990 ohm; at 3 V: 1.849, 2.322, 2.529.
+     Ordering red < green < blue matches photon energy. Bag label read as
+     R 2.0-2.2 V and G/B 3.0-3.2 V, which MATCHES the spec already recorded in
+     sourcing.md, so the recorded figures describe the part in hand whichever
+     listing supplied it. The low-current readings do NOT contradict the label:
+     an argument that they did was withdrawn the same day, having omitted series
+     resistance. They DO show that values.md's 3V3 analysis uses a 20 mA forward
+     voltage at a milliamp operating point (2026-09-23-j12-rgb-led.txt)"
+
+last_verified: 2026-09-23
+
+notes: >-
+  THE VENDOR TURNED OUT TO BE RIGHT, and that is the least interesting outcome
+  and the reason the check was worth running. Nobody could have said so
+  beforehand, which is the entire argument against a ticked box that records a
+  listing as a measurement.
+
+  WHAT WAS ACTUALLY CAUGHT was not in the part at all. It was in the arithmetic:
+  BOTH values.md AND, briefly, this record made the same mistake of using a
+  forward voltage at one current to reason about a circuit running at another.
+  An LED's Vf is not a constant, and a datasheet figure carries its test current
+  with it. That is the durable lesson here, not anything about this LED.

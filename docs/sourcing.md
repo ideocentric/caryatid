@@ -200,13 +200,12 @@ terminals onto pins 1–3, pin 4 unused. The state table and the reasoning are i
 **Candidate:** Amazon `B01CFZMO3I`, listed as diffused —
 <https://www.amazon.com/Diffused-Lighting-Electronics-Components-Emitting/dp/B01CFZMO3I>
 
-> ✅ **MEASURED 2026-09-22, and it passes.** Green **2.322 V**, red **1.862 V**,
-> **common anode**, and the green still lights at a 3.00 V supply. The listing
-> was never readable, so nothing here was ever quoted from the vendor and
-> nothing ever can be: **this measurement is the only information about the
-> part**, and [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml) is now its source. The requirements below
-> stand as written; item 4, the diffusion check, is the one still outstanding
-> and it is visual rather than electrical.
+> ✅ **MEASURED 2026-09-22, and it passes.** Green **2.322 V** at 2.7 mA, red
+> **1.862 V**, **common anode**, **diffused**, and the green still lights at a
+> 3.00 V supply drawing 0.77 mA. All four requirements below are met. The
+> listing was never readable, so nothing here was ever quoted from the vendor;
+> the only vendor figure that exists is the **bag label, 1.8 V red and
+> 3.0–3.2 V green**, read 2026-09-23. See [`j4-charge-led`](../discovery/findings/j4-charge-led.yaml).
 
 **The green die is the whole question**, because J4 hangs on `VOUT` — the cell,
 about **4.2 V falling to 3.0 V**, not a regulated rail.
@@ -217,11 +216,20 @@ about **4.2 V falling to 3.0 V**, not a regulated rail.
 | InGaN, true green | 3.0–3.2 V | **dims, then dies as the cell drains** |
 
 That is the identical failure that stopped the RGB being driven from 3V3, one
-rail further down. The RGB is specified at 3.0–3.2 V green; **if this bicolour
-had used the same die it would have been the wrong part for J4**, however good
-it looked on the bench at full charge. ✅ **It does not.** Measured at
-**2.322 V**, which is AlGaInP with 0.7 V of separation from InGaN, and it draws
-0.77 mA at a 3.00 V supply rather than going dark.
+rail further down. **If this bicolour behaved like a high-Vf green it would be
+the wrong part for J4**, however good it looked on the bench at full charge.
+
+✅ **It does not, and that was settled by measuring the thing that matters.** At
+a **3.00 V supply** through 990 Ω the green draws **0.77 mA** and lights, rather
+than going dark. That is J4's circuit at the cell's end of life, measured
+directly.
+
+⚠️ **The die's chemistry is a separate question and it is NOT settled.** The bag
+label reads 3.0–3.2 V green. A claim that the measured 2.322 V proved AlGaInP was
+withdrawn on 2026-09-23: **a low-current forward voltage cannot tell the two
+apart**, because an InGaN die's 10–30 Ω of series resistance dominates at 20 mA
+and is invisible at 2 mA. It does not matter here. The table above is a guide to
+what to *expect*, not a test you can run at 2 mA.
 
 Before committing:
 

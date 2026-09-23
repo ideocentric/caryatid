@@ -202,15 +202,26 @@ The spec's "3 × series R (~330 Ω) from D8–D10" works for red and fails for t
 other two. An STM32 output-high is roughly 3.15 V under a few milliamps, and
 green and blue capsules have forward voltages around 3.0–3.1 V:
 
-| Channel | Vf | Headroom | Through 330 Ω |
+| Channel | Vf **at 20 mA** | Headroom | Through 330 Ω |
 | --- | --- | --- | --- |
 | red | ~2.0 V | +1.15 V | 3.5 mA |
-| green | ~3.0 V | +0.15 V | **0.45 mA** |
-| blue | ~3.1 V | +0.05 V | **0.15 mA** |
+| green | ~3.0 V | +0.15 V | 0.45 mA |
+| blue | ~3.1 V | +0.05 V | 0.15 mA |
 
-Green and blue will be invisible, and no resistor value fixes it — there is no
-voltage to work with. **Drive from the 5 V rail instead, common anode, GPIOs
-sinking.** Three resistors and nothing else: with 5 V against Vf 3.1 V there is
+🔴 **That table is wrong, and the error is instructive: it uses a forward
+voltage quoted at 20 mA to reason about a circuit that would run at one or two.**
+An LED's Vf is not a constant, and a datasheet figure carries its test current
+with it. Measured on the real part, 2026-09-23, green is **2.32 V at 0.7 mA** and
+2.45 V at 2.6 mA, not 3.0. Reworked at the operating point it actually converges
+to, green gets about **2.2 mA** and blue about **1.7 mA**: dim, but not
+invisible, and 100-150 Ω would give 4-5 mA.
+
+**Drive from the 5 V rail anyway, common anode, GPIOs sinking.** The decision is
+right for reasons that survive the correction: an STM32 **sinks harder than it
+sources**, the 5 V rail is stiffer than a pin's output-high, and the currents
+are properly defined. The 3V3 route would have worked with far less margin. What
+was wrong was the argument, which was written as physics rather than as a
+property of one part at one current. See [`j12-rgb-led`](../discovery/findings/j12-rgb-led.yaml). Three resistors and nothing else: with 5 V against Vf 3.1 V there is
 1.9 V to drop, so ~390 Ω gives 5 mA. A GPIO driven high leaves the LED seeing
 5 − 3.3 = 1.7 V, which is below Vf, so it stays dark.
 

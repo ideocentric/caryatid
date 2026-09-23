@@ -1140,3 +1140,77 @@ unverified.
 
 **Next step:** A7.4 on the four-pin RGB, using the supply rather than the diode
 test, then the two visual checks on the J4 part. Then A7.5.
+
+## 2026-09-23: A7.4 done, and two corrections in the same direction
+
+**Completed:**
+
+- **A7.4 passes.** RGB is **common anode** (diode test, red probe on the common
+  pin) and **diffused**. Vf at 5 V: red 1.932, green 2.454, blue 2.607, through a
+  measured 990 Ω. New ledger record `j12-rgb-led`. **The J4 bicolour is diffused
+  too**, closing the fourth and last of `sourcing.md`'s requirements for it, and
+  the only one a meter could not settle.
+- **The part-identity question dissolved.** `sourcing.md` records CHANZON
+  `B01C19ENFK` and then says to buy the diffused AliExpress version "at the same
+  specification", so which listing supplied the part was unknown. **The bag label
+  reads R 2.0-2.2 V and G/B 3.0-3.2 V, which is the spec the repo already
+  carried.** Whichever listing it came from, the recorded figures describe what
+  is in hand.
+- **A7.2/A7.3/A7.4 are all now complete**, plus both visual checks.
+
+**🔴 Two claims withdrawn, both mine, both the same error.**
+
+The bag labels read 3.0-3.2 V for *both* greens, which contradicted two things
+written into the ledger and six documents on 2026-09-22:
+
+1. *"The J4 green die is AlGaInP, 0.7 V clear of InGaN."*
+2. *"The RGB's vendor spec is wrong by 0.4 V on green and blue."*
+
+**Both rested on extrapolating a logarithmic diode fit from two low-current
+points out to the 20 mA rating.** A log-only fit omits series resistance, which
+for an InGaN die is 10-30 Ω: it contributes a linear IR term that dominates at
+20 mA and is invisible at 2 mA. Restore it and the measurements agree with the
+labels. **The labels are probably right.**
+
+The stated validation was wrong too. The argument was that red landing inside
+the vendor band proved the method sound. **It proves it for red alone**, red
+being the low-series-resistance case that was never in doubt. A check that only
+passes on the case not in question is not a check.
+
+**A7.3 still passes, and the reason matters.** It never depended on the
+chemistry. The real question was measured directly: **green lights at a 3.00 V
+supply through 990 Ω, drawing 0.77 mA.** That is J4's circuit at the cell's end
+of life, at the operating point, with no model. *A directly measured operating
+point survived; an inferred material property did not.* The runbook's A7.3 has
+been rewritten from "is the die AlGaInP" to "does the green still light on a
+flat cell", because the original phrasing invited exactly this. The amber-drift
+finding is unaffected, for the same reason.
+
+**🔴 And the same error was already in `values.md`, pointing the other way.**
+Its "the RGB cannot be driven from a 3V3 GPIO" table **uses forward voltages
+quoted at 20 mA to reason about a circuit that would run at one or two
+milliamps**. At the real operating point green gets ~2.2 mA and blue ~1.7 mA,
+dim but not the "0.45 mA and 0.15 mA, invisible, no resistor value fixes it"
+that is written there. **The decision stands** (an STM32 sinks harder than it
+sources, the 5 V rail is stiffer, currents are defined); the argument does not.
+
+**An LED's Vf is not a constant, and a datasheet figure carries its test current
+with it.** That is the durable lesson, and it caught two documents and me.
+
+**In flight:** nothing. No board powered.
+
+**Open questions:**
+
+- **The green dies' chemistry is unresolved and deliberately left so.** Settle
+  it, if ever worth it, at **20 mA in CC**, the label's own condition, with no
+  resistor and no extrapolation. It does not gate anything: J12 runs from 5 V
+  with headroom either way, and J4 was settled functionally.
+- **`values.md` and `sourcing.md` disagree on the RGB currents** and did before
+  any of this: 5.9/6.7/6.3 against 4.80-5.20/4.83-5.50. They differ on whether
+  to allow the GPIO's 0.35 V output-low drop. Both defensible, one should be
+  picked. Not resolved.
+- **Legibility of the J4 green at 3.0 V** is still a judgement by eye, not made.
+- **A7.5, the bench reference electret, remains untouched.**
+
+**Next step:** A7.5, which is the last A7 item and the one the runbook says to do
+first, since it is the reference everything in Stage 8 leans on.
