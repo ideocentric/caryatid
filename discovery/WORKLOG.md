@@ -1298,3 +1298,69 @@ analogy from a different part. It gates nothing: A7.3 passed functionally.
 
 **Next step:** A7.5. Note the new constraint when planning it: **use CV with a
 measured series resistor, not CC**, for any current below about 20 mA.
+
+## 2026-09-23 01:18: checkpoint. Four A7 component checks closed, two instrument errors quantified, three of my own claims withdrawn
+
+**Completed:**
+
+- **`panel-latch-switch`** A7.6. Switch lamp **28.5 mA at 5.00 V**, 5.6 mA at
+  3.00 V. Internal limiting is a plain ~87.5 Ω resistor, Vf ~2.51 V, not a
+  current source, so the current tracks the rail ~8:1 across the 3-6 V marking.
+  Closed one of three unattributed lines in the 5 V budget. Lead resistance
+  measured 0.0 Ω the same day, closing its own caveat.
+- **`loa-handset-capsule`**. RJ9 colour map settled: outer **yellow/black** is
+  the transmitter with **yellow positive**, inner **red/green** the receiver,
+  symmetric. Polarity established functionally, not by convention. Electret
+  operating current **192 µA**, replacing a derived 1.5 mA that was **7.8×**
+  high. The record's claim that this needed the board was false and is annotated.
+- **`j4-charge-led`** (new) A7.2, A7.3. Common anode, diffused, and the green
+  lights on a flat cell at **0.77 mA from a 3.00 V supply**. Closed an
+  `UNVERIFIED` carried in three documents since sourcing. New finding: **the
+  amber drifts toward red as the cell drains**, ratio 1.25 → 1.55, so the
+  R9/R10 trim is not a fixed adjustment and resistors cannot fully fix it.
+- **`j12-rgb-led`** (new) A7.4. Common anode, diffused, Vf **2.844 V at
+  18.15 mA** → InGaN, bag label right to ~0.13 V. Resolved the standing
+  `values.md`/`sourcing.md` current disagreement: red ~5.2, green ~6.8, blue
+  ~6.4 mA, and **neither document was right about all three**.
+- **`bench-instruments`**. Supply CC is **offset +3.53 mA at unity gain**, so it
+  cannot deliver below ~3.5 mA and a wanted current must be set 3.5 mA low.
+  Meter ohms **gain error ~1.1% low across two ranges**, from three parts within
+  0.18% of each other.
+- **`mic-gain-budget`**. R51 quantified as a lever: ~**13 dB** available at 10k.
+  Stays `unverified`; the SPL assumption and capsule output are still unmeasured.
+- **Three claims of mine withdrawn**, all one error: *a forward voltage used at
+  a current other than the one it was quoted at*. The same error was already in
+  `values.md`'s 3V3 table and both RGB current tables.
+- **Documents corrected off the ledger**: `values.md`, `indicators.md`,
+  `sourcing.md`, `power-sheet.md`, `capture-checklist.md`, `datasheets.md`,
+  `status.md`, `bringup.md`. A7.3 rewritten from "is the die AlGaInP" to "does
+  the green still light on a flat cell", because the original phrasing invited
+  the error. `capture-checklist.md`'s RGB item was unticked (it recorded a
+  vendor spec as a measurement) and re-ticked once actually done.
+
+**In flight:** nothing. No board was powered at any point this session; every
+measurement was a component on the bench.
+
+**Open questions:**
+
+- **A7.5, the bench reference electret, is untouched** and is the only
+  outstanding A7 item. New constraint from tonight: use **CV with a measured
+  series resistor, not CC**, for any current below ~20 mA.
+- **The J4 green's chemistry is unmeasured**, deliberately not inferred by
+  analogy from the RGB. It gates nothing.
+- **Legibility of the J4 green at 3.0 V** is a judgement by eye, not made.
+- **Receiver reads 821 Ω at the RJ9 against 145.3 Ω at the element**, confirmed
+  twice. ~680 Ω sits inside the handset. Matters only if the receiver is ever
+  driven as an output, which loa would do from the RJ9.
+- The supply's **set resolution and published accuracy** are still unread.
+- `docs/status.md` still carries a **RESUME block dated 2026-09-01** predating
+  every Phase A component check.
+- Pre-existing and untouched this session: **`loa-hook-switch`** and
+  **`charger-input-voltage-thermal`** are both `in-progress`.
+
+**Next step:** Run **A7.5**. Characterise the bench test electret before it is
+trusted: DC resistance across its two pigtails **both ways**, expecting a finite
+kΩ that differs by direction (the integral JFET), per
+`discovery/findings/bench-test-electret.yaml`. Then confirm polarity by biasing
+it through a measured ~2k2 from 3.3 V in **CV** and reading the drain voltage,
+the same rig that gave the handset capsule 192 µA. No board required.
