@@ -242,7 +242,7 @@ tie it to the nearest ground by reflex. It is the whole reason J14 exists.
 | A6.4 | **J4 charge LED**, 4-way | 1 anode, 2 /CHG cathode, 3 /PGOOD cathode | **C4** |
 | A6.5 | **J12 RGB**, 4-way | 1 anode +5V, 2 red, 3 green, 4 blue cathodes | E7 |
 | A6.6 | **J14 shorting link**, 2-way | pins bridged | **E8, before any mic test** |
-| A6.7 | **J18 mic**, 3-way | electret red to pin 1 or 2, black to pin 3 | E8 |
+| A6.7 | **J18 mic**, 3-way | **bench electret**: red to pin 1 or 2, black to pin 3. 🔴 **loa's handset is NOT wired by these colours**, see below | E8 |
 | A6.8 | **J17 audio out**, 3-way | L, R, GND to jacks or headphones | E8 |
 | A6.9 | **J8 hook switch**, 2-way | to the hook switch COM and NC | loa build |
 | A6.10 | **J11 keypad**, IDC 2×5 | to JST ZH 7-way. 🔴 **cross positions 5 and 7** | loa build |
@@ -259,6 +259,20 @@ on the board.
 **Re-pin rather than re-make.** JST-XH contacts have a small retention lance; a
 fine pick releases the contact, so a pigtail in the wrong order is fixed in a
 minute rather than cut off.
+
+🔴 **The handset and the bench electret use different colours, and the handset's
+red lead is the EARPIECE.** Wiring loa's handset by A6.7's "red to pin 1 or 2"
+puts the receiver into the mic input and leaves the microphone unconnected.
+
+| | mic + (J18 pin 1 or 2) | mic return (J18 pin 3) | not the mic |
+| --- | --- | --- | --- |
+| **bench electret** | red | black | n/a |
+| **loa's handset, at the RJ9** | **yellow** | **black** | red and green are the receiver |
+
+Measured 2026-09-22: the outer pair is the transmitter and **yellow is
+positive**, established by biasing it, not by convention. Backwards gives a
+silent microphone. See
+[`loa-handset-capsule`](../discovery/findings/loa-handset-capsule.yaml).
 
 🔴 **Beep out every cable before it is plugged in.** Every cable, every time,
 bought pigtails included. A mis-pinned J1 lead puts the supply somewhere it does

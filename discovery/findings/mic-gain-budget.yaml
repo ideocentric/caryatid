@@ -82,14 +82,55 @@ what_the_board_provides:
     - {capsule: Dynamic,  path: "x256, PGA +12 dB",  total: 1020, at_codec_v: "1.02 - 4.08", verdict: covers it}
     - {capsule: Carbon,   path: "bypass, PGA trims", total: 1,    at_codec_v: "0.10 - 0.50", verdict: covers it}
 
+r51_is_a_quantified_lever_as_of_2026_09_22:
+  # Only calculable once the capsule's operating current was measured.
+  # See [[loa-handset-capsule]] measured_2026_09_22.
+  premise: >-
+    An electret's signal is developed ACROSS its load resistor, so the output
+    scales with R51 while the JFET stays in saturation. The handset capsule
+    draws a MEASURED 192 uA at 3.3 V, which fixes the whole ladder.
+  ladder:
+    - {r51: "2174 (as fitted)", drop_V: 0.42, drain_V: 2.88, signal: "reference"}
+    - {r51: "4k7",  drop_V: 0.90, drain_V: 2.40, signal: "~2.2x, +6.7 dB"}
+    - {r51: "10k",  drop_V: 1.92, drain_V: 1.38, signal: "~4.6x, +13.3 dB"}
+    - {r51: "12k",  drop_V: 2.31, drain_V: 0.99, signal: "~5.5x, drain getting tight"}
+  so: >-
+    ROUGHLY 13 dB IS AVAILABLE FROM ONE 0603 if this budget ever turns out
+    short. NOT A RECOMMENDATION and NOT A BOARD CHANGE: this record is still
+    `unverified` and nothing yet says more gain is needed. It is recorded
+    because it is the cheapest 13 dB on the board and because it could not be
+    calculated before the current was measured.
+  caveat: >-
+    Assumes the JFET stays in saturation as the drain comes down. Supported at
+    2.88 V by the measurement; re-measure at any new operating point before
+    relying on it.
+
+  ⚠️ a_gap_in_capsule_output_at_1pa_above: >-
+    THE -46 TO -35 dBV/Pa RANGE CARRIES NO LOAD CONDITION. Electret
+    sensitivity is load-dependent, exactly as the ladder above shows, so a
+    sensitivity figure without its load resistor and supply voltage is
+    incomplete. The sources are sound and the range is probably quoted into a
+    conventional load, but the record does not say which, and that is the
+    condition the board's 2k2 would have to be compared against. Not an error
+    in the numbers; a missing condition on them.
+
 evidence:
+  - "2026-09-22: R51 QUANTIFIED AS A GAIN LEVER, not a fix. loa's handset
+     electret measured at 192 uA operating current, which fixes how far R51 can
+     be raised before the drain runs out of room: about 13 dB is available at
+     10k, against 2k2 as fitted. Also noted that capsule_output_at_1pa cites a
+     sensitivity range with NO LOAD CONDITION, which is the condition that
+     range would have to be compared against. This record STAYS `unverified`:
+     the 94 dB SPL assumption and the real capsule output level are still
+     unmeasured (2026-09-22-handset-capsule-polarity-and-current.txt,
+     [[loa-handset-capsule]])"
   - "2026-08-25: capsule type settled -- loa's handset transmitter is an
      ELECTRET, so the 56-200x row is the one that applies and the board's
      x101 leg is the relevant path. This does NOT verify the record: the
      94 dB SPL assumption and the capsule OUTPUT LEVEL are still unmeasured,
      and they are what the gain targets rest on
      (2026-08-25-handset-capsule-identification.txt, [[loa-handset-capsule]])"
-last_verified: 2026-08-25
+last_verified: 2026-09-22
 
 notes: >-
   THE CONCLUSION IS REASSURING AND THE RECORD IS STILL `unverified`, and both

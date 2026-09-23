@@ -1,0 +1,137 @@
+2026-09-22  LOA HANDSET: RJ9 COLOUR MAP, TRANSMITTER POLARITY,
+            AND THE ELECTRET'S REAL OPERATING CURRENT
+================================================================
+Closes: loa-handset-capsule, which colour goes where and which is +
+        values.md, "Mic bias, electret L/R ... 1.5 mA" (derived, wrong)
+Article: loa's handset, probed at an RJ9 pigtail breakout.
+NO BOARD INVOLVED.
+
+INSTRUMENTS                                 (see bench-instruments.yaml)
+  Meter    Fluke 101
+  Supply   Jesverty, set to 3.3 V
+  R        a 1% 2k2, MEASURED AT 2174 ohm and used at that value.
+           1.18% below nominal, just outside a 1% band, so either the
+           part or the meter. See the ohms-accuracy note at the end.
+
+PART 1. THE FOUR CONDUCTORS, DC RESISTANCE BOTH WAYS
+----------------------------------------------------
+  Readings on the Fluke's 6.000 k range, so all values are KILOHMS.
+  (Three decimals is that range's signature. The receiver figure of
+  145.3 ohm recorded on 2026-08-25 has one decimal, which is the
+  600 ohm range. Consistent both ways.)
+
+  INNER PAIR, red and green
+      red-red   / green-black     0.821 k
+      red-black / green-red       0.821 k
+      => IDENTICAL BOTH WAYS. Passive, no semiconductor.
+         This is the RECEIVER pair.
+
+  OUTER PAIR, yellow and black
+      yellow-red   / black-black  1.798 k
+      yellow-black / black-red    1.056 k
+      => POLARITY DEPENDENT. A semiconductor junction.
+         This is the TRANSMITTER pair, the electret.
+
+  AGREES WITH THE RECORD, taken a month earlier at the jack:
+      2026-08-25   inner 0.824 k      outer 1.054 k
+      2026-09-22   inner 0.821 k      outer 1.056 k
+      0.4% and 0.2% apart, two riggings, a month apart.
+
+  WHAT IS NEW HERE:
+   1. THE COLOURS. The record established "the outer pair is the
+      transmitter" but never which conductors that meant. It is
+      YELLOW and BLACK. The receiver is RED and GREEN.
+   2. THE INNER PAIR IS SYMMETRIC. Only one direction was taken in
+      2026-08-25, so nothing had ruled out a second semiconductor.
+   3. The outer pair's HIGH-side direction (1.798 k) had never been
+      measured at the jack, only at the capsule (1.75-1.77 k).
+
+PART 2. POLARITY, BY BIASING IT  (the functional test)
+-------------------------------------------------------
+  Rig, which is R51's circuit exactly:
+
+      3.3 V --> 2174 ohm --+--> capsule lead A
+                           |
+                      Fluke DC V
+                           |
+              capsule lead B --> 0 V
+
+  A = YELLOW                           A = BLACK
+      drain          2.882 V               drain          0.683 V
+      across R       0.418 V               across R       2.617 V
+      current        192.3 uA              current       1203.8 uA
+      capsule as R   14.99 k               capsule as R    567 ohm
+
+  >>> YELLOW IS POSITIVE (drain). BLACK IS NEGATIVE (source).
+
+  WHY IT IS UNAMBIGUOUS, and not merely "one is lower":
+    0.683 V AT 1.2 mA IS A SILICON JUNCTION FORWARD DROP. Reversed,
+    the capsule is not operating at all, it is a forward-biased diode.
+    192 uA meanwhile is textbook electret bias current, where the
+    usual quoted range is 100-500 uA.
+
+  IT AGREES WITH THE RESISTANCE TEST, independently. The red probe on
+  YELLOW gave the HIGHER reading (1.798 k), which predicts yellow is
+  the drain. Two methods, same answer.
+
+  IT ALSO RECONCILES INTERNALLY: a junction's apparent resistance
+  falls as current rises. 1.056 k at the meter's tiny test current,
+  567 ohm at 1.2 mA. Same junction, two operating points.
+
+PART 3. THE NUMBER THAT REPLACES A PLACEHOLDER
+-----------------------------------------------
+  OPERATING CURRENT = 192 uA per channel, at 3.3 V through 2k2.
+
+  values.md budgets 1.5 mA per channel, which is 3.3 / 2200: the
+  current with THE CAPSULE TREATED AS A SHORT. It is 7.8x TOO HIGH.
+  The capsule is not a short, it presents about 15 k at its operating
+  point, so the 2k2 is only 13% of the loop.
+
+  For the pair, 384 uA rather than 3.0 mA on 3V3A.
+
+  !! THE RECORD SAID THIS COULD NOT BE DONE ON THE BENCH.
+     loa-handset-capsule, what_would_close_it: "Voltage across R51
+     with the board powered ... Needs the boards, so it is not a bench
+     item." THAT IS WRONG, and this rig is the disproof: 3.3 V through
+     2k2 into the real capsule IS R51's circuit. No board required.
+
+PART 4. A LEVER THAT IS NOW QUANTIFIED, FOR mic-gain-budget
+-----------------------------------------------------------
+  An electret's signal is developed ACROSS the load resistor, so the
+  output scales with R51 while the JFET stays in saturation. Knowing
+  the operating current tells you how far R51 can go:
+
+      R51      drop      drain     signal vs 2k2
+      2174     0.42 V    2.88 V    reference (as fitted)
+      4k7      0.90 V    2.40 V    ~2.2x   (+6.7 dB)
+      10k      1.92 V    1.38 V    ~4.6x   (+13.3 dB)
+      12k      2.31 V    0.99 V    ~5.5x, drain getting tight
+
+  SO THERE IS ROUGHLY 13 dB AVAILABLE from one 0603, if the gain
+  budget ever turns out short. NOT A RECOMMENDATION: mic-gain-budget
+  is still `unverified` and nothing says more gain is needed. It is
+  recorded because it is only calculable now that the current is
+  measured, and because it is cheaper than any other way of finding
+  13 dB.
+
+  CAVEAT: this assumes the JFET stays in saturation as the drain comes
+  down. Supported at 2.88 V by this measurement; it would want
+  re-measuring at the new operating point before being relied on.
+
+  ALSO NOTED, a gap in mic-gain-budget rather than an error: its
+  capsule_output_at_1pa range of -46 to -35 dBV/Pa carries NO LOAD
+  CONDITION. Electret sensitivity is load-dependent, so a sensitivity
+  figure without its load resistor and supply voltage is incomplete.
+
+PART 5. OHMS ACCURACY, A BY-PRODUCT WORTH KEEPING
+--------------------------------------------------
+  A 1% 2k2 read 2174 ohm, so its true value is 2178-2222 and the meter
+  reads somewhere between 0.2% and 2.2% LOW on the 6 k range. That is
+  the FIRST ACTUAL ACCURACY CHECK on the Fluke's ohms function in this
+  project. Lead resistance cannot explain it: leads add, and they
+  measured 0.0 ohm.
+
+  Consistent with the caveat already recorded against the switch lamp:
+  if the meter reads low on ohms generally, the 10.2 ohm shunt is
+  really a shade more and the lamp current a shade under 28.5 mA.
+  Inside the few percent already stated. No figure moves.

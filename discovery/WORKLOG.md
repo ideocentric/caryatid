@@ -998,3 +998,74 @@ questions: **A7.2/A7.4** common anode on J4 and J12 by diode test, and **A7.3**
 whether the charge LED's green die is AlGaInP or InGaN, which matters because J4
 runs from `VOUT` down to 3.0 V. Then **A7.5**, characterising the test electret
 before it is trusted to prove anything else.
+
+## 2026-09-22: handset colour map, transmitter polarity, and a placeholder 7.8x out
+
+**Completed:**
+
+- **loa's handset is fully mapped at the RJ9.** Outer pair **yellow and black**
+  is the transmitter, **yellow positive**; inner pair **red and green** is the
+  receiver. The 2026-08-25 record established that the *outer pair* was the mic
+  but never wrote down which conductors that meant, and 4P4C cord colours denote
+  position, not polarity, so there was no convention to fall back on.
+- **Polarity settled functionally, not by convention.** Biasing through a
+  measured 2174 Ω from 3.3 V: yellow on the resistor gives a **2.882 V** drain at
+  **192 µA**; black gives **0.683 V at 1.2 mA**, which is a silicon junction
+  forward drop and not an operating point at all. It independently agrees with
+  the resistance asymmetry, where the red probe on yellow gave the higher
+  reading. Two methods, same answer.
+- **The inner pair is symmetric**, 0.821 kΩ both ways. Only one direction was
+  taken in 2026-08-25, so nothing had ruled out a second semiconductor there.
+- **Corroborates the month-old jack readings to 0.4% and 0.2%** (inner 0.824 →
+  0.821, outer 1.054 → 1.056), which also settled that both sets are kilohms.
+- 🔴 **The electret bias figure in `values.md` was 7.8× too high.** It carried
+  1.5 mA per channel, which is `3.3 V / 2k2`: the current with **the capsule
+  treated as a short**. The capsule presents ~15 kΩ at its operating point, so
+  the 2k2 drops 0.42 V of 3.3 V. **Measured: 192 µA**, 384 µA for the pair
+  rather than 3.0 mA.
+- **A trap removed from the runbook.** A6.7 said "electret red to pin 1 or 2,
+  black to pin 3", written for the bench capsule. **The handset's red lead is the
+  earpiece**, so following it would have wired the receiver into the mic input
+  and left the microphone unconnected. A6.7 now names both parts and carries a
+  colour table.
+- **`values.md` had a second stale bullet**, unrelated to today's reading: the
+  mic bias pair was still described as blocked on *measure the handset capsule*,
+  a month after the capsule was identified as an electret. The 41 mA carbon
+  figure is not live for this build, since JP1/JP4 sit on `1-2` and R52/R54
+  never carry capsule current. Corrected and labelled.
+- **`mic-gain-budget` gains a quantified lever.** With the operating current
+  known, R51 can be sized deliberately: about **13 dB is available at 10k**
+  against the 2k2 fitted, before the drain gets tight. Recorded as a lever, not
+  a recommendation, since that record is still `unverified`. Also noted that its
+  `capsule_output_at_1pa` range carries **no load condition**, which is the
+  condition the board's 2k2 would have to be compared against.
+- **`bench-instruments` gains the first real check of the ohms function**: a 1%
+  2k2 read 2174 Ω, bounding the meter to 0.2-2.2% low on the 6 kΩ range. One
+  part at one point is not a calibration and cannot separate meter error from
+  part error, and it is recorded as such.
+
+**🔴 The pattern worth keeping:** the record said this measurement **needed the
+board**. `what_would_close_it` read "Voltage across R51 with the board powered
+... Needs the boards, so it is not a bench item." That is false, and 3.3 V
+through a 2k2 into the real capsule *is* R51's circuit. The claim was never
+examined; it was assumed because the quantity had been **named after a board
+reference designator**. Naming a measurement after the part it will eventually
+sit beside is what made it look like it required that part.
+
+**In flight:** nothing. No board was powered.
+
+**Open questions:**
+
+- **A7.5 is still untouched.** This was loa's handset, not the bench reference
+  electret, and they are different jobs: the bench capsule's purpose is to prove
+  the board, so it still wants characterising before it is trusted.
+- **821 Ω at the jack against 145.3 Ω at the element**, on the receiver path,
+  now confirmed twice. Roughly 680 Ω sits inside the handset between the two.
+  `loa-handset-capsule` says 145.3 Ω is "the figure to use if the receiver is
+  ever driven as an output", and **loa will drive it from the RJ9**, where it
+  looks like 821 Ω. Not chased: it touches nothing in the mic path.
+- The 13 dB R51 ladder **assumes the JFET stays in saturation** as the drain
+  comes down. Supported at 2.88 V, unverified below it.
+
+**Next step:** A7.2, A7.3 and A7.4, the three LED checks, all diode-test work on
+the bench. Then A7.5.

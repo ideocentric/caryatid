@@ -127,8 +127,8 @@ FB1 pin 2 is the source, the ferrite's output side.
 | **Mic bias L** | R52 | 220 Ω, **only when JP1 is on `2-3` (carbon)** | **11–21 mA** |
 | **Mic bias R** | R54 | 220 Ω, **only when JP4 is on `2-3` (carbon)** | **11–21 mA** |
 | **Switch lamp** | R5 | 0 Ω link; internal limiting is a **plain ~87.5 Ω series resistor**, Vf ~2.51 V, **measured 2026-09-20** | **28.5 mA** |
-| Mic bias, electret L | R51 | 2k2 from 3V3A, JP1 on `1-2` | 1.5 mA |
-| Mic bias, electret R | R53 | 2k2 from 3V3A, JP4 on `1-2` | 1.5 mA |
+| Mic bias, electret L | R51 | 2k2 from 3V3A, JP1 on `1-2`; **measured 2026-09-22** | **0.19 mA** |
+| Mic bias, electret R | R53 | 2k2 from 3V3A, JP4 on `1-2`; **measured 2026-09-22** | **0.19 mA** |
 | Comms A module | J19-1 | external, no allowance stated | unknown |
 | Comms B module | J15-1 | external, no allowance stated | unknown |
 | Expansion | J16-1 | external, no allowance stated | unknown |
@@ -143,16 +143,27 @@ codec, QSPI flash and analogue LDO**, none of which are separately sourced, and
 the same table reaches 730 mA at 125 °C. Treat 100 mA as a floor for the MCU
 core, not as the module's consumption.
 
-Two entries are still open, and they are the reason the tally cannot yet be
-reconciled against the 250 mA "typical" row. **The switch lamp was the third and
-is now closed**; the tally below it reaches ~141 mA in electret mode and
-~163–183 mA in carbon, so the lamp lands **inside** the existing scenario
-estimates rather than on top of them, and **the runtime table is unchanged**:
+**Of the three entries that once blocked this tally, one is left.** The switch
+lamp closed on 2026-09-20 and the electret bias on 2026-09-22; only the three
+connector 5 V pins are still unattributed, and the carbon bias pair is open in
+general but **not live for this build**. The tally now reaches **~141 mA** in
+electret mode and ~163–183 mA in carbon, against a 250 mA "typical" row, so
+every measured item lands **inside** the existing scenario estimates rather than
+on top of them and **the runtime table is unchanged**:
 
-- **The mic bias pair is the largest unresolved item — up to 41 mA together**,
-  which is 16% of the typical scenario. 220 Ω is a low bias value, and
-  [audio.md](audio.md) still lists *measure the handset capsule* as open: the
-  capsule type sets where it sits and therefore the current.
+- **The carbon mic bias pair is the largest unresolved item, up to 41 mA
+  together**, which is 16% of the typical scenario. 220 Ω is a low bias value.
+  🔴 **It is not live for loa.** The handset capsule was identified as an
+  **electret** on 2026-08-25, so JP1/JP4 sit on `1-2` and R52/R54 never carry
+  capsule current. The 41 mA applies only to a carbon capsule fitted later. See
+  [`loa-handset-capsule`](../discovery/findings/loa-handset-capsule.yaml). *(This
+  bullet said the capsule type was still open until 2026-09-22, a month after it
+  was settled.)*
+- ✅ **The electret bias is measured: 192 µA per channel**, 2026-09-22, not the
+  1.5 mA this table carried. That figure was `3.3 V / 2k2`, the current with the
+  **capsule treated as a short**. It is not a short: it presents ~15 kΩ at its
+  operating point, so the 2k2 drops only 0.42 V of the 3.3 V and the old number
+  was **7.8× too high**. 384 µA for the pair rather than 3.0 mA.
 - ✅ **The switch lamp is measured: 28.5 mA at 5.00 V**, 5.6 mA at 3.00 V,
   2026-09-20. It is the **largest indicator load on the rail**, ahead of the RGB
   with all three dies lit, and unlike the RGB it is lit the whole time the

@@ -24,6 +24,29 @@ instruments:
     good_at: >-
       Millivolts. It resolves 0.1 mV on the 600 mV range, which is what makes
       the shunt method work well rather than merely work.
+    ohms_accuracy_first_actual_check_2026_09_22: >-
+      A 1% 2k2 resistor READ 2174 OHM. A 1% part is 2178-2222, so the meter
+      reads somewhere between 0.2% and 2.2% LOW on the 6.000 k range. That is
+      the first time the ohms function has been checked against a known part
+      in this project rather than trusted.
+
+      LEAD RESISTANCE DOES NOT EXPLAIN IT: leads ADD, pushing a reading high,
+      and they measured 0.0 ohm the same week (under ~0.05 ohm, the display
+      resolution).
+
+      CONSISTENT WITH, and mildly supporting, the caveat recorded against the
+      switch lamp: if the meter reads low on ohms generally then the 10.2 ohm
+      shunt is really a shade more and the lamp current a shade UNDER 28.5 mA.
+      Inside the few percent already stated there. No figure moves.
+
+      ⚠️ ONE PART IS NOT A CALIBRATION. It bounds the error at one point on one
+      range and cannot separate meter error from part error. Treat it as a
+      sanity check that found nothing alarming, not as a correction factor.
+    range_signature_worth_knowing: >-
+      The number of decimals identifies the range, which has already resolved a
+      unit ambiguity once. 600 ohm range gives one decimal (145.3), the 6.000 k
+      range gives three (0.821, 1.798, 2.174). When a reading is reported
+      without its unit, the decimal count says which range it came from.
     used_for: DC volts, resistance, diode test, continuity
 
   bench_supply:
@@ -89,6 +112,12 @@ what_this_record_is_for: >-
   probed and how, belongs in the evidence file for the measurement.
 
 evidence:
+  - "2026-09-22: FIRST ACTUAL CHECK OF THE OHMS FUNCTION against a known part.
+     A 1% 2k2 read 2174 ohm, bounding the meter to 0.2-2.2% low on the 6 k
+     range. Not a calibration: one part at one point, and it cannot separate
+     meter error from part error. Lead resistance measured 0.0 ohm on
+     2026-09-20 and cannot explain a low reading in any case, since leads add
+     (2026-09-22-handset-capsule-polarity-and-current.txt)"
   - "2026-09-06: bench supply ordered, Jesverty 0-30 V 0-5 A with selectable
      CC/OCP and an encoder with coarse and fine adjustment, arriving same day.
      Chosen over the 0-10 A sibling because the work sits at the bottom of the
@@ -98,7 +127,7 @@ evidence:
      This is why docs/bringup.md steps 4.7 and 4.9 were rewritten as shunt
      voltages rather than ammeter readings"
 
-last_verified: 2026-09-06
+last_verified: 2026-09-22
 
 notes: >-
   ON ARRIVAL, three things go in the record and one goes in the runbook:

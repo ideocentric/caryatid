@@ -34,6 +34,98 @@ measured:
   jack_pairs:
     outer_kohm: 1.054     # matches the transmitter reverse reading -> the mic
     inner_kohm: 0.824
+    # ⚠️ WHICH CONDUCTORS these were was NOT recorded here until 2026-09-22.
+    # See `measured_2026_09_22` for the colours and both directions.
+
+measured_2026_09_22:
+  # At an RJ9 pigtail breakout, no board. Fluke 101, Jesverty supply at 3.3 V,
+  # a 1% 2k2 measured at 2174 ohm and used at that value.
+  # Evidence: discovery/evidence/2026-09-22-handset-capsule-polarity-and-current.txt
+  headline: >-
+    YELLOW and BLACK are the transmitter, YELLOW POSITIVE. RED and GREEN are
+    the receiver. The electret draws 192 uA at 3.3 V through 2k2.
+
+  🔴 the_colour_map_which_is_what_loa_needs_to_build_the_cable:
+    transmitter_mic:
+      yellow: "POSITIVE, the JFET drain. Takes the bias, goes to the J18 channel pin"
+      black:  "NEGATIVE, the source. Goes to J18 pin 3, MIC_RTN"
+    receiver_earpiece:
+      red_and_green: "the inner pair. Not polarity sensitive, see below"
+    why_it_had_to_be_measured: >-
+      The 2026-08-25 record established that THE OUTER PAIR is the transmitter
+      but never wrote down which conductors that meant, and cord colours in a
+      4P4C handset lead denote POSITION, not polarity. There is no
+      red-is-positive convention available here to fall back on. Wiring the
+      electret backwards gives a silent microphone.
+
+  resistance_both_directions:
+    inner_red_green:  {both_ways_kohm: 0.821, symmetric: true}
+    outer_yellow_black: {red_probe_on_yellow_kohm: 1.798, red_probe_on_black_kohm: 1.056}
+    what_is_new: >-
+      THE INNER PAIR IS SYMMETRIC, 0.821 k in both directions. Only one
+      direction was taken in 2026-08-25, so nothing had ruled out a second
+      semiconductor on that pair. Symmetric means passive, which is what a
+      magnetic receiver looks like.
+    corroboration: >-
+      Against the 2026-08-25 jack readings, inner 0.824 k and outer 1.054 k:
+      0.4% and 0.2% apart, two riggings a month apart. It also settles the
+      unit, since both sets are kilohms.
+
+  polarity_by_biasing_it:
+    rig: "3.3 V -> 2174 ohm -> capsule -> 0 V, Fluke reading the drain to ground. This is R51's circuit."
+    yellow_on_the_resistor: {drain_V: 2.882, across_R_V: 0.418, current_uA: 192.3, capsule_as_R_kohm: 14.99}
+    black_on_the_resistor:  {drain_V: 0.683, across_R_V: 2.617, current_uA: 1203.8, capsule_as_R_ohm: 567}
+    verdict: "🔴 YELLOW IS POSITIVE."
+    🔴 why_it_is_unambiguous: >-
+      NOT MERELY "ONE IS LOWER". 0.683 V AT 1.2 mA IS A SILICON JUNCTION
+      FORWARD DROP: reversed, the capsule is not operating at all, it is a
+      diode. 192 uA meanwhile is textbook electret bias current against a
+      usual quoted range of 100-500 uA.
+
+      It agrees with the resistance test independently: the red probe on
+      YELLOW gave the HIGHER reading, which predicts yellow is the drain. Two
+      methods, same answer. And it reconciles internally, since a junction's
+      apparent resistance falls as current rises: 1.056 k at the meter's test
+      current, 567 ohm at 1.2 mA.
+
+  🔴 the_operating_current_replaces_a_placeholder:
+    measured_uA: 192
+    budgeted_uA: 1500
+    factor: "7.8x too high"
+    what_was_wrong_with_the_old_figure: >-
+      values.md carried 1.5 mA per channel, which is exactly 3.3 V / 2k2: the
+      current with THE CAPSULE TREATED AS A SHORT. It is not a short. It
+      presents about 15 kohm at its operating point, so the 2k2 is only 13% of
+      the loop and drops 0.42 V of the 3.3 V.
+    for_the_pair: "384 uA rather than 3.0 mA on 3V3A"
+
+  🔴 this_record_said_it_needed_the_board_AND_THAT_WAS_WRONG: >-
+    `what_would_close_it` below reads "Voltage across R51 with the board
+    powered; I = V(R51) / 2200. Needs the boards, so it is not a bench item."
+
+    IT IS A BENCH ITEM. 3.3 V through a 2k2 into the real capsule IS R51's
+    circuit, and it was measured with no board in the room. The claim was
+    never examined, it was assumed because the quantity was named after a
+    board reference designator. WORTH KEEPING AS A PATTERN: naming a
+    measurement after the part it will eventually sit next to is what made it
+    look like it needed that part.
+
+  a_lever_for_mic_gain_budget_now_that_the_current_is_known: >-
+    An electret's signal is developed ACROSS its load resistor, so output
+    scales with R51 while the JFET stays in saturation. With 192 uA known,
+    R51 can be sized deliberately rather than guessed:
+
+        2174   drop 0.42 V   drain 2.88 V   reference, as fitted
+        4k7    drop 0.90 V   drain 2.40 V   ~2.2x   (+6.7 dB)
+        10k    drop 1.92 V   drain 1.38 V   ~4.6x   (+13.3 dB)
+        12k    drop 2.31 V   drain 0.99 V   ~5.5x, drain getting tight
+
+    SO ROUGHLY 13 dB IS AVAILABLE FROM ONE 0603. NOT A RECOMMENDATION:
+    `mic-gain-budget` is still unverified and nothing says more gain is
+    needed. Recorded because it is only calculable now, and because it is
+    cheaper than any other way of finding 13 dB. It assumes the JFET stays in
+    saturation as the drain comes down, which is supported at 2.88 V and would
+    want re-measuring at any new operating point.
 
 conclusion: ELECTRET
 
@@ -90,13 +182,27 @@ bias_current_is_bounded_not_measured:
     operating resistance produces a number that looks derived and is not
     measured. That is conventions rule 10 exactly.
   what_would_close_it: >-
-    Voltage across R51 with the board powered; I = V(R51) / 2200. Needs the
-    boards, so it is not a bench item.
+    ✅ CLOSED 2026-09-22, AND THE SECOND SENTENCE WAS WRONG. Voltage across
+    R51 with the board powered; I = V(R51) / 2200. "Needs the boards, so it is
+    not a bench item" is false: 3.3 V through a 2k2 into the real capsule IS
+    that circuit, and it was measured with no board. Answer: 192 uA, not the
+    1.5 mA the table carried. See `measured_2026_09_22`.
 
 evidence:
+  - "2026-09-22: RJ9 COLOUR MAP AND TRANSMITTER POLARITY SETTLED, and the
+     electret's real operating current measured. OUTER pair is YELLOW and
+     BLACK, the transmitter, with YELLOW POSITIVE; INNER pair is RED and
+     GREEN, the receiver, symmetric at 0.821 k both ways. Polarity established
+     functionally by biasing through a measured 2174 ohm from 3.3 V: yellow on
+     the resistor gives a 2.882 V drain at 192 uA, black gives 0.683 V at
+     1.2 mA, which is a junction forward drop and not an operating point. The
+     192 uA replaces values.md's derived 1.5 mA, which assumed the capsule was
+     a short and was 7.8x too high. Corroborates the 2026-08-25 jack readings
+     to 0.4% and 0.2%
+     (2026-09-22-handset-capsule-polarity-and-current.txt)"
   - "2026-08-25: transmitter 1.75-1.77k forward, 1.05-1.06k reversed, steady, measured at the capsule out of circuit; receiver 145.3 ohm; identified ELECTRET by polarity dependence (2026-08-25-handset-capsule-identification.txt)"
 
-last_verified: 2026-08-25
+last_verified: 2026-09-22
 
 notes: >-
   WHAT THIS DOES NOT CLOSE. mic-gain-budget stays unverified. Identification
