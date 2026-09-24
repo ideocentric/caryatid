@@ -74,6 +74,40 @@ the_evidence_favours_correct_placement:
     notches and are separately checkable. U2 IS THE ONLY HARD ONE: the smallest
     part on the board and the only one with no geometric indicator.
 
+✅ PLACEMENT_IS_UNIFORM_ACROSS_THE_BATCH_2026_09_23:
+  observations:
+    board_1: "G visible, silkscreen pin-1 mark at the start of the text line"
+    board_2: "NO MARKING VISIBLE AT ALL"
+    board_3: "NO MARKING VISIBLE AT ALL"
+    board_4: "G oriented the same way, PLUS an apparent WHITE LINE on the pin-marker side"
+    board_5: "G oriented the same way"
+  🔴 the_result_that_matters: >-
+    ALL THREE BOARDS WHERE THE MARKING IS READABLE AGREE. Placement is uniform,
+    so BOARD 1 IS NOT SPECIAL and a C2 failure on any single board would NOT be
+    a rotation problem. That is what the cross-board check was for and it is
+    answered.
+  boards_2_and_3_are_not_a_finding: >-
+    Laser marking on black epoxy is low contrast and strongly angle-dependent,
+    and all five came off one reel. Invisible under the light used is not the
+    same as absent. NOT CHASED.
+
+  🔍 board_4_white_line_A_LEAD_NOT_A_RESULT:
+    what_was_seen: "An apparent white line on the PIN-MARKER SIDE of U2, board 4 only."
+    why_it_matters: >-
+      THE DATASHEET'S OUTLINE LABELS A "PIN 1 ID AREA" AND NO DOT EXISTS. On many
+      tiny packages that area carries a PRINTED BAR instead of a dot. A line on
+      the pin-1 side is exactly where one would be, and if it is real it is
+      DIRECT VERIFICATION needing no assumption about TI's text convention.
+    ⚠️ why_it_is_not_yet_evidence: >-
+      SEEN ON ONE BOARD ONLY, and the same lighting that hid the marking
+      entirely on boards 2 and 3 can equally invent or reveal a line. Flux
+      residue, a scratch and a mould artifact all look like this.
+      ONE BOARD IS AN ARTIFACT; TWO IS A MARKING.
+    what_would_settle_it:
+      - "Is it CRISP AND STRAIGHT, with defined edges parallel to the package edge? Printed markings are; residue and scratches are not."
+      - "Is it INSIDE the package outline, in the end or corner region nearest pin 1, rather than on the solder joint or the board?"
+      - "🔴 Can the same line be found on board 1 or 5 under the light and angle that revealed it on board 4?"
+
 still_worth_doing_before_power:
   compare_across_boards: >-
     CHECK U2'S TEXT ORIENTATION ON BOARD 2. Not to read it, only to see whether
@@ -84,6 +118,15 @@ still_worth_doing_before_power:
     anything is powered.
 
 evidence:
+  - "2026-09-23: PLACEMENT IS UNIFORM ACROSS THE BATCH. Boards 1, 4 and 5 all
+     show the marking G in the same orientation; boards 2 and 3 show no marking
+     at all under the light used, which is not a finding since laser marking on
+     black epoxy is low contrast and angle-dependent and all five came off one
+     reel. ⇒ BOARD 1 IS NOT SPECIAL and a C2 failure on any single board would
+     not be a rotation problem, which is what this check was for. A LEAD, NOT A
+     RESULT: board 4 appears to show a WHITE LINE on the pin-marker side, which
+     would be the printed bar the datasheet's PIN 1 ID AREA refers to and would
+     close this directly. Seen on one board only, so not yet evidence"
   - "2026-09-23: U2 ORIENTATION UNRESOLVED AND DELIBERATELY LEFT SO. The board's
      pinout matches the datasheet exactly and cpl.csv agrees with the footprint
      at rotation 0, so the design and the fab instructions are not in question;
