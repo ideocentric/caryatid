@@ -65,7 +65,14 @@ scope: all five boards
     B1.9    IDC pin-1 and JST polarity on J5 and J11
             expect: as drawn. sourcing.md flags these: the footprints came from absonus, which
                     proves they fabricate, not that they are right
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            J5 and J11 correct on all five.
+            !! THIS STEP'S JUSTIFICATION IS WRONG. sourcing.md does NOT flag J5
+               and J11 as absonus reuses: they are STOCK IDC headers, 176 in
+               inventory. The actual reuses are J6 J7 J8 J9 J10 and J13, none
+               of which this step names. J13 is the one that turned out wrong.
+               Runbook corrected 2026-09-23; sheet NOT regenerated because it
+               already carries results. See j13-qwiic-orientation.
 
   B2. Rail to ground
   ------------------

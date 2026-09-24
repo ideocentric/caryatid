@@ -103,6 +103,38 @@ impact:
     exactly why the checklist author did not think to ask.
   applied: "capture-checklist.md item broadened 2026-09-23."
 
+  🔴 A_SECOND_INDEPENDENT_MISS_FOUND_THE_SAME_DAY: >-
+    docs/bringup.md B1.9 read "IDC pin-1 and JST polarity on J5 and J11 ...
+    sourcing.md flags these: the footprints came from absonus".
+
+    SOURCING.MD DOES NOT FLAG J5 AND J11. They are STOCK IDC headers, 176 in
+    inventory, listed in a different table with no absonus note. The parts
+    actually listed under "on absonus" are the Seed sockets, J6, J7, J8, J10,
+    J9, J13 and some passives.
+
+    ⇒ THE ONE CONNECTOR THAT TURNED OUT WRONG, J13, IS ON THAT LIST, AND B1.9
+    SENT THE READER TO LOOK AT TWO CONNECTORS THAT WERE NEVER PART OF THE RISK.
+
+  🔴 the_pattern_is_worth_more_than_either_defect: >-
+    THE ABSONUS-REUSE RISK WAS FLAGGED TWICE AND BOTH FLAGS MISSED J13:
+
+      capture-checklist.md  right instances, WRONG QUESTION
+                            (asked about pinout and polarity, not facing)
+      bringup.md B1.9       right question, WRONG INSTANCES
+                            (named J5 and J11, which are not reuses)
+
+    Neither was lazy and neither was wrong about the risk existing. A real risk
+    class was identified early and written down in two places, and the specific
+    thing it was there to catch walked past both.
+
+    ⇒ WHEN A RISK CLASS IS FLAGGED, ENUMERATE ITS MEMBERS FROM THE SOURCE
+    RATHER THAN FROM MEMORY, and state which PROPERTY is at risk rather than
+    assuming the obvious one. Both misses are that single discipline, missed
+    in two different directions.
+  applied_2: >-
+    B1.9 corrected and a new B1.10 added 2026-09-23, naming J6, J7, J8, J9, J10
+    and J13 explicitly and asking for pin order, polarity AND facing.
+
 evidence:
   - "2026-09-23: J13 FACES INTO THE BOARD, found by Matt on a fabricated board
      during Phase B B1 and confirmed from the design file. It sits at (170.50,

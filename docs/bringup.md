@@ -401,7 +401,8 @@ batch fault while it still costs an evening rather than a Daisy Seed.
 | B1.6 | Solder bridges, tombstones, skewed parts | none |
 | B1.7 | **U1 QFN-16, U2 SOT-563, U3, U4 orientation** vs `local/fab/board-top.png` | pin 1 as drawn. 🔴 **U2 cannot be checked this way**: the SOT-563 has **no pin-1 dot at all**, confirmed under a microscope 2026-09-23, and its marking `1GI` is the only indicator. Record U2 **UNRESOLVED**, not passed, and let **C2** settle it: a rotated boost will not start, and C1's 100 mA limit makes that a diagnosis rather than a casualty. U1, U3 and U4 have conventional dots or notches. See [`u2-placement-orientation`](../discovery/findings/u2-placement-orientation.yaml) |
 | B1.8 | **C7 polarity**, the 100 µF electrolytic | band to the marked pin |
-| B1.9 | **IDC pin-1 and JST polarity on J5 and J11** | as drawn. `sourcing.md` flags these: the footprints came from absonus, which proves they *fabricate*, not that they are right |
+| B1.9 | **IDC pin-1 and JST polarity on J5 and J11** | as drawn. *(These are **stock** IDC headers, 176 in inventory. This step used to claim `sourcing.md` flagged them as absonus footprints. **It does not.** Corrected 2026-09-23.)* |
+| B1.10 | 🔴 **The connectors that ARE absonus reuses: J6, J7, J8, J9, J10, J13.** Pin order, polarity, **and which way each faces** | as drawn. `sourcing.md` lists exactly these under *on absonus*: proven to *fabricate* is not proven correct **here**. 🔴 **J13 was found facing into the board on 2026-09-23**, by eye, after two separate checks had been aimed at the wrong targets. See [`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml) |
 
 **Photograph before handling.** A photo of an undamaged board is available once.
 
