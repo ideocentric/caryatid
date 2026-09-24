@@ -1,0 +1,101 @@
+id: board-identity-and-condition
+kind: other
+source_claim: >-
+  docs/bringup.md A9: "The boards arrive numbered, and that is enough for this
+  runbook ... The rails have no reason to come off during bring-up ... The mark
+  therefore survives exactly as long as it is needed." A9.1, marking the board
+  proper in marker, was demoted to OPTIONAL on that premise.
+source_ref: >-
+  docs/bringup.md A9 and B1.2; docs/status.md; the ten board photographs taken
+  2026-09-23.
+resource: "The five fabricated boards from the JLC order of 2026-08-23"
+status: confirmed
+
+🔴 BOARD_1_IS_THE_PRACTICE_BOARD_AND_IS_NOT_EQUIVALENT_TO_THE_OTHERS:
+  what_was_done_to_it:
+    - "Its breakaway rails were SNAPPED OFF, so it carries no 0001 mark and no barcode."
+    - "BT1 was hand-soldered onto it as a SOLDERING TEST."
+    - "Matt, 2026-09-23: 'I tested soldering so I did not follow the instructions on that one'."
+
+  🔴 the_rails_were_SNAPPED_and_the_runbook_says_not_to: >-
+    A9's depanelling note reads, verbatim: "Cut, do not snap. Flush cutters or a
+    depanel tool, working along the tabs. SNAPPING BY HAND FLEXES THE BOARD, and
+    this one carries 64 0603 resistors and a QFN-16 whose joints do not enjoy
+    being flexed. That damage surfaces later as an INTERMITTENT on a board you
+    have already declared good, which is the most expensive kind of fault to
+    chase."
+
+    ⚠️ NO DAMAGE IS CLAIMED. Nothing has been measured and the board may be
+    perfectly sound. What is recorded is that BOARD 1 HAS BEEN MECHANICALLY
+    STRESSED IN THE WAY THE RUNBOOK WARNS ABOUT, so flex damage is a LIVE
+    SUSPECT for any anomaly it shows and must not be diagnosed as a batch fault.
+
+  consequence_for_phase_B_and_beyond: >-
+    BOARD 1'S RESULTS ARE INFORMATIVE BUT NOT AUTHORITATIVE. A batch fault is
+    judged on boards 2-5, which are pristine. An anomaly seen ONLY on board 1 is
+    more likely its own history than a design or batch problem.
+
+  🔴 this_is_a_GOOD_outcome_not_a_mistake: >-
+    A practice board is exactly what should absorb a first solder joint and a
+    first depanel. Board 1 did its job. The finding is not that something went
+    wrong, it is that THE BATCH NOW HAS FOUR PRISTINE ARTICLES AND ONE
+    DISTURBED ONE, and the records must not treat all five as interchangeable.
+
+identity_is_INTACT_across_the_batch:
+  boards_2_to_5: >-
+    Rails ATTACHED, carrying a four-digit mark and a 2D barcode on the lower
+    rail. `0002` verified legible in 2026-09-23-board-2-top.jpg. THE MARK FORMAT
+    IS FOUR DIGITS, 0002 rather than 2, which was not previously recorded.
+  board_1: >-
+    No mark, but UNIQUELY IDENTIFIABLE ANYWAY: it is the only board with no
+    rails AND a fitted BT1. Two independent distinguishing features, both
+    visible at a glance.
+  conclusion: >-
+    A9's warning that "boards that are physically indistinguishable produce
+    indistinguishable results" does NOT bite here. Every board can be told apart.
+
+⚠️ A9_1_IS_NO_LONGER_OPTIONAL_FOR_BOARD_1: >-
+  A9.1 (copy the number onto the board proper in marker) was demoted to optional
+  because the rails were expected to stay on through bring-up. FOR BOARD 1 THAT
+  PREMISE IS ALREADY GONE. It is currently identified by the ABSENCE of things,
+  which works only while it stays the odd one out. If a second board is ever
+  depanelled, mark them first.
+
+  The same applies to all five at enclosure fitting, which is when the rails
+  come off by design and every mark disappears at once.
+
+what_the_photographs_establish:
+  files: "discovery/evidence/2026-09-23-board-{1..5}-{top,bottom}.jpg"
+  resolution: "1514 x 1010, about 10 px/mm"
+  ⚠️ a_prediction_that_was_wrong: >-
+    This resolution was predicted to be too low to read designator silkscreen,
+    on the arithmetic that 0.8-1.0 mm text lands at 8-10 px. IT IS NOT. R11,
+    R41, C17, U3, R45, JP1-JP6, J13, R27 and most of the board's designators are
+    legible directly. The photos are fit for purpose and no re-shoot is needed.
+  b1_2_pass: >-
+    Boards 2-5 PASS: rail and mark legible in frame. Board 1 cannot pass as
+    written, its mark no longer exists, and it is recorded as identified by
+    other means instead.
+
+evidence:
+  - "2026-09-23: TEN BOARD PHOTOGRAPHS taken and filed, 1514 x 1010. Boards 2-5
+     carry rails with a FOUR-DIGIT mark and 2D barcode, 0002 verified legible.
+     BT1 correctly ABSENT on board 2, and JP1-JP6 bare. BOARD 1 HAS ITS RAILS
+     SNAPPED OFF and BT1 hand-soldered as a soldering test, so it carries no
+     mark and has been mechanically stressed in the way A9's depanelling note
+     warns against. No damage is claimed and none has been measured; flex damage
+     is recorded as a LIVE SUSPECT for board 1 only. Identity across the batch
+     is intact: board 1 is uniquely identifiable as the only board with no rails
+     and a fitted BT1 (2026-09-23-board-1-top.jpg, -bottom.jpg,
+     2026-09-23-board-2-top.jpg)"
+
+last_verified: 2026-09-23
+
+notes: >-
+  THE REASON THIS RECORD EXISTS is that "five boards" has been a single
+  undifferentiated phrase in every document so far, and it is no longer true.
+  Phase B's whole value is that the same defect on several boards is a batch
+  fault; that inference requires knowing which article is which and which ones
+  have been disturbed.
+
+  READ THIS BEFORE ATTRIBUTING ANY PHASE B OR C RESULT.

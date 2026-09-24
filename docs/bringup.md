@@ -351,7 +351,18 @@ sensible arrangement rather than a trap.
 
 | # | Do | Pass |
 | --- | --- | --- |
-| A9.1 | Optional, ten seconds each: copy the number onto the board proper in marker, bottom silkscreen, clear of any pad | the number survives depanelling |
+| A9.1 | **Optional while the rails are on, and NOT optional once they are off**: copy the number onto the board proper in marker, bottom silkscreen, clear of any pad | the number survives depanelling |
+
+🔴 **Board 1 has already lost its mark.** Its rails were snapped off on
+2026-09-23 during soldering practice, so it carries no `0001` and no barcode. It
+remains identifiable only because it is the odd one out: the single board with
+**no rails and a fitted BT1**. That works while it stays unique and stops working
+the moment a second board is depanelled. **Mark them before that happens**, and
+mark all five at enclosure fitting, which is when every rail comes off at once.
+See [`board-identity-and-condition`](../discovery/findings/board-identity-and-condition.yaml).
+
+**The mark is four digits**, `0002` and not `2`, alongside a 2D barcode on the
+lower rail.
 
 **A9.1 buys one thing, and it is the drawer rather than the bench.** Five boards
 and one or two instruments means three or four sit unused for months. A record

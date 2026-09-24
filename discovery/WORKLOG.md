@@ -1559,3 +1559,74 @@ faces of all five boards, rail and 1-5 mark legible, into
 available once. Then B1.3's six band sweeps per board. **Record faults and fix
 nothing until all five are done**, because the same defect on several boards is
 a batch fault and a quick fix erases the evidence.
+
+## 2026-09-23: B1.2 done, and board 1 turns out not to be equivalent to the others
+
+**Completed:**
+
+- **Ten board photographs taken, renamed and filed** under
+  `discovery/evidence/2026-09-23-board-{1..5}-{top,bottom}.jpg`. 1514 × 1010,
+  about 8 MB for the set.
+- **B1.2 passes on boards 2-5**: rails attached, four-digit mark and 2D barcode
+  legible on the lower rail. **The mark is `0002`, not `2`**, which was not
+  previously recorded anywhere.
+- **B1.3 passes on all five**, Matt's census: all parts present.
+- **B1.4 confirmed on board 2** from the photograph: BT1 absent, outline and
+  pads visible. **B1.5** likewise, JP1-JP6 bare.
+
+**🔴 New record `board-identity-and-condition`, and it changes how Phase B
+results must be read.**
+
+Board 1 is **the practice board** and is not equivalent to the other four:
+
+- its **breakaway rails were snapped off**, so it carries no mark and no barcode
+- **BT1 was hand-soldered onto it** as a soldering test
+- Matt: *"I tested soldering so I did not follow the instructions on that one"*
+
+🔴 **The rails were snapped, and A9's depanelling note says not to**: *"Cut, do
+not snap... snapping by hand flexes the board, and this one carries 64 0603
+resistors and a QFN-16 whose joints do not enjoy being flexed. That damage
+surfaces later as an intermittent on a board you have already declared good."*
+
+**No damage is claimed and none has been measured.** What is recorded is that
+board 1 has been stressed in exactly the way the runbook warns about, so **flex
+damage is a live suspect for any anomaly it shows**, and an anomaly seen only on
+board 1 must not be read as a batch fault. **Boards 2-5 are the pristine
+articles and a batch fault is judged on them.**
+
+**This is a good outcome, not a mistake.** A practice board is exactly what
+should absorb a first solder joint and a first depanel. The finding is that the
+batch now holds four pristine articles and one disturbed one, and no document so
+far distinguishes them: "five boards" has been a single undifferentiated phrase
+throughout.
+
+**Identity is intact.** Board 1 is uniquely identifiable as the only board with
+**no rails and a fitted BT1**, two independent features visible at a glance. So
+A9's warning about indistinguishable boards does not bite. But it works only
+while board 1 stays the odd one out: **A9.1 stops being optional the moment a
+second board is depanelled**, and applies to all five at enclosure fitting when
+every rail comes off at once. A9 updated to say so.
+
+⚠️ **A prediction of mine was wrong and is corrected in the record.** I argued
+1514 × 1010 would be too coarse to read designator silkscreen, from 0.8-1.0 mm
+text landing at 8-10 px. It is not: `R11`, `R41`, `C17`, `U3`, `R45`, `JP1`-`JP6`
+and most of the board read directly off the photographs. **No re-shoot needed.**
+
+**In flight:** **Phase B, B1 partly done.** B1.1 through B1.5 are established.
+**B1.6 through B1.9 are NOT**, and they are the expensive ones.
+
+**Open questions:**
+
+- **B1.6 to B1.9 unanswered**: bridges/tombstones/skewed parts; U1/U2/U3/U4
+  orientation; C7 polarity; IDC pin-1 and JST polarity on J5 and J11. A parts
+  census answers none of them, since all four are orientation and polarity
+  questions rather than presence ones. `sourcing.md` flags J5 and J11
+  specifically as absonus-reused footprints, which is the same reuse that
+  produced the J13 finding.
+- Whether board 1's BT1 holder is **screwed down** as well as soldered; M3
+  screws are still unsourced per `bt1-cell-fit`.
+
+**Next step:** **B1.6 to B1.9 on all five boards**, with
+`local/fab/board-top.png` open on screen to compare against. These are the rows
+where being wrong costs a part, and none of them is answerable from the parts
+census already done.
