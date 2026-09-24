@@ -1364,3 +1364,74 @@ kΩ that differs by direction (the integral JFET), per
 `discovery/findings/bench-test-electret.yaml`. Then confirm polarity by biasing
 it through a measured ~2k2 from 3.3 V in **CV** and reading the drain voltage,
 the same rig that gave the handset capsule 192 µA. No board required.
+
+## 2026-09-23: A7.5 closed, and all six A7 checks are done
+
+**Completed:**
+
+- **`bench-test-electret` goes `unverified` → `confirmed`**, closing A7.5 and
+  with it **every A7 component check**. Nothing in Phase A's component list is
+  outstanding, and no board was powered to get there.
+- 🔴 **There are two bench capsules, not one.** The record described a single
+  article. In hand: the **small pigtailed B0FRLZLH2G** it describes, and the
+  **uxcell B01F5592EO**, which this record had said *"DO NOT BUY IT"*. It was
+  bought anyway. **The verdict's reasoning is untouched**: both are bare
+  two-terminal electrets, identical on the axis that decides correctness, and
+  pigtails beat pads on a bench. One thing it did not anticipate, in mild
+  qualification: **a second independent article separates a board fault from a
+  capsule fault at E8**, which one capsule cannot do.
+- **Test A, both capsules pass.** Small 1.397 k / 1.154 k, large 1.286 k /
+  0.828 k. Finite kilohms, clearly asymmetric, so both are electrets with an
+  integral FET. ⚠️ The large one's readings are **unattributed**: no colour, no
+  longer lead, so the magnitudes are recorded without knowing which pad the red
+  probe sat on.
+- **Test B on the small capsule, in R51's own circuit.** 3.30 V through a
+  measured 2174 Ω: **drain 2.558 V, 339 µA**, CV confirmed at 3.301.
+  **Red is positive**, by measurement rather than convention.
+- **One reading settled the polarity and the reverse was not needed.** A
+  forward-biased junction at 339 µA would sit near 0.6 V, not 2.558. The
+  handset needed its reverse taken because the failure mode there was a 0.683 V
+  junction drop that had to be seen; here the working orientation was hit first
+  and is unambiguous alone.
+- **The resistance test predicted the polarity, two for two.** Meter red on the
+  positive terminal gave the higher reading on both the handset (yellow,
+  1.798 k) and this capsule (red, 1.397 k), each confirmed functionally
+  afterwards. Recorded **with its sample size**: two is a prior that has paid
+  off twice, not a law.
+- **The large capsule's negative pad is identified but not measured.** Matt
+  spotted metal legs running from one pad to the capsule body, which is the can
+  bond and makes that pad negative. Logged as an observation, not a reading.
+
+**🔴 What "proved" means here, stated in the runbook so nobody arrives at E8
+believing otherwise.** A7.5 established four things: that it is genuinely an
+electret, which lead is positive, its operating point, and a baseline. **It did
+not establish that the capsule produces usable signal.** That needs the board or
+a scope, the bench cannot answer it, and no claim is made.
+
+**Also:** 339 µA does **not** go into `values.md`. That budget line stays at
+192 µA because the **handset capsule is what ships**; the bench electret never
+leaves the bench. Putting it in the budget would be the same class of error as a
+datasheet figure quoted at the wrong condition.
+
+**In flight:** nothing. No board powered.
+
+**Open questions:**
+
+- **The large capsule's can bond is unconfirmed.** Ten seconds with the meter:
+  probe each pad to the can rim, the legged one should read near 0 Ω. It would
+  also **attribute** its Test A readings, and it predicts meter-red on the
+  non-legged pad gives the higher 1.286 k, making the polarity rule three for
+  three.
+- The large capsule has **never been biased** and needs leads soldered first.
+- **J4 green's chemistry** unmeasured; **J4 green legibility at 3.0 V** unjudged.
+- Receiver reads **821 Ω at the RJ9 against 145.3 Ω at the element**.
+- `docs/status.md` **RESUME block still dated 2026-09-01**, now a full phase of
+  component checks out of date.
+- Pre-existing, untouched: `loa-hook-switch` and `charger-input-voltage-thermal`
+  are both `in-progress`.
+
+**Next step:** Phase A's component work is finished, so the next move is a
+decision rather than a measurement: **update `docs/status.md`'s RESUME block**,
+which is the first thing read when picking this project up cold and now predates
+every A7 result. Then Phase B, the first board checks, which is where a board
+gets powered for the first time.

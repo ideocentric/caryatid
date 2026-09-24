@@ -1,0 +1,121 @@
+2026-09-23  BENCH TEST ELECTRETS: IDENTIFICATION, POLARITY, OPERATING POINT
+=============================================================================
+Closes: bringup A7.5
+        bench-test-electret, `unverified` since 2026-09-05
+
+  NO BOARD. Fluke 101, Jesverty supply, a 2k2 MEASURED AT 2174 ohm.
+  Every ladder reading verified by B1 + B2 = B3 before use.
+
+🔴 THERE ARE TWO CAPSULES, NOT ONE
+-----------------------------------
+  The record described a single article. Two are in hand.
+
+  SMALL, WITH RED/BLACK PIGTAILS   <- this is the one the record describes,
+                                      Amazon B0FRLZLH2G
+  LARGE, NO LEADS, TWO PADS        <- uxcell B01F5592EO, CONFIRMED by Matt
+
+  ⚠️ THE RECORD SAID "DO NOT BUY IT" ABOUT THE UXCELL. It was bought anyway.
+  THE REASONING STANDS AND IS UNAFFECTED: both are bare two-terminal
+  electrets, identical on the axis that decides correctness, and PIGTAILS
+  BEAT PADS ON A BENCH. The small one remains the reference.
+
+  ONE THING THE RECORD DID NOT ANTICIPATE, in mild qualification of its
+  verdict: A SECOND INDEPENDENT ARTICLE IS USEFUL. Swapping capsules at
+  Stage 8 separates a board fault from a capsule fault, which one capsule
+  cannot do. That is a reason to own it, not a reason the advice was wrong.
+
+TEST A: DC RESISTANCE, BOTH DIRECTIONS
+---------------------------------------
+  Capsule in free air, meter only. Readings on the 6 k range, so KILOHMS
+  (three decimals is that range's signature).
+
+  capsule            A1        A2        ratio    verdict
+  ---------------    -------   -------   ------   ------------------------
+  small, w/ leads    1.397 k   1.154 k   1.21     electret, integral FET
+  large, uxcell      1.286 k   0.828 k   1.55     electret, integral FET
+  (handset, shape)   1.76 k    1.05 k    1.68     electret, integral FET
+
+  A1 on the small one is METER RED ON CAPSULE RED.
+
+  ⚠️ THE LARGE CAPSULE'S READINGS ARE UNATTRIBUTED. It has no colour and no
+  longer lead, so 1.286 and 0.828 are recorded WITHOUT knowing which pad
+  the red probe was on. See the can-bond item below, which would fix it.
+
+  BOTH PASS. Finite kilohms, clearly asymmetric. The asymmetry is the
+  built-in JFET and it settles the type on its own, without depending on
+  the magnitudes landing in any expected band. Neither is dynamic (steady,
+  150-600 ohm) nor carbon (jumps when tapped).
+
+TEST B: BIAS IT. SMALL CAPSULE, RED AT NODE B
+----------------------------------------------
+  3.30 V CV through 2174 ohm. This is R51's circuit exactly.
+
+      B1  drain, B to C      2.558 V
+      B2  across R, A to B   0.738 V   ->  339 uA
+      B3  total,   A to C    3.301 V   (CV held)
+
+  >>> RED IS POSITIVE. 339 uA at a 2.558 V drain.
+
+  🔴 ONE READING SETTLES IT, AND THE REVERSE IS NOT NEEDED. A
+  FORWARD-BIASED JUNCTION AT 339 uA WOULD SIT NEAR 0.6 V, NOT 2.558 V.
+  There is no reading of this but a correctly biased JFET. The handset
+  needed its reverse taken because the failure mode there was a 0.683 V
+  junction drop that had to be SEEN to be believed; here the working
+  orientation was hit first and is unambiguous on its own.
+
+  TEST A PREDICTED IT, AND THAT IS NOW TWO FOR TWO:
+
+      part             meter red on   higher reading   positive
+      handset          yellow         1.798 k          yellow  ✅
+      bench, small     red            1.397 k          red     ✅
+
+  So on these two parts THE METER'S RED PROBE ON THE POSITIVE TERMINAL
+  GIVES THE HIGHER RESISTANCE, each confirmed functionally afterwards.
+  TWO SAMPLES IS NOT A LAW. It is a prior that has paid off twice, and
+  the large capsule would be a third test of it.
+
+COMPARISON WITH THE CAPSULE THAT ACTUALLY SHIPS
+------------------------------------------------
+                    current    drain      effective R
+  handset capsule   192 uA     2.882 V    15.0 k
+  bench, small      339 uA     2.558 V     7.5 k
+
+  The bench article draws 1.8x the handset's. Both are healthy operating
+  points in the same rig, which is itself a check ON THE RIG: two
+  independent capsules landing where electrets should.
+
+  🔴 339 uA DOES NOT GO IN values.md. That budget line is 192 uA because
+  THE HANDSET CAPSULE IS WHAT SHIPS. The bench electret never leaves the
+  bench. Putting its current in the power budget would be the same class
+  of error as a datasheet figure quoted at the wrong condition.
+
+THE LARGE CAPSULE'S POLARITY, IDENTIFIED BUT NOT YET MEASURED
+--------------------------------------------------------------
+  Matt, by eye: ONE PAD HAS METAL LEGS RUNNING TO THE CAPSULE BODY.
+
+  THAT IS THE CAN BOND AND THAT PAD IS NEGATIVE. On a bare electret the
+  back is a PCB disc with two pads; the can's rim is crimped onto one of
+  them, and the other sits inside an isolating gap as the drain.
+
+  ⚠️ NOT YET CONFIRMED WITH THE METER. Probe each pad to the can rim: the
+  legged one should read near 0 ohm and the other open. Ten seconds, and
+  it would also ATTRIBUTE the Test A readings above, which are currently
+  magnitudes without pad labels.
+
+  PREDICTION IF DONE: meter red on the NON-LEGGED pad gives the HIGHER
+  reading, 1.286 k, making the rule three for three.
+
+  NOT BIASED, DELIBERATELY. It needs leads soldered before it is usable,
+  and the small capsule is the better reference.
+
+WHAT THIS DOES AND DOES NOT ESTABLISH
+--------------------------------------
+  ESTABLISHED: both are genuine two-terminal electrets; the small one's
+  polarity, by measurement not convention; its operating point in R51's
+  own circuit; and a baseline for both, so a later oddity can be told
+  from a changed capsule.
+
+  NOT ESTABLISHED: THAT EITHER CAPSULE PRODUCES USABLE SIGNAL. That needs
+  the board at Stage 8 or a scope. The bench cannot answer it and no
+  claim is made. "Prove the test article" here means proved AS FAR AS A
+  BENCH CAN, which is the four things above and not the fifth.
