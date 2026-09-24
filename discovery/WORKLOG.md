@@ -1682,3 +1682,55 @@ only one with no geometric indicator.
 **Next step:** Photograph U2 on **board 2** at the same magnification as the
 board-1 shot and compare, looking for the marking `1GI`. Then B1.8 and B1.9 on
 all five with `local/fab/board-top.png` open on screen.
+
+## 2026-09-23: U2's orientation left unresolved, on purpose
+
+**Completed:**
+
+- 🔴 **`u2-placement-orientation` opened, status `in-progress`.**
+- **The package has no pin-1 dot.** Matt, under a microscope: nothing that looks
+  like an intentional indicator anywhere on the part. **That is a result, not a
+  failure**, and it is recorded as one: the datasheet's package outline labels a
+  "PIN 1 ID AREA", which reads as though a dot exists. It does not, on this
+  part. Recording it stops the next person hunting for twenty minutes.
+- **What is established and not in question:** the board's pinout matches the
+  datasheet exactly, pin by pin, and `cpl.csv` gives rotation 0 matching the
+  footprint. **Design and fab instructions agree.** The only residual risk is
+  the assembly house's own SOT-563 convention, and no file in this repo can
+  settle that.
+- **The evidence favours correct placement** but does not close it. The marking
+  `1GI` reads with the silkscreen pin-1 mark at the start of the line. ⚠️ That
+  rests on TI printing the code from the pin-1 end, which is standard practice
+  and **is not stated in the datasheet**. A plausible inference is not a pass,
+  and this project has been bitten twice in one week by exactly that shape of
+  assumption.
+- **B1.7 updated in the runbook** to say U2 cannot be checked this way and
+  should be recorded unresolved.
+
+**🔴 Why the search was stopped, and it is ledger rule 8 used to stop work
+rather than start it.** This was an attempt to establish a **property**, which
+way the part is rotated, when what matters is an **operating point**, whether the
+boost works. **C2 answers that directly and unambiguously**: a rotated boost does
+not start. And **C1's 100 mA current limit turns a wrongly placed part from a
+casualty into a diagnosis.** Nothing between here and C2 depends on knowing,
+since Phase B applies no power at all. Continuing to squint at a 1.6 mm package
+was the wrong trade.
+
+**In flight:** B1.7, unresolved for U2 and **not yet done for U1, U3, U4**, which
+do have conventional dots and notches.
+
+**Open questions:**
+
+- **U2's rotation**, deliberately open. Closes when the boost runs, or when
+  someone resolves all three marking characters against a stated convention.
+  ⚠️ Do not promote this record on the strength of the marking argument alone.
+- **Worth doing before any power:** compare U2's text orientation on **board 2**
+  against board 1. Not to read it, only to see whether it sits the same way.
+  Two minutes, and it changes what a C2 failure would mean: uniform placement
+  means a single-board failure is not a rotation problem, and **board 1
+  differing from the others would be a much more interesting finding.**
+- **B1.8 and B1.9 still unanswered.**
+
+**Next step:** Compare U2's text orientation on board 2 against board 1. Then
+**B1.7 for U1, U3 and U4** using their pin-1 dots, and **B1.8 and B1.9** with
+`local/fab/board-top.png` open.

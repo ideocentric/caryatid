@@ -1,0 +1,109 @@
+id: u2-placement-orientation
+kind: other
+source_claim: >-
+  Implicit in accepting the assembled boards: that JLC placed U2, the SOT-563
+  TPS61023 boost, at the rotation the design intends. docs/bringup.md B1.7 asks
+  for it to be checked against local/fab/board-top.png, "pin 1 as drawn".
+source_ref: >-
+  docs/bringup.md B1.7; hardware/pcb/caryatid.kicad_pcb; local/fab/cpl.csv;
+  local/datasheets/tps61023_SLVSF14B.pdf; Matt's microscope inspection of board
+  1, 2026-09-23.
+resource: "U2, the TPS61023DRLR boost in SOT-563, as physically placed on the five boards"
+status: in-progress    # 2026-09-23. Evidence FAVOURS correct placement. Deliberately not closed visually; C2 settles it.
+
+what_IS_established:
+  design_is_correct: >-
+    ✅ THE BOARD'S PINOUT MATCHES THE DATASHEET EXACTLY, verified pin by pin
+    2026-09-23: datasheet FB / EN / VIN / GND / SW / VOUT against the board's
+    FB / EN_SW / VOUT / GND / SW / +5V_RAW. The design is not in question.
+  fab_instructions_agree: >-
+    ✅ cpl.csv gives U2 rotation 0, matching the footprint placement in the PCB.
+    Design and fab instructions are consistent, so the ONLY residual risk is the
+    assembly house's own orientation convention for SOT-563, which is a known
+    class of error and which NO FILE IN THIS REPO CAN SETTLE.
+  silkscreen_marker: >-
+    ✅ The footprint's pin-1 triangle sits at local (-0.72, -0.94), directly
+    above pad 1 at (-0.71, -0.50): UPPER-LEFT at rotation 0.
+  device_marking: >-
+    ✅ `1GI`, from the datasheet's PACKAGE OPTION ADDENDUM. Recorded because it
+    was written down nowhere and it is what to look for.
+
+🔴 THE_PACKAGE_HAS_NO_PIN_1_DOT:
+  observation: >-
+    Matt, UNDER A MICROSCOPE, 2026-09-23: nothing that looks like an intentional
+    dot indicator anywhere on the package.
+  why_this_is_a_RESULT_and_not_a_failure: >-
+    The datasheet's package outline DRL0006A labels a "PIN 1 ID AREA", which
+    reads as though a dot exists. IT DOES NOT, on this part. Recording that
+    stops the next person spending twenty minutes looking for it.
+  consequence: >-
+    THE MARKING'S ORIENTATION IS THE ONLY VISUAL INDICATOR THAT EXISTS.
+
+the_evidence_favours_correct_placement:
+  matts_observation: >-
+    The text baseline runs with the silkscreen pin-1 mark at the START of the
+    line: taking the mark as sitting on the baseline, it reads mark, then G.
+  reading: >-
+    `1GI` read rightward from pin 1 gives 1, G, I. The `1` is a thin glyph and
+    easy to lose at magnification while `G` is the most distinctive of the
+    three. A 180-degree error would render the text upside down.
+  ⚠️ WHY_THIS_IS_NOT_CLOSED: >-
+    IT RESTS ON TI PRINTING `1GI` TO READ FROM THE PIN-1 END. That is standard
+    practice and it is NOT STATED IN THE DATASHEET, so it is a convention and
+    not a measurement. This project has been bitten twice in one week by exactly
+    this shape of assumption, and a plausible inference is not a pass.
+  also_unresolved: >-
+    The datasheet notes "there may be additional marking, which relates to the
+    logo, the lot trace code information, or the environmental category". On a
+    1.6 x 1.2 mm package the visible `G` may belong to a lot code rather than to
+    `1GI`. Only resolving all three characters would settle which.
+
+🔴 WHY_THE_SEARCH_WAS_STOPPED_HERE:
+  the_reasoning: >-
+    THIS IS AN ATTEMPT TO ESTABLISH A PROPERTY (which way the part is rotated)
+    WHEN WHAT MATTERS IS AN OPERATING POINT (does the boost work). Ledger rule 8.
+  why_C2_is_the_right_instrument: >-
+    A 180-degree-rotated boost DOES NOT START, and that result is unambiguous.
+    C1 powers up at 5.00 V with a 100 mA limit in CC, so a wrongly placed part
+    FAILS SAFELY: the limit turns a casualty into a diagnosis.
+  nothing_depends_on_it_before_then: >-
+    PHASE B APPLIES NO POWER AT ALL. An unverified U2 blocks no step in it.
+    B1.7 is recorded UNRESOLVED for U2 rather than passed.
+  the_other_three_ICs: >-
+    U1 QFN-16, U3 SOIC-14 and U4 SOIC-8 all carry conventional pin-1 dots or
+    notches and are separately checkable. U2 IS THE ONLY HARD ONE: the smallest
+    part on the board and the only one with no geometric indicator.
+
+still_worth_doing_before_power:
+  compare_across_boards: >-
+    CHECK U2'S TEXT ORIENTATION ON BOARD 2. Not to read it, only to see whether
+    it sits the same way as board 1's. Two minutes, and it changes what a C2
+    failure would MEAN: if all five match, placement is uniform and a
+    single-board failure is not a rotation problem. If board 1 differs from the
+    others that is a far more interesting finding and wants knowing BEFORE
+    anything is powered.
+
+evidence:
+  - "2026-09-23: U2 ORIENTATION UNRESOLVED AND DELIBERATELY LEFT SO. The board's
+     pinout matches the datasheet exactly and cpl.csv agrees with the footprint
+     at rotation 0, so the design and the fab instructions are not in question;
+     only the assembly house's SOT-563 convention is, and no file here can
+     settle it. THE PACKAGE HAS NO PIN-1 DOT, verified by Matt under a
+     microscope, despite the package outline labelling a PIN 1 ID AREA. The
+     marking is `1GI` and its orientation is the only visual indicator; Matt
+     reports the text reading with the silkscreen pin-1 mark at the start of the
+     line, which FAVOURS correct placement but rests on an unstated TI
+     convention. Search stopped in favour of C2, where a rotated boost will not
+     start and C1's 100 mA limit makes that a diagnosis rather than a casualty"
+
+last_verified: 2026-09-23
+
+notes: >-
+  THIS RECORD IS `in-progress` ON PURPOSE AND SHOULD NOT BE PROMOTED ON THE
+  STRENGTH OF THE MARKING ARGUMENT. It closes when the boost runs, or when
+  someone resolves all three marking characters against a stated convention.
+
+  It is also a worked example of ledger rule 8 being applied to stop work rather
+  than to start it: the cheapest correct move was to STOP squinting at a 1.6 mm
+  package and let a current-limited power-up answer the question that actually
+  matters.
