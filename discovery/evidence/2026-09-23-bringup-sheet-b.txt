@@ -59,7 +59,8 @@ scope: all five boards
 
     B1.8    C7 polarity, the 100 µF electrolytic
             expect: band to the marked pin
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            Band to the marked pin on all five.
 
     B1.9    IDC pin-1 and JST polarity on J5 and J11
             expect: as drawn. sourcing.md flags these: the footprints came from absonus, which
