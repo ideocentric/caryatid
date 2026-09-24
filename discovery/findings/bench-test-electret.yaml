@@ -41,6 +41,40 @@ what_is_known:
     separates a board fault from a capsule fault, which one capsule cannot do.
     That is a reason to own it, not a reason the advice was wrong.
 
+    🔴 STRENGTHENED 2026-09-23 once the sizes were measured: the uxcell is not
+    a SECOND COPY, it is a DIFFERENT INSTRUMENT. See `physical_sizes` below.
+
+physical_sizes_measured_2026_09_23:
+  small_pigtailed: "4.5 mm diameter x 2.54 mm tall, measured by Matt"
+  large_uxcell: "10 x 7 mm, from the listing, NOT measured"
+  diaphragm_area_ratio: "roughly 5x in the uxcell's favour"
+  note_on_2_54: >-
+    2.54 mm is exactly 0.1 inch. Probably a 2.5 mm part read on calipers, but
+    worth knowing the figure is suspiciously round if it ever matters.
+
+  ⚠️ WHAT_THIS_SUGGESTS_AND_IT_IS_AN_INFERENCE_NOT_A_MEASUREMENT: >-
+    A SMALLER DIAPHRAGM GENERALLY GIVES LESS OUTPUT, so the small capsule is
+    probably a low-sensitivity article and the uxcell probably louder.
+
+    🔴 LABELLED AS INFERENCE DELIBERATELY. NEITHER CAPSULE'S SENSITIVITY HAS
+    BEEN MEASURED. Output depends on diaphragm material, tension, backplate
+    charge and the internal JFET as well as area, and INFERRING A PROPERTY FROM
+    A PHYSICAL CHARACTERISTIC is the exact move that produced the withdrawn
+    AlGaInP claim on this same day. Do not let it harden.
+
+  it_does_not_change_A7_5: >-
+    This record's own argument holds: the capsule is not there to measure
+    anything, it is there to answer "does the mic path carry a signal at all",
+    and any bare electret does that. A QUIET CAPSULE IS A CONSERVATIVE TEST
+    ARTICLE: if the board hears it, it will certainly hear the handset.
+
+  🔴 where_it_DOES_matter_is_E8: >-
+    IF STAGE 8 COMES BACK MARGINAL OR SILENT, THE SMALL CAPSULE'S LOW OUTPUT
+    BECOMES A LIVE SUSPECT, which is the three-suspects problem this record
+    exists to prevent. That is the moment to reach for the uxcell: a larger
+    diaphragm is a DIFFERENT PROPERTY, not a second copy, so a result that
+    changes between them is informative rather than just repeated.
+
 measured_2026_09_23:
   # Fluke 101, Jesverty supply, a 2k2 MEASURED at 2174 ohm. No board.
   # Evidence: discovery/evidence/2026-09-23-bench-electret-characterisation.txt
@@ -225,6 +259,15 @@ an_alternative_was_offered_and_is_not_needed:
     minute with the meter already on the bench.
 
 evidence:
+  - "2026-09-23: PHYSICAL SIZES. Small pigtailed capsule measured at 4.5 mm
+     diameter x 2.54 mm tall; the uxcell is 10 x 7 mm per its listing, not
+     measured. About 5x the diaphragm area. ⚠️ A smaller diaphragm generally
+     gives less output, so the small one is PROBABLY the quieter article, but
+     that is an INFERENCE and neither capsule's sensitivity has been measured.
+     It does not change A7.5: a quiet capsule is a conservative test article.
+     It matters at E8, where a marginal result would make the small capsule's
+     output a live suspect and the uxcell a genuinely different instrument
+     rather than a second copy"
   - "2026-09-23: A7.5 COMPLETE for the small capsule, status unverified ->
      confirmed. TWO capsules in hand, not one: the small B0FRLZLH2G with
      pigtails that this record describes, and the uxcell B01F5592EO the record
