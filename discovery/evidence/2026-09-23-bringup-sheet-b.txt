@@ -1,0 +1,156 @@
+caryatid bring-up tally sheet
+====================================================================================================
+
+  GENERATED 2026-09-23 from docs/bringup.md by tools/gen_bringup_sheet.py.
+  BLANK. Nothing below is a result yet.
+
+  DO NOT EDIT THE RUNBOOK TO RECORD A READING, and do not hand-edit this
+  sheet's structure. Fix the runbook, regenerate, and the two stay in step.
+
+  Board: ............   Operator: ............   Started: ............
+
+  Instruments (per discovery/findings/bench-instruments.yaml):
+    meter  Fluke 101, NO current ranges. Current is a shunt voltage.
+    supply Jesverty 0-30 V 0-5 A, CC/OCP selectable.
+    shunts 10 ohm for mA, 0.1 ohm for ~1 A.
+
+
+====================================================================================================
+PHASE B: DEAD BOARD
+scope: all five boards
+====================================================================================================
+
+  B1. Inventory and visual
+  ------------------------
+
+    B1.1    Count the boards
+            expect: 5
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.2    Photograph both faces, in focus, whole board, rail and its 1-5 mark legible
+            expect: filed in discovery/evidence/. This photo is what ties board N to its rail
+                    once the rail is gone
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.3    Part census by sweep band, below
+            expect: 127 present
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.4    BT1 absent
+            expect: absent, it is self_fit
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.5    JP1-JP6 bare, no shunts fitted
+            expect: bare
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.6    Solder bridges, tombstones, skewed parts
+            expect: none
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.7    U1 QFN-16, U2 SOT-563, U3, U4 orientation vs local/fab/board-top.png
+            expect: pin 1 as drawn
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.8    C7 polarity, the 100 µF electrolytic
+            expect: band to the marked pin
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B1.9    IDC pin-1 and JST polarity on J5 and J11
+            expect: as drawn. sourcing.md flags these: the footprints came from absonus, which
+                    proves they fabricate, not that they are right
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B2. Rail to ground
+  ------------------
+
+    B2.1    VIN_DC
+            expect: J1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.2    VBAT
+            expect: BT1 pads
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.3    VOUT
+            expect: J3, J4
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.4    +5V
+            expect: J12 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.5    +3V3
+            expect: J16 pin 2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.6    +3V3A
+            expect: J9 pin 1, J10 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B2.7    +3V3D
+            expect: J11 pin 1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B3. Rail to rail
+  ----------------
+
+    B3.1    +5V to +3V3
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.2    +3V3 to +3V3A
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.3    +3V3A to +3V3D
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B3.4    VOUT to +5V
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B4. Ground continuity
+  ---------------------
+
+    B4.1    J5 pin 10 to J11 pin 10
+            expect: near 0 Ω
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B5. D1 orientation
+  ------------------
+
+    B5.1    Diode test across D1 forward
+            expect: 0.2 to 0.4 V. A Schottky, lower than silicon's 0.6 V. Near 0.6-0.7 V means
+                    it is not the part you think
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B5.2    Reverse
+            expect: open
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  B6. Seed socket
+  ---------------
+
+    B6.1    No adjacent pins bridged, A1
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.2    No adjacent pins bridged, A2
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+    B6.3    A1 row not shorted to A2 row
+            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+WHAT WAS NOT TESTED. Fill this in, do not leave it blank.
+====================================================================================================
+
+  Ripple, switching, inrush, debounce timing and audio quality are out of
+  reach with this kit. Anything else you skipped goes here, so the record
+  does not read as though it passed.
+
+  ..............................................................................
+  ..............................................................................
+
