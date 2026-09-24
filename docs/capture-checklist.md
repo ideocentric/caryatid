@@ -70,6 +70,14 @@ down it; do not skip ahead to the fun part.
       quieter problem than one that is never run. Vertical connectors carry no
       facing direction to get wrong, which is why the question was not asked;
       **any right-angle part does.** Broadened 2026-09-23, see [`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml).
+- [ ] 🔴 **Sweep the 3D render for footprints with no visible body**, before
+      fab. `local/fab/board-top.png` is a 3D render and **does** show which way
+      a right-angle connector faces, for every part whose model resolves.
+      **J13's did not.** It is the only connector in that render showing bare
+      pads, which is why its facing fault was invisible before shipping and
+      obvious the moment a board was in hand. **The gap is silent**: nothing
+      errors and nothing warns, the part simply is not there. Cheap to spot,
+      because a missing body looks like bare pads in a sea of solid parts.
 
 ## Sheet structure
 
