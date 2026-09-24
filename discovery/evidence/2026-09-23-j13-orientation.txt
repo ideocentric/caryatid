@@ -1,0 +1,94 @@
+2026-09-23  J13 QWIIC CONNECTOR FACES INTO THE BOARD
+======================================================
+  Found by Matt during Phase B, B1 visual inspection, with the physical
+  board in hand. Confirmed from the design file afterwards.
+
+  🔴 NOTHING WAS CHANGED. Discovery observes; remediation is a separate
+     deliberate task. The PCB, schematic and netlist are untouched.
+
+THE OBSERVATION
+---------------
+  Matt, looking at a fabricated board: J13 faces the wrong direction. It
+  will need rotating 180 degrees, with the silkscreen and the connections
+  fixed to match, in a future revision.
+
+CONFIRMED FROM hardware/pcb/caryatid.kicad_pcb
+-----------------------------------------------
+  Board outline (Edge.Cuts)   x 50.00 to 200.00,  y 30.00 to 120.00
+                              150 x 90 mm
+
+  J13    at x 170.50, y 37.00, rotation 0
+  footprint  Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal
+
+  Footprint local geometry:
+      signal pads 1-4     y = -2.00
+      mounting posts MP   y = +1.88   (x = -2.80 and +2.80)
+      courtyard           y = -3.28 to +3.28
+
+  ON A RIGHT-ANGLE SH CONNECTOR THE CONTACT TAILS EXIT THE HOUSING ON THE
+  SIDE OPPOSITE THE CABLE OPENING. With the signal pads at -Y, THE OPENING
+  FACES +Y. At rotation 0 that is +Y on the board.
+
+      J13 is 7.0 mm from the y=30 edge.
+      The opening faces AWAY from that edge, into 83 mm of board.
+
+  ⚠️ PROVENANCE OF THE TWO HALVES, KEPT SEPARATE. Matt's observation is a
+  DIRECT READING OF A PHYSICAL PART and is the primary evidence. The file
+  analysis is a geometric inference from pad and courtyard positions; it
+  CORROBORATES the observation and supplies coordinates, and it is not
+  what establishes the fault.
+
+CURRENT NET ASSIGNMENT, which is correct Qwiic and must be preserved
+---------------------------------------------------------------------
+      pad 1   GND
+      pad 2   +3V3
+      pad 3   D12    I2C1_SDA
+      pad 4   D11    I2C1_SCL
+
+  That matches the Qwiic / STEMMA-QT standard. THE PINOUT IS NOT THE FAULT.
+
+WHAT A FIX INVOLVES, FOR A FUTURE REVISION
+-------------------------------------------
+  1. Rotate J13 180 degrees.
+  2. 🔴 THE PAD ORDER REVERSES. Physical positions 1-2-3-4 become 4-3-2-1,
+     so the ROUTING MUST BE REWORKED to keep GND / +3V3 / SDA / SCL landing
+     on the same physical contacts. Rotating alone silently mirrors the
+     Qwiic pinout, which is worse than the present fault: a reversed Qwiic
+     cable puts +3V3 on GND.
+  3. Move the pin-1 silkscreen marker.
+  4. RE-CHECK CLEARANCE to the y=30 edge after rotating. The opening would
+     then face an edge 7 mm away, and the courtyard already reaches 3.28 mm.
+     Confirm the mating cable's strain relief clears the edge and the
+     enclosure wall.
+
+IMPACT
+------
+  🔴 IT DOES NOT GATE THIS BUILD. loa does not use J13. Matt's own words:
+  "The current project is not expecting to use this."
+
+  E10.1 ("I2C on J13 with a Qwiic device") IS STILL RUNNABLE. The cable
+  routes awkwardly across the board; it does not prevent enumeration.
+
+  It matters for any FUTURE consumer that wants the Qwiic port, and
+  panel-io-sheet.md already lists a distance sensor against J13.
+
+ROOT CAUSE, AND A GAP IN THE CHECKLIST THAT WOULD NOT HAVE CAUGHT IT
+----------------------------------------------------------------------
+  sourcing.md records this footprint as REUSED FROM ABSONUS.
+
+  capture-checklist.md carries, STILL UNTICKED:
+      "Reuse the absonus footprints listed in sourcing.md - they are drawn
+       and fabricated already. Check pin-1 orientation and JST polarity
+       against THIS schematic; proven to fabricate is not proven correct
+       here."
+
+  THE WARNING WAS RIGHT IN SPIRIT AND TOO NARROW IN LETTER. It asks about
+  PIN-1 ORIENTATION AND POLARITY, which are electrical. This fault is
+  PHYSICAL FACING DIRECTION, and the pinout is correct. So the item as
+  written would NOT have caught it even if it had been ticked.
+
+  ⇒ THE CHECKLIST ITEM SHOULD BE BROADENED: a reused footprint must be
+  checked for WHICH WAY IT FACES IN THE NEW BOARD, not only for pinout.
+  A right-angle connector carries an orientation that a vertical one does
+  not, and it is the only connector on this board where rotation changes
+  anything but pin order.

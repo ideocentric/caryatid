@@ -391,6 +391,22 @@ estimate is most likely wrong:
 
 ## Known open, beyond that list
 
+🔴 **A design fault, found 2026-09-23 on a fabricated board: J13 faces into the
+board.** The right-angle Qwiic connector sits 7.0 mm from the y=30 edge with its
+cable opening pointing *away* from it, into 83 mm of PCB. **It needs rotating
+180° in a future revision**, and rotating it alone is not enough: the pad order
+reverses, so the routing must be reworked or the Qwiic pinout ends up mirrored,
+which is worse than the present fault. The pinout itself is correct.
+
+**It does not gate this build.** loa does not use J13, the five boards are
+unaffected in service, and E10.1 remains runnable with an awkward cable. See
+[`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml).
+
+*What found it was a pair of eyes on a board during Phase B's visual inspection.
+DRC, netlist parity, the fab house and twelve passing board checks all had
+nothing to say about it, because none of them has a concept of which way a cable
+should leave.*
+
 From [capture-checklist.md](capture-checklist.md) and [sourcing.md](sourcing.md):
 
 - ~~Tent the QFN thermal vias.~~ **Done, and it needed a redesign rather than a

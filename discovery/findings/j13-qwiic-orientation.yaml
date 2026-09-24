@@ -1,0 +1,130 @@
+id: j13-qwiic-orientation
+kind: other
+source_claim: >-
+  Implicit in the layout and never stated: that J13, the right-angle Qwiic
+  connector, is placed so its cable can actually leave the board. No document
+  records which way it faces, and nothing checked it.
+source_ref: >-
+  hardware/pcb/caryatid.kicad_pcb; docs/sourcing.md, which records the footprint
+  as reused from absonus; docs/connectors.md "J13 | JST-SH 4 | Comms port A as
+  I2C"; docs/capture-checklist.md, the untickedd "Reuse the absonus footprints"
+  item; Matt, 2026-09-23, with a fabricated board in hand.
+resource: "J13, the JST-SH 4 Qwiic / STEMMA-QT connector"
+status: confirmed     # 2026-09-23. A real design fault, in the fabricated boards.
+
+🔴 THE_FAULT: >-
+  J13 FACES INTO THE BOARD. It sits 7.0 mm from the y=30 edge and its cable
+  opening points AWAY from that edge, into 83 mm of board. A Qwiic cable has to
+  leave across the whole PCB.
+
+  It needs rotating 180 degrees, with the silkscreen and the routing fixed to
+  match. THAT IS A FUTURE REVISION, NOT A CHANGE TO THIS DESIGN.
+
+🔴 nothing_was_changed: >-
+  DISCOVERY OBSERVES; REMEDIATION IS A SEPARATE DELIBERATE TASK. The PCB,
+  schematic and netlist are untouched. This record exists so the fault is not
+  carried in anyone's head until the next revision.
+
+the_evidence:
+  primary: >-
+    MATT'S DIRECT OBSERVATION of a fabricated board during Phase B, B1 visual
+    inspection, 2026-09-23. That is a reading of a physical part and it is what
+    establishes the fault.
+  corroborating: >-
+    Geometry from hardware/pcb/caryatid.kicad_pcb, which supplies coordinates
+    and confirms it independently. It is an INFERENCE from pad and courtyard
+    positions, not the thing that establishes the fault, and the two are kept
+    separate deliberately.
+  board_outline: "Edge.Cuts x 50.00 to 200.00, y 30.00 to 120.00, so 150 x 90 mm"
+  j13_placement: {x: 170.50, y: 37.00, rotation: 0}
+  footprint: "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal"
+  footprint_local_geometry:
+    signal_pads_y: -2.00
+    mounting_posts_y: 1.88
+    courtyard_y: "-3.28 to +3.28"
+  the_geometric_argument: >-
+    ON A RIGHT-ANGLE SH CONNECTOR THE CONTACT TAILS EXIT THE HOUSING OPPOSITE
+    THE CABLE OPENING. With the signal pads at -Y, the opening faces +Y, and at
+    rotation 0 that is +Y on the board: away from the near edge.
+
+the_pinout_is_NOT_the_fault:
+  pad_1: "GND"
+  pad_2: "+3V3"
+  pad_3: "D12, I2C1_SDA"
+  pad_4: "D11, I2C1_SCL"
+  note: "That is correct Qwiic / STEMMA-QT. Only the facing direction is wrong."
+
+what_a_fix_involves_in_a_future_revision:
+  1_rotate: "J13 by 180 degrees."
+  2_🔴_reroute: >-
+    THE PAD ORDER REVERSES. Physical positions 1-2-3-4 become 4-3-2-1, so the
+    ROUTING MUST BE REWORKED to keep GND / +3V3 / SDA / SCL on the same physical
+    contacts. ROTATING ALONE SILENTLY MIRRORS THE QWIIC PINOUT, which is WORSE
+    than the present fault: a reversed Qwiic cable puts +3V3 onto GND.
+  3_silkscreen: "Move the pin-1 marker."
+  4_clearance: >-
+    RE-CHECK CLEARANCE to the y=30 edge after rotating. The opening would then
+    face an edge 7 mm away and the courtyard already reaches 3.28 mm. Confirm
+    the mating cable's strain relief clears both the edge and the enclosure
+    wall.
+
+impact:
+  🔴 does_not_gate_this_build: >-
+    loa does not use J13. Matt: "The current project is not expecting to use
+    this." Five fabricated boards are unaffected in service.
+  bringup: >-
+    E10.1, "I2C on J13 with a Qwiic device", IS STILL RUNNABLE. The cable routes
+    awkwardly across the board; it does not prevent enumeration. Do not mark
+    E10.1 blocked.
+  future: >-
+    It matters for any consumer that wants the Qwiic port. panel-io-sheet.md
+    already lists a distance sensor against J13.
+
+🔴 root_cause_and_a_checklist_gap_worth_more_than_the_fault:
+  the_footprint_was_reused: "sourcing.md records C160404 / this footprint as 'on absonus'."
+  what_the_checklist_says: >-
+    capture-checklist.md carries, STILL UNTICKED: "Reuse the absonus footprints
+    listed in sourcing.md. They are drawn and fabricated already. Check pin-1
+    orientation and JST polarity against THIS schematic; proven to fabricate is
+    not proven correct here."
+  🔴 the_warning_was_right_in_spirit_and_too_narrow_in_letter: >-
+    IT ASKS ABOUT PIN-1 ORIENTATION AND POLARITY, WHICH ARE ELECTRICAL. This
+    fault is PHYSICAL FACING DIRECTION, and the pinout is correct. SO THE ITEM
+    AS WRITTEN WOULD NOT HAVE CAUGHT IT EVEN IF IT HAD BEEN TICKED.
+
+    That is the more useful finding. A checklist that is never run is one
+    problem; a checklist that would have passed the thing it was meant to catch
+    is a different and quieter one.
+  the_broadening: >-
+    A reused footprint must be checked for WHICH WAY IT FACES IN THE NEW BOARD,
+    not only for pinout. J13 is the ONLY connector on this board where rotation
+    changes anything but pin order, because it is the only RIGHT-ANGLE one. A
+    vertical connector carries no facing direction to get wrong, which is
+    exactly why the checklist author did not think to ask.
+  applied: "capture-checklist.md item broadened 2026-09-23."
+
+evidence:
+  - "2026-09-23: J13 FACES INTO THE BOARD, found by Matt on a fabricated board
+     during Phase B B1 and confirmed from the design file. It sits at (170.50,
+     37.00) rotation 0 with a right-angle JST-SH footprint whose signal pads are
+     at local y -2.00 and mounting posts at +1.88, so the opening faces +Y:
+     7.0 mm from the y=30 edge and pointing away from it into 83 mm of board.
+     The PINOUT IS CORRECT Qwiic and is not the fault. NOTHING WAS CHANGED.
+     Does not gate this build, since loa does not use J13, and E10.1 remains
+     runnable. Root cause is a footprint reused from absonus, and the
+     capture-checklist item covering reuse asks only about pin-1 and polarity,
+     so it would not have caught a facing-direction fault even if ticked
+     (2026-09-23-j13-orientation.txt)"
+
+last_verified: 2026-09-23
+
+notes: >-
+  WHAT FOUND THIS WAS A PAIR OF EYES ON A PHYSICAL BOARD, at the cheapest
+  possible moment: Phase B, before anything was powered and before any
+  enclosure work. DRC, netlist parity, the fab house and twelve passing board
+  checks all had nothing to say about it, because none of them knows which way
+  a cable is supposed to leave.
+
+  ⇒ THE VISUAL INSPECTION IS NOT A FORMALITY. B1 exists for defects that no
+  automated check has a concept of, and this is one. Worth remembering the next
+  time a visual step looks like the boring part of a phase.

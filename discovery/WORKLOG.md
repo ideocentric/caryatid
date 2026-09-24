@@ -1494,3 +1494,68 @@ open by choice; `loa-hook-switch` and `charger-input-voltage-thermal` are still
 only, so nothing stands between here and powering a board for the first time.
 Read the instrument-error table in `status.md` before taking a single reading:
 the supply's CC is offset +3.53 mA and the meter reads ~1.1% low on resistance.
+
+## 2026-09-23: Phase B begins, and B1 immediately earns its place
+
+**Completed:**
+
+- **Phase B tally sheet generated** from the runbook, 26 steps, five board
+  columns: `2026-09-23-bringup-sheet-b.txt`.
+- **Census number reconciled while checking it.** 135 footprints is 127 placed
+  parts plus BT1 self-fit, 3 fiducials and 4 mounting holes. So **127 is right**
+  and BT1 is the only genuinely empty *part* location. JP1-JP6's headers are
+  among the 127 and should be soldered; B1.5's "bare" means the removable
+  shunts are not fitted, which is worth knowing before sweeping.
+- **Sweep bands confirmed to be clean non-overlapping strips**, about 20 mm wide
+  and full height, advancing ~23 mm from the J1 end to the J15 end, together
+  accounting for all 127 with none left over.
+
+**🔴 A design fault found: `j13-qwiic-orientation` opened, `confirmed`.**
+
+J13, the right-angle Qwiic connector, **faces into the board.** It sits at
+(170.50, 37.00) rotation 0, **7.0 mm from the y=30 edge, with its cable opening
+pointing away from that edge** into 83 mm of PCB. Found by Matt with a
+fabricated board in hand during B1's visual inspection, then confirmed from
+`caryatid.kicad_pcb`: the footprint's signal pads are at local y −2.00 and its
+mounting posts at +1.88, and on a right-angle SH the tails exit opposite the
+opening.
+
+- **The pinout is correct Qwiic and is not the fault.** GND / +3V3 / D12 SDA /
+  D11 SCL, in that order.
+- 🔴 **A fix is not just a rotation.** The pad order reverses, so the routing
+  must be reworked or the Qwiic pinout ends up mirrored, **which is worse than
+  the present fault**: a reversed Qwiic cable puts +3V3 onto GND. Silkscreen
+  pin-1 moves, and edge clearance wants re-checking afterwards.
+- **It does not gate this build.** loa does not use J13, the five boards are
+  unaffected in service, and E10.1 stays runnable with an awkward cable.
+- **Nothing was changed.** Discovery observes; remediation is a separate
+  deliberate task. PCB, schematic and netlist untouched.
+
+**🔴 The checklist gap is worth more than the fault.** `sourcing.md` records this
+footprint as reused from absonus, and `capture-checklist.md` carries a still
+unticked item about reused absonus footprints. But it asks only about **pin-1
+orientation and JST polarity**, both electrical, and **this fault is physical
+facing direction with a correct pinout**. So **the item as written would not
+have caught it even if it had been ticked.** A checklist never run is one
+problem; a checklist that would have passed the thing it was meant to catch is a
+quieter one. Broadened to ask which way a reused footprint *faces*, and noting
+that J13 is the only right-angle connector on the board, which is precisely why
+nobody thought to ask.
+
+**What found it was a pair of eyes at the cheapest possible moment.** DRC,
+netlist parity, the fab house and twelve passing board checks all had nothing to
+say, because none of them has a concept of which way a cable should leave. B1 is
+not a formality.
+
+**In flight:** **Phase B is started and unrun.** The sheet is generated and
+blank; no board has been inventoried, probed or photographed. Stopped to record
+the J13 finding before proceeding, per the ledger rule.
+
+**Open questions:** unchanged, plus J13's fix deferred to a future revision.
+
+**Next step:** Run **B1.2 first, before handling anything**: photograph both
+faces of all five boards, rail and 1-5 mark legible, into
+`discovery/evidence/` with dated filenames. A photo of an undamaged board is
+available once. Then B1.3's six band sweeps per board. **Record faults and fix
+nothing until all five are done**, because the same defect on several boards is
+a batch fault and a quick fix erases the evidence.

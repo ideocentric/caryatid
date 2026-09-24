@@ -58,10 +58,18 @@ down it; do not skip ahead to the fun part.
       arrives on a JST — J1 for DC in, J17 and J18 for audio. See
       [connectors.md](connectors.md).
 
-- [ ] **Reuse the absonus footprints** listed in [sourcing.md](sourcing.md) —
-      they are drawn and fabricated already. Check pin-1 orientation and JST
+- [ ] **Reuse the absonus footprints** listed in [sourcing.md](sourcing.md).
+      They are drawn and fabricated already. Check pin-1 orientation and JST
       polarity against *this* schematic; proven to fabricate is not proven
       correct here.
+      🔴 **And check WHICH WAY IT FACES, which is a separate question from the
+      pinout.** This item once asked only about pin-1 and polarity, both
+      electrical, and **J13 got through it**: a right-angle Qwiic connector
+      whose pinout is perfectly correct and which points into the board. A
+      checklist that would have passed the thing it was meant to catch is a
+      quieter problem than one that is never run. Vertical connectors carry no
+      facing direction to get wrong, which is why the question was not asked;
+      **any right-angle part does.** Broadened 2026-09-23, see [`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml).
 
 ## Sheet structure
 
