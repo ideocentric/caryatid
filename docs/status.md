@@ -2,7 +2,49 @@
 
 Where the board is, and what happens next. Read this first.
 
-## ▶ RESUME HERE — 2026-09-01
+## ▶ RESUME HERE: 2026-09-23
+
+**Five boards are in hand and nothing has been powered.** That has been true
+since they arrived on 2026-09-01, and it is still the headline. What has changed
+since is that **every part that plugs into them has now been measured**, and so
+have the instruments doing the measuring.
+
+### Phase A component checks: all six passed
+
+No board was powered for any of these. They are the checks where being wrong
+costs a part.
+
+| | | |
+| --- | --- | --- |
+| A7.1 | switch lamp limits its own current | ✅ 3-6 V marking, internally limited |
+| A7.2 | charge LED common anode | ✅ |
+| A7.3 | charge LED green lights on a flat cell | ✅ 0.77 mA at 3.00 V |
+| A7.4 | RGB common anode | ✅ and diffused |
+| A7.5 | test electret characterised | ✅ red positive, 339 µA |
+| A7.6 | switch lamp current | ✅ 28.5 mA at 5.00 V |
+
+Panel parts and the handset are settled too: the **J3 latch switch** is
+compatible and its cable can be built; loa's **handset** is mapped at the RJ9,
+yellow/black transmitter with **yellow positive**, drawing 192 µA.
+
+### 🔴 The instruments have known errors. Read these before measuring anything
+
+| Instrument | Error | Consequence |
+| --- | --- | --- |
+| Jesverty supply, CC | **+3.53 mA offset**, unity gain | cannot deliver below ~3.5 mA; set a wanted current 3.5 mA low |
+| Fluke 101, resistance | **~1.1% low**, across two ranges | currents from shunt drops read ~1.1% low |
+| Jesverty, voltage display | 20-50 mV low | the Fluke is the instrument, the display is convenience |
+
+**Prefer CV with a measured series resistor over CC** for any current under about
+20 mA. The resistor sets the current and its drop reports what you actually got,
+so the supply's current circuitry never enters the measurement. See
+[`bench-instruments`](../discovery/findings/bench-instruments.yaml).
+
+**A DSO Nano is now available** (2026-09-23). ~200 kHz bandwidth, single channel,
+which is about ten times the top of the audio band and therefore adequate for all
+audio work. It is **not** adequate for the boost's ~2 MHz switching ripple.
+
+### Design state, unchanged since fabrication
 
 **The board is routed, filled, silkscreened and fab-ready.** The 2026-08-21
 strip-and-re-place is complete: re-placed into the upper board, re-routed,
@@ -67,9 +109,20 @@ pairs before assembly rather than trusting the one that was tried.
 
 ### What is left now
 
-1. **Screws for the battery holders**, the only part still unsourced. M3, and
-   the length wants the holder measured rather than guessed. See `bt1-cell-fit`.
-2. **Bring up a board.** Nothing in this repo has been powered.
+1. **Bring up a board.** Nothing in this repo has been powered, and Phase A's
+   component work is finished, so this is the next real step. Phase B is where a
+   board sees voltage for the first time.
+2. **Screws for the battery holders**, the only part still unsourced. M3, and
+   the length wants the holder measured rather than guessed. **Blocks C3 only**,
+   so it does not gate Phase B. See `bt1-cell-fit`.
+3. **Optional, newly possible:** close
+   [`mic-gain-budget`](../discovery/findings/mic-gain-budget.yaml), which has
+   been `unverified` since capture because it needed a scope. Speak into the
+   handset at working distance and measure U4's output. That measures the end of
+   the chain directly, so the assumed 94 dB SPL that makes the record unverified
+   stops mattering rather than needing to be resolved. Target is 1.0 Vrms.
+   **Measure at U4's output, not the capsule**: 10 mV at the capsule is about
+   one division, while ×101 puts it at a comfortable 0.5-1.8 V.
 
 Nothing else is outstanding on the design. The boost hot loop, R45's placement and the necked
 tracks were all checked on 2026-08-22 and none needed work — see below.

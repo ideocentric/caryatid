@@ -139,6 +139,49 @@ instruments:
       measured rather than read, and supersedes the need for the minimum
       settable current limit.
 
+  oscilloscope:
+    model: "Seeed Studio DSO Nano"
+    in_hand_since: 2026-09-23
+    ⚠️ VERSION_AND_SPECS_NOT_VERIFIED: >-
+      Which DSO Nano version this is has NOT been established and the manual has
+      not been checked. The figures below are the general class, not read off
+      this unit. Confirm before quoting them anywhere.
+    approximate: {bandwidth: "~200 kHz analog", sampling: "~1 MSa/s", channels: 1}
+
+    🔴 adequate_for_audio_and_that_is_not_a_compromise: >-
+      Audio is 20 Hz to 20 kHz. ~200 kHz is about TEN TIMES the top of the band.
+      For the mic path, the gain stage and J17's output this instrument is
+      genuinely sufficient rather than a stopgap.
+
+    🔴 NOT_adequate_for_the_boost: >-
+      THE TPS61023 SWITCHES AROUND 2 MHz, an order of magnitude above this
+      bandwidth. The note under `bench_supply` that there is no scope to see the
+      switching noise STILL STANDS and was deliberately not deleted when this
+      scope arrived. A scope that cannot resolve the waveform is not a scope for
+      that job.
+
+    other_limits:
+      single_channel: >-
+        No simultaneous comparison of two signals: not L against R, not input
+        against output. Fine for a steady tone, awkward for transients.
+      vertical_sensitivity: >-
+        A raw capsule signal near 10 mV is about one division at full
+        sensitivity, which is marginal. MEASURE AT U4'S OUTPUT INSTEAD, where
+        x101 puts it at 0.5-1.8 V and the reading is comfortable.
+      no_absolute_acoustic_reference: >-
+        It cannot give sensitivity in dBV/Pa. That needs a calibrated acoustic
+        source, which is a different missing instrument and is still missing.
+
+    🔴 what_it_UNBLOCKS: >-
+      `mic-gain-budget`, whose own `what_would_close_it` asks for exactly this:
+      "measure the op-amp output on a scope with each gain leg selected". It has
+      been unverified since capture for want of the instrument.
+
+      AND IT SIDESTEPS THAT RECORD'S CENTRAL ASSUMPTION RATHER THAN RESOLVING
+      IT. The 94 dB SPL figure is unverified and sits at the START of the chain.
+      Measuring U4's output while speaking into the handset measures the END of
+      the chain, so the SPL never has to be known. Operating point, not property.
+
   shunts:
     - {value: "10 ohm", for: "lamp, quiescent, any current in the mA range"}
     - {value: "0.1 ohm", for: "charge and input current, around 1 A"}
@@ -173,6 +216,13 @@ what_this_record_is_for: >-
   probed and how, belongs in the evidence file for the measurement.
 
 evidence:
+  - "2026-09-23: A SEEED STUDIO DSO NANO IS IN HAND, the project's first
+     oscilloscope. Version and specs NOT verified against the manual; the ~200
+     kHz single-channel class figures are general rather than read off this
+     unit. Adequate for audio, being about ten times the top of the band, and
+     NOT adequate for the TPS61023's ~2 MHz switching, so the existing note that
+     there is no scope for the boost noise stands. It unblocks mic-gain-budget,
+     which has asked for a scope since capture"
   - "2026-09-23: THE SUPPLY'S CC IS OFFSET BY +3.53 mA WITH UNITY GAIN.
      Set 2 / 5 / 10 mA delivers 5.98 / 8.53 / 13.53 mA measured on the 10.2 ohm
      shunt; the 5-to-10 pair gives a slope of exactly 1.000. So the minimum

@@ -1435,3 +1435,62 @@ decision rather than a measurement: **update `docs/status.md`'s RESUME block**,
 which is the first thing read when picking this project up cold and now predates
 every A7 result. Then Phase B, the first board checks, which is where a board
 gets powered for the first time.
+
+## 2026-09-23: status.md brought current, and the project has a scope
+
+**Completed:**
+
+- **`docs/status.md`'s RESUME block rewritten** and redated from 2026-09-01. It
+  was a full phase of component checks out of date, in the one file that is
+  meant to be read first when picking this project up cold. This file has been
+  burned by exactly that before, and the previous lapse is noted in it.
+  The block now leads with the true headline, **five boards in hand and nothing
+  powered**, then carries the six A7 results, the panel and handset state, and a
+  table of **the instruments' known errors**, which is new and belongs there
+  because it changes how any future reading should be taken.
+- **A Seeed Studio DSO Nano is in hand**, the project's first oscilloscope,
+  recorded in `bench-instruments`.
+
+**What the scope changes:**
+
+- ✅ **`mic-gain-budget` is no longer blocked on equipment.** Its own
+  `what_would_close_it` has asked for a scope since capture. It is now blocked
+  only on a powered board. **Record correctly stays `unverified`**: nothing has
+  been measured yet, and an unblocked record is not a closed one.
+- 🔴 **Measuring U4's output makes that record's central assumption irrelevant
+  rather than resolving it.** The 94 dB SPL figure sits at the *start* of the
+  chain and is the stated reason the record is unverified. Measuring the op-amp
+  output measures the *end* of the chain, so the SPL never has to be known.
+  Operating point, not property, which is the rule added to the global context
+  file earlier today.
+- **Measure at U4's output, not at the capsule.** 10 mV at the capsule is about
+  one division at full sensitivity; ×101 puts it at 0.5-1.8 V, which is
+  comfortable and is where the 1.0 Vrms target lives anyway.
+
+**What it does not change, stated so it is not quietly assumed:**
+
+- 🔴 **The boost's ~2 MHz switching ripple is still unobservable.** ~200 kHz is
+  an order of magnitude short. `bench-instruments`'s existing note that there is
+  no scope for that noise **was deliberately not deleted**. A scope that cannot
+  resolve the waveform is not a scope for that job.
+- **No absolute sensitivity in dBV/Pa**, which needs a calibrated acoustic
+  source. That is a different missing instrument and it is still missing.
+- **Single channel**, so no simultaneous L against R or input against output.
+
+⚠️ **The DSO Nano's version and specs are NOT verified.** The manual has not been
+checked and the ~200 kHz single-channel figures are the general class, not read
+off this unit. Recorded as unverified in `bench-instruments`, and the audio
+conclusion is robust to the exact number either way.
+
+**In flight:** nothing. No board powered.
+
+**Open questions:** unchanged from the previous entry, less the status.md item,
+which is now done. The large bench capsule's can bond is still an observation
+rather than a reading; the J4 green's chemistry and flat-cell legibility remain
+open by choice; `loa-hook-switch` and `charger-input-voltage-thermal` are still
+`in-progress` and untouched.
+
+**Next step:** **Phase B.** Component work is finished and the screws block C3
+only, so nothing stands between here and powering a board for the first time.
+Read the instrument-error table in `status.md` before taking a single reading:
+the supply's CC is offset +3.53 mA and the meter reads ~1.1% low on resistance.

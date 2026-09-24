@@ -115,6 +115,13 @@ r51_is_a_quantified_lever_as_of_2026_09_22:
     in the numbers; a missing condition on them.
 
 evidence:
+  - "2026-09-23: NO LONGER BLOCKED ON EQUIPMENT. A Seeed Studio DSO Nano is in
+     hand, ~200 kHz single channel, adequate for audio at about ten times the
+     top of the band. This record has asked for a scope since capture. It is now
+     blocked only on a powered board. Note that measuring U4's output makes the
+     unverified 94 dB SPL assumption IRRELEVANT rather than resolving it, since
+     it measures the end of the chain rather than the start. Record STAYS
+     `unverified`: nothing has been measured yet ([[bench-instruments]])"
   - "2026-09-22: R51 QUANTIFIED AS A GAIN LEVER, not a fix. loa's handset
      electret measured at 192 uA operating current, which fixes how far R51 can
      be raised before the drain runs out of room: about 13 dB is available at
@@ -130,7 +137,7 @@ evidence:
      94 dB SPL assumption and the capsule OUTPUT LEVEL are still unmeasured,
      and they are what the gain targets rest on
      (2026-08-25-handset-capsule-identification.txt, [[loa-handset-capsule]])"
-last_verified: 2026-09-22
+last_verified: 2026-09-23
 
 notes: >-
   THE CONCLUSION IS REASSURING AND THE RECORD IS STILL `unverified`, and both
@@ -147,6 +154,22 @@ notes: >-
   scope with each gain leg selected. One reading per capsule type available. The
   question is not "is the gain about right" but "does the loudest realistic
   input clip, and is the quietest usable".
+
+  ✅ THE INSTRUMENT ARRIVED 2026-09-23. A Seeed Studio DSO Nano, ~200 kHz and
+  single channel, which is about ten times the top of the audio band and
+  therefore adequate. THIS RECORD IS NO LONGER BLOCKED ON EQUIPMENT. It is
+  blocked only on a powered board, since U4's output is what gets measured.
+  See [[bench-instruments]].
+
+  🔴 AND NOTE WHAT THAT MEASUREMENT DOES TO `the_spl_assumption`. The 94 dB SPL
+  figure sits at the START of the chain and is the stated reason this record is
+  unverified. MEASURING U4'S OUTPUT MEASURES THE END OF THE CHAIN, so the SPL
+  never has to be known. The assumption is not resolved, it is made IRRELEVANT
+  to the question actually being asked. Operating point, not property.
+
+  MEASURE AT U4'S OUTPUT, NOT AT THE CAPSULE. 10 mV at the capsule is about one
+  division at full sensitivity; x101 puts it at 0.5-1.8 V, which is comfortable
+  and is also where the 1.0 Vrms target lives.
 
   THE CARBON CASE IS THE ONE WITH REAL RISK, and audio.md already says so from
   the other direction: a source hot enough to clip the codec BEFORE the PGA is
