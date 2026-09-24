@@ -25,32 +25,37 @@ scope: all five boards
 
     B1.1    Count the boards
             expect: 5
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
 
     B1.2    Photograph both faces, in focus, whole board, rail and its 1-5 mark legible
             expect: filed in discovery/evidence/. This photo is what ties board N to its rail
                     once the rail is gone
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            b1: rails SNAPPED OFF, no 0001 mark. Identified instead as the only board
 
     B1.3    Part census by sweep band, below
             expect: 127 present
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            127 present, all five. Census by Matt.
 
     B1.4    BT1 absent
             expect: absent, it is self_fit
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 DEVIA.    b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            b1: BT1 FITTED, hand-soldered as a soldering test. Deliberate, not a fault.
 
     B1.5    JP1-JP6 bare, no shunts fitted
             expect: bare
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
 
     B1.6    Solder bridges, tombstones, skewed parts
             expect: none
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            No bridges, tombstones or skewed parts on any board.
 
     B1.7    U1 QFN-16, U2 SOT-563, U3, U4 orientation vs local/fab/board-top.png
             expect: pin 1 as drawn
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PART      b2 PART      b3 PART      b4 PART      b5 PART    
+            U1, U3, U4 PASS on all five. U2 UNRESOLVED: no pin-1 dot exists on SOT-563.
 
     B1.8    C7 polarity, the 100 µF electrolytic
             expect: band to the marked pin
