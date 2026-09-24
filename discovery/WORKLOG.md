@@ -1630,3 +1630,55 @@ and most of the board read directly off the photographs. **No re-shoot needed.**
 `local/fab/board-top.png` open on screen to compare against. These are the rows
 where being wrong costs a part, and none of them is answerable from the parts
 census already done.
+
+## 2026-09-23: B1.6 passes, B1.7 stalls on U2, and a figure of mine corrected
+
+**Completed:**
+
+- **B1.6 passes on all five boards.** No bridges, tombstones or skewed parts.
+- **U2's design pinout verified against the datasheet**, `tps61023_SLVSF14B.pdf`,
+  pin by pin: FB / EN / VIN / GND / SW / VOUT against the board's
+  `FB` / `EN_SW` / `VOUT` / `GND` / `SW` / `+5V_RAW`. **Exact match, so the
+  design is correct** and only the physical placement rotation is in question.
+- **The device marking is `1GI`**, from the datasheet's PACKAGE OPTION ADDENDUM.
+  That is the only visual pin-1 indicator a SOT-563 has; there is no dot or
+  chamfer. Recorded because it was not written down anywhere.
+- **CPL checked:** U2 rotation 0, matching the footprint. Design and fab
+  instructions agree, so the only residual risk is the assembly house's own
+  orientation convention for SOT-563, which no file can settle.
+
+**⚠️ A figure of mine was wrong and had reached the ledger.** I wrote that the
+TPS61023 switches "around 2 MHz" when assessing the DSO Nano, from recollection
+rather than the datasheet. **It is 1 MHz** above 1.5 V VIN, 0.5 MHz below 1 V.
+Corrected in `bench-instruments`. **The conclusion is unaffected**: ~200 kHz
+cannot resolve 1 MHz either, five times short rather than ten.
+
+Also noted there, because it matters to anyone devising a test: the part
+features **"true disconnection between input and output during shutdown"**, so
+there is **no always-present SW-to-VOUT body diode** to probe for. The obvious
+electrical orientation test does not exist on this part.
+
+**In flight:** **B1.7, stalled on U2 only.** Matt can see no orientation
+indicator on board 1's U2 and photographed it
+(`loa/local/baord1-u2.png`, not filed as evidence: it is a working shot, and the
+question is unresolved). The marking is present in the photo but not resolvable
+at that magnification. U1, U3 and U4 all have conventional pin-1 dots or
+notches, so **U2 is the only hard one**: the smallest part on the board and the
+only one with no geometric indicator.
+
+**Open questions:**
+
+- 🔴 **U2's placement rotation is unverified.** It is a **batch** question, not a
+  board-1 one: all five came off one P&P run with one CPL, so a wrong rotation
+  is wrong on all five identically. Next move is a same-magnification photo of
+  U2 on board 2 to establish consistency, then one determination for the batch.
+  **If it cannot be resolved visually, B1.7 should be recorded UNRESOLVED rather
+  than passed.** It blocks nothing in Phase B, where nothing is powered, and
+  surfaces at C2 where a rotated boost will not start and C1's current limit
+  makes that a diagnosis rather than a casualty.
+- **B1.8 and B1.9 still unanswered**: C7 polarity, and IDC pin-1 plus JST
+  polarity on J5 and J11.
+
+**Next step:** Photograph U2 on **board 2** at the same magnification as the
+board-1 shot and compare, looking for the marking `1GI`. Then B1.8 and B1.9 on
+all five with `local/fab/board-top.png` open on screen.

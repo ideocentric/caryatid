@@ -154,11 +154,16 @@ instruments:
       genuinely sufficient rather than a stopgap.
 
     🔴 NOT_adequate_for_the_boost: >-
-      THE TPS61023 SWITCHES AROUND 2 MHz, an order of magnitude above this
-      bandwidth. The note under `bench_supply` that there is no scope to see the
-      switching noise STILL STANDS and was deliberately not deleted when this
-      scope arrived. A scope that cannot resolve the waveform is not a scope for
-      that job.
+      THE TPS61023 SWITCHES AT 1 MHz above 1.5 V VIN, dropping to 0.5 MHz below
+      1 V. Read from the datasheet 2026-09-23, tps61023_SLVSF14B.pdf.
+
+      ⚠️ THIS ENTRY SAID "AROUND 2 MHz" WHEN FIRST WRITTEN, FROM RECOLLECTION
+      RATHER THAN THE DATASHEET. Corrected. THE CONCLUSION IS UNAFFECTED: ~200
+      kHz cannot resolve 1 MHz either, being five times short rather than ten.
+      The note under `bench_supply` that there is no scope to see the switching
+      noise STILL STANDS and was deliberately not deleted when this scope
+      arrived. A scope that cannot resolve the waveform is not a scope for that
+      job.
 
     other_limits:
       single_channel: >-
