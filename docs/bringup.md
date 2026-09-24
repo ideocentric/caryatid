@@ -781,7 +781,7 @@ match `cfg.comms_a` in firmware.**
 
 | # | Do | Expect |
 | --- | --- | --- |
-| E10.1 | I2C on J13 with a Qwiic device | device enumerates |
+| E10.1 | I2C on J13 with a Qwiic device | device enumerates. 🔴 **J13 faces INTO the board** and **R44 sits ~2 mm in front of the opening**. Insertion is fine. **EXTRACTION is the hazard**: a cable withdrawn at an angle can catch R44 and take it off the board. Pull straight and slowly. See [`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml) |
 | E10.2 | UART loopback on J19, D11 to D12 | sent bytes return |
 
 ## E11. Comms B, J15
