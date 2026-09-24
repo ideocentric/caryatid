@@ -68,6 +68,69 @@ what_a_fix_involves_in_a_future_revision:
     the mating cable's strain relief clears both the edge and the enclosure
     wall.
 
+🔴 THE_REAL_ROOT_CAUSE_2026_09_23_J13S_3D_MODEL_DOES_NOT_RENDER:
+  matts_account: >-
+    "It is clearly a design flaw that is obvious when assembled, however, not
+    obvious prior to shipping as the footprint had no image associated with it
+    for our output."
+  ⚠️ a_check_of_mine_was_at_the_wrong_level: >-
+    I checked whether the footprint CARRIES a 3D model reference. It does:
+    ${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/
+    JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal.step
+    and 128 of 135 footprints have one, the 7 without being exactly the 3
+    fiducials and 4 mounting holes.
+
+    A REFERENCE EXISTING IS NOT A MODEL RENDERING, and that distinction is the
+    whole finding. Matt's account was correct and my check did not test it.
+  verified_by_inspection: >-
+    local/fab/board-top.png IS A 3D RENDER, not a 2D plot. Every other
+    connector shows a BODY: J12 beside J13 has its white four-pin housing, J14,
+    J17 and J18 have theirs, J5 and J11 show IDC shrouds, C7 is a cylinder, the
+    ICs are solid.
+
+    🔴 J13 SHOWS BARE PADS AND NOTHING ELSE. IT IS THE ONLY CONNECTOR ON THE
+    BOARD WITH NO BODY IN THE RENDER.
+  🔴 therefore: >-
+    THE ONE ARTIFACT IN THE PIPELINE THAT COULD HAVE SHOWN THIS FAULT WAS BLIND
+    TO EXACTLY THIS PART. A 3D render DOES display facing direction, for every
+    connector whose model resolves. J13's did not, so no amount of looking at
+    the render would have revealed it.
+
+    That is why it was obvious on the assembled board and invisible before
+    shipping, and it is a better explanation than either "a checklist was too
+    narrow" or "a checklist named the wrong parts", both of which are also true
+    and neither of which is the mechanism.
+  the_actionable_remedy: >-
+    BEFORE FAB, SWEEP THE 3D RENDER FOR FOOTPRINTS WITH NO VISIBLE BODY. A part
+    that does not render is invisible to every visual review that follows, and
+    the gap is silent: nothing errors, nothing warns, the part simply is not
+    there. It is cheap to spot precisely because a missing body looks like bare
+    pads in a sea of solid parts.
+
+usability_in_practice_2026_09_23:
+  verdict: "🔴 USABLE WITH CARE. Not a blocker even for a consumer that wants the port."
+  what_is_in_front_of_the_opening: >-
+    R44, at (170.22, 41.25) against J13 at (170.50, 37.00): 4.25 mm from J13's
+    centre, essentially dead ahead of the opening.
+  clearance: >-
+    About 2 mm from the connector's front face, derived from footprint geometry
+    (mounting posts at local y +1.88) rather than measured. Enough to insert a
+    Qwiic cable.
+  🔴 the_hazard_is_REMOVAL_not_insertion: >-
+    Matt: "detaching will need to take extreme care as it would be easy to pull
+    out to be stopped by the small smd resistor". A cable withdrawn at an angle
+    can catch R44 and take it off the board. INSERTION IS FINE; EXTRACTION IS
+    WHERE THE PART GETS LOST.
+  ⚠️ a_designator_correction: >-
+    Matt initially identified it as R14. R14 is at (62.95, 71.67), 113 mm away
+    at the far end of the board. It is R44. "R44" and "R14" differ by one glyph
+    at magnification.
+  a_third_confirmation_of_the_facing: >-
+    R44's position CONFIRMS the opening faces +Y, independently. The direction
+    was first inferred from pad and courtyard geometry, then observed by Matt as
+    "a resistor on the side where you would insert the cable", and R44 sits
+    exactly where those two agree. Three routes, one answer.
+
 impact:
   🔴 does_not_gate_this_build: >-
     loa does not use J13. Matt: "The current project is not expecting to use
