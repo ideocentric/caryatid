@@ -131,6 +131,17 @@ usability_in_practice_2026_09_23:
     "a resistor on the side where you would insert the cable", and R44 sits
     exactly where those two agree. Three routes, one answer.
 
+🔴 THE_ASSEMBLY_HOUSE_IS_EXONERATED_2026_09_24: >-
+  B1.10 run on all five boards: EVERY JST IS PLACED CORRECTLY, J13 INCLUDED.
+  J13 sits exactly where the design specifies, at the rotation cpl.csv asked
+  for. JLC did what it was told.
+
+  ⇒ THE FAULT IS ENTIRELY UPSTREAM IN THE LAYOUT. It is a DESIGN flaw and not
+  a placement one, and that distinction matters: nothing about the assembly
+  process needs changing, and no future order is at risk from the same cause.
+  What needs changing is the layout, and the review step that could have caught
+  it, which is the render sweep now in capture-checklist.md.
+
 impact:
   🔴 does_not_gate_this_build: >-
     loa does not use J13. Matt: "The current project is not expecting to use

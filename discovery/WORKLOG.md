@@ -1734,3 +1734,74 @@ do have conventional dots and notches.
 **Next step:** Compare U2's text orientation on board 2 against board 1. Then
 **B1.7 for U1, U3 and U4** using their pin-1 dots, and **B1.8 and B1.9** with
 `local/fab/board-top.png` open.
+
+## 2026-09-24: B1 complete on all five boards, no faults found
+
+**Completed:**
+
+- **B1.8 PASS**, C7 polarity correct on all five. That is the one part on this
+  board that fails destructively if reversed.
+- **B1.9 PASS**, J5 and J11 correct on all five. ⚠️ **But its justification was
+  wrong**: `sourcing.md` does *not* flag J5 and J11 as absonus reuses. They are
+  **stock IDC headers**, 176 in inventory. The parts listed under *on absonus*
+  are the Seed sockets, J6, J7, J8, J10, J9, **J13** and some passives.
+- **B1.10 added and PASSED**, covering the connectors that actually are reuses.
+  **All JST correct on all five boards, J13 included.**
+- 🔴 **The assembly house is exonerated.** J13 sits exactly where the design
+  specifies, at the rotation `cpl.csv` asked for. **JLC did what it was told.**
+  The fault is entirely upstream in the layout: a **design** flaw, not a
+  placement one. Nothing about the assembly process needs changing and no
+  future order is at risk from the same cause.
+
+**🔴 B1 IS COMPLETE ON ALL FIVE BOARDS AND NO BOARD FAULTS WERE FOUND.** The B1
+gate, *"record faults, fix nothing yet, finish all five first"*, has nothing to
+act on. What B1 did surface was one **design** fault (J13) and three
+**documentation** faults, none of them a problem with the fabricated articles.
+
+**The J13 root cause, corrected to Matt's account.** I had checked whether the
+footprint *carries* a 3D model reference. It does. **A reference existing is not
+a model rendering**, and that distinction is the whole finding.
+`local/fab/board-top.png` is a 3D render and **does** show facing for every
+connector whose model resolves; **J13 is the only one showing bare pads.** So the
+one artifact in the pipeline that could have caught this was blind to exactly
+this part. That is a better explanation than either checklist defect, both of
+which are also true and neither of which is the mechanism.
+
+**J13 is usable.** R44 (not R14, which is 113 mm away) sits ~2 mm in front of the
+opening. Insertion is fine; **extraction is the hazard**, since a cable withdrawn
+at an angle can catch R44 and take it off the board. Warning added at **E10.1**,
+where someone actually plugs into it.
+
+**Three documentation fixes came out of one connector**, and only the third would
+have caught it: the capture-checklist item broadened to ask about *facing*;
+B1.9 corrected and B1.10 added naming the real reuses; and **a pre-fab sweep of
+the 3D render for footprints with no visible body.**
+
+⚠️ **A process slip of mine, recorded because it produced bad commits.** Twice I
+chained `git commit` to a python script that could fail, the script aborted on a
+pattern mismatch, and the commit ran anyway, publishing messages that described
+more than they carried (`74e656e`, `e084b13`). Not amended, since both were
+pushed and this project appends rather than rewrites. `8e91a72` carries the
+remainder and says so. **Apply, verify, then commit separately.**
+
+**In flight:** nothing. **No board has been powered at any point.**
+
+**Open questions:**
+
+- **U2's rotation**, deliberately open, `in-progress`. Placement is uniform
+  across the batch, so a C2 failure on one board would not be a rotation
+  problem. Closes at C2.
+- **B1.10 is appended to the sheet by hand**, since it was added to the runbook
+  after the sheet was generated. The generator's "edit the runbook, regenerate"
+  flow works before a phase starts, not mid-phase.
+- J13's fix deferred to a future revision, and the **rotate-alone trap** is
+  recorded: the pad order reverses, so the routing must be reworked or the Qwiic
+  pinout ends up mirrored, which is worse than the present fault.
+
+**Next step:** **B2, rail to ground.** Seven rails on five boards, meter in
+resistance, probing at connector pins. Still no power. 🔴 The trap is the bulk
+capacitors: C1-C6 are 10-22 µF and C7 is 100 µF, so a rail-to-ground reading
+**starts low and climbs**, which looks exactly like a short. **A real short sits
+at its value and does not move; a capacitor climbs.** Discharge between readings.
+Probe one polarity first and reverse only where it reads low. Gate: any rail
+under ~10 Ω settled in **both** polarities stops that board.
