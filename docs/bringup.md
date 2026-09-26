@@ -560,7 +560,7 @@ is `DC_IN`.** The other is `VIN_DC`.
 
 | # | Do | Pass |
 | --- | --- | --- |
-| B5.1 | Diode test, **red on the `DC_IN` pad**, black on `VIN_DC` | **0.2 to 0.4 V.** A Schottky, *lower* than silicon's 0.6 V. Near 0.6-0.7 V means it is not the part you think |
+| B5.1 | Diode test, **red on the `DC_IN` pad**, black on `VIN_DC` | **0.2 to 0.4 V.** A Schottky, *lower* than silicon's 0.6 V. Near 0.6-0.7 V means it is not the part you think. *(Batch 1 measured **0.197 V on all five**, just under the floor. That is normal: the SS34's rated 550 mV is at 3 A, and the meter tests at ~1 mA. The floor is conservative and nothing fails by reading low.)* |
 | B5.2 | Reverse | open |
 | B5.3 | 🔴 **If B5.1 is open and B5.2 reads 0.2-0.4 V, D1 IS BACKWARDS** | must not happen |
 

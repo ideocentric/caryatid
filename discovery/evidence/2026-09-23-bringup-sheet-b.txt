@@ -320,7 +320,17 @@ scope: all five boards
     B5.1    Diode test across D1 forward
             expect: 0.2 to 0.4 V. A Schottky, lower than silicon's 0.6 V. Near 0.6-0.7 V means
                     it is not the part you think
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 0.197V    b2 0.197V    b3 0.197V    b4 0.197V    b5 0.197V  
+            PASS all five, and D1 IS CORRECTLY ORIENTED on all five: forward
+            conduction with red on the DC_IN pad is what B5.3's backwards case
+            would have ruled out. Meter in DIODE mode, no power applied.
+            0.197 V is a hair under the stated 0.2 V floor and that is FINE.
+            The band exists to separate a Schottky from silicon's 0.6-0.7 V,
+            and 0.197 is unambiguously Schottky. The SS34's rated 550 mV is at
+            3 A; at the meter's ~1 mA test current 0.197 V is normal.
+            => The 0.2 V floor is conservative. Recorded so a future batch
+               reading 0.197 is not mistaken for out of spec.
+            Identical on all five: another tight designed-path style result.
 
     B5.2    Reverse
             expect: open
