@@ -544,7 +544,7 @@ applies to DGND, which B4 already concedes is one net with AGND. Corrected
 
 | # | Do | Pass |
 | --- | --- | --- |
-| B4.1 | J5 pin 10 to J11 pin 10 | near 0 Ω |
+| B4.1 | J5 pin 10 to J11 pin 10 | near 0 Ω. ⚠️ **On J11, pin 9 is `NC` and sits immediately beside pin 10.** Probing it reads open, which this step scores as a **fault**. Pin 10 is **diagonally opposite pin 1**: pin 1 is the `3V3` end with the triangle, odd pins run down that row, so pin 9 ends it and pin 10 ends the other. The silkscreen `GND` label **is** pin 10 on both connectors |
 
 `AGND` and `DGND` are one net here. **An open reading is as much a fault as a
 short**: the ground stitching was one of the last things done to this board.
