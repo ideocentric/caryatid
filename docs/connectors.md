@@ -19,7 +19,7 @@ Pin assignments are in [pinmap.md](pinmap.md), generated from
 | J8 | JST 2 | SW3 → D7 via 74HC14 |
 | J9 | JST 3 | Soft pot: 3V3A, A5, AGND |
 | J10 | JST 2/3 | FSR: 3V3A, A4 |
-| J11 | IDC 2×5 | **Digital bus** — D0–D6 + 3V3D + DGND + spare. 100Ω series each. |
+| J11 | IDC 2×5 | **Digital bus**: D0-D6 + **`+3V3`** + **`GND`** + spare. 100Ω series each. *(This read "3V3D + DGND" until 2026-09-25. **Neither net exists.** There are two 3.3 V nets, `+3V3` and `+3V3A`, and one ground. The D suffix was shorthand for the digital side and was read as a net name by `bringup.md`, which carried a test step for it into every generated sheet.)* |
 | J12 | JST 4 | RGB status. **Common anode**: pin 1 `+5V`, then D26/D27/D29 cathodes sinking through **510Ω red, 300Ω green, 300Ω blue**. Not GND, not 3V3 — see [panel-io-sheet.md](panel-io-sheet.md). |
 | J13 | JST-SH 4 | **Comms port A** as I2C, Qwiic / STEMMA-QT pinout. 🔴 **Faces into the board**, a known fault for a future revision. Pinout is correct; only the facing is wrong. See [`j13-qwiic-orientation`](../discovery/findings/j13-qwiic-orientation.yaml) |
 | J14 | JST-XH 2 | Mic bias return → the hook switch's second pole |

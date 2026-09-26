@@ -100,7 +100,7 @@ scope: all five boards
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
     B2.4    +5V
-            expect: J12 pin 1
+            expect: J16 pin 1, GND at J16 pin 3 or 4  (NOT J12: it has no ground pin)
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
     B2.5    +3V3
@@ -111,8 +111,9 @@ scope: all five boards
             expect: J9 pin 1, J10 pin 1
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
-    B2.7    +3V3D
-            expect: J11 pin 1
+    B2.7    +3V3 AT THE FAR END  (sheet says +3V3D; THAT NET DOES NOT EXIST)
+            expect: J11 pin 1, GND at J11 pin 10. Same net as B2.5: this checks
+                    the rail's continuity across the board, not a third rail.
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
   B3. Rail to rail
@@ -124,7 +125,7 @@ scope: all five boards
     B3.2    +3V3 to +3V3A
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
-    B3.3    +3V3A to +3V3D
+    B3.3    DROP: +3V3D does not exist, so this repeats B3.2
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
     B3.4    VOUT to +5V

@@ -448,10 +448,10 @@ is a pass and needs nothing more. Reverse **only** where it reads low.
 | B2.1 | `VIN_DC` | J1 |
 | B2.2 | `VBAT` | BT1 pads |
 | B2.3 | `VOUT` | J3, J4 |
-| B2.4 | `+5V` | J12 pin 1 |
+| B2.4 | `+5V` | **J16 pin 1**, with GND at J16 pin 3 or 4. *(This said J12 pin 1 until 2026-09-25. **J12 has no ground pin**, pins 2-4 being the RGB cathodes, so a rail-to-ground reading there needs a ground found elsewhere. J16 carries both.)* |
 | B2.5 | `+3V3` | J16 pin 2 |
 | B2.6 | `+3V3A` | J9 pin 1, J10 pin 1 |
-| B2.7 | `+3V3D` | J11 pin 1 |
+| B2.7 | `+3V3` **at the far end** | J11 pin 1, GND at J11 pin 10. 🔴 *(This said `+3V3D` until 2026-09-25. **That net does not exist.** J11 pin 1 is on `+3V3`, the same net as B2.5. Keep the step: probing one rail at both ends of the board checks its continuity, which is a real check. It is not a third rail.)* |
 
 🔴 **Gate: any rail under ~10 Ω settled in both polarities stops that board.**
 
@@ -464,10 +464,18 @@ ends are live rails and neither is ground.
 | --- | --- |
 | B3.1 | `+5V` to `+3V3` |
 | B3.2 | `+3V3` to `+3V3A` |
-| B3.3 | `+3V3A` to `+3V3D` |
+| B3.3 | ~~`+3V3A` to `+3V3D`~~ **DROP THIS ROW.** `+3V3D` does not exist, so this is identical to B3.2 |
 | B3.4 | `VOUT` to `+5V` |
 
-`+3V3`, `+3V3A` and `+3V3D` are **separate nets** and must not read as one.
+🔴 **There are TWO 3.3 V nets on this board, not three: `+3V3` and `+3V3A`.**
+They are separate and must not read as one.
+
+*`+3V3D` was never a net.* It appears only in prose: `connectors.md` describes
+J11 as carrying "3V3D + DGND", this runbook took that literally, and every
+generated sheet since has inherited a step for a rail that does not exist. It
+was descriptive shorthand for *the digital side of 3V3*. The same shorthand
+applies to DGND, which B4 already concedes is one net with AGND. Corrected
+2026-09-25, found while working out where to put the black lead.
 
 ## B4. Ground continuity
 
