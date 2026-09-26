@@ -171,7 +171,28 @@ scope: all five boards
 
     B2.6    +3V3A
             expect: J9 pin 1, J10 pin 1
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 99.5-99.9k  b2 99.5-99.9k  b3 99.5-99.9k  b4 99.5-99.9k  b5 99.5-99.9k
+            PASS all five, and PREDICTED FROM THE NETLIST BEFORE MEASURING.
+            Red J9.1, black J9.3. All five in 99.5-99.9k, a 0.4% spread.
+
+            🔴 THIS ROW VERIFIES COMPONENTS, NOT JUST THE ABSENCE OF A SHORT.
+            +3V3A carries two op-amp bias dividers to ground:
+                +3V3A -[R55 100k]- VBIAS_L -[R56 100k]- GND
+                +3V3A -[R59 100k]- VBIAS_R -[R60 100k]- GND
+            200k each, in parallel = 100k. So the reading confirms all FOUR
+            resistors present and correct on all five boards, and both dividers
+            intact. Diagnostic value if it had differed:
+                ~100k  both dividers intact
+                ~200k  one divider open
+                lower  something else conducting
+                OL     both open
+
+            ⚠️ METER NOTE, QUALIFIED. ~99k was predicted by applying the 1.1%
+            low bias seen on the 600 ohm and 6k ranges. Measured is only
+            0.1-0.5% below nominal. Either the network runs slightly high or the
+            meter is more accurate on this range. CANNOT BE SEPARATED from one
+            reading of a four-resistor network whose own combined tolerance is
+            ~0.7%. Recorded as a data point, NOT as a correction.
 
     B2.7    +3V3 AT THE FAR END  (sheet says +3V3D; THAT NET DOES NOT EXIST)
             expect: J11 pin 1, GND at J11 pin 10. Same net as B2.5: this checks

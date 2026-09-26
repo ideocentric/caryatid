@@ -48,6 +48,20 @@ instruments:
       points. It is a consistent observation, not a correction factor, and it
       should not be applied silently to readings.
 
+      ⚠️ A FOURTH POINT, 2026-09-25, THAT DOES NOT FIT THE 1.1% PATTERN. The
+      board's +3V3A bias network is a nominal 100k (two 200k divider branches
+      in parallel, R55/R56 and R59/R60, all 100k). Applying 1.1% predicted
+      ~99k. MEASURED 99.5-99.9k ON ALL FIVE BOARDS, i.e. only 0.1-0.5% low.
+
+      THIS CANNOT SEPARATE METER ERROR FROM PART TOLERANCE. Four 1% resistors
+      combine to roughly 0.7% on the network, which spans the whole
+      discrepancy. So it is EITHER a network running slightly high OR a meter
+      more accurate on the 600k range than on the lower two. Both are
+      consistent with the data and nothing here decides between them.
+
+      ⇒ DO NOT EXTEND THE 1.1% FIGURE ABOVE THE 6k RANGE. It was measured on
+      600 ohm and 6k and it is not supported at 600k.
+
     ohms_accuracy_first_actual_check_2026_09_22: >-
       A 1% 2k2 resistor READ 2174 OHM. A 1% part is 2178-2222, so the meter
       reads somewhere between 0.2% and 2.2% LOW on the 6.000 k range. That is
