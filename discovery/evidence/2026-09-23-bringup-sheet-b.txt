@@ -257,13 +257,44 @@ scope: all five boards
             against.
 
     B3.2    +3V3 to +3V3A
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 1.054M    b2 1.07M     b3 5.7M      b4 5.6M      b5 372.6k  
+            PASS all five. J5.1 (+3V3A) to J16.2 (+3V3), red on +3V3A.
+            OL in the reverse direction on b1; asymmetry as in B3.1.
+            15x SPREAD ACROSS FIVE BOARDS, in no pattern. Lowest is 37,000x
+            the gate.
+
+            🔴 THE SPREAD IS THE FINDING, BY CONTRAST WITH B2.6.
+                B2.6  set by a DESIGNED path (R55/R56, R59/R60)   0.4% spread
+                B3.2  set by LEAKAGE                               15x spread
+            WHEN A READING IS SET BY A DESIGNED PATH FIVE BOARDS AGREE TO A
+            FRACTION OF A PERCENT; WHEN IT IS SET BY LEAKAGE THEY SPREAD BY AN
+            ORDER OF MAGNITUDE. The spread tells you WHAT you are measuring
+            before you know anything else about it, and it explains why B2.6
+            was the only row that could verify components.
+
+            TWO HYPOTHESES RAISED AND BOTH FALSIFIED BY THE NEXT READING:
+              'b3 is a cleaner board'      killed by b4 matching b3
+              'it is a session-order effect' killed by b5 being LOWEST, last
+            Both were stated with a falsifier and both died cheaply. Recorded
+            because the pattern-spotting was wrong twice in a row on the same
+            row of data, which is what leakage data does to pattern-spotting.
+
+            ⚠️ b5 IS THE LOW ONE HERE AND ON B2.3. Low on 2 of 4 leakage rows,
+            normal on B2.4 and B3.1. Same weak pattern noted at B2.3; LOW is
+            the direction that matters. Still 37,000x clear. See B2.3's note.
 
     B3.3    DROP: +3V3D does not exist, so this repeats B3.2
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
 
     B3.4    VOUT to +5V
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 4M->      b2 <1M       b3 <1M       b4 <1M       b5 <1M     
+            PASS all five. J3.1 (VOUT) to J15.1 (+5V). Wanders, dropping
+            under 1M on every board; b1 started near 4M. Lowest excursion is
+            100,000x the gate.
+            EXPECTED TO BE THE LONGEST CURVE IN B3 and it was: this pair has
+            more bulk capacitance than any other row.
+                VOUT side  C3+C4+C5 = 30u
+                +5V  side  C7 = 100u, plus C6 22u on +5V_RAW behind FB1
 
   B4. Ground continuity
   ---------------------
