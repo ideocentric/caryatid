@@ -214,6 +214,15 @@ scope: all five boards
             depends on, and nothing in Phase B has confirmed it. For scale,
             J16.3 to J16.4 across the ground pour read 0.3 ohm.
 
+    B2.8    +3V3 continuity ACROSS the board  (added 2026-09-25)
+            expect: J16 pin 2 to J11 pin 1, ~0 ohm
+            b1 0.3-0.5   b2 0.3-0.5   b3 0.3-0.5   b4 0.3-0.5   b5 0.3-0.5
+            PASS all five. +3V3 DOES reach J11, so the digital bus has its
+            supply. Same order as the ground pour (J16.3-J16.4 = 0.3 ohm) and
+            mostly clip and contact rather than trace. Each J11 line carries
+            100 ohm in series, so half an ohm on the rail is negligible.
+            This is the check B2.7 was wrongly credited with performing.
+
   B3. Rail to rail
   ----------------
 
