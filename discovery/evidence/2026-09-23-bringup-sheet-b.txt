@@ -89,7 +89,11 @@ scope: all five boards
 
     B2.1    VIN_DC
             expect: J1
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 2.2M      b2 2.4M      b3 4.4M      b4 2.1M      b5 2.1M    
+            PASS all five. Red J1.1, black J1.2.
+            Curve identical on all five: starts ~40M, falls to just under 1M
+            over minutes, climbs back to 2.x M. NOT a fault: a fault does not
+            reproduce five times identically. Spread is noise at this scale.
 
     B2.2    VBAT
             expect: BT1 pads

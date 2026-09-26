@@ -432,10 +432,27 @@ defect on several boards is a batch fault, and a quick fix erases the evidence.
 Meter in resistance, probing at connector pins rather than fine-pitch parts.
 
 🔴 **The bulk capacitors will fool you.** C1-C6 are 10 to 22 µF and C7 is 100 µF.
-The meter's test current charges them, so a rail-to-ground reading **starts low
-and climbs**. That looks exactly like a short. **A real short sits at its value
-and does not move; a capacitor climbs.** Discharge the rail between readings or
-the next one starts where the last stopped.
+The meter's test current charges them, so a rail-to-ground reading **moves, for
+minutes**. Discharge the rail between readings or the next one starts where the
+last stopped.
+
+🔴 **The magnitude is the discriminator, NOT the shape of the curve.** This
+section used to say "a real short sits at its value and does not move; a
+capacitor climbs". **The second half is wrong.** Measured on all five boards
+2026-09-25, `VIN_DC` starts near **40 MΩ**, falls to just under **1 MΩ** over
+several minutes, then climbs back to **2.x MΩ**. It neither sits still nor
+simply climbs.
+
+**What is true is the first half.** A short reads its value immediately and does
+not move. So:
+
+> **A reading above ~1 kΩ at ANY point in the curve cannot be a short.**
+> Pass it and move on. Do not wait for it to settle.
+
+That is worth an evening across B2's 35 readings. The gate is 10 Ω, and waiting
+minutes to refine a number that passes by five orders of magnitude buys nothing.
+**Only a reading that stays genuinely low deserves patience**, and that is the
+one where you reverse the probes.
 
 **Probe one polarity first** (red on rail, black on GND). A high settled reading
 is a pass and needs nothing more. Reverse **only** where it reads low.
