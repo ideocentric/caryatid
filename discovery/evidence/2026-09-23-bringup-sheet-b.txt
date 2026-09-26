@@ -227,7 +227,34 @@ scope: all five boards
   ----------------
 
     B3.1    +5V to +3V3
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 1.5-1.7M  b2 1.5-1.7M  b3 1.5-1.7M  b4 1.5-1.7M  b5 1.5-1.7M
+            PASS all five. Red on +5V, black on +3V3: 1.5-1.7M. OL inverted.
+            NOT A BRIDGE, by six orders of magnitude. A solder bridge is
+            milliohms. This row exists to catch a bridge and it found none.
+
+            🔴 PREDICTED OL AND THAT WAS WRONG, FOR AN INSTRUCTIVE REASON.
+            The prediction asked "what component bridges these two nets" and
+            answered "nothing", which is TRUE and IRRELEVANT. Verified from the
+            netlist: U3's pins never touch +5V, and every resistor on either
+            rail ends at a signal that goes nowhere with the Seed absent.
+
+            NO TWO RAILS ON A REAL BOARD ARE EVER ISOLATED. Both are tied to
+            ground by their own decoupling, so any rail-to-rail reading sees
+            that path and returns leakage, not an open.
+
+            TWO CANDIDATE MECHANISMS, NOT DISTINGUISHED AND NOT WORTH
+            DISTINGUISHING:
+              1. +5V -[C7 100u]- GND -[C18 100n]- +3V3, series caps. C7 is a
+                 POLARISED ELECTROLYTIC, which would explain the asymmetry.
+              2. SURFACE LEAKAGE across adjacent pins. +5V and +3V3 sit on
+                 ADJACENT PINS of THREE connectors (J15/J16/J19 p1-p2), so the
+                 leakage path area is tripled. Flux residue or humidity does
+                 this at exactly megohm scale.
+            At 1.5M the rails pass ~3 uA between them in service. Negligible.
+
+            RECORDED AS A BASELINE: a future board reading MUCH lower here
+            would indicate contamination, and now there is a number to compare
+            against.
 
     B3.2    +3V3 to +3V3A
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
