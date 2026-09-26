@@ -322,8 +322,17 @@ them separates a board fault from a capsule fault, which one capsule cannot do.
 ## A8. Consumables
 
 - [ ] Bench supply, **5.00 V, limit 100 mA, CC not OCP**
-- [ ] Fluke 101, **clip leads**. Hand-held probes on a pad is how the hook switch
-      produced 27 kΩ from a piece of metal
+- [ ] Fluke 101, **clip leads**, and **Dupont connectors on connector pins** to
+      clip onto. Hand-held probes on a pad is how the hook switch produced 27 kΩ
+      from a piece of metal.
+      🔴 **The direction of a contact error FLIPS with the range, so neither
+      direction is reassuring:**
+      **low resistance** → poor contact adds series R → **reads HIGH**
+      (the hook switch, 27 kΩ from a short circuit).
+      **high resistance** → your body and surface leakage sit in **parallel** →
+      **reads LOW**. Measured 2026-09-25: B2.3 on board 1 read **195 kΩ**
+      hand-held and **0.59 MΩ** on clips, a 3× error, and it looked like a real
+      difference between boards until it was retested.
 - [ ] 10 Ω and 0.1 Ω shunts, 1 W or better
 - [ ] 6 shunts per board for JP1-JP6 (Sullins SPC02SYAN, in hand)
 - [ ] **BT1 holders and M3 screws.** Holders in hand; **screws still unsourced**,

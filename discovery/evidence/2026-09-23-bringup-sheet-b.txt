@@ -114,8 +114,14 @@ scope: all five boards
             WHERE IN THE CURVE each was sampled rather than a board difference,
             since these readings move over seconds to minutes and were sampled
             fast by design. Irrelevant to a 10 ohm gate either way.
-            WATCH: if b1 and b5 keep pairing on later rails it is real; if they
-            do not, it was timing. Costs nothing to notice.
+            !! RESOLVED SAME DAY, AND IT WAS NEITHER TIMING NOR THE BOARDS.
+            b1 RETESTED ON CLIPS with Dupont connectors on the pins: 0.59M,
+            matching b2/b3/b4. The 195k was HAND-HELD PROBE CONTACT, with the
+            body in parallel pulling the reading DOWN. b5's 190k is expected to
+            be the same artifact; retest on clips predicts ~0.58M.
+            => USE CLIPS. At megohms a poor contact reads LOW, the opposite
+               direction from the hook switch's 27k, so neither direction of
+               error is reassuring.
 
     B2.4    +5V
             expect: J16 pin 1, GND at J16 pin 3 or 4  (NOT J12: it has no ground pin)
