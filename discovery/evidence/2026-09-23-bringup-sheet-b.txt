@@ -108,7 +108,14 @@ scope: all five boards
 
     B2.3    VOUT
             expect: J3, J4
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 199k      b2 0.58M     b3 0.58M     b4 0.58M     b5 190k    
+            PASS all five. Red J3.1, black J3.4.
+            Splits 3-2: b2/b3/b4 at 0.58M, b1/b5 at ~195k. Almost certainly
+            WHERE IN THE CURVE each was sampled rather than a board difference,
+            since these readings move over seconds to minutes and were sampled
+            fast by design. Irrelevant to a 10 ohm gate either way.
+            WATCH: if b1 and b5 keep pairing on later rails it is real; if they
+            do not, it was timing. Costs nothing to notice.
 
     B2.4    +5V
             expect: J16 pin 1, GND at J16 pin 3 or 4  (NOT J12: it has no ground pin)
