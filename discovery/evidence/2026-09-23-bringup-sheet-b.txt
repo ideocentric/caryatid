@@ -257,71 +257,37 @@ scope: all five boards
             against.
 
     B3.2    +3V3 to +3V3A
-            b1 1.054M    b2 1.07M     b3 5.7M      b4 5.6M      b5 372.6k  
-            PASS all five. J5.1 (+3V3A) to J16.2 (+3V3), red on +3V3A.
-            OL in the reverse direction on b1; asymmetry as in B3.1.
-            15x SPREAD ACROSS FIVE BOARDS, in no pattern. Lowest is 37,000x
-            the gate.
+            expect: separate nets, not bridged
+            b1 5.6M      b2 5.6M      b3 5.7M      b4 5.6M      b5 5.6M    
+            PASS all five. J5.1 (+3V3A) to J16.2 (+3V3). UNIFORM, 2% SPREAD.
 
-            🔴 THE SPREAD IS THE FINDING, BY CONTRAST WITH B2.6.
-                B2.6  set by a DESIGNED path (R55/R56, R59/R60)   0.4% spread
-                B3.2  set by LEAKAGE                               15x spread
-            WHEN A READING IS SET BY A DESIGNED PATH FIVE BOARDS AGREE TO A
-            FRACTION OF A PERCENT; WHEN IT IS SET BY LEAKAGE THEY SPREAD BY AN
-            ORDER OF MAGNITUDE. The spread tells you WHAT you are measuring
-            before you know anything else about it, and it explains why B2.6
-            was the only row that could verify components.
+            🔴 EVERY EARLIER READING ON THIS ROW WAS AN ARTEFACT, AND SO WAS
+               EVERY CONCLUSION DRAWN FROM THEM.
+            CAUSE: the Dupont connector's exposed barrel, seated on J16 pin 2
+            (+3V3), was touching J16 pin 1 (+5V). That puts +5V in parallel
+            with +3V3 and adds a leakage path to +3V3A, pulling the reading
+            down. b5 read 372.6k, then 1.06M, then 5.6M as the contact was
+            progressively eliminated: THE SAME BOARD, 15x APART.
 
-            TWO HYPOTHESES RAISED AND BOTH FALSIFIED BY THE NEXT READING:
-              'b3 is a cleaner board'      killed by b4 matching b3
-              'it is a session-order effect' killed by b5 being LOWEST, last
-            Both were stated with a falsifier and both died cheaply. Recorded
-            because the pattern-spotting was wrong twice in a row on the same
-            row of data, which is what leakage data does to pattern-spotting.
-
-            🔴🔴 CAUSE FOUND 2026-09-26: THE PROBE WAS BRIDGING TO +5V.
-            The Dupont connector's exposed barrel, seated on J16 pin 2 (+3V3),
-            was touching J16 pin 1 (+5V). That puts +5V in parallel with +3V3
-            and adds a leakage path to +3V3A, pulling the reading DOWN.
-            b5 read 372.6k, then 1.06M, then 5.6M as the contact was
-            progressively eliminated. THE SAME BOARD, THREE TIMES, 15x apart.
-
-            => THE LOW READINGS ARE ARTEFACTS. b3 5.7M, b4 5.6M and b5 5.6M are
-               clean. b1 1.054M and b2 1.07M are PROBABLY THE SAME CONTACT and
-               WANT RETESTING; if they come back near 5.6M the row is uniform.
+            THREE EXPLANATIONS WERE PROPOSED AND ALL THREE WERE WRONG:
+              'b3 is a cleaner board'        killed by b4 matching b3
+              'it is a session-order effect' killed by b5 reading lowest, last
+              'leakage rows spread, designed paths do not'
+                                             killed by this row reading 2%
+            The third had already been written into the runbook as a general
+            rule before it was withdrawn.
 
             🔴 THE PROBE RECREATED THE FAULT B3 IS LOOKING FOR. J16 p1/p2 carry
             two different rails on adjacent pins, which is exactly the adjacency
             B3.1 tests for a solder bridge. Same for J15 and J19.
-            CONTAINED TO THIS ROW: B2.5 would have read ~392k instead of OL if
-            the same contact had occurred, and read OL on all five; B3.1 would
-            have read near zero and read 1.5M.
+            CONTAINED TO THIS ROW: B2.5 would have read ~392k instead of OL
+            under the same contact and read OL on all five; B3.1 would have read
+            near zero and read 1.5M.
 
-            (The note below was written before the cause was found.)
-            🔴 RETESTED SAME DAY AND MOST OF THE ABOVE DOES NOT SURVIVE.
-            b5 RETESTED: 1.06M, against 372.6k first time. A 3x DIFFERENCE ON
-            THE SAME BOARD. So the reading is not reproducible on one board and
-            NO BOARD-TO-BOARD COMPARISON HERE IS SUPPORTABLE.
-              WITHDRAWN: the 15x spread figure, the 2-2 / 3-2 grouping, and b5
-                         as a low outlier on this row. At 1.06M b5 sits with
-                         b1 and b2.
-              SURVIVES: the contrast with B2.6. A DESIGNED path gave 0.4%
-                        across five boards; leakage gives at best 3x on ONE.
-
-            ⇒ STOP COMPARING BOARDS ON LEAKAGE ROWS. They pass or they do not,
-              and the numbers carry no board-level information at better than
-              ~3x. Only rows set by DESIGNED paths can discriminate between
-              boards: B2.6's dividers, B2.4, B2.8's continuity. Those are
-              exactly the rows that came in tight.
-
-            THE TWO b5 ODDITIES NOW SEPARATE CLEANLY:
-              B2.3  190k, retested 190k    REPRODUCIBLE, still stands
-              B3.2  372.6k, retested 1.06M NOT reproducible, gone
-            B2.3 remains the only genuine board-level anomaly in the phase,
-            and it is the one that survived a retest.
-
-    B3.3    DROP: +3V3D does not exist, so this repeats B3.2
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            WHAT SURVIVES: the boards are consistent, which is the reassuring
+            result, and the rule now in the runbook: RETEST BEFORE THEORISING
+            ABOUT A DIFFERENCE BETWEEN BOARDS. Five numbers in a column look
+            like a dataset whether or not the measurement repeats.
 
     B3.4    VOUT to +5V
             b1 4M->      b2 <1M       b3 <1M       b4 <1M       b5 <1M     

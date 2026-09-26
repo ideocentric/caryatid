@@ -495,11 +495,21 @@ net-to-net at any connector with different rails on adjacent pins, confirm the
 probe touches **one pin only**. J15, J16 and J19 all carry `+5V` and `+3V3` on
 pins 1 and 2.
 
-**Do not compare boards on the megohm rows.** Board-to-board differences
-smaller than the measurement's own reproducibility carry no information, and
-two hypotheses about "which board is different" were raised and falsified by
-the next reading before the contact was found. **Every apparent difference
-between boards on those rows turned out to be the probe.**
+🔴 **RETEST BEFORE THEORISING ABOUT A DIFFERENCE BETWEEN BOARDS.** This is the
+rule that would have saved the whole episode, and it is the only one the
+evidence supports.
+
+On 2026-09-26 B3.2 produced a 15× spread across five boards. Three explanations
+were proposed in turn, each falsified by the next reading: *one board is
+cleaner*, then *it is a session-order effect*, then *leakage rows simply spread
+while designed paths do not*. **All three were wrong, and the data underneath
+them was an artefact of the probe.** Measured correctly the row reads
+**5.6-5.7 MΩ on all five boards, a 2% spread**, as tight as the designed-path
+row it was being contrasted against.
+
+**Five numbers in a column look like a dataset whether or not the measurement
+repeats.** One retest of one board costs thirty seconds and settles whether
+there is anything to explain. Do that first.
 
 **The spread tells you what you are measuring.** A row set by a **designed
 path** agrees across five boards to a fraction of a percent: B2.6's bias
