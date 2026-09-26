@@ -108,20 +108,36 @@ scope: all five boards
 
     B2.3    VOUT
             expect: J3, J4
-            b1 199k      b2 0.58M     b3 0.58M     b4 0.58M     b5 190k    
-            PASS all five. Red J3.1, black J3.4.
-            Splits 3-2: b2/b3/b4 at 0.58M, b1/b5 at ~195k. Almost certainly
-            WHERE IN THE CURVE each was sampled rather than a board difference,
-            since these readings move over seconds to minutes and were sampled
-            fast by design. Irrelevant to a 10 ohm gate either way.
-            !! RESOLVED SAME DAY, AND IT WAS NEITHER TIMING NOR THE BOARDS.
-            b1 RETESTED ON CLIPS with Dupont connectors on the pins: 0.59M,
-            matching b2/b3/b4. The 195k was HAND-HELD PROBE CONTACT, with the
-            body in parallel pulling the reading DOWN. b5's 190k is expected to
-            be the same artifact; retest on clips predicts ~0.58M.
-            => USE CLIPS. At megohms a poor contact reads LOW, the opposite
-               direction from the hook switch's 27k, so neither direction of
-               error is reassuring.
+            b1 0.59M     b2 0.58M     b3 0.58M     b4 0.58M     b5 190k    
+            PASS all five. Red J3.1, black J3.4. Gate is 10 ohm; the lowest of
+            these passes by 19,000x.
+
+            TWO CORRECTIONS, IN ORDER, BECAUSE BOTH ARE INSTRUCTIVE.
+
+            1. As first taken it looked like a 3-2 split, b1/b5 at ~195k against
+               b2/b3/b4 at 0.58M, and was noted as probably curve position.
+               b1 RETESTED ON CLIPS, with Dupont connectors on the pins: 0.59M.
+               THE 195k WAS HAND-HELD PROBE CONTACT. At megohms the body sits in
+               PARALLEL and pulls the reading DOWN, the opposite direction from
+               the hook switch's 27k, so NEITHER DIRECTION OF ERROR IS
+               REASSURING. Use clips. See A8.
+
+            2. b5 was predicted to be the same artifact. IT IS NOT.
+               b5 RETESTED ON CLIPS: STILL 190k. So the split is 4-1 and real:
+               b5 is genuinely ~3x lower than the other four.
+
+            WHAT b5 MIGHT BE: a ~280k parallel path would do it, which is
+            leakage scale. A cap on VOUT, or part variation in the bq24074 OUT
+            or U2 VIN pin. OR it may STILL be curve position, since reproducible
+            on b5 is not the same as compared like-for-like against the others.
+
+            🔴 NOT RESOLVED, AND DELIBERATELY NOT CHASED. Five orders of
+            magnitude from any threshold and nothing downstream depends on it.
+            IT IS THE FIRST THING TO LOOK AT IF BOARD 5 MISBEHAVES IN PHASE C.
+            Free discriminator: watch whether b5 runs low on B2.4-B2.7 too.
+                low on several rails  -> a board-level property
+                low only on VOUT      -> specific to that net
+                not low elsewhere     -> it was curve position after all
 
     B2.4    +5V
             expect: J16 pin 1, GND at J16 pin 3 or 4  (NOT J12: it has no ground pin)
