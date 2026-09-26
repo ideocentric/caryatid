@@ -141,7 +141,18 @@ scope: all five boards
 
     B2.4    +5V
             expect: J16 pin 1, GND at J16 pin 3 or 4  (NOT J12: it has no ground pin)
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 392k      b2 392.9k    b3 392k      b4 394k      b5 393k    
+            PASS all five. Red J16.1, black J16.3. All read at a CONSISTENT
+            2-MINUTE MARK. Curve: ~40M down to ~200k, back up to ~392k.
+
+            🔴 ALL FIVE WITHIN 0.5%. That is the result, and it bears on B2.3.
+               B2.3 VOUT, sampled FAST and inconsistently: 3x spread.
+               B2.4 +5V,  sampled CONSISTENTLY at 2 min: 0.5% spread.
+               THE SPREAD TRACKS THE SAMPLING METHOD, NOT THE BOARDS.
+            => b5 is NOT low here, so its B2.3 outlier is either specific to
+               VOUT or was curve position. Curve position is now much the more
+               likely, since consistently sampled boards agree to half a percent.
+            => CLOSES THE 'is b5 a board-level property' DISCRIMINATOR: it is not.
 
     B2.5    +3V3
             expect: J16 pin 2
