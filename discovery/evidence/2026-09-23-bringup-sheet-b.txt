@@ -197,7 +197,22 @@ scope: all five boards
     B2.7    +3V3 AT THE FAR END  (sheet says +3V3D; THAT NET DOES NOT EXIST)
             expect: J11 pin 1, GND at J11 pin 10. Same net as B2.5: this checks
                     the rail's continuity across the board, not a third rail.
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 OL        b2 OL        b3 OL        b4 OL        b5 OL      
+            PASS all five. Red J11.1, black J11.10. Consistent with B2.5,
+            which is the same net measured at J16.
+
+            🔴 BUT THIS DOES NOT TEST WHAT IT WAS REFRAMED TO TEST.
+            B2.7 was rewritten as 'the rail's continuity across the board'.
+            IT IS NOT. B2.5 and B2.7 each measure ONE END TO GROUND,
+            independently. Both reading OL proves neither end reaches ground; it
+            says NOTHING about whether J16.2 and J11.1 connect TO EACH OTHER.
+            TWO DISCONNECTED PINS WOULD READ EXACTLY THIS.
+
+            THE ACTUAL CONTINUITY TEST IS ONE READING, NOT YET TAKEN:
+                J16 pin 2  ->  J11 pin 1,  expect ~0 ohm
+            Worth having: +3V3 reaching J11 is what the whole digital bus
+            depends on, and nothing in Phase B has confirmed it. For scale,
+            J16.3 to J16.4 across the ground pour read 0.3 ohm.
 
   B3. Rail to rail
   ----------------

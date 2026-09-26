@@ -477,7 +477,8 @@ is a pass and needs nothing more. Reverse **only** where it reads low.
 | B2.4 | `+5V` | **J16 pin 1**, with GND at J16 pin 3 or 4. *(This said J12 pin 1 until 2026-09-25. **J12 has no ground pin**, pins 2-4 being the RGB cathodes, so a rail-to-ground reading there needs a ground found elsewhere. J16 carries both.)* |
 | B2.5 | `+3V3` | J16 pin 2 |
 | B2.6 | `+3V3A` | J9 pin 1, J10 pin 1 |
-| B2.7 | `+3V3` **at the far end** | J11 pin 1, GND at J11 pin 10. 🔴 *(This said `+3V3D` until 2026-09-25. **That net does not exist.** J11 pin 1 is on `+3V3`, the same net as B2.5. Keep the step: probing one rail at both ends of the board checks its continuity, which is a real check. It is not a third rail.)* |
+| B2.7 | `+3V3` **at the far end** | J11 pin 1, GND at J11 pin 10. 🔴 *(This said `+3V3D` until 2026-09-25. **That net does not exist.** J11 pin 1 is on `+3V3`, the same net as B2.5.)* |
+| B2.8 | 🔴 **`+3V3` continuity ACROSS the board** | **J16 pin 2 to J11 pin 1, ~0 Ω.** *Added 2026-09-25.* B2.7 was briefly justified as checking this. **It does not**: B2.5 and B2.7 each measure one end **to ground**, so both reading OL proves only that neither end reaches ground. **Two pins disconnected from each other would read exactly the same.** `+3V3` reaching J11 is what the whole digital bus depends on |
 
 🔴 **Gate: any rail under ~10 Ω settled in both polarities stops that board.**
 
