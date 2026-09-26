@@ -471,7 +471,7 @@ is a pass and needs nothing more. Reverse **only** where it reads low.
 
 | # | Rail | Reach it at |
 | --- | --- | --- |
-| B2.1 | `VIN_DC` | J1 |
+| B2.1 | `DC_IN` | J1 pin 1, GND at J1 pin 2. ⚠️ *(This said `VIN_DC` until 2026-09-26. **J1 does not carry `VIN_DC`**, which has no connector access at all: only C1.1, D1.1 and U1.13. The check is still valid, since red on J1 pin 1 forward-biases D1 and so reaches `VIN_DC` behind it, but the step named the wrong net.)* |
 | B2.2 | `VBAT` | BT1 pads |
 | B2.3 | `VOUT` | J3, J4 |
 | B2.4 | `+5V` | **J16 pin 1**, with GND at J16 pin 3 or 4. *(This said J12 pin 1 until 2026-09-25. **J12 has no ground pin**, pins 2-4 being the RGB cathodes, so a rail-to-ground reading there needs a ground found elsewhere. J16 carries both.)* |
@@ -553,8 +553,16 @@ short**: the ground stitching was one of the last things done to this board.
 
 | # | Do | Pass |
 | --- | --- | --- |
-| B5.1 | Diode test across D1 forward | **0.2 to 0.4 V.** A Schottky, *lower* than silicon's 0.6 V. Near 0.6-0.7 V means it is not the part you think |
+🔴 **Identify the pads from the BOARD, not from the package band.** This step
+tests whether D1 is oriented correctly, so using the band to decide which probe
+goes where assumes the answer. **Find the pad that reads ~0 Ω to J1 pin 1: that
+is `DC_IN`.** The other is `VIN_DC`.
+
+| # | Do | Pass |
+| --- | --- | --- |
+| B5.1 | Diode test, **red on the `DC_IN` pad**, black on `VIN_DC` | **0.2 to 0.4 V.** A Schottky, *lower* than silicon's 0.6 V. Near 0.6-0.7 V means it is not the part you think |
 | B5.2 | Reverse | open |
+| B5.3 | 🔴 **If B5.1 is open and B5.2 reads 0.2-0.4 V, D1 IS BACKWARDS** | must not happen |
 
 Reversed, D1 blocks the input instead of protecting it and the board never
 powers. That failure is silent and looks like a dead board.

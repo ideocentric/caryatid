@@ -304,7 +304,15 @@ scope: all five boards
 
     B4.1    J5 pin 10 to J11 pin 10
             expect: near 0 Ω
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 0.3       b2 0.3       b3 0.3       b4 0.3       b5 0.3     
+            PASS all five. GND label on J5 to GND label on J11, both pin 10.
+            IDENTICAL ON ALL FIVE and matching J16 p3-p4 (0.3) and the +3V3 run
+            across the board (0.3-0.5). Mostly clip and contact resistance.
+            A DESIGNED PATH: uniform, reproducible, and the number means
+            something. Contrast every megohm row in B2/B3.
+            ⚠️ J11 pin 9 is NC and sits immediately beside pin 10. Probing it
+            reads open, which this step scores as a FAULT. The silkscreen GND
+            label IS pin 10.
 
   B5. D1 orientation
   ------------------
