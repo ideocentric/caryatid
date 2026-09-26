@@ -97,7 +97,14 @@ scope: all five boards
 
     B2.2    VBAT
             expect: BT1 pads
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            Red BT1.1, black BT1.2. Same behaviour on all five: starts ~30M,
+            dips to ~11k, climbs back, whole excursion ~8 seconds. Far shorter
+            RC than B2.1's minutes. 11k is the lowest excursion so far and is
+            the BOTTOM OF A TRANSIENT, not a settled value: 1100x the gate.
+            NOTE b1 was probed at its FITTED holder's terminals, b2-b5 at bare
+            pads, and they behave identically => the hand-soldered BT1
+            introduces nothing detectable on this rail.
 
     B2.3    VOUT
             expect: J3, J4
