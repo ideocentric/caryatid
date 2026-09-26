@@ -572,11 +572,17 @@ powers. That failure is silent and looks like a dead board.
 40 joints across A1 and A2. Where a bridge is most likely and most expensive,
 because the part you would destroy plugs into it.
 
+✅ **Every beep is a fault.** Verified from the netlist 2026-09-26: **no
+adjacent pins share a net on either socket**, so there are no legitimate
+connections to filter out. Use **continuity/beep mode** and walk the row, moving
+one probe at a time: 19 steps per socket. A1 is pins 1-20 and A2 is 21-40, with
+GND on A1.20 and A2.40 if you want a known-good sanity beep first.
+
 | # | Do |
 | --- | --- |
 | B6.1 | No adjacent pins bridged, A1 |
 | B6.2 | No adjacent pins bridged, A2 |
-| B6.3 | A1 row not shorted to A2 row |
+| B6.3 | A1 row not shorted to A2 row. 🔴 **This is a VISUAL check, and it is mostly already done.** Any cross-gap bridge joining two **rails** would have shown in B2 or B3, since A2 carries `+5V` (39), `+3V3` (38), `+3V3A` (21) and `GND` (40) and every rail combination passed. What remains is **signal-to-signal** bridges across the ~17 mm gap, which neither B2/B3 nor the adjacent-pin walk can see. Look, under magnification |
 
 🔴 **Gate: all five boards pass B1 to B6 before any board is powered.**
 

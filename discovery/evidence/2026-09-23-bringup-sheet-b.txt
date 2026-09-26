@@ -334,7 +334,11 @@ scope: all five boards
 
     B5.2    Reverse
             expect: open
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 OL        b2 OL        b3 OL        b4 OL        b5 OL      
+            PASS all five. Probes reversed. Rules out a SHORTED D1, which
+            would read near 0.197 V in both directions.
+            => B5 COMPLETE. D1 is a Schottky, correctly oriented, not shorted,
+               on all five boards. B5.3's backwards case did not occur.
 
   B6. Seed socket
   ---------------
