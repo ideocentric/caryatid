@@ -482,11 +482,24 @@ is a pass and needs nothing more. Reverse **only** where it reads low.
 
 🔴 **Gate: any rail under ~10 Ω settled in both polarities stops that board.**
 
-🔴 **Do not compare boards on the megohm rows.** Measured 2026-09-26: the same
-board gave **372.6 kΩ and then 1.06 MΩ** on a repeat of the same measurement. A
-3× difference on one board means board-to-board differences smaller than that
-carry no information, and two hypotheses about "which board is different" were
-raised and falsified by the next reading before that was understood.
+🔴 **THE PROBE CAN BRIDGE THE ADJACENT PINS THIS PHASE IS LOOKING FOR A BRIDGE
+BETWEEN.** Found 2026-09-26. J16 carries `+5V` on pin 1 and `+3V3` on pin 2,
+**adjacent**, and that is exactly the adjacency B3.1 exists to check. A Dupont
+connector's exposed barrel seated on pin 2 **touched pin 1**, putting `+5V` in
+parallel with `+3V3` and pulling B3.2's reading down by 5×: the same board read
+**372.6 kΩ, then 1.06 MΩ, then 5.6 MΩ** as the contact was progressively
+eliminated.
+
+**The measurement tool recreated the fault it was looking for.** Before probing
+net-to-net at any connector with different rails on adjacent pins, confirm the
+probe touches **one pin only**. J15, J16 and J19 all carry `+5V` and `+3V3` on
+pins 1 and 2.
+
+**Do not compare boards on the megohm rows.** Board-to-board differences
+smaller than the measurement's own reproducibility carry no information, and
+two hypotheses about "which board is different" were raised and falsified by
+the next reading before the contact was found. **Every apparent difference
+between boards on those rows turned out to be the probe.**
 
 **The spread tells you what you are measuring.** A row set by a **designed
 path** agrees across five boards to a fraction of a percent: B2.6's bias

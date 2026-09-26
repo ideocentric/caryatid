@@ -279,6 +279,25 @@ scope: all five boards
             because the pattern-spotting was wrong twice in a row on the same
             row of data, which is what leakage data does to pattern-spotting.
 
+            🔴🔴 CAUSE FOUND 2026-09-26: THE PROBE WAS BRIDGING TO +5V.
+            The Dupont connector's exposed barrel, seated on J16 pin 2 (+3V3),
+            was touching J16 pin 1 (+5V). That puts +5V in parallel with +3V3
+            and adds a leakage path to +3V3A, pulling the reading DOWN.
+            b5 read 372.6k, then 1.06M, then 5.6M as the contact was
+            progressively eliminated. THE SAME BOARD, THREE TIMES, 15x apart.
+
+            => THE LOW READINGS ARE ARTEFACTS. b3 5.7M, b4 5.6M and b5 5.6M are
+               clean. b1 1.054M and b2 1.07M are PROBABLY THE SAME CONTACT and
+               WANT RETESTING; if they come back near 5.6M the row is uniform.
+
+            🔴 THE PROBE RECREATED THE FAULT B3 IS LOOKING FOR. J16 p1/p2 carry
+            two different rails on adjacent pins, which is exactly the adjacency
+            B3.1 tests for a solder bridge. Same for J15 and J19.
+            CONTAINED TO THIS ROW: B2.5 would have read ~392k instead of OL if
+            the same contact had occurred, and read OL on all five; B3.1 would
+            have read near zero and read 1.5M.
+
+            (The note below was written before the cause was found.)
             🔴 RETESTED SAME DAY AND MOST OF THE ABOVE DOES NOT SURVIVE.
             b5 RETESTED: 1.06M, against 372.6k first time. A 3x DIFFERENCE ON
             THE SAME BOARD. So the reading is not reproducible on one board and
