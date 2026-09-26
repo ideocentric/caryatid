@@ -482,6 +482,19 @@ is a pass and needs nothing more. Reverse **only** where it reads low.
 
 🔴 **Gate: any rail under ~10 Ω settled in both polarities stops that board.**
 
+🔴 **Do not compare boards on the megohm rows.** Measured 2026-09-26: the same
+board gave **372.6 kΩ and then 1.06 MΩ** on a repeat of the same measurement. A
+3× difference on one board means board-to-board differences smaller than that
+carry no information, and two hypotheses about "which board is different" were
+raised and falsified by the next reading before that was understood.
+
+**The spread tells you what you are measuring.** A row set by a **designed
+path** agrees across five boards to a fraction of a percent: B2.6's bias
+dividers came in at 99.5-99.9 kΩ, a 0.4% spread, and that row genuinely
+verifies four resistors on every board. A row set by **leakage** spreads by an
+order of magnitude and verifies nothing but the absence of a short. Use the
+first kind to compare boards; use the second only against the gate.
+
 ## B3. Rail to rail
 
 A bridge between adjacent connector pins shows here and not in B2, because both

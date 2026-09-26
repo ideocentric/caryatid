@@ -279,9 +279,27 @@ scope: all five boards
             because the pattern-spotting was wrong twice in a row on the same
             row of data, which is what leakage data does to pattern-spotting.
 
-            ⚠️ b5 IS THE LOW ONE HERE AND ON B2.3. Low on 2 of 4 leakage rows,
-            normal on B2.4 and B3.1. Same weak pattern noted at B2.3; LOW is
-            the direction that matters. Still 37,000x clear. See B2.3's note.
+            🔴 RETESTED SAME DAY AND MOST OF THE ABOVE DOES NOT SURVIVE.
+            b5 RETESTED: 1.06M, against 372.6k first time. A 3x DIFFERENCE ON
+            THE SAME BOARD. So the reading is not reproducible on one board and
+            NO BOARD-TO-BOARD COMPARISON HERE IS SUPPORTABLE.
+              WITHDRAWN: the 15x spread figure, the 2-2 / 3-2 grouping, and b5
+                         as a low outlier on this row. At 1.06M b5 sits with
+                         b1 and b2.
+              SURVIVES: the contrast with B2.6. A DESIGNED path gave 0.4%
+                        across five boards; leakage gives at best 3x on ONE.
+
+            ⇒ STOP COMPARING BOARDS ON LEAKAGE ROWS. They pass or they do not,
+              and the numbers carry no board-level information at better than
+              ~3x. Only rows set by DESIGNED paths can discriminate between
+              boards: B2.6's dividers, B2.4, B2.8's continuity. Those are
+              exactly the rows that came in tight.
+
+            THE TWO b5 ODDITIES NOW SEPARATE CLEANLY:
+              B2.3  190k, retested 190k    REPRODUCIBLE, still stands
+              B3.2  372.6k, retested 1.06M NOT reproducible, gone
+            B2.3 remains the only genuine board-level anomaly in the phase,
+            and it is the one that survived a retest.
 
     B3.3    DROP: +3V3D does not exist, so this repeats B3.2
             b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
