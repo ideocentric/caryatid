@@ -628,7 +628,7 @@ supply, not a reason to raise it.
 | C1.1 | **The CV / CC indicator**, not the current number | **CV lit.** 🔴 *Do not trust the supply's mA display here: `bench-instruments` records that it reads amps well and milliamps badly, and at 15 mA on a 5 A range the error is comparable to the quantity. **CV versus CC is a binary and is all this step needs.** If a number is wanted, put the 10 Ω shunt in the supply lead.* |
 | C1.2 | `VOUT` at J3 or J4 | present, stable, below the input, around 4.4 to 4.5 V |
 | C1.3 | `/PGOOD`, **J4 pin 3 to J4 pin 4** | **near 0 V** = asserted. 🔴 *`/PGOOD` reaches J4 pin 3 through R10, and with no LED fitted **nothing pulls that node up**. So not-asserted **floats** rather than sitting at `VOUT`, and a floating node reads anything. **Only the low reading is meaningful.*** |
-| C1.4 | `+5V` at J12 pin 1 | 🔴 **dead, and that is correct** |
+| C1.4 | `+5V` at **J16 pin 1, GND at J16 pin 3** | 🔴 **dead, and that is correct** *(said J12 pin 1 until 2026-09-27; **J12 has no ground pin**, pins 2-4 being the RGB cathodes)* |
 | C1.5 | Board temperature by hand | nothing warm. A warm QFN with no load is a fault |
 
 ### C1.4 is the step people fail
@@ -645,7 +645,7 @@ Still no cell, still no Seed.
 | # | Do | Expect |
 | --- | --- | --- |
 | C2.1 | Fit the **J3 bare link** (A6.2), pins 1 to 2 | |
-| C2.2 | `+5V` at J12 pin 1 | **4.954 V nominal**, accept **4.744 to 5.168 V** |
+| C2.2 | `+5V` at **J16 pin 1, GND at J16 pin 3** | **4.954 V nominal**, accept **4.744 to 5.168 V** *(said J12 pin 1 until 2026-09-27, same reason as C1.4)* |
 | C2.3 | `+5V` at J15, J16, J19 | same, within meter resolution |
 | C2.4 | Across FB1 | tens of mV at most |
 | C2.5 | Supply current | risen, modest with no load |

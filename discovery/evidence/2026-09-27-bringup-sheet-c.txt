@@ -42,8 +42,9 @@ scope: one board, and **choose it deliberately**
                     meaningful.
             reading: ......................
 
-    C1.4    +5V at J12 pin 1
-            expect: !! dead, and that is correct
+    C1.4    +5V at J16 pin 1, GND at J16 pin 3
+            expect: !! dead, and that is correct (said J12 pin 1 until 2026-09-27; J12 has no
+                    ground pin, pins 2-4 being the RGB cathodes)
             reading: ......................
 
     C1.5    Board temperature by hand
@@ -56,8 +57,9 @@ scope: one board, and **choose it deliberately**
     C2.1    Fit the J3 bare link (A6.2), pins 1 to 2
             reading: ......................
 
-    C2.2    +5V at J12 pin 1
-            expect: 4.954 V nominal, accept 4.744 to 5.168 V
+    C2.2    +5V at J16 pin 1, GND at J16 pin 3
+            expect: 4.954 V nominal, accept 4.744 to 5.168 V (said J12 pin 1 until 2026-09-27,
+                    same reason as C1.4)
             reading: ......................
 
     C2.3    +5V at J15, J16, J19
