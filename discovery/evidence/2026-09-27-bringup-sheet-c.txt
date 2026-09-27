@@ -1,0 +1,148 @@
+caryatid bring-up tally sheet
+====================================================================================================
+
+  GENERATED 2026-09-27 from docs/bringup.md by tools/gen_bringup_sheet.py.
+  BLANK. Nothing below is a result yet.
+
+  DO NOT EDIT THE RUNBOOK TO RECORD A READING, and do not hand-edit this
+  sheet's structure. Fix the runbook, regenerate, and the two stay in step.
+
+  Board: ............   Operator: ............   Started: ............
+
+  Instruments (per discovery/findings/bench-instruments.yaml):
+    meter  Fluke 101, NO current ranges. Current is a shunt voltage.
+    supply Jesverty 0-30 V 0-5 A, CC/OCP selectable.
+    shunts 10 ohm for mA, 0.1 ohm for ~1 A.
+
+
+====================================================================================================
+PHASE C: POWER
+scope: one board, and **choose it deliberately**
+====================================================================================================
+
+  C1. First power
+  ---------------
+
+    C1.1    The CV / CC indicator, not the current number
+            expect: CV lit. !! Do not trust the supply's mA display here: bench-instruments
+                    records that it reads amps well and milliamps badly, and at 15 mA on a 5 A
+                    range the error is comparable to the quantity. CV versus CC is a binary and
+                    is all this step needs. If a number is wanted, put the 10 Ω shunt in the
+                    supply lead.
+            reading: ......................
+
+    C1.2    VOUT at J3 or J4
+            expect: present, stable, below the input, around 4.4 to 4.5 V
+            reading: ......................
+
+    C1.3    /PGOOD, J4 pin 3 to J4 pin 4
+            expect: near 0 V = asserted. !! /PGOOD reaches J4 pin 3 through R10, and with no LED
+                    fitted nothing pulls that node up. So not-asserted floats rather than
+                    sitting at VOUT, and a floating node reads anything. Only the low reading is
+                    meaningful.
+            reading: ......................
+
+    C1.4    +5V at J12 pin 1
+            expect: !! dead, and that is correct
+            reading: ......................
+
+    C1.5    Board temperature by hand
+            expect: nothing warm. A warm QFN with no load is a fault
+            reading: ......................
+
+  C2. The boost
+  -------------
+
+    C2.1    Fit the J3 bare link (A6.2), pins 1 to 2
+            reading: ......................
+
+    C2.2    +5V at J12 pin 1
+            expect: 4.954 V nominal, accept 4.744 to 5.168 V
+            reading: ......................
+
+    C2.3    +5V at J15, J16, J19
+            expect: same, within meter resolution
+            reading: ......................
+
+    C2.4    Across FB1
+            expect: tens of mV at most
+            reading: ......................
+
+    C2.5    Supply current
+            expect: risen, modest with no load
+            reading: ......................
+
+    C2.6    U2 and L1 by hand
+            expect: warm acceptable, hot is not
+            reading: ......................
+
+  C3. BT1 and the cell
+  --------------------
+
+    C3.1    Solder BT1, then repeat B2.2 for VBAT
+            expect: no short. You just added two joints to a rail a cell will drive
+            reading: ......................
+
+    C3.2    Cell open-circuit voltage before fitting
+            expect: 3.0 to 4.2 V, note it
+            reading: ......................
+
+    C3.3    Seat the cell, watching orientation
+            expect: seats without forcing. Fit confirmed 2026-09-01
+            reading: ......................
+
+    C3.4    VBAT at the holder
+            expect: matches C3.2
+            reading: ......................
+
+    C3.5    Supply out, check VOUT
+            expect: alive, running from the cell
+            reading: ......................
+
+    C3.6    J3 link on, check +5V
+            expect: inside the band, now boosted from the cell
+            reading: ......................
+
+  C4. Charging
+  ------------
+
+    C4.1    !! Raise the supply limit to 1.5 A, still 5.00 V
+            expect: the charger needs far more than 100 mA
+            reading: ......................
+
+    C4.2    Supply in, cell fitted, partially discharged
+            expect: /CHG asserts at J4
+            reading: ......................
+
+    C4.3    Charge current, off the supply display
+            expect: 0.90 to 1.10 A. Cross-check with the 0.1 Ω if marginal
+            reading: ......................
+
+    C4.4    VBAT over some minutes
+            expect: rising
+            reading: ......................
+
+    C4.5    Total input current
+            expect: under the 1.29 A input limit
+            reading: ......................
+
+    C4.6    U1 case after ten minutes steady
+            expect: warm, not hot. Closes charger-input-voltage-thermal
+            reading: ......................
+
+  NOTES / what this phase got wrong:
+  ..............................................................................
+  ..............................................................................
+
+
+====================================================================================================
+WHAT WAS NOT TESTED. Fill this in, do not leave it blank.
+====================================================================================================
+
+  Ripple, switching, inrush, debounce timing and audio quality are out of
+  reach with this kit. Anything else you skipped goes here, so the record
+  does not read as though it passed.
+
+  ..............................................................................
+  ..............................................................................
+

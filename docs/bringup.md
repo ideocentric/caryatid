@@ -590,7 +590,18 @@ GND on A1.20 and A2.40 if you want a known-good sanity beep first.
 
 # Phase C: Power
 
-> **Scope:** board 1
+> **Scope:** one board, and **choose it deliberately**
+
+🔴 **This scope said "board 1" until 2026-09-27, and board 1 is now the practice
+board**: rails snapped, BT1 hand-fitted, results recorded as informative rather
+than authoritative. See
+[`board-identity-and-condition`](../discovery/findings/board-identity-and-condition.yaml).
+
+**Prefer a pristine board.** The destruction risk here is low, since C1 and C2
+both run behind a 100 mA limit, while **C2 settles U2's rotation and that is a
+batch question**. An ambiguous answer there costs more than a board. Keep board 1
+in reserve for something genuinely risky, and **write the board number on the
+sheet.**
 
 ## C1. First power
 
@@ -614,9 +625,9 @@ supply, not a reason to raise it.
 
 | # | Measure | Expect |
 | --- | --- | --- |
-| C1.1 | Supply current at idle | a few mA, **CV** lit |
+| C1.1 | **The CV / CC indicator**, not the current number | **CV lit.** 🔴 *Do not trust the supply's mA display here: `bench-instruments` records that it reads amps well and milliamps badly, and at 15 mA on a 5 A range the error is comparable to the quantity. **CV versus CC is a binary and is all this step needs.** If a number is wanted, put the 10 Ω shunt in the supply lead.* |
 | C1.2 | `VOUT` at J3 or J4 | present, stable, below the input, around 4.4 to 4.5 V |
-| C1.3 | `/PGOOD` at J4 | asserted |
+| C1.3 | `/PGOOD`, **J4 pin 3 to J4 pin 4** | **near 0 V** = asserted. 🔴 *`/PGOOD` reaches J4 pin 3 through R10, and with no LED fitted **nothing pulls that node up**. So not-asserted **floats** rather than sitting at `VOUT`, and a floating node reads anything. **Only the low reading is meaningful.*** |
 | C1.4 | `+5V` at J12 pin 1 | 🔴 **dead, and that is correct** |
 | C1.5 | Board temperature by hand | nothing warm. A warm QFN with no load is a fault |
 
