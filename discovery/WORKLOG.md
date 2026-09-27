@@ -1805,3 +1805,63 @@ capacitors: C1-C6 are 10-22 µF and C7 is 100 µF, so a rail-to-ground reading
 at its value and does not move; a capacitor climbs.** Discharge between readings.
 Probe one polarity first and reverse only where it reads low. Gate: any rail
 under ~10 Ω settled in **both** polarities stops that board.
+
+## 2026-09-27: PHASE B COMPLETE. All five boards pass B1 to B6, no board faults
+
+**Completed:**
+
+- **B4.1** ground continuity, **0.3 Ω identical on all five**, matching J16 p3-p4
+  and the `+3V3` run across the board.
+- **B5** D1: **0.197 V forward, OL reverse, all five.** A Schottky, correctly
+  oriented, not shorted. B5.3's backwards case did not occur.
+- **B6** Seed socket: no adjacent pins bridged on A1 or A2, no cross-gap short,
+  all five. **The gate is open and a board may be powered.**
+
+**🔴 ZERO DEFECTS IN THE FABRICATED ARTICLES.** Five boards, six sections,
+nothing wrong with any of them.
+
+**What Phase B actually caught was the runbook.** One design fault and about a
+dozen documentation and method faults:
+
+| | |
+| --- | --- |
+| design | **J13 faces into the board.** Recorded, not fixed, does not gate this build |
+| nets that never existed | **`+3V3D`**, named in three steps |
+| wrong probe points | `VIN_DC` named at J1 which does not carry it; B2.4 sent to J12 which has no ground pin; B4.1 silent on J11 pin 9 being `NC` beside pin 10, which reads open and scores as a **fault** |
+| wrong attributions | B1.9 credited J5/J11 as absonus reuses; they are stock parts, and **J13, which was wrong, was on the real list** |
+| wrong method | "a capacitor climbs" (it does not: **magnitude**, not shape, is the discriminator); the clip warning covered only contact reading **high**, when at megohms the body sits in parallel and reads **low**; B5 was package-referenced when it must be board-referenced or it assumes the orientation it tests |
+
+**🔴 The measurement kept being the finding.** Four separate contact errors, and
+**every apparent difference between boards on the megohm rows turned out to be
+the probe** — culminating in a Dupont barrel on J16 pin 2 touching pin 1, which
+bridged the adjacent rails that B3.1 exists to check for a bridge. **The tool
+recreated the fault it was looking for.**
+
+I proposed three explanations for that spread in turn, each falsified by the
+next reading rather than by scepticism about the data, and the third reached the
+runbook as a general rule before being withdrawn. The rule that replaced it is
+the only one the evidence supports: **retest before theorising about a
+difference between boards.** Five numbers in a column look like a dataset
+whether or not the measurement repeats.
+
+**In flight:** nothing. **No board has been powered at any point.**
+
+**Open questions, all carried deliberately:**
+
+- **U2's placement rotation**, `in-progress`. Placement is uniform across the
+  batch. **C2 settles it**: a rotated boost does not start, and C1's 100 mA
+  limit makes that a diagnosis rather than a casualty.
+- **Board 5, B2.3**: 190 kΩ against 0.58 MΩ, retested and reproducible. The only
+  board-level anomaly that survived. First thing to look at if b5 misbehaves.
+- **Board 1 is the practice board**: rails snapped, BT1 hand-fitted. Its results
+  are informative, not authoritative.
+- **J13's fix** deferred to a future revision, with the rotate-alone trap
+  recorded: the pad order reverses, so the routing must be reworked or the Qwiic
+  pinout ends up mirrored, which is worse than the present fault.
+
+**Next step:** **Phase C, C1 first power.** Read the instrument-error table in
+`status.md` first: the supply's CC is offset **+3.53 mA**, so a wanted current
+must be set 3.5 mA low, and it cannot deliver below ~3.5 mA at all. Generate a
+Phase C sheet with `tools/gen_bringup_sheet.py --phase C` **before** starting,
+since the generator's "edit the runbook, regenerate" flow works before a phase
+and not mid-phase.

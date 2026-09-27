@@ -344,13 +344,20 @@ scope: all five boards
   ---------------
 
     B6.1    No adjacent pins bridged, A1
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            No adjacent pins bridged on A1. Continuity walk, 19 pairs.
+            Every beep would be a fault: no adjacent pins share a net.
 
     B6.2    No adjacent pins bridged, A2
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            No adjacent pins bridged on A2. Same walk.
 
     B6.3    A1 row not shorted to A2 row
-            b1 ........  b2 ........  b3 ........  b4 ........  b5 ........
+            b1 PASS      b2 PASS      b3 PASS      b4 PASS      b5 PASS    
+            A1 row not shorted to A2 row. Visual across the ~17 mm gap.
+            Rail-to-rail cases were already excluded by B2 and B3 passing.
+
+            🔴 GATE OPEN. All five boards pass B1 to B6. A board may be powered.
 
   NOTES / what this phase got wrong:
   ..............................................................................
@@ -368,3 +375,48 @@ WHAT WAS NOT TESTED. Fill this in, do not leave it blank.
   ..............................................................................
   ..............................................................................
 
+
+
+====================================================================================================
+PHASE B COMPLETE, 2026-09-27. ALL FIVE BOARDS PASS B1 TO B6.
+====================================================================================================
+
+  NO BOARD FAULTS WERE FOUND ON ANY OF THE FIVE.
+
+  🔴 WHAT PHASE B ACTUALLY CAUGHT WAS THE RUNBOOK, NOT THE BOARDS.
+  One design fault and around a dozen documentation and method faults,
+  against zero defects in the fabricated articles.
+
+  DESIGN
+    J13 faces into the board. Recorded, not fixed. Does not gate this build.
+
+  NETS AND PROBE POINTS THAT WERE WRONG
+    +3V3D  named in three steps and NEVER EXISTED as a net
+    VIN_DC  B2.1 named it at J1, which does not carry it
+    B2.4    sent you to J12, which has no ground pin
+    B1.9    attributed absonus reuse to J5/J11, which are stock parts
+    B4.1    J11 pin 9 is NC and sits beside pin 10; probing it reads open,
+            which that step scores as a FAULT
+
+  METHOD THAT WAS WRONG
+    'a capacitor climbs'  it does not; the curve is non-monotonic.
+                          MAGNITUDE is the discriminator, not shape.
+    clip-lead warning     covered only contact reading HIGH. At megohms the
+                          body sits in PARALLEL and reads LOW.
+    B5                    was package-referenced; it must be board-referenced,
+                          or it assumes the orientation it is testing.
+    board comparison      every apparent difference between boards on the
+                          megohm rows was THE PROBE. Retest before theorising.
+
+  THE PROBE RECREATED THE FAULT B3 LOOKS FOR: a Dupont barrel on J16 pin 2
+  touching pin 1, bridging the adjacent rails that B3.1 exists to check.
+
+  CARRIED FORWARD
+    U2 orientation   deliberately unresolved. C2 settles it: a rotated boost
+                     does not start, and C1's 100 mA limit makes that a
+                     diagnosis rather than a casualty.
+    b5 on B2.3       190k against 0.58M, retested and reproducible. The ONLY
+                     board-level anomaly that survived. First thing to look at
+                     if board 5 misbehaves in Phase C.
+    board 1          the practice board: rails SNAPPED, BT1 hand-fitted. Its
+                     results are informative, not authoritative.

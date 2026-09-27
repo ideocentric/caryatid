@@ -4,10 +4,34 @@ Where the board is, and what happens next. Read this first.
 
 ## ▶ RESUME HERE: 2026-09-23
 
-**Five boards are in hand and nothing has been powered.** That has been true
-since they arrived on 2026-09-01, and it is still the headline. What has changed
-since is that **every part that plugs into them has now been measured**, and so
-have the instruments doing the measuring.
+**Five boards are in hand, all five have passed Phase B, and nothing has been
+powered yet.** Phase B completed 2026-09-27 with **no board faults on any of the
+five**. Every part that plugs into them has been measured, and so have the
+instruments doing the measuring.
+
+🔴 **The next step is Phase C: first power.** Nothing in this repo has yet seen
+a volt.
+
+### Phase B: all five passed, and it caught the runbook rather than the boards
+
+**Zero defects in the fabricated articles.** What B1 to B6 actually found was one
+design fault and about a dozen documentation and method faults:
+
+| | |
+| --- | --- |
+| **design** | J13 faces into the board. Recorded, not fixed, does not gate this build |
+| **nets that did not exist** | `+3V3D` was named in three steps and is not a net |
+| **probe points that were wrong** | B2.1 named `VIN_DC` at J1, which does not carry it; B2.4 sent you to J12, which has no ground pin; B4.1 did not warn that J11 pin 9 is `NC` and sits beside pin 10 |
+| **method that was wrong** | "a capacitor climbs" (it does not, and **magnitude** is the discriminator, not shape); the clip-lead warning covered only one direction of contact error; B5 was package-referenced when it must be board-referenced |
+| **the measurement itself** | **every apparent difference between boards on the megohm rows turned out to be the probe**, including a Dupont barrel bridging the adjacent rails that B3.1 exists to check |
+
+**Carried into Phase C:** U2's placement rotation is deliberately unresolved and
+**C2 settles it**, since a rotated boost does not start and C1's 100 mA limit
+makes that a diagnosis rather than a casualty. Board 5's B2.3 reading of 190 kΩ
+against 0.58 MΩ is the only board-level anomaly that survived a retest and is the
+first thing to look at if board 5 misbehaves. **Board 1 is the practice board**,
+with snapped rails and a hand-fitted BT1, so its results are informative rather
+than authoritative.
 
 ### Phase A component checks: all six passed
 
@@ -109,9 +133,11 @@ pairs before assembly rather than trusting the one that was tried.
 
 ### What is left now
 
-1. **Bring up a board.** Nothing in this repo has been powered, and Phase A's
-   component work is finished, so this is the next real step. Phase B is where a
-   board sees voltage for the first time.
+1. **Phase C, first power.** Phases A and B are complete on all five boards and
+   nothing in this repo has been powered. **This is the next step.** 🔴 Read the
+   instrument-error table above before taking a single reading: the supply's CC
+   is offset **+3.53 mA** and the meter reads **~1.1% low** on resistance below
+   the 6 kΩ range.
 2. **Screws for the battery holders**, the only part still unsourced. M3, and
    the length wants the holder measured rather than guessed. **Blocks C3 only**,
    so it does not gate Phase B. See `bt1-cell-fit`.
