@@ -1865,3 +1865,87 @@ must be set 3.5 mA low, and it cannot deliver below ~3.5 mA at all. Generate a
 Phase C sheet with `tools/gen_bringup_sheet.py --phase C` **before** starting,
 since the generator's "edit the runbook, regenerate" flow works before a phase
 and not mid-phase.
+
+## 2026-09-28: checkpoint. Phase B done, Phase C prepared and not started
+
+**READ THIS FIRST ON RESUMING.** Nothing in this repo has been powered. Phase C
+is prepared but not begun.
+
+**Completed:**
+
+- **PHASE B COMPLETE**, all five boards pass B1 to B6, **no board faults found**.
+  What it caught was one design fault (J13) and about a dozen documentation and
+  method faults. Full summary at the foot of
+  `discovery/evidence/2026-09-23-bringup-sheet-b.txt`.
+- **Phase C sheet generated and blank**:
+  `discovery/evidence/2026-09-27-bringup-sheet-c.txt`, 23 steps, single column.
+- **Phase C's steps audited against the board file before generating**, which is
+  the lesson Phase B taught. Four corrections made:
+  - **scope** said "board 1", which is now the practice board. Rewritten to
+    choose deliberately, recommending a pristine one.
+  - **C1.1** expected "a few mA" off the supply display, the range this supply
+    reads worst. Reframed to the **CV/CC indicator**, a binary.
+  - **C1.3** named no pin and no value. Now **J4 pin 3 to pin 4, near 0 V**,
+    with the caveat that nothing pulls that node up so only the low reading
+    means anything.
+  - **C1.4 and C2.2** sent you to **J12 pin 1, which has no ground pin.** Same
+    defect as B2.4, fixed there on 2026-09-25 and nowhere else. **Fixing an
+    instance is not fixing the pattern**: a grep would have caught all three.
+    Both now use **J16 pin 1 with GND at J16 pin 3**.
+
+**In flight:** **nothing is part-done.** Phase C has not started and no board has
+seen a volt.
+
+**🔴 THE DECISION WAITING FOR YOU, BEFORE ANYTHING ELSE:** which board runs
+Phase C. Phase B's scope line said board 1, and **board 1 is the practice board**
+with snapped rails and a hand-fitted BT1. My recommendation is **a pristine
+board**: the destruction risk is low behind C1's 100 mA limit, while **C2 settles
+U2's rotation, which is a batch question** where an ambiguous answer costs more
+than a board. **Write the board number on the sheet.**
+
+**The rig, so it does not need rederiving:**
+
+```
+C1   supply 5.00 V, limit 100 mA, CC not OCP
+     supply +  ->  J1 pin 1 (DC_IN)
+     supply -  ->  J1 pin 2 (GND)
+     no cell, no Seed, no JP shunts, no J3 link
+
+     C1.1  CV/CC indicator only, ignore the mA number
+     C1.2  J3 p1 -> J3 p4        4.4 - 4.5 V
+     C1.3  J4 p3 -> J4 p4        near 0 V = /PGOOD asserted
+     C1.4  J16 p1 -> J16 p3      0 V, AND THAT IS CORRECT
+     C1.5  by hand               nothing warm
+
+C2   same, PLUS a bare link across J3 pins 1 and 2
+     C2.2  J16 p1 -> J16 p3      4.744 - 5.168 V
+     C2.3  J15 p1 / J19 p1 to that connector's own GND
+     C2.4  FB1 p1 -> FB1 p2      tens of mV at most
+```
+
+**Open questions:**
+
+- **`u2-placement-orientation`** is `in-progress` **by design.** Placement is
+  uniform across the batch. **C2.2 settles it**: in the band means the boost
+  works and the part is oriented right; nothing at all means it is not, and
+  C1's 100 mA limit is what makes that a diagnosis rather than a casualty.
+- **Board 5, B2.3**: 190 kΩ against 0.58 MΩ, retested and reproducible. The only
+  board-level anomaly that survived. First thing to look at if b5 misbehaves.
+- **Board 1** is the practice board. Results informative, not authoritative.
+- **C3 is blocked** on the M3 screws, and **nothing else is.** C1, C2 and C4 all
+  proceed without it.
+- **J13's fix** deferred to a future revision. The rotate-alone trap is
+  recorded: pad order reverses, so the routing must be reworked or the Qwiic
+  pinout ends up mirrored, which is worse than the present fault.
+- Pre-existing and untouched all session: `loa-hook-switch` and
+  `charger-input-voltage-thermal`, both `in-progress`.
+- **The sheet generator still hardcodes its instruments block** while citing
+  `bench-instruments.yaml`, so it does not carry the supply's **+3.53 mA CC
+  offset**. Phase C is the first phase that actually uses CC. Offered and not
+  yet taken up.
+
+**Next step:** Decide the board, write it on the C sheet, then run **C1**: set
+5.00 V with a **100 mA limit in CC, not OCP**, connect only J1, switch on, and
+read the CV/CC indicator. 🔴 **C1.4's dead 5 V rail is the design working**, not
+a dead boost: R6 holds the enable low and no switch is fitted. C2 is where you
+find out which.
